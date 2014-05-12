@@ -84,6 +84,7 @@ HEADERS += core/book.h \
            gui/functionswidget.h \
            gui/historydock.h \
            gui/historywidget.h \
+           gui/keypad.h \
            gui/tipwidget.h \
            gui/variablesdock.h \
            gui/variablelistwidget.h \
@@ -140,6 +141,7 @@ SOURCES += main.cpp \
            gui/functionswidget.cpp \
            gui/historydock.cpp \
            gui/historywidget.cpp \
+           gui/keypad.cpp \
            gui/syntaxhighlighter.cpp \
            gui/tipwidget.cpp \
            gui/variablesdock.cpp \
