@@ -120,10 +120,12 @@ public:
   Error error;
   //TODO do not keep formats with numbers
   char format;
+  const HNumber * unit;
+  const QString * unit_name;
 };
 
 HNumberPrivate::HNumberPrivate()
-  : error(Success), format(0)
+  : error(Success), format(0), unit(NULL), unit_name(NULL)
 {
   h_init();
   float_create(&fnum);
@@ -132,6 +134,8 @@ HNumberPrivate::HNumberPrivate()
 HNumberPrivate::~HNumberPrivate()
 {
   float_free(&fnum);
+  delete unit;
+  delete unit_name;
 }
 
 typedef char (*Float1ArgND)(floatnum x);
@@ -346,6 +350,36 @@ char HNumber::format() const
 HNumber& HNumber::setFormat(char c)
 {
    d->format = float_isnan(&d->fnum)?0:c;
+   return *this;
+}
+
+HNumber HNumber::getUnit() {
+   if(float_isnan(&d->fnum)) return *this;
+   return (d->unit) ? *d->unit : HNumber(1);
+}
+
+QString HNumber::getUnitName() {
+   return (d->unit) ? *d->unit_name : "";
+}
+
+bool HNumber::hasUnit() const {
+  return (d->unit && d->unit_name);
+}
+
+/**
+ * Sets the display unit (e.g. "meter/second")
+ */
+HNumber& HNumber::setDisplayUnit(const HNumber unit, const QString &name)
+{
+    //TODO: check dimension
+   if(unit.isZero()) {
+      *this = HMath::nan(InvalidDimension);
+   } else if(float_isnan(&d->fnum)) {
+      if(d->unit) delete d->unit;
+      if(d->unit_name) delete d->unit_name;
+      d->unit = new HNumber(unit);
+      d->unit_name = new QString(name);
+   }
    return *this;
 }
 

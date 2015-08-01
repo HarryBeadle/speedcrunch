@@ -43,7 +43,7 @@ protected:
 
 private:
     enum {
-        SizePixels = 20,
+        SizePixels = 10,
     };
 
     Q_DISABLE_COPY(BitWidget)

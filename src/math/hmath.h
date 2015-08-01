@@ -21,6 +21,8 @@
 #ifndef MATH_HMATH_H
 #define MATH_HMATH_H
 
+#include <QString>
+
 #include "core/errors.h"
 
 #include <ostream>
@@ -64,6 +66,13 @@ class HNumber
     // 'b': binary
     char format() const;
     HNumber& setFormat( char c = 0 );
+
+
+    bool hasUnit() const ;
+    HNumber getUnit();
+    QString getUnitName();
+    HNumber& setDisplayUnit(const HNumber , const QString &name);
+
 
     int toInt() const;
     Error error() const;

@@ -24,7 +24,7 @@
 class HNumber;
 
 struct NumberFormatter {
-	static QString format(const HNumber&);
+        static QString format(HNumber);
 };
 
 #endif

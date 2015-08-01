@@ -21,13 +21,25 @@
 #include "core/settings.h"
 #include "math/hmath.h"
 
-QString NumberFormatter::format(const HNumber& number)
+QString NumberFormatter::format(HNumber number)
 {
     Settings* settings = Settings::instance();
+
+    //handle units
+    QString unit_name = "";
+    if(number.hasUnit()) {
+        unit_name = number.getUnitName();
+        number /= number.getUnit();
+    }
+
     const char format = number.format() != 0 ? number.format() : settings->resultFormat;
     char* str = HMath::format(number, format, settings->resultPrecision);
     QString result = QString::fromLatin1(str);
     free(str);
+    if(unit_name != "") {
+        result.append(" ");
+        result.append(unit_name);
+    }
     if (settings->radixCharacter() != '.')
         result.replace('.', settings->radixCharacter());
     return result;

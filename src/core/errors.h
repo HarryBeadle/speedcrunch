@@ -119,6 +119,14 @@ typedef enum
 /* parameter type mismatch */
   TypeMismatch,
 
+/* occurs if quantities of different dimensions are compared, added, etc., or
+  if during an invalid conversion*/
+  DimensionMismatch,
+
+/* occurs if a non dimensionless quantity is fed to a function that requires
+ dimensoinless arguments, e.g. sin, exp,... */
+  InvalidDimension,
+
 /* cannot overwrite an existing key in a table */
 //  KeyExists,
 
@@ -143,6 +151,10 @@ typedef enum
 /* this value is used internally to indicate the absence of
   any error information altogether */
   NotAnError,
+
+/*
+ */
+
 
 } Error;
 
