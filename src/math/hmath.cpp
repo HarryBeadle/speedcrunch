@@ -353,12 +353,12 @@ HNumber& HNumber::setFormat(char c)
    return *this;
 }
 
-HNumber HNumber::getUnit() {
+HNumber HNumber::getUnit() const {
    if(float_isnan(&d->fnum)) return *this;
    return (d->unit) ? *d->unit : HNumber(1);
 }
 
-QString HNumber::getUnitName() {
+QString HNumber::getUnitName() const {
    return (d->unit) ? *d->unit_name : "";
 }
 
@@ -367,20 +367,26 @@ bool HNumber::hasUnit() const {
 }
 
 /**
- * Sets the display unit (e.g. "meter/second")
+ * Sets the display unit
  */
 HNumber& HNumber::setDisplayUnit(const HNumber unit, const QString &name)
 {
     //TODO: check dimension
-   if(unit.isZero()) {
+   if(unit.isZero() || unit.isNan()) {
       *this = HMath::nan(InvalidDimension);
-   } else if(float_isnan(&d->fnum)) {
-      if(d->unit) delete d->unit;
-      if(d->unit_name) delete d->unit_name;
+   } else if(!float_isnan(&d->fnum)) {
+      stripUnits();
       d->unit = new HNumber(unit);
       d->unit_name = new QString(name);
    }
    return *this;
+}
+
+void HNumber::stripUnits() {
+    delete d->unit;
+    delete d->unit_name;
+    d->unit = NULL;
+    d-> unit_name = NULL;
 }
 
 /**
@@ -400,7 +406,13 @@ HNumber& HNumber::operator=( const HNumber & hn )
 {
   d->format = hn.format();
   d->error = hn.error();
+
   float_copy(&d->fnum, &hn.d->fnum, EXACT);
+
+  stripUnits();
+  if(hn.hasUnit()) {
+    setDisplayUnit(hn.getUnit(), hn.getUnitName());
+  }
   return *this;
 }
 

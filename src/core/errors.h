@@ -119,12 +119,11 @@ typedef enum
 /* parameter type mismatch */
   TypeMismatch,
 
-/* occurs if quantities of different dimensions are compared, added, etc., or
-  if during an invalid conversion*/
+/* occurs if quantities of different dimensions are compared, added, converted, etc. */
   DimensionMismatch,
 
 /* occurs if a non dimensionless quantity is fed to a function that requires
- dimensoinless arguments, e.g. sin, exp,... */
+ dimensoinless arguments, or if an invalid unit is specified */
   InvalidDimension,
 
 /* cannot overwrite an existing key in a table */

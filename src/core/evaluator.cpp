@@ -73,6 +73,12 @@ const HNumber& Evaluator::checkOperatorResult(const HNumber& n)
     case TooExpensive:
         m_error = Evaluator::tr("too time consuming computation was rejected");
         break;
+    case DimensionMismatch:
+        m_error = Evaluator::tr("dimension mismatch - quantities with different dimensions cannot be compared, added,...");
+        break;
+    case InvalidDimension:
+        m_error = Evaluator::tr("invalid dimension - operation might require dimensionless arguments");
+        break;
     default:;
     }
     return n;
@@ -168,6 +174,8 @@ static Token::Op matchOperator(const QString& text)
           result = Token::LeftShift;
         else if(text == ">>")
           result = Token::RightShift;
+        else if(text == "->")
+            result = Token::RightArrow;
     }
 #if 0
     else if (text.length() == 3) {
@@ -179,28 +187,29 @@ static Token::Op matchOperator(const QString& text)
    return result;
 }
 
-// Helper function: give operator precedence e.g. "+" is 1 while "*" is 3.
+// Helper function: give operator precedence e.g. "+" is 300 while "*" is 500.
 static int opPrecedence(Token::Op op)
 {
     int prec;
     switch(op) {
-    case Token::Exclamation: prec = 8; break;
-    case Token::Percent: prec = 8; break;
-    case Token::Caret: prec = 7; break;
-    case Token::Asterisk: prec = 5; break;
-    case Token::Slash: prec = 6; break;
+    case Token::Exclamation: prec = 800; break;
+    case Token::Percent: prec = 800; break;
+    case Token::Caret: prec = 700; break;
+    case Token::Asterisk: prec = 500; break;
+    case Token::Slash: prec = 600; break;
     case Token::Modulo:
-    case Token::Backslash: prec = 6; break;
+    case Token::Backslash: prec = 600; break;
     case Token::Plus:
-    case Token::Minus: prec = 3; break;
+    case Token::Minus: prec = 300; break;
     case Token::LeftShift:
-    case Token::RightShift: prec = 2; break;
-    case Token::Ampersand: prec = 1; break;
-    case Token::Pipe: prec = 0; break;
+    case Token::RightShift: prec = 200; break;
+    case Token::Ampersand: prec = 100; break;
+    case Token::Pipe: prec = 50; break;
+    case Token::RightArrow: prec = 0;
     case Token::RightPar:
-    case Token::Semicolon: prec = -1; break;
-    case Token::LeftPar: prec = -2; break;
-    default: prec = -2; break;
+    case Token::Semicolon: prec = -100; break;
+    case Token::LeftPar: prec = -200; break;
+    default: prec = -200; break;
     }
     return prec;
 }
@@ -528,7 +537,7 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
                     state = Bad;
             }
 
-            // Beginning with unknown alphanumeric?  Could be identifier, or function.
+            // Beginning with unknown alphanumeric?  Could be identifier or function.
             if (state == Bad && isIdentifier(ch))
                 state = InIdentifier;
             break;
@@ -868,7 +877,7 @@ void Evaluator::compile(const Tokens& tokens)
                     }
                 }
 
-                // R.ule for unary operator in simplified function syntax. This handles case like "sin -90".
+                // Rule for unary operator in simplified function syntax. This handles case like "sin -90".
                 if (!ruleFound && syntaxStack.itemCount() >= 3) {
                     Token x = syntaxStack.top();
                     Token op = syntaxStack.top(1);
@@ -991,6 +1000,7 @@ void Evaluator::compile(const Tokens& tokens)
                             case Token::RightShift: m_codes.append(Opcode::RSh); break;
                             case Token::Ampersand: m_codes.append(Opcode::BAnd); break;
                             case Token::Pipe:      m_codes.append(Opcode::BOr); break;
+                            case Token::RightArrow: m_codes.append(Opcode::Conv); break;
                             default: break;
                         };
 #ifdef EVALUATOR_DEBUG
@@ -1345,6 +1355,17 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
                 stack.push(val2);
                 break;
 
+            case Opcode::Conv:
+                if (stack.count() < 2) {
+                    m_error = tr("invalid expression");
+                    return HMath::nan();
+                }
+                val1 = stack.pop();
+                val2 = stack.pop();
+                val2.setDisplayUnit(val1,"");
+                stack.push(val2);
+                break;
+
             // Reference.
             case Opcode::Ref:
                 fname = identifiers.at(index);
@@ -1444,7 +1465,6 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
         m_error = tr("invalid expression");
         return HMath::nan();
     }
-
     return stack.pop();
 }
 

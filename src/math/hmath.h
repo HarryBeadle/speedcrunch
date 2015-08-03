@@ -69,9 +69,10 @@ class HNumber
 
 
     bool hasUnit() const ;
-    HNumber getUnit();
-    QString getUnitName();
+    HNumber getUnit() const;
+    QString getUnitName() const;
     HNumber& setDisplayUnit(const HNumber , const QString &name);
+    void stripUnits();
 
 
     int toInt() const;

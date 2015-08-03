@@ -35,7 +35,7 @@ public:
     enum Op { InvalidOp = 0, Plus, Minus, Asterisk, Slash, Backslash, Caret,
               Super0, Super1, Super2, Super3, Super4, Super5, Super6, Super7, Super8, Super9,
               LeftPar, RightPar, Semicolon, Percent, Exclamation, Equal, Modulo,
-              LeftShift, RightShift, Ampersand, Pipe };
+              LeftShift, RightShift, Ampersand, Pipe, RightArrow };
     enum Type { stxUnknown, stxNumber, stxIdentifier, stxOperator, stxOpenPar, stxClosePar, stxSep };
 
     static const Token null;
@@ -144,7 +144,7 @@ private:
 
     struct Opcode {
         enum { Nop = 0, Load, Ref, Function, Add, Sub, Neg, Mul, Div, Pow,
-               Fact, Modulo, IntDiv, LSh, RSh, BAnd, BOr };
+               Fact, Modulo, IntDiv, LSh, RSh, BAnd, BOr, Conv };
 
         unsigned type;
         unsigned index;

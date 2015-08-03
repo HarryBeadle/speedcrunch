@@ -29,7 +29,9 @@ QString NumberFormatter::format(HNumber number)
     QString unit_name = "";
     if(number.hasUnit()) {
         unit_name = number.getUnitName();
-        number /= number.getUnit();
+        HNumber unit = number.getUnit();
+        number.stripUnits();
+        number /= unit;
     }
 
     const char format = number.format() != 0 ? number.format() : settings->resultFormat;
