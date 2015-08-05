@@ -22,7 +22,7 @@ or
     qmake "DEFINES+=SPEEDCRUNCH_PORTABLE" speedcrunch.pro
 
 ## Contributing
-- Report bugs or request features in the [issue tracker](http://code.google.com/p/speedcrunch/issues/list).
+- Report bugs or request features in the [issue tracker](https://bitbucket.org/heldercorreia/speedcrunch/issues).
 - Add or improve a [translation](https://www.transifex.com/projects/p/speedcrunch/).
 - Send a message to the [forum](https://groups.google.com/group/speedcrunch).
 - Follow the news on the [blog](http://speedcrunch.blogspot.com).
