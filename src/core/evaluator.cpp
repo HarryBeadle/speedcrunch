@@ -183,6 +183,8 @@ static Token::Op matchOperator(const QString& text)
             result = Token::Modulo;
     }
 #endif
+    else if(text.startsWith("->"))
+        result = Token::RightArrow;
 
    return result;
 }
@@ -690,6 +692,30 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
         // Invalidating here too, because usually when we set state to Bad, the case Bad won't be run.
         tokens.setValid(false);
 
+
+    // Find the correct text for the conversion operator (->)
+    // Advance up to the next operator with lower precedence, excluding higher precedence ops in parenthesis.
+    // WARNING: This assumes that there is no UNARY operator with lower precedence than the conversion operator.
+    for(int i=0; i<tokens.length(); ++i) {
+        //Find conversion operator
+        if(!tokens.at(i).isOperator() || tokens.at(i).asOperator()!=Token::RightArrow)
+            continue;
+        Token & conv_token = tokens[i];
+        int parens = 0;
+        while(++i<tokens.length()) {
+            if(tokens.at(i).isOperator()) {
+                if(tokens.at(i).asOperator() == Token::LeftPar)
+                    ++parens;
+                else if(tokens.at(i).asOperator() == Token::RightPar)
+                    --parens;
+                //break if all parenthesis are matched and a lower priority op has been found
+                else if(parens==0 && opPrecedence(tokens.at(i).asOperator()) <= opPrecedence(Token::RightArrow))
+                    break;
+            }
+            conv_token.addText(tokens.at(i).text());
+        }
+    }
+
     return tokens;
 }
 
@@ -1000,7 +1026,8 @@ void Evaluator::compile(const Tokens& tokens)
                             case Token::RightShift: m_codes.append(Opcode::RSh); break;
                             case Token::Ampersand: m_codes.append(Opcode::BAnd); break;
                             case Token::Pipe:      m_codes.append(Opcode::BOr); break;
-                            case Token::RightArrow: m_codes.append(Opcode::Conv); break;
+                            case Token::RightArrow:
+                                m_codes.append(Opcode(Opcode::Conv, op.text().mid(2))); break;
                             default: break;
                         };
 #ifdef EVALUATOR_DEBUG
@@ -1362,7 +1389,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
-                val2.setDisplayUnit(val1,"");
+                val2.setDisplayUnit(val1, opcode.text);
                 stack.push(val2);
                 break;
 

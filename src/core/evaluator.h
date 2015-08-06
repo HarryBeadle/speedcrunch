@@ -51,6 +51,7 @@ public:
     bool isIdentifier() const { return m_type == stxIdentifier; }
     int pos() const { return m_pos; }
     QString text() const { return m_text; }
+    void addText(QString t) { m_text.append(t);}
     Type type() const { return m_type; }
 
     Token& operator=(const Token&);
@@ -149,8 +150,12 @@ private:
         unsigned type;
         unsigned index;
 
+        // TODO: this is only needed for Conv Op. Maybe put this in a smarter place?
+        QString text;
+
         Opcode() : type(Nop), index(0) {}
         Opcode(unsigned t) : type(t), index(0) {}
+        Opcode(unsigned t, QString txt) : type(t), index(0), text(txt) {}
         Opcode(unsigned t, unsigned i): type(t), index(i) {}
     };
 
