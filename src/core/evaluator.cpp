@@ -28,6 +28,9 @@
 #include <QStack>
 
 #define EVALUATOR_DEBUG
+#define ALLOW_IMPLICIT_MULT
+
+
 #ifdef EVALUATOR_DEBUG
 #include <QFile>
 #include <QTextStream>
@@ -701,19 +704,39 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
         if(!tokens.at(i).isOperator() || tokens.at(i).asOperator()!=Token::RightArrow)
             continue;
         Token & conv_token = tokens[i];
+
+        bool must_fence = false;
         int parens = 0;
+        QString expr = "";
+
+        //Make sure the next token cannot be mistake for part of a number
+        if(tokens.length()>i+1) {
+            QString s = tokens.at(i+1).text().toUpper();
+            if((QString("1234567890XBOED").contains(s[0]) || isRadixChar(s[0])) &&
+                  (s.length()<=1 || QString("0123456789abcdef").contains(s[1])))
+                must_fence=true;
+        }
         while(++i<tokens.length()) {
             if(tokens.at(i).isOperator()) {
+                int prec = opPrecedence(tokens.at(i).asOperator());
                 if(tokens.at(i).asOperator() == Token::LeftPar)
                     ++parens;
                 else if(tokens.at(i).asOperator() == Token::RightPar)
                     --parens;
+                else if (prec <= opPrecedence(Token::Asterisk) && !parens)
+                    must_fence = true;
                 //break if all parenthesis are matched and a lower priority op has been found
-                else if(parens==0 && opPrecedence(tokens.at(i).asOperator()) <= opPrecedence(Token::RightArrow))
+                else if(parens==0 && prec <= opPrecedence(Token::RightArrow))
                     break;
             }
-            conv_token.addText(tokens.at(i).text());
+            if(i>1 && (tokens.at(i-1).isIdentifier() || tokens.at(i-1).isNumber()) && (tokens.at(i).isIdentifier() || tokens.at(i).isNumber())) {
+                expr.append(" "); // Add a space to emphasize implicit multiplication
+            }
+            expr.append(tokens.at(i).text());
         }
+        if(must_fence)
+            expr = "(" + expr + ")";
+        conv_token.addText(expr);
     }
 
     return tokens;
@@ -1035,6 +1058,29 @@ void Evaluator::compile(const Tokens& tokens)
 #endif
                     }
                 }
+#ifdef ALLOW_IMPLICIT_MULT
+
+                // Rule for implicit multiplication:  A B -> A.
+                // Action: Treat as A * B.
+                if(!ruleFound && syntaxStack.itemCount() >= 2) {
+                    Token b = syntaxStack.top();
+                    Token a = syntaxStack.top(1);
+
+                    if((a.isNumber() || a.isIdentifier())
+                            && (b.isNumber() || b.isIdentifier()))  {
+                        ruleFound = true;
+                        syntaxStack.pop();
+                        syntaxStack.pop();
+                        syntaxStack.push(b);
+                        m_codes.append(Opcode::Mul);
+#ifdef EVALUATOR_DEBUG
+                        dbg << "    Rule for implicit multiplication" << "\n";
+#endif
+                    }
+
+                }
+#endif
+
 
                 // Rule for unary operator:  (op1) (op2) X -> (op1) X.
                 // Conditions: op2 is unary, token is not '('.
@@ -1389,6 +1435,10 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
+                if(val1.isZero()) {
+                    m_error = tr("unit must not be zero");
+                    return HMath::nan();
+                }
                 val2.setDisplayUnit(val1, opcode.text);
                 stack.push(val2);
                 break;
