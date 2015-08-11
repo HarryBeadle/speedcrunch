@@ -68,7 +68,7 @@
 #include <QVBoxLayout>
 
 #ifdef Q_OS_WIN32
-#include "Windows.h"
+#include "windows.h"
 #endif // Q_OS_WIN32
 
 QTranslator* MainWindow::createTranslator(const QString& langCode)
