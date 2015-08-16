@@ -1,5 +1,7 @@
 # SpeedCrunch
-SpeedCrunch is a high-precision scientific calculator. It features a syntax-highlighted scrollable display and is designed to be fully used via keyboard. Some distinctive features are auto-completion of functions and variables, a formula book, and quick insertion of constants from various fields of knowledge. Available for Windows, OS X, and Linux in a number of languages. For binary downloads, please visit the [home](http://speedcrunch.org/) or [download](https://bitbucket.org/heldercorreia/speedcrunch/downloads) pages. These are the official mirrors for development: [GitHub](https://github.com/speedcrunch), [Google Code](https://code.google.com/p/speedcrunch/), [Gitorious](https://gitorious.org/speedcrunch), [Bitbucket](https://bitbucket.org/heldercorreia/speedcrunch/).
+SpeedCrunch is a high-precision scientific calculator. It features a syntax-highlighted scrollable display and is designed to be fully used via keyboard. Some distinctive features are auto-completion of functions and variables, a formula book, and quick insertion of constants from various fields of knowledge. Available for Windows, OS X, and Linux in a number of languages.
+
+![capture.png](https://bitbucket.org/repo/dR7BnG/images/3654665019-capture.png)
 
 ## Building
 To build from source, use either CMake or QMake to build the project:
@@ -22,7 +24,7 @@ or
     qmake "DEFINES+=SPEEDCRUNCH_PORTABLE" speedcrunch.pro
 
 ## Contributing
-- Report bugs or request features in the [issue tracker](http://code.google.com/p/speedcrunch/issues/list).
+- Report bugs or request features in the [issue tracker](https://bitbucket.org/heldercorreia/speedcrunch/issues).
 - Add or improve a [translation](https://www.transifex.com/projects/p/speedcrunch/).
 - Send a message to the [forum](https://groups.google.com/group/speedcrunch).
 - Follow the news on the [blog](http://speedcrunch.blogspot.com).

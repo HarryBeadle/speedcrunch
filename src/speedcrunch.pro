@@ -12,10 +12,12 @@ equals(QT_MAJOR_VERSION, 4) {
         error(Qt 4.8 or newer is required but version $$[QT_VERSION] was detected.)
     }
 
-    !win32 {
+    !win32|win32-g++ {
         QMAKE_CXXFLAGS += -std=c++0x
     }
 }
+
+win32-g++:QMAKE_LFLAGS += -static
 
 DEFINES += SPEEDCRUNCH_VERSION=\\\"master\\\"
 DEFINES += QT_USE_QSTRINGBUILDER
