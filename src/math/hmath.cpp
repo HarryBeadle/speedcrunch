@@ -280,6 +280,11 @@ HNumber::HNumber( const char* str ) : d( new HNumberPrivate )
   float_geterror();
 }
 
+HNumber::HNumber(const QJsonObject &json) : d( new HNumberPrivate )
+{
+    *this = deSerialize(json);
+}
+
 /**
  * Destroys this number.
  */
@@ -387,6 +392,32 @@ void HNumber::stripUnits() {
     delete d->unit_name;
     d->unit = NULL;
     d-> unit_name = NULL;
+}
+
+void HNumber::serialize(QJsonObject &json) const
+{
+    const char f = format();
+    json["format"] = f;
+    json["value"] = HMath::format(*this, f, DECPRECISION);
+    if(hasUnit()) {
+        json["unit"] = HMath::format(getUnit(), 'e', DECPRECISION);
+        json["unit_name"] = getUnitName();
+    }
+}
+
+HNumber HNumber::deSerialize(const QJsonObject &json)
+{
+    QString str = json["value"].toString();
+    str.replace(",", ".");
+    HNumber result(str.toLatin1().constData());
+    result.setFormat(json["format"].toString().toLatin1().constData()[0]);
+
+    if(json.contains("unit")) {
+        str = json["unit"].toString();
+        result.setDisplayUnit(HNumber(str.toLatin1().constData()), json["unit_name"].toString());
+    }
+
+    return result;
 }
 
 /**

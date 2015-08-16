@@ -79,7 +79,30 @@ HEADERS += core/book.h \
            gui/userfunctionsdock.h \
            gui/userfunctionlistwidget.h \
            gui/manualwindow.h \
-           gui/mainwindow.h
+           gui/mainwindow.h \
+           core/session.h \
+           math/floatcommon.h \
+           math/floatconfig.h \
+           math/floatconst.h \
+           math/floatconvert.h \
+           math/floaterf.h \
+           math/floatexp.h \
+           math/floatgamma.h \
+           math/floathmath.h \
+           math/floatincgamma.h \
+           math/floatio.h \
+           math/floatipower.h \
+           math/floatlog.h \
+           math/floatlogic.h \
+           math/floatlong.h \
+           math/floatnum.h \
+           math/floatpower.h \
+           math/floatseries.h \
+           math/floattrig.h \
+           math/hmath.h \
+           math/number.h \
+    core/sessionhistory.h \
+    core/sessionvariables.h
 
 SOURCES += main.cpp \
            core/book.cpp \
@@ -90,6 +113,7 @@ SOURCES += main.cpp \
            core/numberformatter.cpp \
            core/pageserver.cpp \
            core/settings.cpp \
+           core/session.cpp \
            gui/aboutbox.cpp \
            gui/bitfieldwidget.cpp \
            gui/bookdock.cpp \
@@ -126,7 +150,10 @@ SOURCES += main.cpp \
            math/floatseries.c \
            math/floattrig.c \
            math/hmath.cpp \
-           math/number.c
+           math/number.c \
+           math/floatincgamma.c \
+    core/sessionhistory.cpp \
+    core/sessionvariables.cpp
 
 RESOURCES += resources/speedcrunch.qrc
 TRANSLATIONS += resources/locale/ar.ts \

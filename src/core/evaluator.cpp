@@ -27,7 +27,8 @@
 #include <QCoreApplication>
 #include <QStack>
 
-#define EVALUATOR_DEBUG
+//#define EVALUATOR_DEBUG
+
 #define ALLOW_IMPLICIT_MULT
 
 
@@ -77,7 +78,7 @@ const HNumber& Evaluator::checkOperatorResult(const HNumber& n)
         m_error = Evaluator::tr("too time consuming computation was rejected");
         break;
     case DimensionMismatch:
-        m_error = Evaluator::tr("dimension mismatch - quantities with different dimensions cannot be compared, added,...");
+        m_error = Evaluator::tr("dimension mismatch - quantities with different dimensions cannot be compared, added, etc.");
         break;
     case InvalidDimension:
         m_error = Evaluator::tr("invalid dimension - operation might require dimensionless arguments");

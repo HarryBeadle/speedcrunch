@@ -22,6 +22,7 @@
 #define MATH_HMATH_H
 
 #include <QString>
+#include <QJsonObject>
 
 #include "core/errors.h"
 
@@ -47,6 +48,7 @@ class HNumber
     HNumber( const HNumber& );
     HNumber( int i );
     HNumber( const char* );
+    HNumber( const QJsonObject & json);
     ~HNumber();
 
     bool isNan() const;
@@ -74,6 +76,8 @@ class HNumber
     HNumber& setDisplayUnit(const HNumber , const QString &name);
     void stripUnits();
 
+    void serialize(QJsonObject & json) const;
+    static HNumber deSerialize(const QJsonObject & json);
 
     int toInt() const;
     Error error() const;

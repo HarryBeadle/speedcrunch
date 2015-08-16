@@ -22,8 +22,12 @@
 #include <QCoreApplication>
 #include <QApplication>
 
+#include "session.h"
+
 int main(int argc, char* argv[])
 {
+    Session::test();
+
     QApplication application(argc, argv);
 
     QCoreApplication::setApplicationName("speedcrunch");
