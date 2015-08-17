@@ -1,9 +1,10 @@
 #include "session.h"
 #include "sessionhistory.h"
-#include "sessionvariables.h"
+#include "variable.h"
 
 #include <QFile>
-#include<QJsonDocument>
+#include <QJsonDocument>
+#include <functions.h>
 
 
 
@@ -12,30 +13,36 @@
 void Session::serialize(QJsonObject &json) const
 {
     // history
-    QJsonObject hist_obj;
-    hist_obj["count"] = history.size();  //currently reduntant, only the length of the QJsonArray is considered
     QJsonArray hist_entries;
     for(int i=0; i<history.size(); ++i) {
         QJsonObject curr_entry_obj;
         history.at(i).serialize(curr_entry_obj);
         hist_entries.append(curr_entry_obj);
     }
-    hist_obj["entries"] = hist_entries;
-    json["history"] = hist_obj;
+    json["history"] = hist_entries;
 
     //variables
-    QJsonObject var_obj;
-    var_obj["count"] = variables.size();  // reduntant, see above
     QJsonArray var_entries;
-    QMapIterator<QString, Variable> i(variables);
+    QHashIterator<QString, Variable> i(variables);
     while(i.hasNext()) {
         i.next();
         QJsonObject curr_entry_obj;
         i.value().serialize(curr_entry_obj);
         var_entries.append(curr_entry_obj);
     }
-    var_obj["entries"] = var_entries;
-    json["variables"] = var_obj;
+    json["variables"] = var_entries;
+
+
+    // functions
+    QJsonArray func_entries;
+    QHashIterator<QString, UserFunction> j(userFunctions);
+    while(j.hasNext()) {
+        j.next();
+        QJsonObject curr_entry_obj;
+        j.value().serialize(curr_entry_obj);
+        func_entries.append(curr_entry_obj);
+    }
+    json["functions"] = func_entries;
 }
 
 void Session::deSerialize(const QJsonObject &json, bool merge=false)
@@ -45,20 +52,26 @@ void Session::deSerialize(const QJsonObject &json, bool merge=false)
         variables.clear();
     }
 
-    QJsonObject hist_obj = json["history"].toObject();
-    int n = hist_obj["count"].toInt();
-    QJsonArray entries = hist_obj["entries"].toArray();
+    QJsonArray hist_obj = json["history"].toArray();
+    int n = hist_obj.size();
     for(int i=0; i<n; ++i) {
-        history.append(HistoryEntry(entries[i].toObject()));
+        history.append(HistoryEntry(hist_obj[i].toObject()));
     }
 
-    QJsonObject var_obj = json["variables"].toObject();
-    n = var_obj["count"].toInt();
-    entries = var_obj["entries"].toArray();
+    QJsonArray var_obj = json["variables"].toArray();
+    n = var_obj.size();
     for(int i=0; i<n; ++i) {
-        QJsonObject var = entries[i].toObject();
+        QJsonObject var = var_obj[i].toObject();
         variables[var["identifier"].toString()].deSerialize(var);
     }
+
+    QJsonArray func_obj = json["functions"].toArray();
+    n = func_obj.size();
+    for(int i=0; i<n; ++i) {
+        QJsonObject func = func_obj[i].toObject();
+        userFunctions[func["name"].toString()].deSerialize(func);
+    }
+
 
 }
 
@@ -88,6 +101,17 @@ QList<Variable> Session::variablesToList() const
     return variables.values();
 }
 
+bool Session::isBuiltInVariable(const QString & id) const
+{
+    // Defining variables with the same name as existing functions is not supported for now.
+    if(FunctionRepo::instance()->find(id))
+        return true;
+    if(!variables.contains(id))
+        return false;
+
+    return variables.value(id).type() == Variable::BuiltIn;
+}
+
 void Session::addHistoryEntry(const HistoryEntry &entry)
 {
     history.append(entry);
@@ -106,6 +130,27 @@ void Session::removeHistoryEntryAt(const int index)
 HistoryEntry Session::historyEntryAt(const int index) const
 {
     return history.at(index);
+}
+
+void Session::addUserFunction(const UserFunction func)
+{
+    QString name = func.name();
+    userFunctions[name] = func;
+}
+
+void Session::removeUserFunction(const QString str)
+{
+    userFunctions.remove(str);
+}
+
+void Session::clearUserFunctions()
+{
+    userFunctions.clear();
+}
+
+bool Session::hasUserFunction(const QString &str) const
+{
+    return userFunctions.contains(str);
 }
 
 
@@ -128,6 +173,9 @@ void Session::test()
     session.addHistoryEntry(HistoryEntry("sqrt(2)^2", HNumber(2)));
     session.addHistoryEntry(HistoryEntry("6^(1/3)", HNumber("1.81712059283213965889")));
     session.addHistoryEntry(HistoryEntry("61+64", HNumber(125)));
+
+    session.addUserFunction(UserFunction("f", QStringList("x"), "5*x"));
+
 
     QJsonObject json;
     session.serialize(json);

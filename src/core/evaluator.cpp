@@ -27,7 +27,7 @@
 #include <QCoreApplication>
 #include <QStack>
 
-//#define EVALUATOR_DEBUG
+#define EVALUATOR_DEBUG
 
 #define ALLOW_IMPLICIT_MULT
 
@@ -1632,7 +1632,7 @@ HNumber Evaluator::eval()
                 return HMath::nan();
             }
 
-            // Check that each arguments are unique and not a reserved identifier.
+            // Check that each arguments is unique and not a reserved identifier.
             for (int i = 0; i < m_assignArg.count() - 1; ++i) {
                 const QString &argName = m_assignArg.at(i);
 

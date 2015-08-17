@@ -29,22 +29,4 @@ public:
     void deSerialize(const QJsonObject & json);
 };
 
-
-
-#if 0
-class SessionHistory
-{
-private:
-    QList<HistoryEntry> m_entries;
-public:
-    SessionHistory();
-    void append(const HistoryEntry entry);
-    void insert(const int index, const HistoryEntry entry);
-    void removeAt(const int index);
-    HistoryEntry at(const int index) const;
-    int size() const;
-    void clear();
-};
-#endif
-
 #endif // SESSIONHISTORY_H

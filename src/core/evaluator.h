@@ -136,28 +136,29 @@ public:
     void unsetAllUserFunctions();
     bool hasUserFunction(const QString&);
 
+    struct Opcode {
+        enum  Type { Nop, Load, Ref, Function, Add, Sub, Neg, Mul, Div, Pow,
+               Fact, Modulo, IntDiv, LSh, RSh, BAnd, BOr, Conv };
+
+        Type type;
+        unsigned index;
+
+        // TODO: this is only needed for Conv Op. Maybe refactor this to a smarter place?
+        QString text;
+
+        Opcode() : type(Nop), index(0) {}
+        Opcode(Type t) : type(t), index(0) {}
+        Opcode(Type t, QString txt) : type(t), index(0), text(txt) {}
+        Opcode(Type t, unsigned i): type(t), index(i) {}
+    };
+
 protected:
     void compile(const Tokens&);
+
 
 private:
     Evaluator();
     Q_DISABLE_COPY(Evaluator)
-
-    struct Opcode {
-        enum { Nop = 0, Load, Ref, Function, Add, Sub, Neg, Mul, Div, Pow,
-               Fact, Modulo, IntDiv, LSh, RSh, BAnd, BOr, Conv };
-
-        unsigned type;
-        unsigned index;
-
-        // TODO: this is only needed for Conv Op. Maybe put this in a smarter place?
-        QString text;
-
-        Opcode() : type(Nop), index(0) {}
-        Opcode(unsigned t) : type(t), index(0) {}
-        Opcode(unsigned t, QString txt) : type(t), index(0), text(txt) {}
-        Opcode(unsigned t, unsigned i): type(t), index(i) {}
-    };
 
     struct UserFunction {
         UserFunctionDescr descr;

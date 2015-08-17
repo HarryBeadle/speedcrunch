@@ -104,7 +104,8 @@ HEADERS += core/book.h \
            math/hmath.h \
            math/number.h \
     core/sessionhistory.h \
-    core/sessionvariables.h
+    core/variable.h \
+    core/userfunction.h
 
 SOURCES += main.cpp \
            core/book.cpp \
@@ -155,7 +156,8 @@ SOURCES += main.cpp \
            math/number.c \
            math/floatincgamma.c \
     core/sessionhistory.cpp \
-    core/sessionvariables.cpp
+    core/variable.cpp \
+    core/userfunction.cpp
 
 RESOURCES += resources/speedcrunch.qrc
 TRANSLATIONS += resources/locale/ar.ts \
