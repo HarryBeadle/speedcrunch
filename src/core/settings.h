@@ -49,7 +49,7 @@ public:
     bool autoCalc;
     bool autoCompletion;
     int digitGrouping;
-    bool historySave;
+    bool sessionSave;
     bool leaveLastExpression;
     bool syntaxHighlighting;
     bool systemTrayIconVisible;
@@ -86,7 +86,7 @@ public:
 
 private:
     Settings();
-    Q_DISABLE_COPY(Settings);
+    Q_DISABLE_COPY(Settings)
 };
 
 #endif

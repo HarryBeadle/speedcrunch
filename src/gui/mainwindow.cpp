@@ -67,6 +67,7 @@
 #include <QStatusBar>
 #include <QToolTip>
 #include <QVBoxLayout>
+#include <QJsonDocument>
 
 #ifdef Q_OS_WIN32
 #include "windows.h"
@@ -132,7 +133,7 @@ void MainWindow::createActions()
     m_actions.settingsBehaviorLeaveLastExpression = new QAction(this);
     m_actions.settingsBehaviorMinimizeToTray = new QAction(this);
     m_actions.settingsBehaviorPartialResults = new QAction(this);
-    m_actions.settingsBehaviorSaveHistoryOnExit = new QAction(this);
+    m_actions.settingsBehaviorSaveSessionOnExit = new QAction(this);
     m_actions.settingsBehaviorSaveVariablesOnExit = new QAction(this);
     m_actions.settingsBehaviorSaveUserFunctionsOnExit = new QAction(this);
     m_actions.settingsBehaviorSaveWindowPositionOnExit = new QAction(this);
@@ -182,7 +183,7 @@ void MainWindow::createActions()
     m_actions.settingsBehaviorLeaveLastExpression->setCheckable(true);
     m_actions.settingsBehaviorMinimizeToTray->setCheckable(true);
     m_actions.settingsBehaviorPartialResults->setCheckable(true);
-    m_actions.settingsBehaviorSaveHistoryOnExit->setCheckable(true);
+    m_actions.settingsBehaviorSaveSessionOnExit->setCheckable(true);
     m_actions.settingsBehaviorSaveVariablesOnExit->setCheckable(true);
     m_actions.settingsBehaviorSaveUserFunctionsOnExit->setCheckable(true);
     m_actions.settingsBehaviorSaveWindowPositionOnExit->setCheckable(true);
@@ -318,7 +319,7 @@ void MainWindow::setActionsText()
     m_actions.settingsBehaviorAutoCompletion->setText(MainWindow::tr("Automatic &Completion"));
     m_actions.settingsBehaviorMinimizeToTray->setText(MainWindow::tr("&Minimize To System Tray"));
     m_actions.settingsBehaviorPartialResults->setText(MainWindow::tr("&Partial Results"));
-    m_actions.settingsBehaviorSaveHistoryOnExit->setText(MainWindow::tr("Save &History on Exit"));
+    m_actions.settingsBehaviorSaveSessionOnExit->setText(MainWindow::tr("Save &History on Exit"));
     m_actions.settingsBehaviorSaveVariablesOnExit->setText(MainWindow::tr("Save &Variables on Exit"));
     m_actions.settingsBehaviorSaveUserFunctionsOnExit->setText(MainWindow::tr("Save User &Functions on Exit"));
     m_actions.settingsBehaviorSaveWindowPositionOnExit->setText(MainWindow::tr("Save &Window Positon on Exit"));
@@ -514,7 +515,7 @@ void MainWindow::createMenus()
     m_menus.angleUnit->addAction(m_actions.settingsAngleUnitDegree);
 
     m_menus.behavior = m_menus.settings->addMenu("");
-    m_menus.behavior->addAction(m_actions.settingsBehaviorSaveHistoryOnExit);
+    m_menus.behavior->addAction(m_actions.settingsBehaviorSaveSessionOnExit);
     m_menus.behavior->addAction(m_actions.settingsBehaviorSaveVariablesOnExit);
     m_menus.behavior->addAction(m_actions.settingsBehaviorSaveUserFunctionsOnExit);
     m_menus.behavior->addAction(m_actions.settingsBehaviorSaveWindowPositionOnExit);
@@ -611,12 +612,6 @@ void MainWindow::createStatusBar()
 
 void MainWindow::createFixedWidgets()
 {
-    m_session = new Session();
-    m_constants = Constants::instance();
-    m_evaluator = Evaluator::instance();
-    m_functions = FunctionRepo::instance();
-    m_evaluator->setSession(m_session);
-
     m_widgets.root = new QWidget(this);
     setCentralWidget(m_widgets.root);
 
@@ -866,7 +861,7 @@ void MainWindow::createFixedConnections()
     connect(m_actions.settingsBehaviorMinimizeToTray, SIGNAL(toggled(bool)), SLOT(setSystemTrayIconEnabled(bool)));
     connect(m_actions.settingsBehaviorAutoAns, SIGNAL(toggled(bool)), SLOT(setAutoAnsEnabled(bool)));
     connect(m_actions.settingsBehaviorPartialResults, SIGNAL(toggled(bool)), SLOT(setAutoCalcEnabled(bool)));
-    connect(m_actions.settingsBehaviorSaveHistoryOnExit, SIGNAL(toggled(bool)), SLOT(setHistorySaveEnabled(bool)));
+    connect(m_actions.settingsBehaviorSaveSessionOnExit, SIGNAL(toggled(bool)), SLOT(setSessionSaveEnabled(bool)));
     connect(m_actions.settingsBehaviorSaveVariablesOnExit, SIGNAL(toggled(bool)), SLOT(setVariableSaveEnabled(bool)));
     connect(m_actions.settingsBehaviorSaveUserFunctionsOnExit, SIGNAL(toggled(bool)), SLOT(setUserFunctionSaveEnabled(bool)));
     connect(m_actions.settingsBehaviorSaveWindowPositionOnExit, SIGNAL(toggled(bool)), SLOT(setWindowPositionSaveEnabled(bool)));
@@ -978,8 +973,8 @@ void MainWindow::applySettings()
     else if (m_settings->angleUnit == 'd')
         m_actions.settingsAngleUnitDegree->setChecked(true);
 
-    if (m_settings->historySave) {
-        m_actions.settingsBehaviorSaveHistoryOnExit->setChecked(true);
+    if (m_settings->sessionSave) {
+        m_actions.settingsBehaviorSaveSessionOnExit->setChecked(true);
         restoreHistory();
     }
 
@@ -1118,7 +1113,7 @@ void MainWindow::checkInitialDigitGrouping()
 
 void MainWindow::saveSettings()
 {
-    if (m_settings->historySave) {
+    if (m_settings->sessionSave) {
         m_settings->history = m_widgets.editor->history();
         m_settings->historyResults = m_widgets.editor->historyResults();
     } else {
@@ -1159,6 +1154,14 @@ void MainWindow::saveSettings()
 MainWindow::MainWindow()
     : QMainWindow()
 {
+
+    m_session = new Session();
+    m_constants = Constants::instance();
+    m_evaluator = Evaluator::instance();
+    m_functions = FunctionRepo::instance();
+    m_evaluator->setSession(m_session);
+    m_evaluator->initializeBuiltInVariables();
+
     m_translator = 0;
     m_settings = Settings::instance();
 
@@ -1203,6 +1206,7 @@ MainWindow::~MainWindow()
         deleteFunctionsDock();
     if (m_docks.history)
         deleteHistoryDock();
+    delete m_session;
 }
 
 
@@ -1230,15 +1234,16 @@ void MainWindow::showAboutDialog()
 
 void MainWindow::clearHistory()
 {
+    m_session->clearHistory();
     m_widgets.display->clear();
-    m_widgets.editor->clearHistory();
+    clearEditor();
     if (m_settings->historyDockVisible) {
         HistoryWidget* history = qobject_cast<HistoryWidget *>(m_docks.history->widget());
         history->clear();
     }
     m_settings->history.clear();
     m_settings->historyResults.clear();
-    QTimer::singleShot(0, m_widgets.editor, SLOT(setFocus()));
+    emit historyChanged();
 }
 
 void MainWindow::clearEditor()
@@ -1286,7 +1291,7 @@ void MainWindow::increaseOpacity()
 
 void MainWindow::deleteVariables()
 {
-    m_evaluator->unsetAllUserDefinedVariables();
+    m_session->clearVariables();
 
     if (m_settings->variablesDockVisible)
         m_docks.variables->updateList();
@@ -1294,7 +1299,7 @@ void MainWindow::deleteVariables()
 
 void MainWindow::deleteUserFunctions()
 {
-    m_evaluator->unsetAllUserFunctions();
+    m_session->clearUserFunctions();
 
     if (m_settings->userFunctionsDockVisible)
         m_docks.userFunctions->updateList();
@@ -1351,7 +1356,7 @@ void MainWindow::hideStateLabel()
 void MainWindow::showSessionLoadDialog()
 {
     QString errMsg  = tr("File %1 is not a valid session");
-    QString filters = tr("SpeedCrunch Sessions (*.sch);;All Files (*)");
+    QString filters = tr("SpeedCrunch Sessions (*.json);;All Files (*)");
     QString fname = QFileDialog::getOpenFileName(this, tr("Load Session"), QString::null, filters);
     if (fname.isEmpty())
         return;
@@ -1362,122 +1367,52 @@ void MainWindow::showSessionLoadDialog()
         return;
     }
 
-    QTextStream stream(&file);
-
-    // Version of the format.
-    QString version = stream.readLine();
-    if (version != "0.10" && version != "0.12") {
-        QMessageBox::critical(this, tr("Error"), errMsg.arg(fname));
-        return;
-    }
-
-    // Number of calculations.
-    bool ok;
-    int noCalcs = stream.readLine().toInt(&ok);
-    if (ok == false || noCalcs < 0) {
-        QMessageBox::critical(this, tr("Error"), errMsg.arg(fname));
-        return;
-    }
-
     // Ask for merge with current session.
+    bool merge;
     QString mergeMsg = tr(
         "Merge session being loaded with current session?\n"
         "If no, current variables and display will be cleared."
     );
-
     QMessageBox::StandardButton button =
-        QMessageBox::question(this, tr("Question"), mergeMsg,
+        QMessageBox::question(this, tr("Merge?"), mergeMsg,
             QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::Yes);
 
-    if (button == QMessageBox::Cancel)
-        return;
+    if (button == QMessageBox::Yes)
+        merge = true;
+    else if (button == QMessageBox::No)
+        merge = false;
+    else return;
 
-    if (button == QMessageBox::No) {
-        m_widgets.display->clear();
-        deleteVariables();
-        deleteUserFunctions();
-        clearHistory();
-    }
-
-    // Expressions and results.
-    QStringList expList;
-    QStringList resList;
-    for (int i = 0; i < noCalcs; ++i) {
-        QString exp = stream.readLine();
-        QString res = stream.readLine();
-        if (exp.isNull() || res.isNull()) {
-            QMessageBox::critical(this, tr("Error"), errMsg.arg(fname));
-            return;
-        }
-        expList.append(exp);
-        resList.append(res);
-    }
-
-    // FIXME: This keeps the history in three (finally even four) different places.
-    // There should be just one central history and result list, and the clients
-    // editor, display, settings and historyDock should retrieve their data from there.
-    // FIXME: Actually there should be three lists: expressions, values and formats.
-    m_widgets.display->appendHistory(expList, resList);
-    m_widgets.editor->appendHistory(expList, resList);
-
-    if (m_settings->historyDockVisible) {
-        HistoryWidget* history = qobject_cast<HistoryWidget *>(m_docks.history->widget());
-        history->appendHistory(expList);
-    }
-
-    // Variables.
-    int noVars = stream.readLine().toInt(&ok);
-    if (ok == false || noVars < 0) {
-        QMessageBox::critical(this, tr("Error"), errMsg.arg(fname));
-        return;
-    }
-    for (int i = 0; i < noVars; i++) {
-        QString var = stream.readLine();
-        QString val = stream.readLine();
-        if (var.isNull() || val.isNull()) {
-            QMessageBox::critical(this, tr("Error"), errMsg.arg(fname));
-            return;
-        }
-
-        // Only allow the "ans" built-in variable to be set.
-        Variable::Type type = m_evaluator->isBuiltInVariable(var) ?
-            Variable::BuiltIn : Variable::UserDefined;
-        if (type == Variable::BuiltIn && var != "ans")
-            continue;
-
-        HNumber num(val.toLatin1().data());
-        if (num != HMath::nan())
-            m_evaluator->setVariable(var, num, type);
-    }
-
-    if (m_settings->variablesDockVisible)
-        m_docks.variables->updateList();
-
-    if (version == "0.12") {
-        // User functions.
-        int noUsrFuncs = stream.readLine().toInt(&ok);
-        if (ok == false || noUsrFuncs < 0) {
-            QMessageBox::critical(this, tr("Error"), errMsg.arg(fname));
-            return;
-        }
-        for (int i = 0; i < noUsrFuncs; i++) {
-            QString name = stream.readLine();
-            QString args = stream.readLine();
-            QString expr = stream.readLine();
-            if (name.isNull() || args.isNull() || expr.isNull()) {
-                QMessageBox::critical(this, tr("Error"), errMsg.arg(fname));
-                return;
-            }
-            UserFunction descr(name, args.split(";"), expr);
-            m_evaluator->setUserFunction(descr);
-        }
-
-        if (m_settings->userFunctionsDockVisible)
-            m_docks.userFunctions->updateList();
-    }
+    QByteArray data = file.readAll();
+    QJsonDocument doc(QJsonDocument::fromJson(data));
+    m_session->deSerialize(doc.object(), merge);
 
     file.close();
+    emit historyChanged();
+    emit variablesChanged();
+    emit functionsChanged();
 
+}
+
+void MainWindow::saveSession()
+{
+    QString filters = tr("SpeedCrunch Sessions (*.json);;All Files (*)");
+    QString fname = QFileDialog::getSaveFileName(this, tr("Save Session"), QString::null, filters);
+    if (fname.isEmpty())
+        return;
+
+    QFile file(fname);
+    if (!file.open(QIODevice::WriteOnly)) {
+        QMessageBox::critical(this, tr("Error"), tr("Can't write to file %1").arg(fname));
+        return;
+    }
+
+    QJsonObject json;
+    m_session->serialize(json);
+    QJsonDocument doc(json);
+    file.write(doc.toJson());
+
+    file.close();
 }
 
 void MainWindow::showSessionImportDialog()
@@ -1500,16 +1435,16 @@ void MainWindow::showSessionImportDialog()
     );
 
     QMessageBox::StandardButton button =
-        QMessageBox::question(this, tr("Question"), mergeMsg,
+        QMessageBox::question(this, tr("Merge?"), mergeMsg,
             QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, QMessageBox::Yes);
 
     if (button == QMessageBox::Cancel)
         return;
     if (button == QMessageBox::No) {
         m_widgets.display->clear();
-        deleteVariables();
-        deleteUserFunctions();
-        clearHistory();
+        m_session->clearHistory();
+        m_session->clearVariables();
+        m_session->clearUserFunctions();
     }
 
     QTextStream stream(&file);
@@ -1536,25 +1471,7 @@ void MainWindow::showSessionImportDialog()
                     ignoreAll = true;
             }
         } else {
-            m_widgets.display->append(str, result);
-            if (result.isNan()) {
-                m_widgets.editor->appendHistory(str, "");
-            } else {
-                char* num = HMath::format(result, 'e', DECPRECISION);
-                m_widgets.editor->appendHistory(str, num);
-                free(num);
-                m_widgets.editor->setAnsAvailable(true);
-            }
-
-            if (m_settings->variablesDockVisible)
-                m_docks.variables->updateList();
-            if (m_settings->userFunctionsDockVisible)
-                m_docks.userFunctions->updateList();
-            if (m_settings->historyDockVisible) {
-                HistoryWidget* history = qobject_cast<HistoryWidget*>(m_docks.history->widget());
-                history->append(str);
-            }
-
+            m_session->addHistoryEntry(HistoryEntry(exp, result));
             m_widgets.editor->setText(str);
             m_widgets.editor->selectAll();
             m_widgets.editor->stopAutoCalc();
@@ -1567,6 +1484,9 @@ void MainWindow::showSessionImportDialog()
     }
 
     file.close();
+    emit historyChanged();
+    emit variablesChanged();
+    emit functionsChanged();
 
     QTimer::singleShot(0, m_widgets.editor, SLOT(setFocus()));
 
@@ -1598,9 +1518,9 @@ void MainWindow::setAutoCalcEnabled(bool b)
     m_widgets.editor->setAutoCalcEnabled(b);
 }
 
-void MainWindow::setHistorySaveEnabled(bool b)
+void MainWindow::setSessionSaveEnabled(bool b)
 {
-    m_settings->historySave = b;
+    m_settings->sessionSave = b;
 }
 
 void MainWindow::setLeaveLastExpressionEnabled(bool b)
@@ -1705,95 +1625,6 @@ void MainWindow::setAngleModeRadian()
     emit angleUnitChanged();
 }
 
-void MainWindow::saveSession()
-{
-    QString filters = tr("SpeedCrunch Sessions (*.sch);;All Files (*)");
-    QString fname = QFileDialog::getSaveFileName(this, tr("Save Session"), QString::null, filters);
-    if (fname.isEmpty())
-        return;
-
-    QFile file(fname);
-    if (!file.open(QIODevice::WriteOnly)) {
-        QMessageBox::critical(this, tr("Error"), tr("Can't write to file %1").arg(fname));
-        return;
-    }
-
-    QTextStream stream(&file);
-
-    // Format version.
-    stream << "0.12" << "\n";
-
-#if 1
-    QStringList history = m_widgets.editor->history();
-    QStringList historyResults = m_widgets.editor->historyResults();
-
-    Q_ASSERT(history.count() == historyResults.count());
-
-    // Number of calculations.
-    stream << history.count() << "\n";
-
-    // Expressions and results.
-    for (int i = 0; i < history.count(); ++i) {
-        stream << history.at(i) << QLatin1String("\n");
-        stream << historyResults.at(i) << QLatin1String("\n");
-    }
-#else
-    // Number of calculations.
-    stream << m_widgets.display->count() << "\n";
-
-    // Expressions and results.
-    QStringList historyLines = m_widgets.display->toPlainText().split(QLatin1String("\n"));
-    int exprCount = 0;
-    for (int i = 0; i < historyLines.count(); ++i) {
-        if (historyLines.at(i).isEmpty())
-            continue;
-
-        // If the expression has a result, just remove the equal sign prefix,
-        // otherwise, export the result as an empty line.
-        if (i + 1 < historyLines.count() && !historyLines.at(i + 1).isEmpty()) {
-            // Expression.
-            stream << historyLines.at(i) << QLatin1String("\n");
-            ++i;
-            // Result.
-            const QString &result = historyLines.at(i);
-            if (result.startsWith(QLatin1String("= ")))
-                stream << result.mid(2) << QLatin1String("\n");
-            else
-                stream << result << QLatin1String("\n");
-        } else {
-            // User function assignment, so there is no result.
-            stream << historyLines.at(i) << QLatin1String("\n\n");
-        }
-        ++exprCount;
-    }
-
-    Q_ASSERT(exprCount == m_widgets.display->count());
-#endif
-
-    // Number of variables.
-    QList<Variable> variables = m_evaluator->getUserDefinedVariablesPlusAns();
-    stream << variables.count() << "\n";
-
-    // Variables.
-    for (int i = 0; i < variables.count(); ++i) {
-        Variable var = variables.at(i);
-        char* value = HMath::format(var.value());
-        stream << var.identifier() << "\n" << value << "\n";
-        free(value);
-    }
-
-    // Number of user functions.
-    QList<UserFunction> userFunctions = m_evaluator->getUserFunctions();
-    stream << userFunctions.count() << "\n";
-
-    // User functions.
-    for (int i = 0; i < userFunctions.count(); ++i) {
-        UserFunction descr = userFunctions.at(i);
-        stream << descr.name() << "\n" << descr.arguments().join(";") << "\n" << descr.expression() << "\n";
-    }
-
-    file.close();
-}
 
 inline static QString documentsLocation()
 {
@@ -2317,6 +2148,7 @@ void MainWindow::evaluateEditorExpression()
     } else if (result.isNan())
         return;
 
+    //TODO: remove this
     m_widgets.display->append(expr, result);
     m_widgets.display->scrollToBottom();
 

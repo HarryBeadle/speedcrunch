@@ -434,7 +434,7 @@ void Evaluator::reset()
     m_assignFunc = false;
     m_assignArg.clear();
     m_session = NULL;
-    unsetAllUserDefinedVariables(); // Initializes built-in variables.
+
 }
 
 void Evaluator::setSession(Session *s)
@@ -1662,7 +1662,7 @@ HNumber Evaluator::eval()
             userFunction->identifiers = m_identifiers;
             userFunction->opcodes = m_codes;
 
-            m_userFunctions.insert(m_assignId, userFunction);
+            m_session->addUserFunction(*userFunction);
         } else {
             if(hasUserFunction(m_assignId)) {
                 m_error = tr("%1 is a user function name, please choose another or delete the function").arg(m_assignId);
@@ -1686,7 +1686,8 @@ HNumber Evaluator::evalUpdateAns()
 
 void Evaluator::setVariable(const QString& id, HNumber value, Variable::Type type)
 {
-    m_session->addVariable(Variable(id, value, type));
+    if(m_session)
+        m_session->addVariable(Variable(id, value, type));
 }
 
 Variable Evaluator::getVariable(const QString& id) const
@@ -1745,7 +1746,6 @@ void Evaluator::unsetAllUserDefinedVariables()
     HNumber ansBackup = getVariable(QLatin1String("ans")).value();
     m_session->clearVariables();
     setVariable(QLatin1String("ans"), ansBackup, Variable::BuiltIn);
-    initializeBuiltInVariables();
 }
 
 static void replaceSuperscriptPowersWithCaretEquivalent(QString& expr)

@@ -64,6 +64,9 @@ signals:
     void resultFormatChanged();
     void resultPrecisionChanged();
     void syntaxHighlightingChanged();
+    void historyChanged();
+    void variablesChanged();
+    void functionsChanged();
 
 public slots:
     void copy();
@@ -116,7 +119,7 @@ private slots:
     void setFullScreenEnabled(bool);
     void setFunctionsDockVisible(bool);
     void setHistoryDockVisible(bool);
-    void setHistorySaveEnabled(bool);
+    void setSessionSaveEnabled(bool);
     void setLeaveLastExpressionEnabled(bool);
     void setRadixCharacterAutomatic();
     void setRadixCharacter(char);
@@ -252,7 +255,7 @@ private:
         QAction* settingsResultFormatHexadecimal;
         QAction* settingsAngleUnitRadian;
         QAction* settingsAngleUnitDegree;
-        QAction* settingsBehaviorSaveHistoryOnExit;
+        QAction* settingsBehaviorSaveSessionOnExit;
         QAction* settingsBehaviorSaveVariablesOnExit;
         QAction* settingsBehaviorSaveUserFunctionsOnExit;
         QAction* settingsBehaviorSaveWindowPositionOnExit;

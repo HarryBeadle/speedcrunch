@@ -19,7 +19,7 @@ equals(QT_MAJOR_VERSION, 4) {
 
 win32-g++:QMAKE_LFLAGS += -static
 
-DEFINES += SPEEDCRUNCH_VERSION=\\\"master\\\"
+DEFINES += SPEEDCRUNCH_VERSION="\"\\\"pw\\\"\""
 DEFINES += QT_USE_QSTRINGBUILDER
 win32:DEFINES += _USE_MATH_DEFINES
 
@@ -103,15 +103,15 @@ HEADERS += core/book.h \
            math/floattrig.h \
            math/hmath.h \
            math/number.h \
-    core/sessionhistory.h \
-    core/variable.h \
-    core/userfunction.h \
-    gui/syntaxhighlighter.h \
-    core/errors.h \
-    core/numberformatter.h \
-    core/pageserver.h \
-    core/settings.h \
-    core/opcode.h
+           core/sessionhistory.h \
+           core/variable.h \
+           core/userfunction.h \
+           gui/syntaxhighlighter.h \
+           core/errors.h \
+           core/numberformatter.h \
+           core/pageserver.h \
+           core/settings.h \
+           core/opcode.h
 
 SOURCES += main.cpp \
            core/book.cpp \
@@ -161,10 +161,10 @@ SOURCES += main.cpp \
            math/hmath.cpp \
            math/number.c \
            math/floatincgamma.c \
-    core/sessionhistory.cpp \
-    core/variable.cpp \
-    core/userfunction.cpp \
-    core/opcode.cpp
+           core/sessionhistory.cpp \
+           core/variable.cpp \
+           core/userfunction.cpp \
+           core/opcode.cpp
 
 RESOURCES += resources/speedcrunch.qrc
 TRANSLATIONS += resources/locale/ar.ts \

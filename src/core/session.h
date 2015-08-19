@@ -49,7 +49,7 @@ public:
     void save();
 
     void serialize(QJsonObject &json) const;
-    void deSerialize(const QJsonObject & json, bool merge);
+    int deSerialize(const QJsonObject & json, bool merge);
 
 
     void addVariable(const Variable & var);
@@ -65,6 +65,7 @@ public:
     void removeHistoryEntryAt(const int index);
     HistoryEntry historyEntryAt(const int index) const;
     QList<HistoryEntry> historyToList() const {return history;}
+    void clearHistory();
 
     void addUserFunction(const UserFunction & func);
     void removeUserFunction(const QString & str);

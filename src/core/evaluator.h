@@ -116,6 +116,7 @@ public:
     void unsetAllUserDefinedVariables();
     bool isBuiltInVariable(const QString&) const;
     bool hasVariable(const QString&) const;
+    void initializeBuiltInVariables();
 
     QList<UserFunction> getUserFunctions() const;
     void setUserFunction(const UserFunction & f);
@@ -142,11 +143,9 @@ private:
     QVector<HNumber> m_constants;
     QStringList m_identifiers;
     Session * m_session;
-    QHash<QString, UserFunction*> m_userFunctions;
 
     const HNumber& checkOperatorResult(const HNumber&);
     static QString stringFromFunctionError(Function*);
-    void initializeBuiltInVariables();
     HNumber exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& constants,
                  const QStringList& identifiers);
     HNumber execUserFunction(const UserFunction* function, QVector<HNumber>& arguments);
