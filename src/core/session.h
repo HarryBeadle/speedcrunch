@@ -51,14 +51,14 @@ public:
     void serialize(QJsonObject &json) const;
     void deSerialize(const QJsonObject & json, bool merge);
 
+
     void addVariable(const Variable & var);
-    bool containsVariable(const QString & id) const;
+    bool hasVariable(const QString & id) const;
     void removeVariable(const QString & id);
+    void clearVariables();
     Variable getVariable(const QString & id) const;
     QList<Variable> variablesToList() const;
     bool isBuiltInVariable(const QString &id) const;
-
-
 
     void addHistoryEntry(const HistoryEntry & entry);
     void insertHistoryEntry(const int index, const HistoryEntry & entry);
@@ -66,11 +66,12 @@ public:
     HistoryEntry historyEntryAt(const int index) const;
     QList<HistoryEntry> historyToList() const {return history;}
 
-    void addUserFunction(const UserFunction func);
-    void removeUserFunction(const QString str);
+    void addUserFunction(const UserFunction & func);
+    void removeUserFunction(const QString & str);
     void clearUserFunctions();
     bool hasUserFunction(const QString & str) const;
     QList<UserFunction> UserFunctionsToList() const;
+    const UserFunction * getUserFunction(const QString & fname) const;
 
     static void test();
 };

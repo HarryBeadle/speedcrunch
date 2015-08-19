@@ -110,7 +110,8 @@ HEADERS += core/book.h \
     core/errors.h \
     core/numberformatter.h \
     core/pageserver.h \
-    core/settings.h
+    core/settings.h \
+    core/opcode.h
 
 SOURCES += main.cpp \
            core/book.cpp \
@@ -162,7 +163,8 @@ SOURCES += main.cpp \
            math/floatincgamma.c \
     core/sessionhistory.cpp \
     core/variable.cpp \
-    core/userfunction.cpp
+    core/userfunction.cpp \
+    core/opcode.cpp
 
 RESOURCES += resources/speedcrunch.qrc
 TRANSLATIONS += resources/locale/ar.ts \

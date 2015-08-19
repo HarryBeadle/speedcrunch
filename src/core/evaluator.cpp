@@ -21,7 +21,7 @@
 // Boston, MA 02110-1301, USA.
 
 #include "core/evaluator.h"
-
+#include "core/session.h"
 #include "core/settings.h"
 
 #include <QCoreApplication>
@@ -434,6 +434,11 @@ void Evaluator::reset()
     m_assignFunc = false;
     m_assignArg.clear();
     unsetAllUserDefinedVariables(); // Initializes built-in variables.
+}
+
+void Evaluator::setSession(Session *s)
+{
+    m_session = s;
 }
 
 QString Evaluator::error() const
@@ -1270,7 +1275,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
     QVector<HNumber> args;
     QString fname;
     Function* function;
-    UserFunction* userFunction = NULL;
+    const UserFunction* userFunction = NULL;
 
     for (int pc = 0; pc < opcodes.count(); ++pc) {
         const Opcode& opcode = opcodes.at(pc);
@@ -1450,7 +1455,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
                 if (m_assignArg.contains(fname)) // Argument.
                     stack.push(HMath::nan());
                 else if (hasVariable(fname)) // Variable.
-                    stack.push(getVariable(fname).value);
+                    stack.push(getVariable(fname).value());
                 else { // Function.
                     function = FunctionRepo::instance()->find(fname);
                     if (function) {
@@ -1505,9 +1510,9 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
 
                 // Show function signature if the user gave no argument (yet).
                 if (userFunction) {
-                    if (!args.count() && userFunction->descr.arguments.count() != 0) {
-                        m_error = QString::fromLatin1("%1(%2)").arg(userFunction->descr.name)
-                            .arg(userFunction->descr.arguments.join(";"));
+                    if (!args.count() && userFunction->arguments().count() != 0) {
+                        m_error = QString::fromLatin1("%1(%2)").arg(userFunction->name())
+                            .arg(userFunction->arguments().join(";"));
                         return HMath::nan();
                     }
                 } else if (function) {
@@ -1546,7 +1551,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
     return stack.pop();
 }
 
-HNumber Evaluator::execUserFunction(UserFunction* function, QVector<HNumber>& arguments) {
+HNumber Evaluator::execUserFunction(const UserFunction* function, QVector<HNumber>& arguments) {
     /* TODO:
      *   OK ignore missing variables or user functions when declaring a user function.
      *   OK prohibit user function recursion by using a flag in UserFunction.
@@ -1555,18 +1560,21 @@ HNumber Evaluator::execUserFunction(UserFunction* function, QVector<HNumber>& ar
      *   OK show a list of user functions and allow the user to delete them.
      *   - replace user variables by user functions (with no argument) ?
      */
-    if (arguments.count() != function->descr.arguments.count()) {
-        m_error = "<b>" + function->descr.name + "</b>: " + tr("wrong number of arguments");
+    if (arguments.count() != function->arguments().count()) {
+        m_error = "<b>" + function->name() + "</b>: " + tr("wrong number of arguments");
         return HMath::nan();
     }
 
+//TODO: replace with stack depth counter
+#if 0
     if (function->inUse) {
-        m_error = "<b>" + function->descr.name + "</b>: " + tr("user function recursion is not supported");
+        m_error = "<b>" + function->name() + "</b>: " + tr("user function recursion is not supported");
         return HMath::nan();
     }
+
 
     function->inUse = true;
-
+#endif
     QVector<Opcode> newOpcodes;
     QVector<HNumber> newConstants = function->constants; // Copy
 
@@ -1577,7 +1585,7 @@ HNumber Evaluator::execUserFunction(UserFunction* function, QVector<HNumber>& ar
         if (opcode.type == Opcode::Ref) {
             // Check if the identifier is an argument name.
             QString name = function->identifiers.at(opcode.index);
-            int argIdx = function->descr.arguments.indexOf(name);
+            int argIdx = function->arguments().indexOf(name);
             if (argIdx >= 0) {
                 // Replace the reference by a constant value.
                 opcode = Opcode(Opcode::Load, newConstants.count());
@@ -1591,10 +1599,11 @@ HNumber Evaluator::execUserFunction(UserFunction* function, QVector<HNumber>& ar
     HNumber result = exec(newOpcodes, newConstants, function->identifiers);
     if (!m_error.isEmpty()) {
         // Tell the user where the error happened.
-        m_error = "<b>" + function->descr.name + "</b>: " + m_error;
+        m_error = "<b>" + function->name() + "</b>: " + m_error;
     }
-
+ #if 0
     function->inUse = false;
+ #endif
     return result;
 }
 
@@ -1609,10 +1618,10 @@ bool Evaluator::isBuiltInVariable(const QString& id) const
     if (FunctionRepo::instance()->find(id))
         return true;
 
-    if (!m_variables.contains(id))
+    if (!m_session->hasVariable(id))
         return false;
 
-    return m_variables.value(id).type == Variable::BuiltIn;
+    return m_session->getVariable(id).type() == Variable::BuiltIn;
 }
 
 HNumber Evaluator::eval()
@@ -1676,41 +1685,40 @@ HNumber Evaluator::evalUpdateAns()
 
 void Evaluator::setVariable(const QString& id, HNumber value, Variable::Type type)
 {
-    m_variables.insert(id, Variable(id, value, type));
+    m_session->addVariable(Variable(id, value, type));
 }
 
-Evaluator::Variable Evaluator::getVariable(const QString& id) const
+Variable Evaluator::getVariable(const QString& id) const
 {
     if (id.isEmpty())
         return Variable(QLatin1String(""), HNumber(0));
 
-    return m_variables.value(id);
+    return m_session->getVariable(id);
 }
 
 bool Evaluator::hasVariable(const QString& id) const
 {
-    return id.isEmpty() ? false : m_variables.contains(id);
+    return id.isEmpty() ? false : m_session->hasVariable(id);
 }
 
 void Evaluator::unsetVariable(const QString& id)
 {
-    if (isBuiltInVariable(id))
+    if(m_session->isBuiltInVariable(id))
         return;
-
-    m_variables.remove(id);
+    m_session->removeVariable(id);
 }
 
-QList<Evaluator::Variable> Evaluator::getVariables() const
+QList<Variable> Evaluator::getVariables() const
 {
-    return m_variables.values();
+    return m_session->variablesToList();
 }
 
-QList<Evaluator::Variable> Evaluator::getUserDefinedVariables() const
+QList<Variable> Evaluator::getUserDefinedVariables() const
 {
-    QList<Variable> result = m_variables.values();
+    QList<Variable> result = getVariables();
     auto iter = result.begin();
     while (iter != result.end()) {
-        if ((*iter).type == Variable::BuiltIn)
+        if ((*iter).type() == Variable::BuiltIn)
             iter = result.erase(iter);
         else
             ++iter;
@@ -1718,19 +1726,19 @@ QList<Evaluator::Variable> Evaluator::getUserDefinedVariables() const
     return result;
 }
 
-QList<Evaluator::Variable> Evaluator::getUserDefinedVariablesPlusAns() const
+QList<Variable> Evaluator::getUserDefinedVariablesPlusAns() const
 {
-    QList<Evaluator::Variable> result = getUserDefinedVariables();
+    QList<Variable> result = getUserDefinedVariables();
     Variable ans = getVariable(QLatin1String("ans"));
-    if (!ans.name.isEmpty())
+    if (!ans.identifier().isEmpty())
         result.append(ans);
     return result;
 }
 
 void Evaluator::unsetAllUserDefinedVariables()
 {
-    HNumber ansBackup = getVariable(QLatin1String("ans")).value;
-    m_variables.clear();
+    HNumber ansBackup = getVariable(QLatin1String("ans")).value();
+    m_session->clearVariables();
     setVariable(QLatin1String("ans"), ansBackup, Variable::BuiltIn);
     initializeBuiltInVariables();
 }
@@ -1749,47 +1757,43 @@ static void replaceSuperscriptPowersWithCaretEquivalent(QString& expr)
     expr.replace(QString::fromUtf8("⁹"), QLatin1String("^9"));
 }
 
-QList<Evaluator::UserFunctionDescr> Evaluator::getUserFunctions() const
+QList<UserFunction> Evaluator::getUserFunctions() const
 {
-    QList<UserFunctionDescr> result;
-    auto iter = m_userFunctions.begin();
-    while (iter != m_userFunctions.end()) {
-        result.append(iter.value()->descr);
-        ++iter;
-    }
-    return result;
+    return m_session->UserFunctionsToList();
 }
 
-void Evaluator::setUserFunction(const UserFunctionDescr& descr)
+void Evaluator::setUserFunction(const UserFunction &f)
 {
-    // We need to compile the function, so pretend the user typed it.
-    setExpression(descr.name + "(" + descr.arguments.join(";") + ")=" + descr.expression);
-    eval();
+    if(!f.opcodes.isEmpty()) {
+        // already compiled
+        m_session->addUserFunction(f);
+    }
+    else {
+        // We need to compile the function, so pretend the user typed it.
+        setExpression(f.name() + "(" + f.arguments().join(";") + ")=" + f.expression());
+        eval();
+    }
+
 }
 
 void Evaluator::unsetUserFunction(const QString& fname)
 {
-    UserFunction *function = m_userFunctions.take(fname);
-    if (function) delete function;
-    // FIXME: would "m_userFunctions.remove(fname);" be enough ?
+    m_session->removeUserFunction(fname);
 }
 
 void Evaluator::unsetAllUserFunctions()
 {
-    while (!m_userFunctions.isEmpty()) {
-        unsetUserFunction(m_userFunctions.begin().key());
-    }
+    m_session->clearUserFunctions();
 }
 
 bool Evaluator::hasUserFunction(const QString& fname)
 {
-    return fname.isEmpty() ? false : m_userFunctions.contains(fname);
+    return fname.isEmpty() ? false : m_session->hasUserFunction(fname);
 }
 
-Evaluator::UserFunction* Evaluator::getUserFunction(const QString& fname) const
+const UserFunction *Evaluator::getUserFunction(const QString& fname) const
 {
-    // TODO: handle the fname.isEmpty() case ?
-    return m_userFunctions.value(fname);
+    return m_session->getUserFunction(fname);
 }
 
 QString Evaluator::autoFix(const QString& expr)

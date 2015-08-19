@@ -24,8 +24,8 @@
 
 #include<QString>
 #include<QStringList>
-#include<evaluator.h>
-
+#include<QVector>
+#include "core/opcode.h"
 
 class UserFunction
 {
@@ -38,7 +38,7 @@ private:
 public:
     QVector<HNumber> constants;
     QStringList identifiers;
-    QVector<Evaluator::Opcode> opcodes;
+    QVector<Opcode> opcodes;
     bool inUse;
 
     UserFunction(QString name, QStringList arguments, QString expression)
@@ -58,8 +58,6 @@ public:
 
     void serialize(QJsonObject & json) const;
     void deSerialize(const QJsonObject & json);
-    void compile();
-
 };
 
 #endif // CORE_USERFUNCTION_H

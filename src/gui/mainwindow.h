@@ -31,6 +31,7 @@ class Constants;
 class ConstantsDock;
 class Editor;
 class Evaluator;
+class Session;
 class FunctionRepo;
 class FunctionsDock;
 class HistoryDock;
@@ -354,6 +355,7 @@ private:
     Evaluator* m_evaluator;
     FunctionRepo* m_functions;
     Settings* m_settings;
+    Session* m_session;
     QTranslator* m_translator;
     QPlainTextEdit* m_copyWidget;
 };

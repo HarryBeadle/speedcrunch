@@ -26,6 +26,7 @@
 #include "core/functions.h"
 #include "core/numberformatter.h"
 #include "core/settings.h"
+#include "core/session.h"
 #include "gui/aboutbox.h"
 #include "gui/bitfieldwidget.h"
 #include "gui/bookdock.h"
@@ -613,6 +614,8 @@ void MainWindow::createFixedWidgets()
     m_constants = Constants::instance();
     m_evaluator = Evaluator::instance();
     m_functions = FunctionRepo::instance();
+    m_session = new Session();
+    m_evaluator->setSession(m_session);
 
     m_widgets.root = new QWidget(this);
     setCentralWidget(m_widgets.root);
@@ -1201,6 +1204,7 @@ MainWindow::~MainWindow()
     if (m_docks.history)
         deleteHistoryDock();
 }
+
 
 bool MainWindow::event(QEvent* event)
 {

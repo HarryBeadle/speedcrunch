@@ -29,6 +29,11 @@
 #include <QString>
 #include <QStringList>
 #include <QVector>
+#include <core/opcode.h>
+#include "core/variable.h"
+#include "core/userfunction.h"
+
+class Session;
 
 class Token {
 public:
@@ -78,30 +83,13 @@ class Evaluator : public QObject {
     Q_OBJECT
 
 public:
-    struct Variable {
-        enum Type { BuiltIn, UserDefined };
-        Variable() : name(""), value(HNumber(0)) { }
-        Variable(const QString& n, HNumber v, Type t = UserDefined) : name(n), value(v), type(t) { }
-        bool operator==(const Variable& other) const { return name == other.name; }
-        QString name;
-        HNumber value;
-        Type type;
-    };
-
-    struct UserFunctionDescr {
-        QString name;
-        QStringList arguments;
-        QString expression;
-
-        UserFunctionDescr(QString name, QStringList arguments, QString expression)
-            : name(name), arguments(arguments), expression(expression) {}
-    };
-
     // Needed only for issue 160 workaround.
     enum AutoFixPolicy { AutoFix, NoAutoFix };
 
     static Evaluator* instance();
     void reset();
+
+    void setSession(Session * s);
 
     static bool isSeparatorChar(const QChar&);
     static bool isRadixChar(const QChar&);
@@ -129,28 +117,11 @@ public:
     bool isBuiltInVariable(const QString&) const;
     bool hasVariable(const QString&) const;
 
-    //UserFunctionDescr getUserFunction(const QString&) const;
-    QList<UserFunctionDescr> getUserFunctions() const;
-    void setUserFunction(const UserFunctionDescr&);
+    QList<UserFunction> getUserFunctions() const;
+    void setUserFunction(const UserFunction & f);
     void unsetUserFunction(const QString&);
     void unsetAllUserFunctions();
     bool hasUserFunction(const QString&);
-
-    struct Opcode {
-        enum  Type { Nop, Load, Ref, Function, Add, Sub, Neg, Mul, Div, Pow,
-               Fact, Modulo, IntDiv, LSh, RSh, BAnd, BOr, Conv };
-
-        Type type;
-        unsigned index;
-
-        // TODO: this is only needed for Conv Op. Maybe refactor this to a smarter place?
-        QString text;
-
-        Opcode() : type(Nop), index(0) {}
-        Opcode(Type t) : type(t), index(0) {}
-        Opcode(Type t, QString txt) : type(t), index(0), text(txt) {}
-        Opcode(Type t, unsigned i): type(t), index(i) {}
-    };
 
 protected:
     void compile(const Tokens&);
@@ -159,21 +130,6 @@ protected:
 private:
     Evaluator();
     Q_DISABLE_COPY(Evaluator)
-
-    struct UserFunction {
-        UserFunctionDescr descr;
-
-        QVector<HNumber> constants;
-        QStringList identifiers;
-        QVector<Opcode> opcodes;
-
-        bool inUse;
-
-        UserFunction(UserFunctionDescr& descr)
-            : descr(descr), inUse(false) {}
-        UserFunction(QString name, QStringList arguments, QString expression)
-            : descr(name, arguments, expression), inUse(false) {}
-    };
 
     bool m_dirty;
     QString m_error;
@@ -185,7 +141,7 @@ private:
     QVector<Opcode> m_codes;
     QVector<HNumber> m_constants;
     QStringList m_identifiers;
-    QHash<QString, Variable> m_variables;
+    Session * m_session;
     QHash<QString, UserFunction*> m_userFunctions;
 
     const HNumber& checkOperatorResult(const HNumber&);
@@ -193,8 +149,8 @@ private:
     void initializeBuiltInVariables();
     HNumber exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& constants,
                  const QStringList& identifiers);
-    HNumber execUserFunction(UserFunction* function, QVector<HNumber>& arguments);
-    UserFunction* getUserFunction(const QString&) const;
+    HNumber execUserFunction(const UserFunction* function, QVector<HNumber>& arguments);
+    const UserFunction * getUserFunction(const QString&) const;
 };
 
 #endif

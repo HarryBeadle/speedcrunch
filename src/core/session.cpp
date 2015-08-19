@@ -81,7 +81,7 @@ void Session::addVariable(const Variable &var)
     variables[id] = var;
 }
 
-bool Session::containsVariable(const QString &id) const
+bool Session::hasVariable(const QString &id) const
 {
     return variables.contains(id);
 }
@@ -89,6 +89,11 @@ bool Session::containsVariable(const QString &id) const
 void Session::removeVariable(const QString &id)
 {
     variables.remove(id);
+}
+
+void Session::clearVariables()
+{
+    variables.clear();
 }
 
 Variable Session::getVariable(const QString &id) const
@@ -132,13 +137,13 @@ HistoryEntry Session::historyEntryAt(const int index) const
     return history.at(index);
 }
 
-void Session::addUserFunction(const UserFunction func)
+void Session::addUserFunction(const UserFunction &func)
 {
     QString name = func.name();
     userFunctions[name] = func;
 }
 
-void Session::removeUserFunction(const QString str)
+void Session::removeUserFunction(const QString &str)
 {
     userFunctions.remove(str);
 }
@@ -151,6 +156,11 @@ void Session::clearUserFunctions()
 bool Session::hasUserFunction(const QString &str) const
 {
     return userFunctions.contains(str);
+}
+
+const UserFunction * Session::getUserFunction(const QString &fname) const
+{
+    return &*userFunctions.find(fname);
 }
 
 
