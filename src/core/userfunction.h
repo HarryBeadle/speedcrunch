@@ -26,6 +26,7 @@
 #include<QStringList>
 #include<QVector>
 #include "core/opcode.h"
+#include "math/hmath.h"
 
 class UserFunction
 {

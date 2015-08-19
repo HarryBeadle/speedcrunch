@@ -433,6 +433,7 @@ void Evaluator::reset()
     m_assignId = QString();
     m_assignFunc = false;
     m_assignArg.clear();
+    m_session = NULL;
     unsetAllUserDefinedVariables(); // Initializes built-in variables.
 }
 
@@ -1690,7 +1691,7 @@ void Evaluator::setVariable(const QString& id, HNumber value, Variable::Type typ
 
 Variable Evaluator::getVariable(const QString& id) const
 {
-    if (id.isEmpty())
+    if (id.isEmpty() || !m_session)
         return Variable(QLatin1String(""), HNumber(0));
 
     return m_session->getVariable(id);
@@ -1698,19 +1699,22 @@ Variable Evaluator::getVariable(const QString& id) const
 
 bool Evaluator::hasVariable(const QString& id) const
 {
-    return id.isEmpty() ? false : m_session->hasVariable(id);
+    if (id.isEmpty() || !m_session)
+        return false;
+    else
+        return m_session->hasVariable(id);
 }
 
 void Evaluator::unsetVariable(const QString& id)
 {
-    if(m_session->isBuiltInVariable(id))
+    if(!m_session || m_session->isBuiltInVariable(id))
         return;
     m_session->removeVariable(id);
 }
 
 QList<Variable> Evaluator::getVariables() const
 {
-    return m_session->variablesToList();
+    return m_session ? m_session->variablesToList() : QList<Variable>();
 }
 
 QList<Variable> Evaluator::getUserDefinedVariables() const
@@ -1737,6 +1741,7 @@ QList<Variable> Evaluator::getUserDefinedVariablesPlusAns() const
 
 void Evaluator::unsetAllUserDefinedVariables()
 {
+    if(!m_session) return;
     HNumber ansBackup = getVariable(QLatin1String("ans")).value();
     m_session->clearVariables();
     setVariable(QLatin1String("ans"), ansBackup, Variable::BuiltIn);
@@ -1759,7 +1764,7 @@ static void replaceSuperscriptPowersWithCaretEquivalent(QString& expr)
 
 QList<UserFunction> Evaluator::getUserFunctions() const
 {
-    return m_session->UserFunctionsToList();
+        return m_session ? m_session->UserFunctionsToList() : QList<UserFunction>();
 }
 
 void Evaluator::setUserFunction(const UserFunction &f)

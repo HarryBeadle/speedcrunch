@@ -611,10 +611,10 @@ void MainWindow::createStatusBar()
 
 void MainWindow::createFixedWidgets()
 {
+    m_session = new Session();
     m_constants = Constants::instance();
     m_evaluator = Evaluator::instance();
     m_functions = FunctionRepo::instance();
-    m_session = new Session();
     m_evaluator->setSession(m_session);
 
     m_widgets.root = new QWidget(this);
@@ -1128,21 +1128,21 @@ void MainWindow::saveSettings()
 
     if (m_settings->variableSave) {
         m_settings->variables.clear();
-        QList<Evaluator::Variable> variables = m_evaluator->getUserDefinedVariablesPlusAns();
+        QList<Variable> variables = m_evaluator->getUserDefinedVariablesPlusAns();
         for (int i = 0; i < variables.count(); ++i) {
-            QString name = variables.at(i).name;
-            char* value = HMath::format(variables.at(i).value, 'e', DECPRECISION);
+            QString name = variables.at(i).identifier();
+            char* value = HMath::format(variables.at(i).value(), 'e', DECPRECISION);
             m_settings->variables.append(QString("%1=%2").arg(name).arg(value));
             free(value);
         }
     }
 
     if (m_settings->userFunctionSave) {
-        QList<Evaluator::UserFunctionDescr> userFunctions = m_evaluator->getUserFunctions();
+        QList<UserFunction> userFunctions = m_evaluator->getUserFunctions();
         for (int i = 0; i < userFunctions.count(); ++i) {
-            Evaluator::UserFunctionDescr descr = userFunctions.at(i);
+            UserFunction descr = userFunctions.at(i);
             QStringList funcParts;
-            funcParts << descr.name << descr.arguments << descr.expression;
+            funcParts << descr.name() << descr.arguments() << descr.expression();
             m_settings->userFunctions.append(funcParts);
         }
     }
@@ -1250,7 +1250,7 @@ void MainWindow::clearEditor()
 void MainWindow::copyResultToClipboard()
 {
     QClipboard* cb = QApplication::clipboard();
-    HNumber num = m_evaluator->getVariable(QLatin1String("ans")).value;
+    HNumber num = m_evaluator->getVariable(QLatin1String("ans")).value();
     char* strToCopy = HMath::format(num, m_settings->resultFormat, m_settings->resultPrecision);
     QString final(strToCopy);
     if (m_settings->radixCharacter() == ',')
@@ -1440,9 +1440,9 @@ void MainWindow::showSessionLoadDialog()
         }
 
         // Only allow the "ans" built-in variable to be set.
-        Evaluator::Variable::Type type = m_evaluator->isBuiltInVariable(var) ?
-            Evaluator::Variable::BuiltIn : Evaluator::Variable::UserDefined;
-        if (type == Evaluator::Variable::BuiltIn && var != "ans")
+        Variable::Type type = m_evaluator->isBuiltInVariable(var) ?
+            Variable::BuiltIn : Variable::UserDefined;
+        if (type == Variable::BuiltIn && var != "ans")
             continue;
 
         HNumber num(val.toLatin1().data());
@@ -1468,7 +1468,7 @@ void MainWindow::showSessionLoadDialog()
                 QMessageBox::critical(this, tr("Error"), errMsg.arg(fname));
                 return;
             }
-            Evaluator::UserFunctionDescr descr(name, args.split(";"), expr);
+            UserFunction descr(name, args.split(";"), expr);
             m_evaluator->setUserFunction(descr);
         }
 
@@ -1771,25 +1771,25 @@ void MainWindow::saveSession()
 #endif
 
     // Number of variables.
-    QList<Evaluator::Variable> variables = m_evaluator->getUserDefinedVariablesPlusAns();
+    QList<Variable> variables = m_evaluator->getUserDefinedVariablesPlusAns();
     stream << variables.count() << "\n";
 
     // Variables.
     for (int i = 0; i < variables.count(); ++i) {
-        Evaluator::Variable var = variables.at(i);
-        char* value = HMath::format(var.value);
-        stream << var.name << "\n" << value << "\n";
+        Variable var = variables.at(i);
+        char* value = HMath::format(var.value());
+        stream << var.identifier() << "\n" << value << "\n";
         free(value);
     }
 
     // Number of user functions.
-    QList<Evaluator::UserFunctionDescr> userFunctions = m_evaluator->getUserFunctions();
+    QList<UserFunction> userFunctions = m_evaluator->getUserFunctions();
     stream << userFunctions.count() << "\n";
 
     // User functions.
     for (int i = 0; i < userFunctions.count(); ++i) {
-        Evaluator::UserFunctionDescr descr = userFunctions.at(i);
-        stream << descr.name << "\n" << descr.arguments.join(";") << "\n" << descr.expression << "\n";
+        UserFunction descr = userFunctions.at(i);
+        stream << descr.name() << "\n" << descr.arguments().join(";") << "\n" << descr.expression() << "\n";
     }
 
     file.close();
@@ -2250,9 +2250,9 @@ void MainWindow::restoreVariables()
         m_evaluator->setExpression(m_settings->variables.at(k));
         m_evaluator->eval();
         QStringList list = m_settings->variables.at(k).split("=");
-        Evaluator::Variable::Type type = Evaluator::Variable::UserDefined;
+        Variable::Type type = Variable::UserDefined;
         if (list.at(0) == QLatin1String("ans"))
-            type = Evaluator::Variable::BuiltIn;
+            type = Variable::BuiltIn;
         m_evaluator->setVariable(list.at(0), HNumber(list.at(1).toLatin1().data()), type);
     }
 
@@ -2266,7 +2266,7 @@ void MainWindow::restoreUserFunctions()
 {
     for (int k = 0; k < m_settings->userFunctions.count(); ++k) {
         QStringList funcParts = m_settings->userFunctions.at(k);
-        Evaluator::UserFunctionDescr descr(funcParts.first(), funcParts.mid(1, funcParts.size() - 2), funcParts.last());
+        UserFunction descr(funcParts.first(), funcParts.mid(1, funcParts.size() - 2), funcParts.last());
         m_evaluator->setUserFunction(descr);
     }
 

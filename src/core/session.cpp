@@ -158,6 +158,11 @@ bool Session::hasUserFunction(const QString &str) const
     return userFunctions.contains(str);
 }
 
+QList<UserFunction> Session::UserFunctionsToList() const
+{
+    return userFunctions.values();
+}
+
 const UserFunction * Session::getUserFunction(const QString &fname) const
 {
     return &*userFunctions.find(fname);

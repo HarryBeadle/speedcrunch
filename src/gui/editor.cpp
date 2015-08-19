@@ -396,20 +396,20 @@ void Editor::triggerAutoComplete()
 
     // Find matches in variables names.
     QStringList vchoices;
-    QList<Evaluator::Variable> variables = m_evaluator->getVariables();
+    QList<Variable> variables = m_evaluator->getVariables();
     for (int i = 0; i < variables.count(); ++i)
-        if (variables.at(i).name.startsWith(id, Qt::CaseInsensitive))
-            vchoices.append(QString("%1:%2").arg(variables.at(i).name)
-                .arg(NumberFormatter::format(variables.at(i).value)));
+        if (variables.at(i).identifier().startsWith(id, Qt::CaseInsensitive))
+            vchoices.append(QString("%1:%2").arg(variables.at(i).identifier())
+                .arg(NumberFormatter::format(variables.at(i).value())));
     vchoices.sort();
     choices += vchoices;
 
     // Find matches in user functions.
     QStringList ufchoices;
-    QList<Evaluator::UserFunctionDescr> userFunctions = m_evaluator->getUserFunctions();
+    QList<UserFunction> userFunctions = m_evaluator->getUserFunctions();
     for (int i = 0; i < userFunctions.count(); ++i)
-        if (userFunctions.at(i).name.startsWith(id, Qt::CaseInsensitive))
-            ufchoices.append(QString("%1:User function").arg(userFunctions.at(i).name));
+        if (userFunctions.at(i).name().startsWith(id, Qt::CaseInsensitive))
+            ufchoices.append(QString("%1:User function").arg(userFunctions.at(i).name()));
     ufchoices.sort();
     choices += ufchoices;
 

@@ -1,6 +1,8 @@
 #ifndef CORE_OPCODE_H
 #define CORE_OPCODE_H
 
+#include<QString>
+
 
 class Opcode
 {

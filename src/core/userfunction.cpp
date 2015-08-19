@@ -1,4 +1,6 @@
-#include "userfunction.h"
+#include "core/userfunction.h"
+#include "core/evaluator.h"
+#include "core/opcode.h"
 #include <QJsonArray>
 
 
@@ -17,7 +19,7 @@ UserFunction::UserFunction(const QJsonObject &json)
     if(json.contains("opcodes")) {
         const QJsonArray  & codes_json = json["opcodes"].toArray();
         for(int i=0; i<codes_json.size(); ++i) {
-            Evaluator::Opcode opcode(static_cast<Evaluator::Opcode::Type>(codes_json[i].toObject()["t"].toInt()),  codes_json[i].toObject()["i"].toInt());
+            Opcode opcode(static_cast<Opcode::Type>(codes_json[i].toObject()["t"].toInt()),  codes_json[i].toObject()["i"].toInt());
             if(codes_json[i].toObject().contains("text"))
                 opcode.text = codes_json[i].toObject()["text"].toString();
             opcodes.append(opcode);
@@ -40,6 +42,16 @@ UserFunction::UserFunction(const QJsonObject &json)
 QString UserFunction::name() const
 {
     return m_name;
+}
+
+QStringList UserFunction::arguments() const
+{
+    return m_arguments;
+}
+
+QString UserFunction::expression() const
+{
+    return m_expression;
 }
 
 QString UserFunction::description() const
@@ -83,7 +95,7 @@ void UserFunction::serialize(QJsonObject &json) const
         QJsonArray opcodes_json;
         for(int i=0;i<opcodes.size(); ++i) {
             QJsonObject curr_code_json;
-            const Evaluator::Opcode & curr_code = opcodes.at(i);
+            const Opcode & curr_code = opcodes.at(i);
             curr_code_json["t"] = curr_code.type;
             curr_code_json["i"] = int(curr_code.index);
             if(curr_code.text != "")
