@@ -105,7 +105,12 @@ HEADERS += core/book.h \
            math/number.h \
     core/sessionhistory.h \
     core/variable.h \
-    core/userfunction.h
+    core/userfunction.h \
+    gui/syntaxhighlighter.h \
+    core/errors.h \
+    core/numberformatter.h \
+    core/pageserver.h \
+    core/settings.h
 
 SOURCES += main.cpp \
            core/book.cpp \
