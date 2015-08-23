@@ -24,6 +24,7 @@
 
 class QListWidget;
 class QListWidgetItem;
+class HistoryEntry;
 
 class HistoryWidget : public QWidget
 {
@@ -33,10 +34,7 @@ public:
     explicit HistoryWidget(QWidget *parent = 0);
 
 public slots:
-    void append(const QString &);
-    void appendHistory(const QStringList &);
-    void clear();
-    void setHistory(const QStringList &);
+    void updateHistory();
 
 signals:
     void expressionSelected(const QString &);

@@ -82,8 +82,6 @@ void Settings::load()
     sessionSave = settings->value(key + QLatin1String("SessionSave"), true).toBool();
     leaveLastExpression = settings->value(key + QLatin1String("LeaveLastExpression"), false).toBool();
     language = settings->value(key + QLatin1String("Language"), "C").toString();
-    variableSave = settings->value(key + QLatin1String("VariableSave"), true).toBool();
-    userFunctionSave = settings->value(key + QLatin1String("UserFunctionSave"), true).toBool();
     syntaxHighlighting = settings->value(key + QLatin1String("SyntaxHighlighting"), true).toBool();
     systemTrayIconVisible = settings->value(key + QLatin1String("SystemTrayIconVisible"), false).toBool();
     autoResultToClipboard = settings->value(key + QLatin1String("AutoResultToClipboard"), false).toBool();
@@ -129,7 +127,7 @@ void Settings::load()
     key = KEY + QLatin1String("/Display/");
     displayFont = settings->value(key + QLatin1String("DisplayFont"), QFont().toString()).toString();
     colorScheme = settings->value(key + QLatin1String("ColorScheme"), 0).toInt();
-
+#if 0
     // Load history.
     key = KEY + QLatin1String("/History/");
     history.clear();
@@ -207,7 +205,7 @@ void Settings::load()
             userFunctions.append(value);
         }
     }
-
+#endif
     delete settings;
 }
 
@@ -219,13 +217,10 @@ void Settings::save()
     if (!settings)
         return;
 
-    int k, i;
     QString key = KEY + QLatin1String("/General/");
 
     settings->setValue(key + QLatin1String("SessionSave"), sessionSave);
     settings->setValue(key + QLatin1String("LeaveLastExpression"), leaveLastExpression);
-    settings->setValue(key + QLatin1String("VariableSave"), variableSave);
-    settings->setValue(key + QLatin1String("UserFunctionSave"), userFunctionSave);
     settings->setValue(key + QLatin1String("AutoCompletion"), autoCompletion);
     settings->setValue(key + QLatin1String("AutoAns"), autoAns);
     settings->setValue(key + QLatin1String("AutoCalc"), autoCalc);
@@ -272,6 +267,7 @@ void Settings::save()
     settings->setValue(key + QLatin1String("DisplayFont"), displayFont);
     settings->setValue(key + QLatin1String("ColorScheme"), colorScheme);
 
+#if 0
     // Save history.
     if (sessionSave) {
         key = KEY + QLatin1String("/History/");
@@ -359,6 +355,7 @@ void Settings::save()
             }
         }
     }
+#endif
 
     delete settings;
 }

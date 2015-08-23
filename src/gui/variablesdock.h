@@ -24,6 +24,7 @@
 
 class QTreeWidgetItem;
 class VariableListWidget;
+class Variable;
 
 class VariablesDock : public QDockWidget
 {
@@ -32,7 +33,6 @@ class VariablesDock : public QDockWidget
 public:
     explicit VariablesDock(QWidget* parent = 0);
 
-    void updateList();
 
 signals:
     void variableSelected(const QString&);
@@ -40,6 +40,7 @@ signals:
 public slots:
     void handleRadixCharacterChange();
     void retranslateText();
+    void updateList();
 
 protected:
     virtual void changeEvent(QEvent*);

@@ -32,6 +32,9 @@ class ConstantsDock;
 class Editor;
 class Evaluator;
 class Session;
+class HistoryEntry;
+class Variable;
+class UserFunction;
 class FunctionRepo;
 class FunctionsDock;
 class HistoryDock;
@@ -105,7 +108,7 @@ private slots:
     void openCommunityURL();
     void openNewsURL();
     void retranslateText();
-    void saveSession();
+    void saveSessionDialog();
     void selectEditorExpression();
     void setAlwaysOnTopEnabled(bool);
     void setAngleModeDegree();
@@ -147,8 +150,6 @@ private slots:
     void setParseAllRadixChar(bool);
     void setStrictDigitGrouping(bool);
     void setSystemTrayIconEnabled(bool);
-    void setVariableSaveEnabled(bool);
-    void setUserFunctionSaveEnabled(bool b);
     void setVariablesDockVisible(bool);
     void setUserFunctionsDockVisible(bool);
     void setWindowPositionSaveEnabled(bool);
@@ -195,9 +196,7 @@ private:
     void checkInitialResultPrecision();
     void checkInitialLanguage();
     void checkInitialDigitGrouping();
-    void restoreHistory();
-    void restoreVariables();
-    void restoreUserFunctions();
+    void restoreSession();
     void deleteStatusBar();
     void deleteBitField();
     void deleteBookDock();
@@ -207,6 +206,7 @@ private:
     void deleteVariablesDock();
     void deleteUserFunctionsDock();
     void saveSettings();
+    void saveSession(QString &fname);
     void setActionsText();
     void setMenusText();
     void setStatusBarText();
@@ -256,8 +256,6 @@ private:
         QAction* settingsAngleUnitRadian;
         QAction* settingsAngleUnitDegree;
         QAction* settingsBehaviorSaveSessionOnExit;
-        QAction* settingsBehaviorSaveVariablesOnExit;
-        QAction* settingsBehaviorSaveUserFunctionsOnExit;
         QAction* settingsBehaviorSaveWindowPositionOnExit;
         QAction* settingsBehaviorPartialResults;
         QAction* settingsBehaviorAutoCompletion;

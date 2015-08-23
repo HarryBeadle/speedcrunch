@@ -24,6 +24,9 @@
 #include "gui/syntaxhighlighter.h"
 #include "math/hmath.h"
 #include "math/floatconfig.h"
+#include "core/evaluator.h"
+#include "core/session.h"
+#include "core/sessionhistory.h"
 
 #include <QLatin1String>
 #include <QApplication>
@@ -33,11 +36,11 @@
 
 ResultDisplay::ResultDisplay(QWidget* parent)
     : QPlainTextEdit(parent)
-    , m_count(0)
     , m_highlighter(new SyntaxHighlighter(this))
     , m_scrolledLines(0)
     , m_scrollDirection(0)
     , m_isScrollingPageOnly(false)
+    , m_count(0)
 {
     setViewportMargins(0, 0, 0, 0);
     setBackgroundRole(QPalette::Base);
@@ -48,6 +51,7 @@ ResultDisplay::ResultDisplay(QWidget* parent)
     setWordWrapMode(QTextOption::WrapAnywhere);
 }
 
+
 void ResultDisplay::append(const QString& expression, const HNumber& value)
 {
     ++m_count;
@@ -56,36 +60,6 @@ void ResultDisplay::append(const QString& expression, const HNumber& value)
     if (!value.isNan())
         appendPlainText(QLatin1String("= ") + NumberFormatter::format(value));
     appendPlainText(QLatin1String(""));
-
-    // TODO: Refactor, this only serves to save a session.
-    m_expressions.append(expression);
-    if (value.isNan()) {
-        m_results.append("");
-    } else {
-        const char format = value.format() != 0 ? value.format() : 'e';
-        char* str = HMath::format(value, format, DECPRECISION);
-        m_results.append(str);
-        free(str);
-    }
-}
-
-void ResultDisplay::appendHistory(const QStringList& expressions, const QStringList& results)
-{
-    const int count = expressions.count();
-    for (int i = 0 ; i < count; ++i) {
-        QString str = results.at(i);
-        str.replace(',', '.');
-        HNumber result(str.toLatin1().constData());
-
-        if (str.indexOf('b') == 1)
-            result.setFormat('b');
-        else if (str.indexOf('o') == 1)
-            result.setFormat('o');
-        else if (str.indexOf('x') == 1)
-            result.setFormat('h');
-
-        append(expressions.at(i), result);
-    }
 }
 
 int ResultDisplay::count() const
@@ -99,20 +73,29 @@ void ResultDisplay::rehighlight()
     updateScrollBarStyleSheet();
 }
 
+
 void ResultDisplay::clear()
 {
     m_count = 0;
-    m_expressions.clear();
-    m_results.clear();
     setPlainText(QLatin1String(""));
 }
 
+
 void ResultDisplay::refresh()
 {
-    const QStringList expressions = m_expressions;
-    const QStringList results = m_results;
     clear();
-    appendHistory(expressions, results);
+    QList<HistoryEntry> history = Evaluator::instance()->session()->historyToList();
+    m_count = history.count();
+
+    for(int i=0; i<m_count; ++i) {
+        QString expression = history[i].expr();
+        HNumber value = history[i].result();
+        appendPlainText(expression);
+        if (!value.isNan())
+            appendPlainText(QLatin1String("= ") + NumberFormatter::format(value));
+        appendPlainText(QLatin1String(""));
+    }
+
 }
 
 void ResultDisplay::scrollLines(int numberOfLines)
@@ -176,6 +159,7 @@ void ResultDisplay::scrollToTop()
     m_isScrollingPageOnly = false;
     scrollToDirection(-1);
 }
+
 
 void ResultDisplay::scrollToBottom()
 {

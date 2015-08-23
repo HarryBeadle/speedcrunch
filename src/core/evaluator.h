@@ -90,6 +90,7 @@ public:
     void reset();
 
     void setSession(Session * s);
+    const Session *session();
 
     static bool isSeparatorChar(const QChar&);
     static bool isRadixChar(const QChar&);

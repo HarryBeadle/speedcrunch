@@ -442,6 +442,11 @@ void Evaluator::setSession(Session *s)
     m_session = s;
 }
 
+const Session *Evaluator::session()
+{
+    return m_session;
+}
+
 QString Evaluator::error() const
 {
     return m_error;
