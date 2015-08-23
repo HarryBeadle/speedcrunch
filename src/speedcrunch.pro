@@ -111,7 +111,8 @@ HEADERS += core/book.h \
            core/numberformatter.h \
            core/pageserver.h \
            core/settings.h \
-           core/opcode.h
+           core/opcode.h \
+    math/rational.h
 
 SOURCES += main.cpp \
            core/book.cpp \
@@ -164,7 +165,8 @@ SOURCES += main.cpp \
            core/sessionhistory.cpp \
            core/variable.cpp \
            core/userfunction.cpp \
-           core/opcode.cpp
+           core/opcode.cpp \
+    math/rational.cpp
 
 RESOURCES += resources/speedcrunch.qrc
 TRANSLATIONS += resources/locale/ar.ts \
