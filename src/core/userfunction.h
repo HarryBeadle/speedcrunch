@@ -40,7 +40,6 @@ public:
     QVector<HNumber> constants;
     QStringList identifiers;
     QVector<Opcode> opcodes;
-    bool inUse;
 
     UserFunction(QString name, QStringList arguments, QString expression)
         : m_name(name), m_arguments(arguments), m_expression(expression) {}

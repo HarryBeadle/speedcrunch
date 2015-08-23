@@ -244,15 +244,20 @@ void ResultDisplay::fullContentScrollEvent()
 void ResultDisplay::wheelEvent(QWheelEvent* event)
 {
     if (event->modifiers() == (Qt::ShiftModifier | Qt::ControlModifier)) {
-        if (event->delta() > 0)
+        if (event->angledelta() > 0)
             emit shiftControlWheelUp();
         else
             emit shiftControlWheelDown();
     } else if (event->modifiers() == Qt::ShiftModifier) {
-        if (event->delta() > 0)
+        if (event->angledelta() > 0)
             emit shiftWheelUp();
         else
             emit shiftWheelDown();
+    } else if (event->modifiers() == Qt::ControlModifier) {
+        if (event->angledelta() > 0)
+            emit controlWheelUp();
+        else
+            emit controlWheelDown();
     } else {
         QPlainTextEdit::wheelEvent(event);
         return;

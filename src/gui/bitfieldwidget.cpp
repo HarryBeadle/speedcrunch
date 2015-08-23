@@ -144,7 +144,7 @@ BitFieldWidget::BitFieldWidget(QWidget* parent) :
 
 void BitFieldWidget::wheelEvent(QWheelEvent* we)
 {
-    if (we->delta() > 0)
+    if (we->angledelta() > 0)
         shiftBitsLeft();
     else
         shiftBitsRight();

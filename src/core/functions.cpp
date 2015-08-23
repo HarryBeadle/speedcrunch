@@ -617,6 +617,15 @@ HNumber function_shr(Function* f, const Function::ArgumentList& args)
     return HMath::ashr(args.at(0), args.at(1));
 }
 
+HNumber function_when(Function* f, const Function::ArgumentList & args)
+{
+    ENSURE_ARGUMENT_COUNT(3);
+    if (args.at(0).isZero())
+        return args.at(2);
+    else
+        return args.at(1);
+}
+
 HNumber function_idiv(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(2);
@@ -783,6 +792,7 @@ void FunctionRepo::createFunctions()
     FUNCTION_INSERT(shr);
     FUNCTION_INSERT(idiv);
     FUNCTION_INSERT(mod);
+    //FUNCTION_INSERT(when);
 
     // IEEE-754.
     FUNCTION_INSERT(ieee754_decode);
@@ -926,6 +936,7 @@ void FunctionRepo::setTranslatableFunctionUsages()
     FUNCTION_USAGE_TR(shl, tr("n; bits"));
     FUNCTION_USAGE_TR(shr, tr("n; bits"));
     FUNCTION_USAGE_TR(unmask, tr("n; bits"));
+    //FUNCTION_USAGE_TR(when, tr("condition; if_TRUE; if_FALSE"));
 }
 
 void FunctionRepo::setFunctionNames()
@@ -1014,6 +1025,7 @@ void FunctionRepo::setFunctionNames()
     FUNCTION_NAME(trunc, tr("Truncation"));
     FUNCTION_NAME(unmask, tr("Sign-extend a value"));
     FUNCTION_NAME(variance, tr("Variance"));
+    //FUNCTION_NAME(when, tr("Conditional Branch"));
     FUNCTION_NAME(xor, tr("Logical XOR"));
 }
 

@@ -743,9 +743,9 @@ void Editor::keyPressEvent(QKeyEvent* event)
 
 void Editor::wheelEvent(QWheelEvent* event)
 {
-    if (event->delta() > 0)
+    if (event->angledelta() > 0)
         historyBack();
-    else if (event->delta() < 0)
+    else if (event->angledelta() < 0)
         historyForward();
     event->accept();
 }

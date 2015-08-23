@@ -123,7 +123,7 @@ public:
     void setUserFunction(const UserFunction & f);
     void unsetUserFunction(const QString&);
     void unsetAllUserFunctions();
-    bool hasUserFunction(const QString&);
+    bool hasUserFunction(const QString&) const;
 
 protected:
     void compile(const Tokens&);
@@ -144,6 +144,7 @@ private:
     QVector<HNumber> m_constants;
     QStringList m_identifiers;
     Session * m_session;
+    unsigned int m_stack_depth;
 
     const HNumber& checkOperatorResult(const HNumber&);
     static QString stringFromFunctionError(Function*);

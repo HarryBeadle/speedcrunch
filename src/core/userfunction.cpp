@@ -4,6 +4,9 @@
 #include <QJsonArray>
 
 
+#define SAVE_COMPILED_FORM
+
+
 
 UserFunction::UserFunction(const QJsonObject &json)
 {
@@ -90,6 +93,7 @@ void UserFunction::serialize(QJsonObject &json) const
     if(m_description!="")
         json["description"] = m_description;
 
+#ifdef SAVE_COMPILED_FORM
     // if compiled form is available, save it as well
     if(!opcodes.isEmpty()) {
         QJsonArray opcodes_json;
@@ -112,13 +116,13 @@ void UserFunction::serialize(QJsonObject &json) const
         }
         json["constants"] = constants_json;
 
-
         QJsonArray identifiers_json;
         for(int i=0; i<identifiers.size(); ++i) {
             identifiers_json.append(identifiers.at(i));
         }
         json["identifiers"] = identifiers_json;
     }
+#endif
 }
 
 void UserFunction::deSerialize(const QJsonObject &json)

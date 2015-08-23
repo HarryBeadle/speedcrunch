@@ -46,6 +46,8 @@ signals:
     void shiftWheelUp();
     void shiftControlWheelDown();
     void shiftControlWheelUp();
+    void controlWheelDown();
+    void controlWheelUp();
     void expressionSelected(const QString&);
 
 public slots:

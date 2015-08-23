@@ -28,7 +28,7 @@
 #include <QStack>
 
 #define EVALUATOR_DEBUG
-
+#define MAX_STACK_DEPTH 100
 #define ALLOW_IMPLICIT_MULT
 
 
@@ -434,6 +434,7 @@ void Evaluator::reset()
     m_assignFunc = false;
     m_assignArg.clear();
     m_session = NULL;
+    m_stack_depth=0;
 
 }
 
@@ -1475,7 +1476,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
                         stack.push(HMath::nan());
                         refs.insert(stack.count(), fname);
                     } else {
-                        m_error = fname + ": " + tr("unknown function or variable");
+                        m_error = "<b>" + fname + "</b>: " + tr("unknown function or variable");
                         return HMath::nan();
                     }
                 }
@@ -1497,7 +1498,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
                 }
 
                 if (!function && !userFunction && !m_assignFunc) {
-                    m_error = fname + ": " + tr("unknown function or variable");
+                    m_error = "<b>" + fname + "</b>: " + tr("unknown function or variable");
                     return HMath::nan();
                 }
 
@@ -1517,13 +1518,13 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
                 // Show function signature if the user gave no argument (yet).
                 if (userFunction) {
                     if (!args.count() && userFunction->arguments().count() != 0) {
-                        m_error = QString::fromLatin1("%1(%2)").arg(userFunction->name())
+                        m_error = QString::fromLatin1("<b>%1</b>(%2)").arg(userFunction->name())
                             .arg(userFunction->arguments().join(";"));
                         return HMath::nan();
                     }
                 } else if (function) {
                     if (!args.count()) {
-                        m_error = QString::fromLatin1("%1(%2)").arg(fname).arg(function->usage());
+                        m_error = QString::fromLatin1("<b>%1</b>(%2)").arg(fname).arg(function->usage());
                         return HMath::nan();
                     }
                 }
@@ -1571,16 +1572,15 @@ HNumber Evaluator::execUserFunction(const UserFunction* function, QVector<HNumbe
         return HMath::nan();
     }
 
-//TODO: replace with stack depth counter
-#if 0
-    if (function->inUse) {
-        m_error = "<b>" + function->name() + "</b>: " + tr("user function recursion is not supported");
+
+
+    ++m_stack_depth;
+    if(m_stack_depth>MAX_STACK_DEPTH) {
+        m_error = "<b>" + function->name() + "</b>: " + tr("Maximum recursion depth exceeded");
+        --m_stack_depth;
         return HMath::nan();
     }
 
-
-    function->inUse = true;
-#endif
     QVector<Opcode> newOpcodes;
     QVector<HNumber> newConstants = function->constants; // Copy
 
@@ -1603,13 +1603,11 @@ HNumber Evaluator::execUserFunction(const UserFunction* function, QVector<HNumbe
     }
 
     HNumber result = exec(newOpcodes, newConstants, function->identifiers);
-    if (!m_error.isEmpty()) {
-        // Tell the user where the error happened.
+    if (!m_error.isEmpty() && !m_error.contains(tr("Maximum recursion depth exceeded"))) {
+        // Tell the user where the error happened, but avoid spamming them when the stack overflowed
         m_error = "<b>" + function->name() + "</b>: " + m_error;
     }
- #if 0
-    function->inUse = false;
- #endif
+    --m_stack_depth;
     return result;
 }
 
@@ -1796,14 +1794,17 @@ void Evaluator::unsetAllUserFunctions()
     m_session->clearUserFunctions();
 }
 
-bool Evaluator::hasUserFunction(const QString& fname)
+bool Evaluator::hasUserFunction(const QString& fname) const
 {
     return fname.isEmpty() ? false : m_session->hasUserFunction(fname);
 }
 
 const UserFunction *Evaluator::getUserFunction(const QString& fname) const
 {
-    return m_session->getUserFunction(fname);
+    if(hasUserFunction(fname))
+        return m_session->getUserFunction(fname);
+    else
+        return NULL;
 }
 
 QString Evaluator::autoFix(const QString& expr)
