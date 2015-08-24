@@ -76,6 +76,12 @@ class HNumber
     QString getUnitName() const;
     HNumber& setDisplayUnit(const HNumber , const QString &name);
     void stripUnits();
+    bool hasDimension() const;
+    bool isDimensionless() const;
+    QMap<QString, Rational> getDimension() const;
+    void modifyDimension(const QString & key, const Rational & exponent);
+    void clearDimension();
+    bool sameDimension(const HNumber & other) const;
 
     void serialize(QJsonObject & json) const;
     static HNumber deSerialize(const QJsonObject & json);

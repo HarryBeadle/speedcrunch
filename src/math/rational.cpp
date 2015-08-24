@@ -24,6 +24,7 @@
 
 #include <math.h>
 #include <QString>
+#include <QStringList>
 #include <limits.h>
 
 
@@ -62,6 +63,10 @@ Rational::Rational(const HNumber &num) :
 {
     if(HMath::abs(num)>HNumber(INT_MAX) || HMath::abs(num)<HNumber(1)/HNumber(INT_MAX)) {
         m_valid = false;
+        return;
+    }
+    if(num.isInteger()) {
+        m_num = num.toInt();
         return;
     }
     const unsigned long long MAXD = INT_MAX/2; // maximal denominator
@@ -119,6 +124,35 @@ Rational::Rational(const double &num):
         bound.m_num *= -1;
 
     *this = bound;
+}
+
+Rational::Rational(const QString &str) : m_num(0), m_denom(1), m_valid(true)
+{
+    if(str=="") {
+        m_valid=false;
+        return;
+    }
+    QStringList l = str.split("/");
+    if(l.size()==1) {
+        bool ok;
+        m_num = l.at(0).toInt(&ok);
+        if(!ok) {
+            m_valid=false;
+            return;
+        }
+    } else if(l.size()==2) {
+        bool ok;
+        m_num = l.at(0).toInt(&ok);
+        if(!ok) {
+            m_valid=false;
+            return;
+        }
+        m_denom = l.at(1).toInt(&ok);
+        if(!ok) {
+            m_valid=false;
+            return;
+        }
+    }
 }
 
 Rational Rational::operator*(const Rational &other) const
@@ -197,7 +231,9 @@ bool Rational::isValid() const
 
 QString Rational::toString() const
 {
-    return QString::fromLatin1("%1/%2").arg(m_num, m_denom);
+    if(m_denom==1)
+        return QString::fromLatin1("%1").arg(m_num);
+    return QString::fromLatin1("%1/%2").arg(m_num).arg(m_denom);
 }
 
 HNumber Rational::toHNumber() const

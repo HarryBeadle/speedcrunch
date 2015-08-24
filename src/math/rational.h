@@ -38,6 +38,7 @@ public:
     Rational() : m_num(0), m_denom(1), m_valid(true) {}
     Rational(const HNumber &num);
     Rational(const double &num);
+    Rational(const QString & str);
     Rational(const int a, const int b) : m_num(a), m_denom(b), m_valid(true) {normalize();}
 
     int numerator() const {return m_num;}
@@ -54,6 +55,7 @@ public:
     Rational &operator/=(const Rational & other);
     bool operator<(const Rational & other) const;
     bool operator==(const Rational & other) const;
+    bool operator!=(const Rational & other) const {return !operator==(other);}
     bool operator>(const Rational & other) const;
 
     bool isZero() const;
