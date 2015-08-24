@@ -49,7 +49,7 @@ void Rational::normalize()
 
 int Rational::compare(const Rational &other) const
 {
-    return m_num*other.m_denom - m_denom*other.m_denom;
+    return m_num*other.m_denom - m_denom*other.m_num;
 }
 
 

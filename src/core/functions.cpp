@@ -71,6 +71,8 @@ HNumber Function::exec(const Function::ArgumentList& args)
         return HMath::nan();
     setError(Success);
     HNumber result = (*m_ptr)(this, args);
+    if(result.error())
+        setError(result.error());
     return result;
 }
 

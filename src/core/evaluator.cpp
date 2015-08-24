@@ -55,6 +55,7 @@ static void s_deleteEvaluator()
 const HNumber& Evaluator::checkOperatorResult(const HNumber& n)
 {
     switch (n.error()) {
+    case Success: break;
     case NoOperand:
         if(m_assignFunc == false)
             m_error = Evaluator::tr("cannot operate on a NaN");
@@ -75,13 +76,16 @@ const HNumber& Evaluator::checkOperatorResult(const HNumber& n)
         m_error = Evaluator::tr("overflow - integer result exceeds maximum limit for integers");
         break;
     case TooExpensive:
-        m_error = Evaluator::tr("too time consuming computation was rejected");
+        m_error = Evaluator::tr("too time consuming - computation was rejected");
         break;
     case DimensionMismatch:
         m_error = Evaluator::tr("dimension mismatch - quantities with different dimensions cannot be compared, added, etc.");
         break;
     case InvalidDimension:
         m_error = Evaluator::tr("invalid dimension - operation might require dimensionless arguments");
+        break;
+    case EvalUnstable:
+        m_error = Evaluator::tr("Computation aborted - encountered numerical instability");
         break;
     default:;
     }
@@ -96,6 +100,7 @@ QString Evaluator::stringFromFunctionError(Function* function)
     QString result = QString::fromLatin1("<b>%1</b>: ");
 
     switch (function->error()) {
+    case Success: break;
     case InvalidParamCount:
         result += Evaluator::tr("wrong number of arguments");
         break;
@@ -103,25 +108,43 @@ QString Evaluator::stringFromFunctionError(Function* function)
         result += Evaluator::tr("does not take NaN as an argument");
         break;
     case Overflow:
+        result += Evaluator::tr("overflow - huge result is out of SpeedCrunch's number range");
+        break;
     case Underflow:
+        result += Evaluator::tr("underflow - tiny result is out of SpeedCrunch's number range");
+        break;
     case OutOfLogicRange:
+        result += Evaluator::tr("overflow - logic result exceeds maximum of 256 bits");
+        break;
     case OutOfIntegerRange:
         result += Evaluator::tr("result out of range");
         break;
     case ZeroDivide:
+        result += Evaluator::tr("division by zero");
+        break;
     case EvalUnstable:
+        result += Evaluator::tr("Computation aborted - encountered numerical instability");
+        break;
     case OutOfDomain:
         result += Evaluator::tr("undefined for argument domain");
         break;
     case TooExpensive:
         result += Evaluator::tr("computation too expensive");
         break;
+    case InvalidDimension:
+        result += Evaluator::tr("invalid dimension - function might require dimensionless arguments");
+        break;
+    case DimensionMismatch:
+        result += Evaluator::tr("dimension mismatch - quantities with different dimensions cannot be compared, added, etc.");
+        break;
+    case IONoBase:
     case BadLiteral:
     case InvalidPrecision:
     case InvalidParam:
         result += Evaluator::tr("internal error, please report a bug");
         break;
     default:
+        result += Evaluator::tr("error");
         break;
     };
 
@@ -1450,6 +1473,10 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
                 val2 = stack.pop();
                 if(val1.isZero()) {
                     m_error = tr("unit must not be zero");
+                    return HMath::nan();
+                }
+                if(!val1.sameDimension(val2)) {
+                    m_error = tr("Conversion failed - dimension mismatch");
                     return HMath::nan();
                 }
                 val2.setDisplayUnit(val1, opcode.text);

@@ -541,6 +541,11 @@ HNumber& HNumber::operator=( const HNumber & hn )
 
   float_copy(&d->fnum, &hn.d->fnum, EXACT);
 
+  clearDimension();
+  if(hn.hasDimension()) {
+      this->d->dimension = new QMap<QString, Rational>(*hn.d->dimension);
+  }
+
   stripUnits();
   if(hn.hasUnit()) {
     setDisplayUnit(hn.getUnit(), hn.getUnitName());
@@ -1405,7 +1410,7 @@ HNumber HMath::raise(const HNumber& n1, const HNumber& n2)
         //Try to convert n2 to a Rational. If n2 is not rational, return NaN.
         Rational exp(n2);
         if(abs(exp.toHNumber() - n2) >= RATIONAL_TOL)
-            return HMath::nan(InvalidParam);
+            return HMath::nan(OutOfDomain);
         result.d->dimension = new QMap<QString, Rational>();
         QMap<QString, Rational>::const_iterator i = n1.d->dimension->constBegin();
         while (i != n1.d->dimension->constEnd()) {
