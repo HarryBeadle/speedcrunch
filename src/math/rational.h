@@ -37,6 +37,7 @@ class Rational
 public:
     Rational() : m_num(0), m_denom(1), m_valid(true) {}
     Rational(const HNumber &num);
+    Rational(const double &num);
     Rational(const int a, const int b) : m_num(a), m_denom(b), m_valid(true) {normalize();}
 
     int numerator() const {return m_num;}
@@ -58,10 +59,11 @@ public:
     bool isZero() const;
     bool isValid() const;
 
-    QString toString();
-    HNumber toHNumber();
+    QString toString() const;
+    HNumber toHNumber( )const;
+    double toDouble() const;
 
-
+    static void test();
 };
 
 #endif // RATIONAL_H

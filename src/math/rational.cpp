@@ -20,6 +20,7 @@
 
 #include "rational.h"
 #include "math/hmath.h"
+#include "numberformatter.h"
 
 #include <math.h>
 #include <QString>
@@ -63,36 +64,61 @@ Rational::Rational(const HNumber &num) :
         m_valid = false;
         return;
     }
-    const long long MAXD = INT_MAX/2; // maximal denominator
-    int p0=0, q0=1, p1=1, q1=0;
-    long long k = 1;
+    const unsigned long long MAXD = INT_MAX/2; // maximal denominator
+    unsigned long long p0=0, q0=1, p1=1, q1=0;
     HNumber val(HMath::abs(num));
     while(true) {
-        int a = HMath::floor(val).toInt();
-        long long q2 = q0 + a*q1;
-        if(q2>MAXD || p0+k*p1>MAXD)
+        long a = HMath::floor(val).toInt();
+        unsigned long long q2 = q0 + a*q1;
+        if(q2>MAXD)
             break;
-        int temp1=p0, temp2=p1, temp3=q1;
+        unsigned long long temp1=p0, temp2=p1, temp3=q1;
         p0 = temp2;
         q0 = temp3;
         p1 = temp1 + a*temp2;
         q1 = q2;
         val = HNumber(1)/HMath::frac(val);
-        k = (MAXD-q0) / q1;
+        if(val>HNumber(MAXD)) break;
     }
 
-    Rational bound1(p0+k*p1, q0+k*q1);
-    Rational bound2(p1, q1);
+    Rational bound(p1, q1);
     if(num<0) {
-        bound1.m_num *= -1;
-        bound1.m_denom *= -1;
+        bound.m_num *= -1;
     }
-    HNumber hbound1(bound1.toHNumber());
-    HNumber hbound2(bound2.toHNumber());
+    *this = bound;
 
-    *this = (HMath::abs(hbound1-num) <= HMath::abs(hbound2-num)) ?
-                bound1: bound2;
+}
 
+Rational::Rational(const double &num):
+    m_num(1), m_denom(1), m_valid(1)
+{
+    if (abs(num)>INT_MAX || abs(1./num)>INT_MAX) {
+           m_valid = false;
+           return;
+    }
+    const long long MAXD = INT_MAX/2; // maximal denominator
+    long long p0=0, q0=1, p1=1, q1=0;
+
+    double val = fabs(num);
+    while(true) {
+        unsigned long long  a = static_cast<unsigned long long>(floor(val));
+        unsigned long long q2 = q0 + a*q1;
+        if(q2>MAXD)
+            break;
+        unsigned long long temp1=p0, temp2=p1, temp3=q1;
+        p0 = temp2;
+        q0 = temp3;
+        p1 = temp1 + a*temp2;
+        q1 = q2;
+        if(val==a) break;
+        val = 1/(val-a);
+    }
+
+    Rational bound(p1, q1);
+    if(num<0)
+        bound.m_num *= -1;
+
+    *this = bound;
 }
 
 Rational Rational::operator*(const Rational &other) const
@@ -169,13 +195,38 @@ bool Rational::isValid() const
     return m_valid;
 }
 
-QString Rational::toString()
+QString Rational::toString() const
 {
     return QString::fromLatin1("%1/%2").arg(m_num, m_denom);
 }
 
-HNumber Rational::toHNumber()
+HNumber Rational::toHNumber() const
 {
-    return HNumber(toString().toLatin1().constData());
+    HNumber num(QString::number(m_num).toLatin1().constData());
+    HNumber denom(QString::number(m_denom).toLatin1().constData());
+    QString str = NumberFormatter::format(num);
+    str = NumberFormatter::format(denom);
+    return num/denom;
+
+}
+
+double Rational::toDouble() const
+{
+    return double(m_num)/m_denom;
+}
+
+void Rational::test()
+{
+    QString str;
+    str = NumberFormatter::format(Rational(123,456).toHNumber());
+
+    Rational r1;
+    r1 = Rational(22./7);
+    r1 = Rational(-12345./96457);
+
+    r1 = Rational(HNumber("-1234")/HNumber("7895"));
+    r1 = Rational(HNumber("-1235000")/HNumber("78950000"));
+
+    return;
 
 }

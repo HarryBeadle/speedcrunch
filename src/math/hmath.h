@@ -30,6 +30,7 @@
 
 class HMath;
 class HNumberPrivate;
+class Rational;
 
 class HNumber
 {
