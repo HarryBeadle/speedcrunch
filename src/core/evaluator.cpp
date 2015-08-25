@@ -23,6 +23,7 @@
 #include "core/evaluator.h"
 #include "core/session.h"
 #include "core/settings.h"
+#include "math/rational.h"
 
 #include <QCoreApplication>
 #include <QStack>
@@ -417,6 +418,34 @@ void Evaluator::initializeBuiltInVariables()
 
     setVariable(QLatin1String("pi"), HMath::pi(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("π"), HMath::pi(), Variable::BuiltIn);
+
+    HNumber meter(1);
+    meter.modifyDimension("length", 1);
+    setVariable(QString::fromUtf8("meter"), meter, Variable::BuiltIn);
+
+    HNumber second(1);
+    second.modifyDimension("time", 1);
+    setVariable(QString::fromUtf8("second"), second, Variable::BuiltIn);
+
+    HNumber kilogram(1);
+    kilogram.modifyDimension("mass", 1);
+    setVariable(QString::fromUtf8("kilogram"), kilogram, Variable::BuiltIn);
+
+    HNumber ampere(1);
+    ampere.modifyDimension("el. current", 1);
+    setVariable(QString::fromUtf8("ampere"), ampere, Variable::BuiltIn);
+
+    HNumber mole(1);
+    mole.modifyDimension("amount", 1);
+    setVariable(QString::fromUtf8("mole"), mole, Variable::BuiltIn);
+
+    HNumber candela(1);
+    candela.modifyDimension("luminous intensity", 1);
+    setVariable(QString::fromUtf8("candela"), candela, Variable::BuiltIn);
+
+    HNumber kelvin(1);
+    kelvin.modifyDimension("temperature", 1);
+    setVariable(QString::fromUtf8("kelvin"), kelvin, Variable::BuiltIn);
 }
 
 void Evaluator::setExpression(const QString& expr)
