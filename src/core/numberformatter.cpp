@@ -20,18 +20,64 @@
 
 #include "core/settings.h"
 #include "math/hmath.h"
+#include "math/rational.h"
+
+#include <QMap>
 
 QString NumberFormatter::format(HNumber number)
 {
     Settings* settings = Settings::instance();
 
+
     //handle units
     QString unit_name = "";
+    HNumber unit(1);
     if(number.hasUnit()) {
-        unit_name = number.getUnitName();
-        HNumber unit = number.getUnit();
+        unit_name = ' ' + number.getUnitName();
+        unit = number.getUnit();
         number.stripUnits();
         number /= unit;
+    } else if(!number.isDimensionless()) {
+        number.cleanDimension();
+        // autogenerate unit name
+        QMap<QString, Rational> dimension = number.getDimension();
+        QMap<QString, Rational>::const_iterator i = dimension.constBegin();
+        while (i != dimension.constEnd()) {
+            QString exponent = i.value().toString();
+            if(exponent.contains('/'))
+                exponent = "^(" + exponent+')';
+            else if(exponent == "1")
+                exponent = "";
+            else
+                exponent = '^' + exponent;
+
+
+            // TODO: replace this with a lookup to a repository
+            if(i.key() == "length") {
+                    unit_name += " meter";
+
+            } else if(i.key() == "time") {
+                unit_name += " second";
+
+            } else if(i.key() == "mass") {
+                unit_name += " kilogram";
+
+            } else if(i.key() == "el. current") {
+                unit_name += " ampere";
+
+            } else if(i.key() == "amount") {
+                unit_name += " mole";
+
+            } else if(i.key() == "luminous intensity") {
+                unit_name += " canedela";
+
+            } else if(i.key() == "temperature") {
+                unit_name += " kelvin";
+            } else
+                unit_name += " " + i.key(); // fall back to the dimension name
+            unit_name += exponent;
+            ++i;
+        }
     }
 
     const char format = number.format() != 0 ? number.format() : settings->resultFormat;
@@ -39,7 +85,6 @@ QString NumberFormatter::format(HNumber number)
     QString result = QString::fromLatin1(str);
     free(str);
     if(unit_name != "") {
-        result.append(" ");
         result.append(unit_name);
     }
     if (settings->radixCharacter() != '.')

@@ -425,6 +425,8 @@ bool HNumber::isDimensionless() const
     return true;
 }
 
+
+// remove redundant entries (where exponent == 0)
 QMap<QString, Rational> HNumber::getDimension() const
 {
     if(hasDimension())
@@ -441,7 +443,7 @@ void HNumber::modifyDimension(const QString &key, const Rational &exponent)
     if(!d->dimension)
         d->dimension = new QMap<QString, Rational>;
     d->dimension->insert(key, exponent);
-
+    cleanDimension();
 
 }
 
@@ -474,6 +476,21 @@ bool HNumber::sameDimension(const HNumber &other) const
     }
     return true;
 
+}
+
+void HNumber::cleanDimension()
+{
+    if(!hasDimension()) return;
+    QMap<QString, Rational>::iterator i = d->dimension->begin();
+    while (i != d->dimension->end()) {
+        if(i.value().isZero()) {
+            i = d->dimension->erase(i);
+        } else
+            ++i;
+
+    }
+    if(hasUnit())
+        d->unit->cleanDimension();
 }
 
 void HNumber::serialize(QJsonObject &json) const
