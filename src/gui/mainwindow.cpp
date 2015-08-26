@@ -2068,7 +2068,11 @@ void MainWindow::copy()
 }
 
 void MainWindow::restoreSession() {
+#ifdef SPEEDCRUNCH_PORTABLE
+    QString data_path = QApplication::applicationDirPath();
+#else
     QString data_path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+#endif
     QDir qdir;
     qdir.mkpath(data_path);
     data_path.append("/history.json");
@@ -2297,7 +2301,11 @@ void MainWindow::closeEvent(QCloseEvent* e)
 {
     saveSettings();
     if(m_settings->sessionSave) {
+#ifdef SPEEDCRUNCH_PORTABLE
+        QString data_path = QApplication::applicationDirPath();
+#else
         QString data_path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+#endif
         QDir qdir;
         qdir.mkpath(data_path);
         data_path.append("/history.json");
