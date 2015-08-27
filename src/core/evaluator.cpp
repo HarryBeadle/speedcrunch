@@ -225,8 +225,8 @@ static int opPrecedence(Token::Op op)
     case Token::Exclamation: prec = 800; break;
     case Token::Percent: prec = 800; break;
     case Token::Caret: prec = 700; break;
-    case Token::Asterisk: prec = 500; break;
-    case Token::Slash: prec = 600; break;
+    case Token::Asterisk:
+    case Token::Slash: prec = 500; break;
     case Token::Modulo:
     case Token::Backslash: prec = 600; break;
     case Token::Plus:
@@ -535,12 +535,14 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
     // Force a terminator.
     ex.append(QChar());
 
+#if 0
     // Work around issue 160 until new more flexible parser is written.
     if (policy == AutoFix) {
         if (ex.at(0) == '-')
             ex.prepend('0');
         ex.replace("(-", "(0-");
     }
+#endif
 
     // Main loop.
     while (state != Bad && state != Finish && i < ex.length()) {
@@ -882,7 +884,7 @@ void Evaluator::compile(const Tokens& tokens)
         // Unknown token is invalid.
         if (tokenType == Token::stxUnknown)
             break;
-
+#if 0
         // Special case for percentage.
         if (tokenType == Token::stxOperator && token.asOperator() == Token::Percent
              && syntaxStack.itemCount() >= 1 && !syntaxStack.top().isOperator())
@@ -894,9 +896,10 @@ void Evaluator::compile(const Tokens& tokens)
             dbg << "  Handling percentage" << "\n";
 #endif
         }
+#endif
 
         // Try to apply all parsing rules.
-        if (token.asOperator() != Token::Percent) {
+        if (1 || token.asOperator() != Token::Percent) {
 #ifdef EVALUATOR_DEBUG
             dbg << "  Checking rules..." << "\n";
 #endif
@@ -948,24 +951,30 @@ void Evaluator::compile(const Tokens& tokens)
                     }
                 }
 
-                // Rule for postfix operators.
+                // Rule for postfix operators: Y POSTFIX -> Y
+                // Condition: Y is not an operator, POSTFIX is a postfix op.
+                // Since we evaluate from left to right, we need not check precedence at this point.
                 if (!ruleFound && syntaxStack.itemCount() >= 2) {
                     Token postfix = syntaxStack.top();
                     Token y = syntaxStack.top(1);
                     if (postfix.isOperator() && !y.isOperator())
                         switch (postfix.asOperator()) {
+                            case Token::Percent:
+                                syntaxStack.pop();
+                                m_constants.append(HNumber("0.01"));
+                                m_codes.append(Opcode(Opcode::Load, m_constants.count() - 1));
+                                m_codes.append(Opcode(Opcode::Mul));
+                                break;
                             case Token::Exclamation:
                                 ruleFound = true;
                                 syntaxStack.pop();
-                                syntaxStack.pop();
-                                syntaxStack.push(y);
                                 m_codes.append(Opcode(Opcode::Fact));
                                 break;
                             default:;
-#ifdef EVALUATOR_DEBUG
-                                if(ruleFound) dbg << "    Rule for postfix operator " << postfix.text() << "\n";
-#endif
                         }
+#ifdef EVALUATOR_DEBUG
+                        if(ruleFound) dbg << "    Rule for postfix operator " << postfix.text() << "\n";
+#endif
                 }
 
                 // Rule for parenthesis: (Y) -> Y.
@@ -1183,52 +1192,47 @@ void Evaluator::compile(const Tokens& tokens)
                     Token x = syntaxStack.top();
                     Token op2 = syntaxStack.top(1);
                     Token op1 = syntaxStack.top(2);
-                    if (!x.isOperator() && op1.isOperator() && op2.isOperator()
-                         && (op2.asOperator() == Token::Plus || op2.asOperator() == Token::Minus))
+                    if (!x.isOperator() && op1.isOperator()
+                         && (op2.asOperator() == Token::Plus || op2.asOperator() == Token::Minus)
+                         && (!token.isOperator()
+                             || opPrecedence(token.asOperator()) <= Token::Asterisk))
                     {
                         ruleFound = true;
                         if (op2.asOperator() == Token::Minus)
                             m_codes.append(Opcode(Opcode::Neg));
                     }
-#if 0
-                    else { // Maybe postfix.
-                        x = op2;
-                        op2 = syntaxStack.top();
-                        if (!x.isOperator() && op1.isOperator() && op2.isOperator()
-                             && op2.asOperator() == Token::Exclamation)
-                        {
-                            ruleFound = true;
-                            m_codes.append(Opcode(Opcode::Fact));
-                        }
-                    }
-#endif
                     if (ruleFound) {
                         syntaxStack.pop();
                         syntaxStack.pop();
                         syntaxStack.push(x);
 #ifdef EVALUATOR_DEBUG
-                        dbg << "    Rule for unary operator" << "\n";
+                        dbg << "    Rule for unary operator" << op2.text() << "\n";
 #endif
                     }
                 }
 
-                // auxiliary rule for unary operator:  (op) X -> X
-                // conditions: op is unary, op is first in syntax stack,
-                // token is not '(' or '^' or '!' or any power operator
-                // action: push (op) to result
+                // auxiliary rule for unary prefix operator:  (op) X -> X
+                // conditions: op is unary, op is first in syntax stack
+                // action: create code for (op). Unary MINUS or PLUS are treated with the precedence of multiplication.
                 if (!ruleFound && token.asOperator() != Token::LeftPar
-                     && token.asOperator() != Token::Exclamation
+                     //&& token.asOperator() != Token::Exclamation
                      && syntaxStack.itemCount() == 2)
                 {
                     Token x = syntaxStack.top();
                     Token op = syntaxStack.top(1);
-                    if (!x.isOperator() && op.isOperator()
-                         && (op.asOperator() == Token::Plus || op.asOperator() == Token::Minus))
+                    if (!x.isOperator()
+                        && (op.asOperator() == Token::Plus || op.asOperator() == Token::Minus)
+                        && ((token.isOperator() && opPrecedence(token.asOperator()) <= opPrecedence(Token::Asterisk))
+                            || !token.isOperator()))
                     {
                         ruleFound = true;
                         if (op.asOperator() == Token::Minus)
                             m_codes.append(Opcode(Opcode::Neg));
+#ifdef EVALUATOR_DEBUG
+                        dbg << "    Rule for unary operator (auxiliary)" << "\n";
+#endif
                     } else {
+#if 0
                         x = op;
                         op = syntaxStack.top();
                         if (!x.isOperator() && op.isOperator())
@@ -1240,6 +1244,7 @@ void Evaluator::compile(const Tokens& tokens)
                                 m_codes.append(Opcode(Opcode::Fact));
                             else ruleFound = ruleFoundOldValue;
                         }
+#endif
                     }
                     if (ruleFound) {
                         syntaxStack.pop();
@@ -1257,7 +1262,7 @@ void Evaluator::compile(const Tokens& tokens)
 
 
             // Can't apply rules anymore, push the token.
-            if (token.asOperator() != Token::Percent)
+            if (1 || token.asOperator() != Token::Percent)
                 syntaxStack.push(token);
 
             // For identifier, generate code to load from reference.
