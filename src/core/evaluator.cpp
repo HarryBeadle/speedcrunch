@@ -847,26 +847,6 @@ void Evaluator::compile(const Tokens& tokens)
         if (tokenType == Token::stxUnknown)
             break;
 
-        // For constants, push immediately to stack. Generate code to load from a constant.
-        if (tokenType == Token::stxNumber) {
-            syntaxStack.push(token);
-            m_constants.append(token.asNumber());
-            m_codes.append(Opcode(Opcode::Load, m_constants.count() - 1));
-#ifdef EVALUATOR_DEBUG
-            dbg << "  Push " << token.asNumber() << " to constant pools" << "\n";
-#endif
-        }
-
-        // For identifier, push immediately to stack. Generate code to load from reference.
-        if (tokenType == Token::stxIdentifier) {
-            syntaxStack.push(token);
-            m_identifiers.append(token.text());
-            m_codes.append(Opcode(Opcode::Ref, m_identifiers.count() - 1));
-#ifdef EVALUATOR_DEBUG
-            dbg << "  Push " << token.text() << " to identifier pools" << "\n";
-#endif
-        }
-
         // Special case for percentage.
         if (tokenType == Token::stxOperator && token.asOperator() == Token::Percent
              && syntaxStack.itemCount() >= 1 && !syntaxStack.top().isOperator())
@@ -879,8 +859,8 @@ void Evaluator::compile(const Tokens& tokens)
 #endif
         }
 
-        // For any other operator, try to apply all parsing rules.
-        if (tokenType == Token::stxOperator && token.asOperator() != Token::Percent) {
+        // Try to apply all parsing rules.
+        if (token.asOperator() != Token::Percent) {
 #ifdef EVALUATOR_DEBUG
             dbg << "  Checking rules..." << "\n";
 #endif
@@ -947,7 +927,7 @@ void Evaluator::compile(const Tokens& tokens)
                                 break;
                             default:;
 #ifdef EVALUATOR_DEBUG
-                                dbg << "    Rule for postfix operator" << "\n";
+                                if(ruleFound) dbg << "    Rule for postfix operator " << postfix.text() << "\n";
 #endif
                         }
                 }
@@ -957,8 +937,7 @@ void Evaluator::compile(const Tokens& tokens)
                     Token right = syntaxStack.top();
                     Token y = syntaxStack.top(1);
                     Token left = syntaxStack.top(2);
-                    if (right.isOperator() && !y.isOperator() && left.isOperator()
-                         && right.asOperator() == Token::RightPar
+                    if (!y.isOperator() && right.asOperator() == Token::RightPar
                          && left.asOperator() == Token::LeftPar)
                     {
                         ruleFound = true;
@@ -986,7 +965,7 @@ void Evaluator::compile(const Tokens& tokens)
                         syntaxStack.pop();
                         syntaxStack.push(arg);
 #ifdef EVALUATOR_DEBUG
-                        dbg << "    Rule for simplified function syntax" << "\n";
+                        dbg << "    Rule for simplified function syntax; function " << id.text() << "\n";
 #endif
                     }
                 }
@@ -996,7 +975,7 @@ void Evaluator::compile(const Tokens& tokens)
                     Token x = syntaxStack.top();
                     Token op = syntaxStack.top(1);
                     Token id = syntaxStack.top(2);
-                    if (!x.isOperator() && op.isOperator() && id.isIdentifier()
+                    if (!x.isOperator() && id.isIdentifier()
                          && FunctionRepo::instance()->find(id.text())
                          && (op.asOperator() == Token::Plus || op.asOperator() == Token::Minus))
                     {
@@ -1007,7 +986,7 @@ void Evaluator::compile(const Tokens& tokens)
                         if (op.asOperator() == Token::Minus)
                             m_codes.append(Opcode(Opcode::Neg));
 #ifdef EVALUATOR_DEBUG
-                        dbg << "    Rule for unary operator in simplified function syntax" << "\n";
+                        dbg << "    Rule for unary operator in simplified function syntax; function " << id.text() << "\n";
 #endif
                     }
                 }
@@ -1019,8 +998,7 @@ void Evaluator::compile(const Tokens& tokens)
                     Token x = syntaxStack.top(1);
                     Token id = syntaxStack.top(2);
                     if (id.isIdentifier() && m_functions->find(id.text())) {
-                        if (!x.isOperator() && op.isOperator() &&
-                             op.asOperator() == Token::Exclamation)
+                        if (!x.isOperator() && op.asOperator() == Token::Exclamation)
                         {
                             ruleFound = true;
                             syntaxStack.pop();
@@ -1028,15 +1006,14 @@ void Evaluator::compile(const Tokens& tokens)
                             syntaxStack.push(x);
                             m_codes.append(Opcode(Opcode::Fact));
 #ifdef EVALUATOR_DEBUG
-                            dbg << "    Rule for unary operator in simplified function syntax"
-                                << "\n";
+                            dbg << "    Rule for unary operator in simplified function syntax" << "\n";
 #endif
                         }
                     }
                 }
 #endif
 
-                // Rule for function arguments, if token is , or ): id (arg1 ; arg2 -> id (arg.
+                // Rule for function arguments, if token is ; or ): id (arg1 ; arg2 -> id (arg.
                 if (!ruleFound && syntaxStack.itemCount() >= 5
                      && (token.asOperator() == Token::RightPar
                          || token.asOperator() == Token::Semicolon))
@@ -1076,8 +1053,7 @@ void Evaluator::compile(const Tokens& tokens)
                         syntaxStack.push(Token(Token::stxNumber));
                         m_codes.append(Opcode(Opcode::Function, 0));
 #ifdef EVALUATOR_DEBUG
-                        dbg << "    Rule for function call with parentheses, but without argument"
-                            << "\n";
+                        dbg << "    Rule for function call with parentheses, but without argument" << "\n";
 #endif
                     }
                 }
@@ -1092,15 +1068,20 @@ void Evaluator::compile(const Tokens& tokens)
                     Token op = syntaxStack.top(1);
                     Token a = syntaxStack.top(2);
                     if (!a.isOperator() && !b.isOperator() && op.isOperator()
-                         && token.asOperator() != Token::LeftPar
-                         && token.asOperator() != Token::Caret
-                         && opPrecedence(op.asOperator()) >= opPrecedence(token.asOperator()))
+                         && ((token.isOperator() && opPrecedence(op.asOperator()) >= opPrecedence(token.asOperator())
+                              && token.asOperator() != Token::LeftPar
+                              && token.asOperator() != Token::Caret)    // token is normal operator
+                             || (!token.isOperator()                    // token may represent implicit multiplication
+                                 && opPrecedence(op.asOperator()) >= opPrecedence(Token::Asterisk))))
                     {
                         ruleFound = true;
                         syntaxStack.pop();
                         syntaxStack.pop();
                         syntaxStack.pop();
-                        syntaxStack.push(b);
+                        if(b.isIdentifier()) //prefer identifiers to numbers on the stack (for implicit mult)
+                            syntaxStack.push(b);
+                        else
+                            syntaxStack.push(a);
                         switch (op.asOperator()) {
                             // Simple binary operations.
                             case Token::Plus:      m_codes.append(Opcode::Add); break;
@@ -1125,18 +1106,28 @@ void Evaluator::compile(const Tokens& tokens)
                 }
 #ifdef ALLOW_IMPLICIT_MULT
 
-                // Rule for implicit multiplication:  A B -> A.
-                // Action: Treat as A * B.
+                /* Rule for implicit multiplication:  NUMBER IDENTIFIER     -> IDENTIFIER
+                 *                                    IDENTIFIER IDENTIFIER -> IDENTIFIER
+                 * Action: Treat as A * B.
+                 * Note that the second operand must not be a number. The result is always an identifier.
+                 */
                 if(!ruleFound && syntaxStack.itemCount() >= 2) {
                     Token b = syntaxStack.top();
                     Token a = syntaxStack.top(1);
 
-                    if((a.isNumber() || a.isIdentifier())
-                            && (b.isNumber() || b.isIdentifier()))  {
+                    if((a.isNumber() || a.isIdentifier()) && (b.isIdentifier())
+                            && token.asOperator() != Token::LeftPar
+                            && ((token.isOperator()
+                                 && opPrecedence(Token::Asterisk) >= opPrecedence(token.asOperator())) // token is normal operator
+                                || !token.isOperator())) // token represents implicit multiplication
+                    {
                         ruleFound = true;
                         syntaxStack.pop();
                         syntaxStack.pop();
-                        syntaxStack.push(b);
+                        if(b.isIdentifier()) //prefer identifiers to numbers on the stack
+                            syntaxStack.push(b);
+                        else
+                            syntaxStack.push(a);
                         m_codes.append(Opcode::Mul);
 #ifdef EVALUATOR_DEBUG
                         dbg << "    Rule for implicit multiplication" << "\n";
@@ -1228,9 +1219,28 @@ void Evaluator::compile(const Tokens& tokens)
                     break;
             }
 
+
             // Can't apply rules anymore, push the token.
             if (token.asOperator() != Token::Percent)
                 syntaxStack.push(token);
+
+            // For identifier, generate code to load from reference.
+            if (tokenType == Token::stxIdentifier) {
+                m_identifiers.append(token.text());
+                m_codes.append(Opcode(Opcode::Ref, m_identifiers.count() - 1));
+#ifdef EVALUATOR_DEBUG
+                dbg << "  Push " << token.text() << " to identifier pools" << "\n";
+#endif
+            }
+
+            // For constants, generate code to load from a constant.
+            if (tokenType == Token::stxNumber) {
+                m_constants.append(token.asNumber());
+                m_codes.append(Opcode(Opcode::Load, m_constants.count() - 1));
+#ifdef EVALUATOR_DEBUG
+                dbg << "  Push " << token.asNumber() << " to constant pools" << "\n";
+#endif
+            }
         }
     }
 
