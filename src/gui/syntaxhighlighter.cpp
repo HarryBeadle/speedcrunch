@@ -269,10 +269,18 @@ void SyntaxHighlighter::groupDigits(const QString& text, int pos, int length)
         bool isNumber = c < 128 && (charType[c] & allowedChars);
 
         if (s >= 0) {
-            if (!isNumber && !evaluator->isSeparatorChar(c)) {
-                // End of current number found, start grouping the digits.
-                formatDigitsGroup(text, s, i, invertGroup, groupSize);
-                s = -1; // Reset.
+            if (!isNumber) {
+                bool nextIsNumber;
+                if(evaluator->isSeparatorChar(c) && i<endPos-1) {
+                    ushort nextC = text[i+1].unicode();
+                    nextIsNumber = nextC < 128 && (charType[nextC] & allowedChars);
+                } else
+                    nextIsNumber = false;
+                if(!nextIsNumber || !evaluator->isSeparatorChar(c)) {
+                    // End of current number found, start grouping the digits.
+                    formatDigitsGroup(text, s, i, invertGroup, groupSize);
+                    s = -1; // Reset.
+                }
             }
         } else {
             if (isNumber) // Start of number found.
