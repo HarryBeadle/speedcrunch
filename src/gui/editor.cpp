@@ -379,6 +379,28 @@ void Editor::triggerAutoComplete()
     // TODO: if we are assigning a user function, find matches in its arguments names and
     //       replace variables names that collide. But we cannot know if we are assigning
     //       a user function without evaluating the expression (a token scan will not be enough).
+    if(Evaluator::instance()->isUserFunctionAssign())
+    {
+        for(int i=2; i<tokens.size(); ++i) {
+            if(tokens[i].asOperator() == Token::Semicolon)
+                continue;
+            if(tokens[i].asOperator() == Token::RightPar)
+                break;
+            if(tokens[i].isIdentifier()) {
+                QString arg = tokens[i].text();
+                if(!arg.startsWith(id, Qt::CaseInsensitive)) continue;
+                for(int j=0; j<choices.size(); ++j){
+                    if(choices[j].split(":")[0]==arg) {
+                        choices.removeAt(j);
+                        j--;
+                    }
+                }
+                choices.append(arg + ": Argument");
+            }
+        }
+    }
+
+
 
     // No match, don't bother with completion.
     if (!choices.count())
