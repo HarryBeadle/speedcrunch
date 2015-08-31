@@ -37,7 +37,7 @@ AboutBox::AboutBox(QWidget* parent, Qt::WindowFlags f)
 
     QString msg = "<center>";
     msg += "<img src=\":/speedcrunch.png\"><br>";
-    msg += "<b>SpeedCrunch " + QLatin1String(SPEEDCRUNCH_VERSION);
+    msg += "<b>SpeedCrunch " SPEEDCRUNCH_VERSION;
 #ifdef SPEEDCRUNCH_PORTABLE
     msg += " (Portable Edition)";
 #endif
