@@ -27,24 +27,28 @@ ADD_DEFINITIONS(-DQT_USE_QSTRINGBUILDER)
 
 include(SourceFiles.cmake)
 
-if(MINGW)
-    add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/speedcrunchico.o
-                       COMMAND windres.exe -I${CMAKE_CURRENT_SOURCE_DIR} -i${CMAKE_CURRENT_SOURCE_DIR}/resources/speedcrunch.rc -o ${CMAKE_CURRENT_BINARY_DIR}/speedcrunchico.o)
-    set(speedcrunch_SOURCES ${speedcrunch_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/speedcrunchico.o)
-else(MINGW)
-    set(speedcrunch_SOURCES ${speedcrunch_SOURCES} resources/speedcrunch.rc)
-endif(MINGW)
+if(WIN32)
+    set(WIN32_RES_FILE ${CMAKE_CURRENT_BINARY_DIR}/speedcrunch.rc.obj)
+    if(MINGW)
+        add_custom_command(OUTPUT ${WIN32_RES_FILE}
+                           COMMAND windres.exe ${CMAKE_CURRENT_SOURCE_DIR}/resources/speedcrunch.rc ${WIN32_RES_FILE})
+    else(MINGW)
+        add_custom_command(OUTPUT ${WIN32_RES_FILE}
+                           COMMAND rc.exe /fo ${WIN32_RES_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/resources/speedcrunch.rc)
+    endif(MINGW)
+endif(WIN32)
 
 string(COMPARE EQUAL "${CMAKE_CXX_COMPILER_ID}" MSVC USING_MSVC)
 if(USING_MSVC)
     add_definitions(/Wall)
+    add_definitions(-D_USE_MATH_DEFINES)
 else()
     add_definitions(-Wall)
     add_definitions(-std=c++0x)
 endif()
 
 qt5_add_RESOURCES( speedcrunch_RESOURCES_SOURCES ${speedcrunch_RESOURCES} )
-add_executable(${PROGNAME} WIN32 MACOSX_BUNDLE ${speedcrunch_SOURCES} ${speedcrunch_HEADERS_MOC} ${speedcrunch_RESOURCES_SOURCES} ${speedcrunch_FORMS_HEADERS})
+add_executable(${PROGNAME} WIN32 MACOSX_BUNDLE ${speedcrunch_SOURCES} ${speedcrunch_HEADERS_MOC} ${speedcrunch_RESOURCES_SOURCES} ${speedcrunch_FORMS_HEADERS} ${WIN32_RES_FILE})
 
 if(APPLE)
     set( speedcrunch_RESOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources )
