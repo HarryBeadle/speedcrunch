@@ -49,7 +49,7 @@ BookDock::BookDock(QWidget* parent)
 void BookDock::handleAnchorClick(const QUrl& url)
 {
     if (url.toString().startsWith("formula:")) {
-        QString expression = url.toString().mid(8);
+        QString expression = url.toString(QUrl::DecodeReserved).mid(8);
         emit expressionSelected(expression);
     } else
         openPage(url);
