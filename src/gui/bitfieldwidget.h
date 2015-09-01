@@ -43,7 +43,8 @@ protected:
 
 private:
     enum {
-        SizePixels = 10,
+        // TODO: have this scale with screen DPI
+        SizePixels = 20,
     };
 
     Q_DISABLE_COPY(BitWidget)
