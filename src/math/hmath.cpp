@@ -582,7 +582,7 @@ HNumber& HNumber::operator=( const HNumber & hn )
  */
 HNumber HNumber::operator+( const HNumber & num ) const
 {
-  HNumber result;
+  HNumber result(num);
   if(!sameDimension(num))
       return HMath::nan(DimensionMismatch);
   call2Args(result.d, d, num.d, checkAdd);
@@ -602,7 +602,7 @@ HNumber& HNumber::operator+=( const HNumber & num )
  */
 HNumber operator-( const HNumber & n1, const HNumber & n2 )
 {
-  HNumber result;
+  HNumber result(n1);
   if(!n1.sameDimension(n2))
       return HMath::nan(DimensionMismatch);
   call2Args(result.d, n1.d, n2.d, checkSub);
