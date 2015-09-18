@@ -21,8 +21,7 @@
 #include "core/settings.h"
 #include "math/cmath.h"
 #include "math/rational.h"
-
-#include <QMap>
+#include "math/units.h"
 
 QString NumberFormatter::format(CNumber number)
 {
@@ -32,63 +31,14 @@ QString NumberFormatter::format(CNumber number)
     //handle units
     QString unit_name = "";
     CNumber unit(1);
-    if(number.hasUnit()) {
-        unit_name = ' ' + number.getUnitName();
-        unit = number.getUnit();
-        number.stripUnits();
-        number /= unit;
-    } else if(!number.isDimensionless()) {
+    if(!number.hasUnit() && !number.isDimensionless()) {
         number.cleanDimension();
-        // autogenerate unit name
-        QMap<QString, Rational> dimension = number.getDimension();
-        QMap<QString, Rational>::const_iterator i = dimension.constBegin();
-        while (i != dimension.constEnd()) {
-            QString exponent = i.value().toString();
-            if(exponent.contains('/'))
-                exponent = "^(" + exponent+')';
-            else if(exponent == "1")
-                exponent = "";
-            else
-                exponent = '^' + exponent;
-
-            if(exponent == QLatin1String("^0")) exponent = QString::fromUtf8("⁰");
-            else if(exponent == QLatin1String("^2")) exponent = QString::fromUtf8("²");
-            else if(exponent == QLatin1String("^3")) exponent = QString::fromUtf8("³");
-            else if(exponent == QLatin1String("^4")) exponent = QString::fromUtf8("⁴") ;
-            else if(exponent == QLatin1String("^5")) exponent = QString::fromUtf8("⁵") ;
-            else if(exponent == QLatin1String("^6")) exponent = QString::fromUtf8("⁶") ;
-            else if(exponent == QLatin1String("^7")) exponent = QString::fromUtf8("⁷") ;
-            else if(exponent == QLatin1String("^8")) exponent = QString::fromUtf8("⁸") ;
-            else if(exponent == QLatin1String("^9")) exponent = QString::fromUtf8("⁹") ;
-
-
-            // TODO: replace this with a lookup to a repository
-            if(i.key() == "length") {
-                    unit_name += " meter";
-
-            } else if(i.key() == "time") {
-                unit_name += " second";
-
-            } else if(i.key() == "mass") {
-                unit_name += " kilogram";
-
-            } else if(i.key() == "el. current") {
-                unit_name += " ampere";
-
-            } else if(i.key() == "amount") {
-                unit_name += " mole";
-
-            } else if(i.key() == "luminous intensity") {
-                unit_name += " candela";
-
-            } else if(i.key() == "temperature") {
-                unit_name += " kelvin";
-            } else
-                unit_name += " " + i.key(); // fall back to the dimension name
-            unit_name += exponent;
-            ++i;
-        }
+        Units::findUnit(number);
     }
+    unit_name = ' ' + number.getUnitName();
+    unit = number.getUnit();
+    number.stripUnits();
+    number /= unit;
 
     const char format = number.format() != 0 ? number.format() : settings->resultFormat;
     char* str = CMath::format(number, format, settings->resultPrecision);

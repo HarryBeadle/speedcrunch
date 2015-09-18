@@ -1,4 +1,4 @@
-equals(QT_MAJOR_VERSION, 5) {
+﻿equals(QT_MAJOR_VERSION, 5) {
     lessThan(QT_MINOR_VERSION, 2) {
         error(Qt 5.2 or newer is required but version $$[QT_VERSION] was detected.)
     }
@@ -112,7 +112,8 @@ HEADERS += core/book.h \
            math/floattrig.h \
            math/hmath.h \
            math/number.h \
-           math/rational.h
+           math/rational.h \
+           math/units.h
 
 SOURCES += main.cpp \
            core/book.cpp \
@@ -169,6 +170,7 @@ SOURCES += main.cpp \
 	   math/cmath.cpp \
 	   math/cnumberparser.cpp \
            math/rational.cpp
+           math/units.cpp
 
 RESOURCES += resources/speedcrunch.qrc
 TRANSLATIONS += resources/locale/ar.ts \

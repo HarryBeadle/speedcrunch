@@ -1,4 +1,4 @@
-// This file is part of the SpeedCrunch project
+﻿// This file is part of the SpeedCrunch project
 // Copyright (C) 2004 Ariya Hidayat <ariya@kde.org>
 // Copyright (C) 2005, 2006 Johan Thelin <e8johan@gmail.com>
 // Copyright (C) 2007, 2008, 2009, 2010, 2013 Helder Correia <helder.pereira.correia@gmail.com>
@@ -24,6 +24,7 @@
 #include "core/session.h"
 #include "core/settings.h"
 #include "math/rational.h"
+#include "math/units.h"
 
 #include <QCoreApplication>
 #include <QStack>
@@ -413,39 +414,36 @@ Evaluator::Evaluator()
 
 void Evaluator::initializeBuiltInVariables()
 {
-    setVariable(QLatin1String("e"), CMath::e(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("ℯ"), CMath::e(), Variable::BuiltIn);
+    setVariable(QLatin1String("e"), HMath::e(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("ℯ"), HMath::e(), Variable::BuiltIn);
 
-    setVariable(QLatin1String("pi"), CMath::pi(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("π"), CMath::pi(), Variable::BuiltIn);
+    setVariable(QLatin1String("pi"), HMath::pi(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("π"), HMath::pi(), Variable::BuiltIn);
 
-    CNumber meter(1);
-    meter.modifyDimension("length", 1);
-    setVariable(QString::fromUtf8("meter"), meter, Variable::BuiltIn);
 
-    CNumber second(1);
-    second.modifyDimension("time", 1);
-    setVariable(QString::fromUtf8("second"), second, Variable::BuiltIn);
 
-    CNumber kilogram(1);
-    kilogram.modifyDimension("mass", 1);
-    setVariable(QString::fromUtf8("kilogram"), kilogram, Variable::BuiltIn);
+    setVariable(QString::fromUtf8("meter"), Units::meter(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("second"), Units::second(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("kilogram"), Units::kilogram(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("ampere"), Units::ampere(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("mole"), Units::mole(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("candela"), Units::candela(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("kelvin"), Units::kelvin(), Variable::BuiltIn);
 
-    CNumber ampere(1);
-    ampere.modifyDimension("el. current", 1);
-    setVariable(QString::fromUtf8("ampere"), ampere, Variable::BuiltIn);
-
-    CNumber mole(1);
-    mole.modifyDimension("amount", 1);
-    setVariable(QString::fromUtf8("mole"), mole, Variable::BuiltIn);
-
-    CNumber candela(1);
-    candela.modifyDimension("luminous intensity", 1);
-    setVariable(QString::fromUtf8("candela"), candela, Variable::BuiltIn);
-
-    CNumber kelvin(1);
-    kelvin.modifyDimension("temperature", 1);
-    setVariable(QString::fromUtf8("kelvin"), kelvin, Variable::BuiltIn);
+    setVariable(QString::fromUtf8("newton"), Units::newton(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("joule"), Units::joule(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("watt"), Units::watt(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("pascal"), Units::pascal(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("coulomb"), Units::coulomb(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("volt"), Units::volt(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("ohm"), Units::ohm(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("watt"), Units::watt(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("farad"), Units::farad(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("watt"), Units::watt(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("tesla"), Units::tesla(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("weber"), Units::weber(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("henry"), Units::henry(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("siemens"), Units::siemens(), Variable::BuiltIn);
 }
 
 void Evaluator::setExpression(const QString& expr)
@@ -732,6 +730,7 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
               // We're done with complex number */
               /* FIXME ! Handle numbers like 1+j2 */
               /* FIXME ! Handle both i and j cases */
+              /* FIXME really necessary here? */
               tokenText.append(ex.at(i));
               i++;
 	      tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
@@ -755,6 +754,7 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
               // We're done with complex number */
               /* FIXME ! Handle numbers like 1+j2 */
               /* FIXME ! Handle both i and j cases */
+              /* FIXME really necessary here? */
               tokenText.append(ex.at(i));
               i++;
 	      tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
@@ -773,6 +773,7 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
               // We're done with complex number */
               /* FIXME ! Handle numbers like 1+j2 */
               /* FIXME ! Handle both i and j cases */
+              /* FIXME really necessary here? */
               tokenText.append(ex.at(i));
               i++;
 	      tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
