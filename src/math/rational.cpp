@@ -82,6 +82,7 @@ Rational::Rational(const HNumber &num) :
         q0 = temp3;
         p1 = temp1 + a*temp2;
         q1 = q2;
+        if(HMath::frac(val).isZero()) break;
         val = HNumber(1)/HMath::frac(val);
         if(val>HNumber(MAXD)) break;
     }
