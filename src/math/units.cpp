@@ -15,47 +15,57 @@ void Units::findUnit(CNumber & number)
     /*
      *  match derived units
      */
-    if(number.sameDimension(joule())) {                  // energy or torque
+    if(number.sameDimension(joule())) {                             // energy or torque
         number.setDisplayUnit(joule(), "newton meter");
     }
-    else if(number.sameDimension(newton())) {          // force
+    else if(number.sameDimension(newton())) {                       // force
         number.setDisplayUnit(newton(), "newton");
     }
-    else if(number.sameDimension(watt())) {            // power
+    else if(number.sameDimension(watt())) {                         // power
         number.setDisplayUnit(watt(), "watt");
     }
-    else if(number.sameDimension(pascal())) {          // pressure or energy density
+    else if(number.sameDimension(pascal())) {                       // pressure or energy density
         number.setDisplayUnit(pascal(), "pascal");
     }
-    else if(number.sameDimension(coulomb())) {         // charge
+    else if(number.sameDimension(coulomb())) {                      // charge
         number.setDisplayUnit(coulomb(), "coulomb");
     }
-    else if(number.sameDimension(volt())) {            // electrical potential
+    else if(number.sameDimension(volt())) {                         // electrical potential
         number.setDisplayUnit(volt(), "volt");
     }
-    else if(number.sameDimension(ohm())) {             // el. resistance
+    else if(number.sameDimension(ohm())) {                          // el. resistance
         number.setDisplayUnit(ohm(), "ohm");
     }
-    else if(number.sameDimension(siemens())) {         // el. conductance
+    else if(number.sameDimension(siemens())) {                      // el. conductance
         number.setDisplayUnit(siemens(), "siemens");
     }
-    else if(number.sameDimension(farad())) {           // capacitance
+    else if(number.sameDimension(ohm()*meter())) {                  // el. resistivity
+        number.setDisplayUnit(ohm()*meter(), "ohm meter");
+    }
+    else if(number.sameDimension(siemens()/meter())) {              // el. conductivity
+        number.setDisplayUnit(siemens()/meter(), "siemens/meter");
+    }
+    else if(number.sameDimension(siemens()/meter()/mole())) {       // molar conductivity
+        number.setDisplayUnit(siemens()/meter()/mole(),
+                              "siemens/(meter mole)");
+    }
+    else if(number.sameDimension(farad())) {                        // capacitance
         number.setDisplayUnit(farad(), "farad");
     }
-    else if(number.sameDimension(tesla())) {           // magnetic flux density
+    else if(number.sameDimension(tesla())) {                        // magnetic flux density
         number.setDisplayUnit(tesla(), "tesla");
     }
-    else if(number.sameDimension(weber())) {           // magnetic flux
+    else if(number.sameDimension(weber())) {                        // magnetic flux
         number.setDisplayUnit(weber(), "weber");
     }
-    else if(number.sameDimension(henry())) {           // inductance
+    else if(number.sameDimension(henry())) {                        // inductance
         number.setDisplayUnit(henry(), "henry");
     }
-    else if(number.sameDimension(coulomb()/cbmeter())) {           // electric charge density
+    else if(number.sameDimension(coulomb()/cbmeter())) {            // electric charge density
         number.setDisplayUnit(coulomb()/cbmeter(),
                               QString::fromUtf8("coulomb/meter³"));
     }
-    else if(number.sameDimension(coulomb()/sqmeter())) {           // surface charge density or el. flux
+    else if(number.sameDimension(coulomb()/sqmeter())) {            // surface charge density or el. flux
         number.setDisplayUnit(coulomb()/sqmeter(),
                               QString::fromUtf8("coulomb/meter²"));
     }
@@ -72,9 +82,9 @@ void Units::findUnit(CNumber & number)
         number.setDisplayUnit(joule()/kilogram()/kelvin(),
                               "joule/(kilogram kelvin)");
     }
-    else if(number.sameDimension(joule()/kilogram()/kelvin())) {    // specific heat capacity
-        number.setDisplayUnit(joule()/kilogram()/kelvin(),
-                              "joule/(kilogram kelvin)");
+    else if(number.sameDimension(joule()/mole()/kelvin())) {        // molar heat capacity
+        number.setDisplayUnit(joule()/mole()/kelvin(),
+                              "joule/(mole kelvin)");
     }
     else if(number.sameDimension(mole()/second()/cbmeter())) {      // catalytic activity
         number.setDisplayUnit(mole()/second()/cbmeter(),
@@ -83,17 +93,26 @@ void Units::findUnit(CNumber & number)
     else if(number.sameDimension(newton()/meter())) {               // surface tension
         number.setDisplayUnit(newton()/meter(), "newton/meter");
     }
-    else if(number.sameDimension(pascal()*second())) {               // dynamic viscosity
+    else if(number.sameDimension(pascal()*second())) {              // dynamic viscosity
         number.setDisplayUnit(pascal()*second(), "pascal second");
     }
-    else if(number.sameDimension(volt()/meter())) {                  // el. field
+    else if(number.sameDimension(volt()/meter())) {                 // el. field
         number.setDisplayUnit(volt()/meter(), "volt/meter");
     }
-    else if(number.sameDimension(watt()/meter()/kelvin())) {         // thermal conductivity
+    else if(number.sameDimension(watt()/meter()/kelvin())) {        // thermal conductivity
         number.setDisplayUnit(watt()/meter()/kelvin(), "watt/(meter kelvin)");
     }
-    else if(number.sameDimension(watt()/sqmeter())) {                // heat flux
+    else if(number.sameDimension(watt()/sqmeter())) {               // heat flux
         number.setDisplayUnit(watt()/sqmeter(), "watt/meter²");
+    }
+    else if(number.sameDimension(joule()/kelvin())) {               // entropy
+        number.setDisplayUnit(joule()/kelvin(), "joule/kelvin");
+    }
+    else if(number.sameDimension(joule()/kilogram())) {             // specific energy
+        number.setDisplayUnit(joule()/kilogram(), "joule/kilogram");
+    }
+    else if(number.sameDimension(joule()/kilogram())) {             // specific energy
+        number.setDisplayUnit(joule()/kilogram(), "joule/kilogram");
 
     }
     else
@@ -142,7 +161,6 @@ void Units::findUnit(CNumber & number)
             } else {
                 unit_name += " " + i.key(); // fall back to the dimension name
             }
-
             unit_name += exponent;
             ++i;
         }
