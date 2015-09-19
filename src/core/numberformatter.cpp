@@ -53,7 +53,7 @@ QString NumberFormatter::format(HNumber number)
 
             if(exponent == QLatin1String("^0")) exponent = QString::fromUtf8("⁰");
             else if(exponent == QLatin1String("^2")) exponent = QString::fromUtf8("²");
-            else if(exponent == QLatin1String("^3")) exponent = QLatin1String("³");
+            else if(exponent == QLatin1String("^3")) exponent = QString::fromUtf8("³");
             else if(exponent == QLatin1String("^4")) exponent = QString::fromUtf8("⁴") ;
             else if(exponent == QLatin1String("^5")) exponent = QString::fromUtf8("⁵") ;
             else if(exponent == QLatin1String("^6")) exponent = QString::fromUtf8("⁶") ;
