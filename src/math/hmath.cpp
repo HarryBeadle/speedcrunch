@@ -582,6 +582,8 @@ HNumber& HNumber::operator=( const HNumber & hn )
  */
 HNumber HNumber::operator+( const HNumber & num ) const
 {
+  if(this->isZero()) return num;
+  if(num.isZero()) return *this;
   HNumber result(num);
   if(!sameDimension(num))
       return HMath::nan(DimensionMismatch);
@@ -1317,9 +1319,9 @@ HNumber HMath::sqrt( const HNumber & n )
   HNumber result;
   if(n.hasDimension()) {
       result.d->dimension = new QMap<QString, Rational>();
-      QMap<QString, Rational>::const_iterator i = result.d->dimension->constBegin();
-      while (i != result.d->dimension->constEnd()) {
-          result.modifyDimension(i.key(), i.value()/Rational(1,2));
+      QMap<QString, Rational>::const_iterator i = n.d->dimension->constBegin();
+      while (i != n.d->dimension->constEnd()) {
+          result.modifyDimension(i.key(), i.value()*Rational(1,2));
           ++i;
       }
   }
@@ -1339,9 +1341,9 @@ HNumber HMath::cbrt( const HNumber & n )
   HNumber r;
   if(n.hasDimension()) {
       r.d->dimension = new QMap<QString, Rational>();
-      QMap<QString, Rational>::const_iterator i = r.d->dimension->constBegin();
-      while (i != r.d->dimension->constEnd()) {
-          r.modifyDimension(i.key(), i.value()/Rational(1,2));
+      QMap<QString, Rational>::const_iterator i = n.d->dimension->constBegin();
+      while (i != n.d->dimension->constEnd()) {
+          r.modifyDimension(i.key(), i.value()*Rational(1,3));
           ++i;
       }
   }

@@ -42,19 +42,25 @@
 #define ENSURE_POSITIVE_ARGUMENT_COUNT() \
     if (args.count() < 1) { \
         f->setError(InvalidParamCount); \
-        return HMath::nan(); \
+        return HMath::nan(InvalidParamCount); \
     }
 
 #define ENSURE_ARGUMENT_COUNT(i) \
     if (args.count() != (i)) { \
         f->setError(InvalidParamCount); \
-        return HMath::nan(); \
+        return HMath::nan(InvalidParamCount); \
     }
 
 #define ENSURE_EITHER_ARGUMENT_COUNT(i, j) \
     if (args.count() != (i) && args.count() != (j)) { \
         f->setError(InvalidParamCount); \
-        return HMath::nan(); \
+        return HMath::nan(InvalidParamCount); \
+    }
+
+#define ENSURE_SAME_DIMENSION() \
+    for(int i=0; i<args.count()-1; ++i) { \
+        if(!args.at(i).sameDimension(args.at((i)+1))) \
+            return HMath::nan(InvalidDimension);\
     }
 
 static FunctionRepo* s_FunctionRepoInstance = 0;
@@ -85,7 +91,7 @@ HNumber function_abs(Function* f, const Function::ArgumentList& args)
 HNumber function_average(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_POSITIVE_ARGUMENT_COUNT();
-    return std::accumulate(args.begin(), args.end(), HNumber(0)) / HNumber(args.count());
+    return std::accumulate(args.begin()+1, args.end(), *args.begin()) / HNumber(args.count());
 }
 
 HNumber function_absdev(Function* f, const Function::ArgumentList& args)
@@ -93,7 +99,7 @@ HNumber function_absdev(Function* f, const Function::ArgumentList& args)
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     HNumber mean = function_average(f, args);
     if (mean.isNan())
-        return HMath::nan();
+        return mean;   // pass the error along
     HNumber acc = 0;
     for (int i = 0; i < args.count(); ++i)
         acc += HMath::abs(args.at(i) - mean);
@@ -418,15 +424,17 @@ HNumber function_radians(Function* f, const Function::ArgumentList& args)
 HNumber function_max(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_POSITIVE_ARGUMENT_COUNT();
+    ENSURE_SAME_DIMENSION();
     return *std::max_element(args.begin(), args.end());
 }
 
 HNumber function_median(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_POSITIVE_ARGUMENT_COUNT();
+    ENSURE_SAME_DIMENSION();
 
     Function::ArgumentList sortedArgs = args;
-    qSort(sortedArgs);
+    std::sort(sortedArgs.begin(), sortedArgs.end());
 
     if ((args.count() & 1) == 1)
         return sortedArgs.at((args.count() - 1) / 2);
@@ -438,6 +446,7 @@ HNumber function_median(Function* f, const Function::ArgumentList& args)
 HNumber function_min(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_POSITIVE_ARGUMENT_COUNT();
+    ENSURE_SAME_DIMENSION();
     return *std::min_element(args.begin(), args.end());
 }
 
@@ -468,8 +477,10 @@ HNumber function_geomean(Function* f, const Function::ArgumentList& args)
 
     if (args.count() == 2)
         return HMath::sqrt(result);
-
-    return HMath::exp(HMath::ln(result) / HNumber(args.count()));
+    HNumber nominal = result;
+    nominal.clearDimension();
+    result = HMath::raise(result/nominal, HNumber(1)/HNumber(args.count()));
+    return HMath::exp(HMath::ln(nominal) / HNumber(args.count()))*result;
 }
 
 HNumber function_dec(Function* f, const Function::ArgumentList& args)

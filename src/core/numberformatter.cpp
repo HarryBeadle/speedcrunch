@@ -79,7 +79,7 @@ QString NumberFormatter::format(HNumber number)
                 unit_name += " mole";
 
             } else if(i.key() == "luminous intensity") {
-                unit_name += " canedela";
+                unit_name += " candela";
 
             } else if(i.key() == "temperature") {
                 unit_name += " kelvin";
