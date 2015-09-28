@@ -75,6 +75,7 @@ AboutBox::AboutBox(QWidget* parent, Qt::WindowFlags f)
         THANKS(Henrique Pinto)
         THANKS(James Yuzwalk)
         THANKS(Jean-Remy Falleri)
+        THANKS(Johannes Lange)
         THANKS(Jonathan Avraham)
         THANKS(Jonathan Riddell)
         THANKS(Lars Ivar Igesund)
@@ -105,74 +106,10 @@ AboutBox::AboutBox(QWidget* parent, Qt::WindowFlags f)
         ;
 
     msg += "</p><p>";
-    msg += QString("<b>%1</b><br><br>").arg(tr("Translations"));
-    const QString i18n = "<b>%1</b><br>%2<br><br>";
-    msg += i18n.arg(tr("Arabic"))
-               .arg("Ali Issa<br>Nancy Mattur<br>Kefah Issa");
-    msg += i18n.arg(tr("Argentinian Spanish"))
-               .arg("Lucas Sallovitz");
-    msg += i18n.arg(tr("Basque"))
-               .arg("I&ntilde;igo Salvador Azurmendi");
-    msg += i18n.arg(tr("Brazilian Portuguese"))
-               .arg("F&aacute;bio Margarido");
-    msg += i18n.arg(tr("Catalan"))
-               .arg("Francesc Farf&aacute;n");
-    msg += i18n.arg(tr("Czech"))
-               .arg("Blond'&aacute;k<br>Jakub Vasicek<br>Pavel Fric");
-    msg += i18n.arg(tr("Dutch"))
-               .arg("Bram Schoenmakers<br>Jaap Woldringh<br>Maarten Fonville<br>Kristof Bal");
-    msg += i18n.arg(tr("Estonian"))
-               .arg("Mihkel T&otilde;nnov");
-    msg += i18n.arg(tr("French"))
-               .arg("Cyril Foucr&eacute;<br>Gr&eacute;gory Treiber<br>Laurent Cozic");
-    msg += i18n.arg(tr("Finnish"))
-               .arg("J-P Nurmi<br>Lasse Liehu");
-    msg += i18n.arg(tr("German"))
-               .arg("Wolf Lammen");
-    msg += i18n.arg(tr("Hebrew"))
-               .arg("Jonathan Avraham");
-    msg += i18n.arg(tr("Hungarian"))
-               .arg("T&ouml;r&ouml;k B&aacute;lint");
-    msg += i18n.arg(tr("Indonesian"))
-               .arg("Ariya Hidayat<br>Yolla Indria");
-    msg += i18n.arg(tr("Italian"))
-               .arg("Alessio Sclocco");
-    msg += i18n.arg(tr("Japanese"))
-               .arg("Kazuki Hamasaki");
-    msg += i18n.arg(tr("Korean"))
-               .arg("Younguk Kim");
-    msg += i18n.arg(tr("Latvian"))
-               .arg("Ri&#x10D;ards Pauls");
-    msg += i18n.arg(tr("Norwegian"))
-               .arg("Thomas Finneid");
-    msg += i18n.arg(tr("Polish"))
-               .arg("Micha&#322; Trzebiatowski<br>Witold Wysota");
-    msg += i18n.arg(tr("Portuguese"))
-               .arg("Helder Correia");
-    msg += i18n.arg(tr("Romanian"))
-               .arg("Iulia Taulescu");
-    msg += i18n.arg(tr("Russian"))
-               .arg("Alexander Bushuev (aka winuntu)<br>Irek Khasyanov");
-    msg += i18n.arg(tr("Simplified Chinese"))
-               .arg("Liang Qi");
-    msg += i18n.arg(tr("Spanish"))
-               .arg("Francesc Farf&aacute;n");
-    msg += i18n.arg(tr("Swedish"))
-               .arg("Johan Thelin");
-    msg += i18n.arg(tr("Turkish"))
-               .arg("Serdar Soytetir");
-    msg += "</p>";
 
-    msg += "<p>";
-    const QString copy = "%1 %2 <b>%3</b><br>";
-    msg += copy.arg(tr("Copyright (C)")).arg("2004-2007").arg("Ariya Hidayat");
-    msg += copy.arg(tr("Copyright (C)")).arg("2005-2006").arg("Johan Thelin");
-    msg += copy.arg(tr("Copyright (C)")).arg("2007-2013").arg("Helder Correia");
-    msg += copy.arg(tr("Copyright (C)")).arg("2007-2009").arg("Wolf Lammen");
-    msg += copy.arg(tr("Copyright (C)")).arg("2007").arg("Petri Damst&eacute;n");
-    msg += copy.arg(tr("Copyright (C)")).arg("2008-2009").arg("Alessandro Portale");
-    msg += copy.arg(tr("Copyright (C)")).arg("2009").arg("Andreas Scherer");
-    msg += "</p>";
+    msg += "<p><b>";
+    msg += tr("Copyright (C) 2004-2015 The SpeedCrunch developers");
+    msg += "</b></p>";
 
     msg += "<p>";
     msg += tr("This program is free software; you can redistribute it and/or "
