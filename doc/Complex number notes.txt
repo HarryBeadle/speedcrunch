@@ -1,0 +1,30 @@
+Forms to parse :
+
+a
+a+ib
+a+jb
+a+bi
+a+bj
+ib
+jb
+bi
+bj
+
+Grammar of one complex number :
+
+complex_number -> part suite
+suite -> []
+suite -> + part suite
+
+part -> prefixed_part
+part -> postfixed_part
+
+part_prefixed -> i base_number
+part_prefixed -> j base_number
+
+part_postfixed -> base_number postfix
+
+postfix -> i
+postfix -> j
+postfix -> []
+

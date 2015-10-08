@@ -22,6 +22,7 @@
 
 #include "core/functions.h"
 #include "math/hmath.h"
+#include "math/cmath.h"
 
 #include <QHash>
 #include <QObject>
@@ -43,7 +44,7 @@ public:
     Token(Type type = stxUnknown, const QString& text = QString::null, int pos = -1);
     Token(const Token&);
 
-    HNumber asNumber() const;
+    CNumber asNumber() const;
     Op asOperator() const;
     QString description() const;
     bool isNumber() const { return m_type == stxNumber; }
@@ -79,11 +80,11 @@ class Evaluator : public QObject {
 public:
     struct Variable {
         enum Type { BuiltIn, UserDefined };
-        Variable() : name(""), value(HNumber(0)) { }
-        Variable(const QString& n, HNumber v, Type t = UserDefined) : name(n), value(v), type(t) { }
+        Variable() : name(""), value(CNumber(0)) { }
+        Variable(const QString& n, CNumber v, Type t = UserDefined) : name(n), value(v), type(t) { }
         bool operator==(const Variable& other) const { return name == other.name; }
         QString name;
-        HNumber value;
+        CNumber value;
         Type type;
     };
 
@@ -108,9 +109,9 @@ public:
     QString autoFix(const QString&);
     QString dump();
     QString error() const;
-    HNumber eval();
-    HNumber evalNoAssign();
-    HNumber evalUpdateAns();
+    CNumber eval();
+    CNumber evalNoAssign();
+    CNumber evalUpdateAns();
     QString expression() const;
     bool isValid();
     Tokens scan(const QString&, AutoFixPolicy = AutoFix) const;
@@ -122,7 +123,7 @@ public:
     QList<Variable> getVariables() const;
     QList<Variable> getUserDefinedVariables() const;
     QList<Variable> getUserDefinedVariablesPlusAns() const;
-    void setVariable(const QString&, HNumber, Variable::Type = Variable::UserDefined);
+    void setVariable(const QString&, CNumber, Variable::Type = Variable::UserDefined);
     void unsetVariable(const QString&);
     void unsetAllUserDefinedVariables();
     bool isBuiltInVariable(const QString&) const;
@@ -157,7 +158,7 @@ private:
     struct UserFunction {
         UserFunctionDescr descr;
 
-        QVector<HNumber> constants;
+        QVector<CNumber> constants;
         QStringList identifiers;
         QVector<Opcode> opcodes;
 
@@ -177,17 +178,17 @@ private:
     bool m_assignFunc;
     QStringList m_assignArg;
     QVector<Opcode> m_codes;
-    QVector<HNumber> m_constants;
+    QVector<CNumber> m_constants;
     QStringList m_identifiers;
     QHash<QString, Variable> m_variables;
     QHash<QString, UserFunction*> m_userFunctions;
 
-    const HNumber& checkOperatorResult(const HNumber&);
+    const CNumber& checkOperatorResult(const CNumber&);
     static QString stringFromFunctionError(Function*);
     void initializeBuiltInVariables();
-    HNumber exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& constants,
+    CNumber exec(const QVector<Opcode>& opcodes, const QVector<CNumber>& constants,
                  const QStringList& identifiers);
-    HNumber execUserFunction(UserFunction* function, QVector<HNumber>& arguments);
+    CNumber execUserFunction(UserFunction* function, QVector<CNumber>& arguments);
     UserFunction* getUserFunction(const QString&) const;
 };
 

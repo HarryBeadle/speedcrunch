@@ -22,7 +22,7 @@
 #include "core/numberformatter.h"
 #include "core/settings.h"
 #include "gui/syntaxhighlighter.h"
-#include "math/hmath.h"
+#include "math/cmath.h"
 #include "math/floatconfig.h"
 
 #include <QLatin1String>
@@ -48,7 +48,7 @@ ResultDisplay::ResultDisplay(QWidget* parent)
     setWordWrapMode(QTextOption::WrapAnywhere);
 }
 
-void ResultDisplay::append(const QString& expression, const HNumber& value)
+void ResultDisplay::append(const QString& expression, const CNumber& value)
 {
     ++m_count;
 
@@ -63,7 +63,7 @@ void ResultDisplay::append(const QString& expression, const HNumber& value)
         m_results.append("");
     } else {
         const char format = value.format() != 0 ? value.format() : 'e';
-        char* str = HMath::format(value, format, DECPRECISION);
+        char* str = CMath::format(value, format, DECPRECISION);
         m_results.append(str);
         free(str);
     }
@@ -75,7 +75,8 @@ void ResultDisplay::appendHistory(const QStringList& expressions, const QStringL
     for (int i = 0 ; i < count; ++i) {
         QString str = results.at(i);
         str.replace(',', '.');
-        HNumber result(str.toLatin1().constData());
+	/* FIXME ! Modify this function for complex number support ! */
+        CNumber result(str.toLatin1().constData());
 
         if (str.indexOf('b') == 1)
             result.setFormat('b');

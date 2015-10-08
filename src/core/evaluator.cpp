@@ -32,9 +32,9 @@
 #include <QFile>
 #include <QTextStream>
 
-QTextStream& operator<<(QTextStream& s, HNumber num)
+QTextStream& operator<<(QTextStream& s, CNumber num)
 {
-    char* str = HMath::format(num, 'f');
+    char* str = CMath::format(num, 'f');
     s << str;
     free(str);
     return s;
@@ -48,7 +48,7 @@ static void s_deleteEvaluator()
     delete s_evaluatorInstance;
 }
 
-const HNumber& Evaluator::checkOperatorResult(const HNumber& n)
+const CNumber& Evaluator::checkOperatorResult(const CNumber& n)
 {
     switch (n.error()) {
     case NoOperand:
@@ -227,10 +227,10 @@ Token& Token::operator=(const Token& token)
     return*this;
 }
 
-HNumber Token::asNumber() const
+CNumber Token::asNumber() const
 {
     QString text = m_text;
-    return isNumber() ? HNumber((const char*)text.toLatin1()) : HNumber(0);
+    return isNumber() ? CNumber((const char*)text.toLatin1()) : CNumber(0);
 }
 
 Token::Op Token::asOperator() const
@@ -374,11 +374,11 @@ Evaluator::Evaluator()
 
 void Evaluator::initializeBuiltInVariables()
 {
-    setVariable(QLatin1String("e"), HMath::e(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("ℯ"), HMath::e(), Variable::BuiltIn);
+    setVariable(QLatin1String("e"), CMath::e(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("ℯ"), CMath::e(), Variable::BuiltIn);
 
-    setVariable(QLatin1String("pi"), HMath::pi(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("π"), HMath::pi(), Variable::BuiltIn);
+    setVariable(QLatin1String("pi"), CMath::pi(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("π"), CMath::pi(), Variable::BuiltIn);
 }
 
 void Evaluator::setExpression(const QString& expr)
@@ -572,7 +572,14 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
                 ++i;
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
-            else { // We're done with integer number.
+            else if(ch == 'j') {
+              // We're done with complex number */
+              /* FIXME ! Handle numbers like 1+j2 */
+              /* FIXME ! Handle both i and j cases */
+              tokenText.append(ex.at(i));
+              i++;
+              state = Start;
+            } else { // We're done with integer number.
                 tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
                 tokenText = "";
                 state = Start;
@@ -661,7 +668,14 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
                 tokenText.append(ex.at(i++));
             else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
-            else { // We're done with floating-point number.
+            else if(ch == 'j') {
+              // We're done with complex number */
+              /* FIXME ! Handle numbers like 1+j2 */
+              /* FIXME ! Handle both i and j cases */
+              tokenText.append(ex.at(i));
+              i++;
+              state = Start;
+            } else { // We're done with floating-point number.
                 tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
                 tokenText = "";
                 state = Start;
@@ -748,7 +762,7 @@ void Evaluator::compile(const Tokens& tokens)
         if (tokenType == Token::stxOperator && token.asOperator() == Token::Percent
              && syntaxStack.itemCount() >= 1 && !syntaxStack.top().isOperator())
         {
-            m_constants.append(HNumber("0.01"));
+            m_constants.append(CNumber("0.01"));
             m_codes.append(Opcode(Opcode::Load, m_constants.count() - 1));
             m_codes.append(Opcode(Opcode::Mul));
 #ifdef EVALUATOR_DEBUG
@@ -1108,9 +1122,9 @@ void Evaluator::compile(const Tokens& tokens)
     }
 }
 
-HNumber Evaluator::evalNoAssign()
+CNumber Evaluator::evalNoAssign()
 {
-    HNumber result;
+    CNumber result;
 
     if (m_dirty) {
         Tokens tokens = scan(m_expression);
@@ -1118,7 +1132,7 @@ HNumber Evaluator::evalNoAssign()
         // Invalid expression?
         if (!tokens.valid()) {
             m_error = tr("invalid expression");
-            return HNumber(0);
+            return CNumber(0);
         }
 
         // Variable assignment?
@@ -1177,13 +1191,13 @@ HNumber Evaluator::evalNoAssign()
     return result;
 }
 
-HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& constants,
+CNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<CNumber>& constants,
                         const QStringList& identifiers) {
-    QStack<HNumber> stack;
+    QStack<CNumber> stack;
     QHash<int, QString> refs;
     int index;
-    HNumber val1, val2;
-    QVector<HNumber> args;
+    CNumber val1, val2;
+    QVector<CNumber> args;
     QString fname;
     Function* function;
     UserFunction* userFunction = NULL;
@@ -1206,7 +1220,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::Neg:
                 if (stack.count() < 1) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val1 = checkOperatorResult(-val1);
@@ -1217,7 +1231,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::Add:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1228,7 +1242,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::Sub:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1239,7 +1253,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::Mul:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1250,7 +1264,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::Div:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1261,28 +1275,28 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::Pow:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
-                val2 = checkOperatorResult(HMath::raise(val2, val1));
+                val2 = checkOperatorResult(CMath::raise(val2, val1));
                 stack.push(val2);
                 break;
 
             case Opcode::Fact:
                 if (stack.count() < 1) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
-                val1 = checkOperatorResult(HMath::factorial(val1));
+                val1 = checkOperatorResult(CMath::factorial(val1));
                 stack.push(val1);
                 break;
 
             case Opcode::Modulo:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1293,18 +1307,18 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::IntDiv:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
                 val2 = checkOperatorResult(val2 / val1);
-                stack.push(HMath::integer(val2));
+                stack.push(CMath::integer(val2));
                 break;
 
             case Opcode::LSh:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1315,7 +1329,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::RSh:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1326,7 +1340,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::BAnd:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1337,7 +1351,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::BOr:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1349,24 +1363,24 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::Ref:
                 fname = identifiers.at(index);
                 if (m_assignArg.contains(fname)) // Argument.
-                    stack.push(HMath::nan());
+                    stack.push(CMath::nan());
                 else if (hasVariable(fname)) // Variable.
                     stack.push(getVariable(fname).value);
                 else { // Function.
                     function = FunctionRepo::instance()->find(fname);
                     if (function) {
-                        stack.push(HMath::nan());
+                        stack.push(CMath::nan());
                         refs.insert(stack.count(), fname);
                     } else if (m_assignFunc) {
                         // Allow arbitrary identifiers when declaring user functions.
-                        stack.push(HMath::nan());
+                        stack.push(CMath::nan());
                         refs.insert(stack.count(), fname);
                     } else if (hasUserFunction(fname)) {
-                        stack.push(HMath::nan());
+                        stack.push(CMath::nan());
                         refs.insert(stack.count(), fname);
                     } else {
                         m_error = fname + ": " + tr("unknown function or variable");
-                        return HMath::nan();
+                        return CMath::nan();
                     }
                 }
                 break;
@@ -1388,12 +1402,12 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
 
                 if (!function && !userFunction && !m_assignFunc) {
                     m_error = fname + ": " + tr("unknown function or variable");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
 
                 if (stack.count() < index) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
 
                 args.clear();
@@ -1409,27 +1423,27 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
                     if (!args.count() && userFunction->descr.arguments.count() != 0) {
                         m_error = QString::fromLatin1("%1(%2)").arg(userFunction->descr.name)
                             .arg(userFunction->descr.arguments.join(";"));
-                        return HMath::nan();
+                        return CMath::nan();
                     }
                 } else if (function) {
                     if (!args.count()) {
                         m_error = QString::fromLatin1("%1(%2)").arg(fname).arg(function->usage());
-                        return HMath::nan();
+                        return CMath::nan();
                     }
                 }
 
                 if (m_assignFunc) {
                     // Allow arbitrary identifiers when declaring user functions.
-                    stack.push(HMath::nan());
+                    stack.push(CMath::nan());
                 } else if (userFunction) {
                     stack.push(execUserFunction(userFunction, args));
                     if (!m_error.isEmpty())
-                        return HMath::nan();
+                        return CMath::nan();
                 } else {
                     stack.push(function->exec(args));
                     if (function->error()) {
                         m_error = stringFromFunctionError(function);
-                        return HMath::nan();
+                        return CMath::nan();
                     }
                 }
                 break;
@@ -1442,13 +1456,13 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
     // More than one value in stack? Unsuccesfull execution...
     if (stack.count() != 1) {
         m_error = tr("invalid expression");
-        return HMath::nan();
+        return CMath::nan();
     }
 
     return stack.pop();
 }
 
-HNumber Evaluator::execUserFunction(UserFunction* function, QVector<HNumber>& arguments) {
+CNumber Evaluator::execUserFunction(UserFunction* function, QVector<CNumber>& arguments) {
     /* TODO:
      *   OK ignore missing variables or user functions when declaring a user function.
      *   OK prohibit user function recursion by using a flag in UserFunction.
@@ -1459,18 +1473,18 @@ HNumber Evaluator::execUserFunction(UserFunction* function, QVector<HNumber>& ar
      */
     if (arguments.count() != function->descr.arguments.count()) {
         m_error = "<b>" + function->descr.name + "</b>: " + tr("wrong number of arguments");
-        return HMath::nan();
+        return CMath::nan();
     }
 
     if (function->inUse) {
         m_error = "<b>" + function->descr.name + "</b>: " + tr("user function recursion is not supported");
-        return HMath::nan();
+        return CMath::nan();
     }
 
     function->inUse = true;
 
     QVector<Opcode> newOpcodes;
-    QVector<HNumber> newConstants = function->constants; // Copy
+    QVector<CNumber> newConstants = function->constants; // Copy
 
     // Replace references to function arguments by constants.
     for (int i = 0; i < function->opcodes.count(); ++i) {
@@ -1490,7 +1504,7 @@ HNumber Evaluator::execUserFunction(UserFunction* function, QVector<HNumber>& ar
         newOpcodes.append(opcode);
     }
 
-    HNumber result = exec(newOpcodes, newConstants, function->identifiers);
+    CNumber result = exec(newOpcodes, newConstants, function->identifiers);
     if (!m_error.isEmpty()) {
         // Tell the user where the error happened.
         m_error = "<b>" + function->descr.name + "</b>: " + m_error;
@@ -1517,13 +1531,13 @@ bool Evaluator::isBuiltInVariable(const QString& id) const
     return m_variables.value(id).type == Variable::BuiltIn;
 }
 
-HNumber Evaluator::eval()
+CNumber Evaluator::eval()
 {
-    HNumber result = evalNoAssign(); // This sets m_assignId.
+    CNumber result = evalNoAssign(); // This sets m_assignId.
 
     if (isBuiltInVariable(m_assignId)) {
         m_error = tr("%1 is a reserved name, please choose another").arg(m_assignId);
-        return HMath::nan();
+        return CMath::nan();
     }
 
     // Handle user variable or function assignment.
@@ -1531,7 +1545,7 @@ HNumber Evaluator::eval()
         if (m_assignFunc) {
             if(hasVariable(m_assignId)) {
                 m_error = tr("%1 is a variable name, please choose another or delete the variable").arg(m_assignId);
-                return HMath::nan();
+                return CMath::nan();
             }
 
             // Check that each arguments are unique and not a reserved identifier.
@@ -1540,12 +1554,12 @@ HNumber Evaluator::eval()
 
                 if (m_assignArg.indexOf(argName, i + 1) != -1) {
                     m_error = tr("argument %1 is used more than once").arg(argName);
-                    return HMath::nan();
+                    return CMath::nan();
                 }
 
                 if (isBuiltInVariable(argName)) {
                     m_error = tr("%1 is a reserved name, please choose another").arg(argName);
-                    return HMath::nan();
+                    return CMath::nan();
                 }
             }
 
@@ -1558,7 +1572,7 @@ HNumber Evaluator::eval()
         } else {
             if(hasUserFunction(m_assignId)) {
                 m_error = tr("%1 is a user function name, please choose another or delete the function").arg(m_assignId);
-                return HMath::nan();
+                return CMath::nan();
             }
 
             setVariable(m_assignId, result);
@@ -1568,15 +1582,15 @@ HNumber Evaluator::eval()
     return result;
 }
 
-HNumber Evaluator::evalUpdateAns()
+CNumber Evaluator::evalUpdateAns()
 {
-    HNumber result = eval();
+    CNumber result = eval();
     if (m_error.isEmpty() && !m_assignFunc)
         setVariable(QLatin1String("ans"), result, Variable::BuiltIn);
     return result;
 }
 
-void Evaluator::setVariable(const QString& id, HNumber value, Variable::Type type)
+void Evaluator::setVariable(const QString& id, CNumber value, Variable::Type type)
 {
     m_variables.insert(id, Variable(id, value, type));
 }
@@ -1584,7 +1598,7 @@ void Evaluator::setVariable(const QString& id, HNumber value, Variable::Type typ
 Evaluator::Variable Evaluator::getVariable(const QString& id) const
 {
     if (id.isEmpty())
-        return Variable(QLatin1String(""), HNumber(0));
+        return Variable(QLatin1String(""), CNumber(0));
 
     return m_variables.value(id);
 }
@@ -1631,7 +1645,7 @@ QList<Evaluator::Variable> Evaluator::getUserDefinedVariablesPlusAns() const
 
 void Evaluator::unsetAllUserDefinedVariables()
 {
-    HNumber ansBackup = getVariable(QLatin1String("ans")).value;
+    CNumber ansBackup = getVariable(QLatin1String("ans")).value;
     m_variables.clear();
     setVariable(QLatin1String("ans"), ansBackup, Variable::BuiltIn);
     initializeBuiltInVariables();
@@ -1761,8 +1775,8 @@ QString Evaluator::dump()
     result.append("  Constants:\n");
     for (c = 0; c < m_constants.count(); ++c) {
         QString vtext;
-        HNumber val = m_constants.at(c);
-        char* ss = HMath::format(val, 'f');
+        CNumber val = m_constants.at(c);
+        char* ss = CMath::format(val, 'f');
         result += QString("    #%1 = %2\n").arg(c).arg(ss);
         free(ss);
     }

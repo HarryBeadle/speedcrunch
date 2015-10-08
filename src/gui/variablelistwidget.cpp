@@ -33,7 +33,7 @@
 #include <QTreeWidget>
 #include <QVBoxLayout>
 
-static QString formatValue(const HNumber& value);
+static QString formatValue(const CNumber& value);
 
 VariableListWidget::VariableListWidget(QWidget* parent)
     : QWidget(parent)
@@ -210,9 +210,9 @@ void VariableListWidget::keyPressEvent(QKeyEvent* event)
     QWidget::keyPressEvent(event);
 }
 
-static QString formatValue(const HNumber& value)
+static QString formatValue(const CNumber& value)
 {
-    char* formatted = HMath::format(value, 'g');
+    char* formatted = CMath::format(value, 'g');
     QString result = QString::fromLatin1(formatted);
     if (Settings::instance()->radixCharacter() != '.')
         result.replace('.', Settings::instance()->radixCharacter());

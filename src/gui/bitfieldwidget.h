@@ -23,7 +23,7 @@
 #include <QLabel>
 #include <QWidget>
 
-class HNumber;
+class CNumber;
 
 class BitWidget : public QLabel {
     Q_OBJECT
@@ -64,7 +64,7 @@ protected:
     virtual void wheelEvent(QWheelEvent *we);
 
 public slots:
-    void updateBits(const HNumber&);
+    void updateBits(const CNumber&);
 
 private slots:
     void onBitChanged();

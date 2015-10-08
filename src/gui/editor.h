@@ -26,7 +26,7 @@ struct Constant;
 class ConstantCompletion;
 class EditorCompletion;
 class Evaluator;
-class HNumber;
+class CNumber;
 class SyntaxHighlighter;
 
 class QEvent;

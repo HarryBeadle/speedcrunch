@@ -22,7 +22,7 @@
 #include <QBasicTimer>
 #include <QPlainTextEdit>
 
-class HNumber;
+class CNumber;
 class SyntaxHighlighter;
 
 class ResultDisplay : public QPlainTextEdit
@@ -32,7 +32,7 @@ class ResultDisplay : public QPlainTextEdit
 public:
     explicit ResultDisplay(QWidget* parent = 0);
 
-    void append(const QString& expr, const HNumber& value);
+    void append(const QString& expr, const CNumber& value);
     void appendHistory(const QStringList& expressions, const QStringList& results);
     int count() const;
     bool isEmpty() const { return m_count == 0; }

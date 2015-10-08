@@ -21,10 +21,10 @@
 
 #include <QtCore/QString>
 
-class HNumber;
+class CNumber;
 
 struct NumberFormatter {
-	static QString format(const HNumber&);
+	static QString format(const CNumber&);
 };
 
 #endif

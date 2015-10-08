@@ -19,13 +19,13 @@
 #include "core/numberformatter.h"
 
 #include "core/settings.h"
-#include "math/hmath.h"
+#include "math/cmath.h"
 
-QString NumberFormatter::format(const HNumber& number)
+QString NumberFormatter::format(const CNumber& number)
 {
     Settings* settings = Settings::instance();
     const char format = number.format() != 0 ? number.format() : settings->resultFormat;
-    char* str = HMath::format(number, format, settings->resultPrecision);
+    char* str = CMath::format(number, format, settings->resultPrecision);
     QString result = QString::fromLatin1(str);
     free(str);
     if (settings->radixCharacter() != '.')

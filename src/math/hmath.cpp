@@ -1964,3 +1964,35 @@ struct MathInit{
 };
 
 MathInit mathinit;
+
+/**
+ * Parses a string containing a real number.
+ *
+ * Parameters :
+ *   str_in : pointer towards the string to parse
+ *   str_out : pointer towards a pointer towards the remaining of the string after parsing
+ */
+HNumber HMath::parse_str (const char * str_in, const char ** str_out) {
+
+  /* FIXME ! Duplicate code !!! */
+
+  /* FIXME ! Error management !!! */
+
+  const char * str = str_in;
+  t_itokens tokens;
+
+  HNumber x;
+  delete x.d;
+
+  x.d = new HNumberPrivate;
+  if ((x.d->error = parse(&tokens, &str)) == Success && *str == 0)
+    x.d->error = float_in(&x.d->fnum, &tokens);
+  float_geterror();
+
+  /* Store remaining of the string */
+  if (str_out != NULL)
+    *str_out = str;
+
+  return x;
+}
+

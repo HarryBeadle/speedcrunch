@@ -1128,7 +1128,7 @@ void MainWindow::saveSettings()
         QList<Evaluator::Variable> variables = m_evaluator->getUserDefinedVariablesPlusAns();
         for (int i = 0; i < variables.count(); ++i) {
             QString name = variables.at(i).name;
-            char* value = HMath::format(variables.at(i).value, 'e', DECPRECISION);
+            char* value = CMath::format(variables.at(i).value, 'e', DECPRECISION);
             m_settings->variables.append(QString("%1=%2").arg(name).arg(value));
             free(value);
         }
@@ -1246,8 +1246,8 @@ void MainWindow::clearEditor()
 void MainWindow::copyResultToClipboard()
 {
     QClipboard* cb = QApplication::clipboard();
-    HNumber num = m_evaluator->getVariable(QLatin1String("ans")).value;
-    char* strToCopy = HMath::format(num, m_settings->resultFormat, m_settings->resultPrecision);
+    CNumber num = m_evaluator->getVariable(QLatin1String("ans")).value;
+    char* strToCopy = CMath::format(num, m_settings->resultFormat, m_settings->resultPrecision);
     QString final(strToCopy);
     if (m_settings->radixCharacter() == ',')
         final.replace('.', ',');
@@ -1441,8 +1441,8 @@ void MainWindow::showSessionLoadDialog()
         if (type == Evaluator::Variable::BuiltIn && var != "ans")
             continue;
 
-        HNumber num(val.toLatin1().data());
-        if (num != HMath::nan())
+        CNumber num(val.toLatin1().data());
+        if (num != CMath::nan())
             m_evaluator->setVariable(var, num, type);
     }
 
@@ -1518,7 +1518,7 @@ void MainWindow::showSessionImportDialog()
 
         m_evaluator->setExpression(str);
 
-        HNumber result = m_evaluator->evalUpdateAns();
+        CNumber result = m_evaluator->evalUpdateAns();
         if (!m_evaluator->error().isEmpty()) {
             if (!ignoreAll) {
                 QMessageBox::StandardButton button =
@@ -1536,7 +1536,7 @@ void MainWindow::showSessionImportDialog()
             if (result.isNan()) {
                 m_widgets.editor->appendHistory(str, "");
             } else {
-                char* num = HMath::format(result, 'e', DECPRECISION);
+                char* num = CMath::format(result, 'e', DECPRECISION);
                 m_widgets.editor->appendHistory(str, num);
                 free(num);
                 m_widgets.editor->setAnsAvailable(true);
@@ -1773,7 +1773,7 @@ void MainWindow::saveSession()
     // Variables.
     for (int i = 0; i < variables.count(); ++i) {
         Evaluator::Variable var = variables.at(i);
-        char* value = HMath::format(var.value);
+        char* value = CMath::format(var.value);
         stream << var.name << "\n" << value << "\n";
         free(value);
     }
@@ -2249,7 +2249,7 @@ void MainWindow::restoreVariables()
         Evaluator::Variable::Type type = Evaluator::Variable::UserDefined;
         if (list.at(0) == QLatin1String("ans"))
             type = Evaluator::Variable::BuiltIn;
-        m_evaluator->setVariable(list.at(0), HNumber(list.at(1).toLatin1().data()), type);
+        m_evaluator->setVariable(list.at(0), CNumber(list.at(1).toLatin1().data()), type);
     }
 
     if (m_docks.variables)
@@ -2301,7 +2301,7 @@ void MainWindow::evaluateEditorExpression()
         return;
 
     m_evaluator->setExpression(expr);
-    HNumber result = m_evaluator->evalUpdateAns();
+    CNumber result = m_evaluator->evalUpdateAns();
 
     if (!m_evaluator->error().isEmpty()) {
         showStateLabel(m_evaluator->error());
@@ -2320,7 +2320,7 @@ void MainWindow::evaluateEditorExpression()
         m_widgets.editor->appendHistory(expr, "");
     } else {
         const char format = result.format() != 0 ? result.format() : 'e';
-        char* num = HMath::format(result, format, DECPRECISION);
+        char* num = CMath::format(result, format, DECPRECISION);
         m_widgets.editor->appendHistory(expr, num);
         free(num);
         m_widgets.editor->setAnsAvailable(true);
@@ -2401,8 +2401,8 @@ void MainWindow::handleCopyAvailable(bool copyAvailable)
 void MainWindow::handleBitsChanged(const QString& str)
 {
     clearEditor();
-    HNumber num(str.toLatin1().data());
-    insertTextIntoEditor(QString(HMath::format(num, 'h')));
+    CNumber num(str.toLatin1().data());
+    insertTextIntoEditor(QString(CMath::format(num, 'h')));
     showStateLabel(QString("Current value: %1").arg(NumberFormatter::format(num)));
 }
 

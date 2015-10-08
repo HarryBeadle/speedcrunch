@@ -27,10 +27,14 @@
 
 class HMath;
 class HNumberPrivate;
+class CNumber;
+class CMath;
 
 class HNumber
 {
   friend class HMath;
+  friend class CNumber;
+  friend class CMath;
   friend HNumber operator-( const HNumber & );
   friend HNumber operator-( const HNumber &, const HNumber& );
   friend bool operator>( const HNumber& l, const HNumber& r );
@@ -98,6 +102,8 @@ class HMath
   public:
     // FORMAT
     static char * format( const HNumber & n, char format = 'g', int prec = -1 );
+    // PARSING
+    static HNumber parse_str (const char * str_in, const char ** str_out);
     // CONSTANTS
     static HNumber e();
     static HNumber phi();

@@ -128,7 +128,9 @@ SOURCES += main.cpp \
            math/floatseries.c \
            math/floattrig.c \
            math/hmath.cpp \
-           math/number.c
+           math/number.c \
+	   math/cmath.cpp \
+	   math/cnumberparser.cpp
 
 RESOURCES += resources/speedcrunch.qrc
 TRANSLATIONS += resources/locale/ar.ts \
