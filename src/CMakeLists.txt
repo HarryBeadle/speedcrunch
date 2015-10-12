@@ -117,6 +117,33 @@ endif(WIN32)
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${BINDIR})
 include(InstallRequiredSystemLibraries)
 
+################################# PACKAGE #####################################
+
+set(CPACK_PACKAGE_VENDOR SpeedCrunch)
+set(CPACK_PACKAGE_VERSION ${speedcrunch_VERSION})
+set(CPACK_PACKAGE_INSTALL_DIRECTORY SpeedCrunch)
+set(CPACK_PACKAGE_EXECUTABLES ${PROGNAME} SpeedCrunch)
+
+if(WIN32)
+    if(NOT CPACK_GENERATOR)
+        if(PORTABLE_SPEEDCRUNCH)
+            set(CPACK_GENERATOR ZIP)
+        else(PORTABLE_SPEEDCRUNCH)
+            set(CPACK_GENERATOR NSIS)
+        endif(PORTABLE_SPEEDCRUNCH)
+    endif(NOT CPACK_GENERATOR)
+
+    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/../pkg/COPYING.rtf")
+    set(CPACK_NSIS_EXECUTABLES_DIRECTORY ${BINDIR})
+    set(CPACK_NSIS_INSTALLED_ICON_NAME "${BINDIR}\\\\${PROGNAME}.exe,0")
+    set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\resources\\\\speedcrunch.ico")
+    set(CPACK_NSIS_HELP_LINK "http://groups.google.com/group/speedcrunch")
+    set(CPACK_NSIS_URL_INFO_ABOUT "http://speedcrunch.org")
+    set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL true)
+endif(WIN32)
+
+include(CPack)
+
 ################################ UNINSTALL #####################################
 
 configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
