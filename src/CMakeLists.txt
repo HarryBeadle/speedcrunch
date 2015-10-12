@@ -90,7 +90,7 @@ if(NOT WIN32)
     set(ICONDIR "${SHAREDIR}/pixmaps/")
 endif(NOT WIN32)
 
-option(PORTABLE "Enable to build in portable mode" OFF)
+option(PORTABLE_SPEEDCRUNCH "Enable to build in portable mode" OFF)
 if(PORTABLE_SPEEDCRUNCH)
     add_definitions(-DSPEEDCRUNCH_PORTABLE)
 endif(PORTABLE_SPEEDCRUNCH)
