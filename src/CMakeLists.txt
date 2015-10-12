@@ -88,6 +88,10 @@ if(NOT WIN32)
     set(SHAREDIR "share/")
     set(MENUDIR "${SHAREDIR}/applications/")
     set(ICONDIR "${SHAREDIR}/pixmaps/")
+    set(BINDIR "bin")
+else(NOT WIN32)
+    set(BINDIR ".")
+    set(DATADIR ".")
 endif(NOT WIN32)
 
 option(PORTABLE_SPEEDCRUNCH "Enable to build in portable mode" OFF)
@@ -95,12 +99,23 @@ if(PORTABLE_SPEEDCRUNCH)
     add_definitions(-DSPEEDCRUNCH_PORTABLE)
 endif(PORTABLE_SPEEDCRUNCH)
 
-install(TARGETS ${PROGNAME} DESTINATION bin)
+install(TARGETS ${PROGNAME} DESTINATION ${BINDIR})
 
 if(NOT WIN32)
     install(FILES ../pkg/speedcrunch.desktop DESTINATION ${MENUDIR})
     install(FILES resources/speedcrunch.png DESTINATION ${ICONDIR})
+else(NOT WIN32)
+    install(FILES ../pkg/COPYING.rtf DESTINATION ${DATADIR})
 endif(NOT WIN32)
+
+include(../pkg/QtWin32Deploy.cmake)
+if(WIN32)
+    qtwin32_check_qt_version(5.5)
+    qtwin32_deploy_modules(${BINDIR} qtwin32_Qt5Widgets)
+    qtwin32_deploy_default_qt_conf(${BINDIR})
+endif(WIN32)
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${BINDIR})
+include(InstallRequiredSystemLibraries)
 
 ################################ UNINSTALL #####################################
 
