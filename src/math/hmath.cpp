@@ -496,7 +496,7 @@ void HNumber::cleanDimension()
 void HNumber::serialize(QJsonObject &json) const
 {
     const char f = format();
-    json["format"] = f;
+    json["format"] = QString(f);
     json["value"] = HMath::format(*this, f, DECPRECISION);
     if(hasUnit()) {
         json["unit"] = HMath::format(getUnit(), 'e', DECPRECISION);

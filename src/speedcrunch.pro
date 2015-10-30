@@ -1,4 +1,4 @@
-﻿equals(QT_MAJOR_VERSION, 5) {
+equals(QT_MAJOR_VERSION, 5) {
     lessThan(QT_MINOR_VERSION, 2) {
         error(Qt 5.2 or newer is required but version $$[QT_VERSION] was detected.)
     }
@@ -169,7 +169,7 @@ SOURCES += main.cpp \
            math/number.c \
 	   math/cmath.cpp \
 	   math/cnumberparser.cpp \
-           math/rational.cpp
+           math/rational.cpp \
            math/units.cpp
 
 RESOURCES += resources/speedcrunch.qrc

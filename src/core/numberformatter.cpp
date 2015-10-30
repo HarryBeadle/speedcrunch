@@ -1,4 +1,4 @@
-// This file is part of the SpeedCrunch project
+﻿// This file is part of the SpeedCrunch project
 // Copyright (C) 2013 Helder Correia <helder.pereira.correia@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -38,9 +38,9 @@ QString NumberFormatter::format(CNumber number)
     unit_name = ' ' + number.getUnitName();
     unit = number.getUnit();
     number.stripUnits();
-    number /= unit;
 
     const char format = number.format() != 0 ? number.format() : settings->resultFormat;
+    number /= unit;
     char* str = CMath::format(number, format, settings->resultPrecision);
     QString result = QString::fromLatin1(str);
     free(str);

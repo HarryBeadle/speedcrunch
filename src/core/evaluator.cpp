@@ -1186,7 +1186,6 @@ void Evaluator::compile(const Tokens& tokens)
 
                 // Rule for unary operator:  (op1) (op2) X -> (op1) X.
                 // Conditions: op2 is unary, token is not '('.
-                // Action: push (op2) to result e.g. "* - 2" becomes "*".
                 if (!ruleFound && token.asOperator() != Token::LeftPar
                         && syntaxStack.itemCount() >= 3)
                 {
@@ -1196,13 +1195,12 @@ void Evaluator::compile(const Tokens& tokens)
                     if (!x.isOperator() && op1.isOperator()
                          && (op2.asOperator() == Token::Plus || op2.asOperator() == Token::Minus)
                          && (!token.isOperator()
-                             || opPrecedence(token.asOperator()) <= Token::Asterisk))
+                             || opPrecedence(token.asOperator()) <= opPrecedence(Token::Asterisk)))
                     {
                         ruleFound = true;
                         if (op2.asOperator() == Token::Minus)
                             m_codes.append(Opcode(Opcode::Neg));
-                    }
-                    if (ruleFound) {
+
                         syntaxStack.pop();
                         syntaxStack.pop();
                         syntaxStack.push(x);
