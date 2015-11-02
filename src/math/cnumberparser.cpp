@@ -38,7 +38,10 @@ bool isnum (char c) {
  * Each of the following function parses one producion of the grammar */
 CNumber CNumberParser::part () {
   if (_isempty(str)) {
-    throw UnexpectedEnd();
+    return CMath::nan();
+  }
+  else if (strncmp(str, "NaN", 3) == 0) {
+    return CMath::nan();
   }
   else if (*str == 'i' || *str == 'j') {
     return part_prefixed();
@@ -47,7 +50,7 @@ CNumber CNumberParser::part () {
     return part_postfixed();
   }
   else {
-    throw UnexpectedSymbol(*str);
+    return CMath::nan();
   }
 }
 

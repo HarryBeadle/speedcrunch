@@ -38,6 +38,7 @@
 #ifndef CNUMBER_PARSER_HXX
 #define CNUMBER_PARSER_HXX
 
+#include <string.h>
 #include "hmath.h"
 #include "cmath.h"
 
