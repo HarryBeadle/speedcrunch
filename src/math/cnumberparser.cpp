@@ -18,21 +18,8 @@ void CNumberParser::parse (CNumber * Number) {
   *Number  = a + b;
 }
 
-/* FIXME !!! Duplicate !!! */
-
-/* sort of alias for (strlen == 0). I don't have access to a
-   POSIX manual, so I don't know how strlen reacts on NULL.*/
-static char
-_isempty(
-  const char* p)
-{
-  return p == NULL || *p == '\0';
-}
-
-/* FIXME ! Find isnum function in STDLIB manual !!! */
-bool isnum (char c) {
-  return ((unsigned char) c >= '0') && ((unsigned char) c <= '9');
-}
+/* Null string or empty string. strlen(NULL) is undefined. */
+static char _isempty(const char* p){ return p == NULL || *p == '\0'; }
 
 /* Parsing functions.                                                 *
  * Each of the following function parses one producion of the grammar */
@@ -46,7 +33,7 @@ CNumber CNumberParser::part () {
   else if (*str == 'i' || *str == 'j') {
     return part_prefixed();
   }
-  else if (isnum (*str) ) {
+  else if (isdigit (*str) ) {
     return part_postfixed();
   }
   else {
