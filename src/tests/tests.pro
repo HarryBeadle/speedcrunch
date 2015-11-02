@@ -1,3 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS = testhmath.pro testevaluator.pro testfloatnum.pro
+SUBDIRS = testhmath.pro testevaluator.pro testfloatnum.pro testcnumberparser.pro 
 
