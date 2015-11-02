@@ -60,7 +60,7 @@ static void checkDivisionByZero(const char* file, int line, const char* msg, con
     ++eval_total_tests;
 
     eval->setExpression(expr);
-    HNumber rn = eval->evalUpdateAns();
+    CNumber rn = eval->evalUpdateAns();
 
     if (eval->error().isEmpty()) {
         ++eval_failed_tests;
@@ -73,7 +73,7 @@ static void checkEval(const char* file, int line, const char* msg, const QString
     ++eval_total_tests;
 
     eval->setExpression(expr);
-    HNumber rn = eval->evalUpdateAns();
+    CNumber rn = eval->evalUpdateAns();
 
     if (!eval->error().isEmpty()) {
         if (!shouldFail) {
@@ -81,7 +81,7 @@ static void checkEval(const char* file, int line, const char* msg, const QString
             cerr << "[Line " << line << "]\t:" << msg << "  Error: " << qPrintable(eval->error()) << endl;
         }
     } else {
-        char* result = HMath::format(rn, 'f');
+        char* result = CMath::format(rn, 'f');
         if (shouldFail || strcmp(result, expected)) {
             ++eval_failed_tests;
             cerr << "[Line " << line << "]\t" << msg << "\tResult: " << result;
@@ -103,11 +103,11 @@ static void checkEvalPrecise(const char* file, int line, const char* msg, const 
     ++eval_total_tests;
 
     eval->setExpression(expr);
-    HNumber rn = eval->evalUpdateAns();
+    CNumber rn = eval->evalUpdateAns();
 
     // We compare up to 50 decimals, not exact number because it's often difficult
     // to represent the result as an irrational number, e.g. PI.
-    char* result = HMath::format(rn, 'f', 50);
+    char* result = CMath::format(rn, 'f', 50);
     if (strcmp(result, expected)) {
         ++eval_failed_tests;
         cerr << "[Line" << line <<"]:\t" << msg << "  Result: " << result << ", "<< "Expected: " << expected << endl;
