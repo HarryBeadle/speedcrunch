@@ -1,4 +1,4 @@
-/* cmath.cpp                                                               *
+/* cmath.cpp                                                                 *
  *                                                                           *
  * by Hadrien Theveneau - 2013                                               *
  *                                                                           *
@@ -677,119 +677,149 @@ CNumber CMath::tanh( const CNumber & x )
 }
 
 
-/*********************************************************/
-/* DUMMY FUNCTIONS, JUST FOR TEST                        */
-/* WARNING !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!              */
-/*********************************************************/
+/************************************************************/
+/* Wrappers towards functions defined only on real numbers  */
+/************************************************************/
 
-#define NOT_IMPLEMENTED_CNUMBER_1(fct) \
-  CNumber CNumber::fct( ) const { \
-    return CMath::nan(NotImplemented); \
+#define ENSURE_REAL(number, error)		\
+  if( !(number).isReal() )			\
+    return CMath::nan( error );
+
+#define REAL_WRAPPER_CNUMBER_1(fct, error)	\
+  CNumber CNumber::fct( ) const {		\
+    ENSURE_REAL(*this, error);			\
+    return CNumber( this->real.fct( ) );	\
   }
 
-#define NOT_IMPLEMENTED_CNUMBER_2(fct) \
-  CNumber CNumber::fct( const CNumber & ) const { \
-    return CMath::nan(NotImplemented); \
+#define REAL_WRAPPER_CNUMBER_2(fct, error)		\
+  CNumber CNumber::fct( const CNumber& x ) const {	\
+    ENSURE_REAL(*this, error);				\
+    ENSURE_REAL(x, error);				\
+    return CNumber( this->real.fct( x.real ) );		\
   }
 
-#define NOT_IMPLEMENTED_CNUMBER_3(fct) \
-  CNumber& CNumber::fct( const CNumber & ) { \
-    *this = CMath::nan(NotImplemented); \
-    return *this; \
+#define REAL_WRAPPER_CNUMBER_3(fct, error)		\
+  CNumber& CNumber::fct( const CNumber& x ) {		\
+    if( !this->isReal() ) {				\
+      *this = CMath::nan( error );			\
+      return *this;					\
+    }							\
+    if( !x.isReal() ) {					\
+      *this = CMath::nan( error );			\
+      return *this;					\
+    }							\
+    this->real.fct( x.real );				\
+    return *this;					\
   }
 
-#define NOT_IMPLEMENTED_CNUMBER_4(fct) \
-  int CNumber::fct() const { \
-    return 0; \
+#define REAL_WRAPPER_CNUMBER_4(fct, error)	\
+  int CNumber::fct() const {			\
+    if( !this->isReal() )			\
+      return 0; /* FIXME ! Better fail value */ \
+    return this->real.fct();			\
   }
 
-#define NOT_IMPLEMENTED_CMATH_NUM(fct) \
-  CNumber CMath::fct( const CNumber & ) { \
-    return CMath::nan(NotImplemented); \
+#define REAL_WRAPPER_CMATH_NUM(fct, error)	\
+  CNumber CMath::fct( const CNumber& x ) {	\
+    ENSURE_REAL(x, error);			\
+    return CNumber( HMath::fct( x.real ) );	\
   }
 
-#define NOT_IMPLEMENTED_CMATH_NUM_NUM(fct) \
-  CNumber CMath::fct( const CNumber &, const CNumber &) { \
-    return CMath::nan(NotImplemented); \
+#define REAL_WRAPPER_CMATH_NUM_NUM(fct, error)		\
+  CNumber CMath::fct( const CNumber& x1, const CNumber& x2) {	\
+    ENSURE_REAL(x1, error);				        \
+    ENSURE_REAL(x2, error);					\
+    return CNumber( HMath::fct( x1.real, x2.real ) );		\
   }
 
-#define NOT_IMPLEMENTED_CMATH_NUM_INT(fct) \
-  CNumber CMath::fct( const CNumber &, int ) { \
-    return CMath::nan(NotImplemented); \
+#define REAL_WRAPPER_CMATH_NUM_INT(fct, error)	\
+  CNumber CMath::fct( const CNumber& x1, int n) {	\
+    ENSURE_REAL(x1, error);				\
+    return CNumber( HMath::fct( x1.real, n ) );		\
   }
 
-#define NOT_IMPLEMENTED_CMATH_NUM_NUM_NUM(fct) \
-  CNumber CMath::fct( const CNumber &, const CNumber &, const CNumber & ) {	\
-    return CMath::nan(NotImplemented); \
+#define REAL_WRAPPER_CMATH_NUM_NUM_NUM(fct, error)		\
+  CNumber CMath::fct( const CNumber& x1, const CNumber& x2,	\
+		      const CNumber& x3) {                      \
+    ENSURE_REAL(x1, error);						\
+    ENSURE_REAL(x2, error);						\
+    ENSURE_REAL(x3, error);						\
+    return CNumber( HMath::fct( x1.real, x2.real, x3.real ) );	\
   }
 
-#define NOT_IMPLEMENTED_CMATH_NUM_NUM_NUM_NUM(fct) \
-  CNumber CMath::fct( const CNumber &, const CNumber &, const CNumber &, const CNumber & ) {	\
-    return CMath::nan(NotImplemented); \
+#define REAL_WRAPPER_CMATH_NUM_NUM_NUM_NUM(fct, error)	\
+  CNumber CMath::fct( const CNumber& x1, const CNumber& x2,	\
+		      const CNumber& x3, const CNumber& x4) {	\
+    ENSURE_REAL(x1, error);					\
+    ENSURE_REAL(x2, error);					\
+    ENSURE_REAL(x3, error);					\
+    ENSURE_REAL(x4, error);					\
+    return CNumber( HMath::fct( x1.real, x2.real,		\
+				x3.real, x4.real ) );		\
   }
 
 // CNumber
-NOT_IMPLEMENTED_CNUMBER_4( toInt );
-NOT_IMPLEMENTED_CNUMBER_2( operator& );
-NOT_IMPLEMENTED_CNUMBER_3( operator&= );
-NOT_IMPLEMENTED_CNUMBER_2( operator| );
-NOT_IMPLEMENTED_CNUMBER_3( operator|= );
-NOT_IMPLEMENTED_CNUMBER_2( operator^ );
-NOT_IMPLEMENTED_CNUMBER_3( operator^= );
-NOT_IMPLEMENTED_CNUMBER_1( operator~ );
-NOT_IMPLEMENTED_CNUMBER_2( operator>> );
-NOT_IMPLEMENTED_CNUMBER_2( operator<< );
+REAL_WRAPPER_CNUMBER_4( toInt, OutOfDomain );
+REAL_WRAPPER_CNUMBER_2( operator&, OutOfLogicRange );
+REAL_WRAPPER_CNUMBER_3( operator&=, OutOfLogicRange );
+REAL_WRAPPER_CNUMBER_2( operator|, OutOfLogicRange );
+REAL_WRAPPER_CNUMBER_3( operator|=, OutOfLogicRange );
+REAL_WRAPPER_CNUMBER_2( operator^, OutOfLogicRange );
+REAL_WRAPPER_CNUMBER_3( operator^=, OutOfLogicRange );
+REAL_WRAPPER_CNUMBER_1( operator~, OutOfLogicRange );
+REAL_WRAPPER_CNUMBER_2( operator>>, OutOfLogicRange );
+REAL_WRAPPER_CNUMBER_2( operator<<, OutOfLogicRange );
 // CMath GENERAL MATH
-NOT_IMPLEMENTED_CMATH_NUM( rad2deg );
-NOT_IMPLEMENTED_CMATH_NUM( deg2rad );
-NOT_IMPLEMENTED_CMATH_NUM( integer );
-NOT_IMPLEMENTED_CMATH_NUM( frac );
-NOT_IMPLEMENTED_CMATH_NUM( floor );
-NOT_IMPLEMENTED_CMATH_NUM( ceil );
-NOT_IMPLEMENTED_CMATH_NUM_NUM( gcd );
-NOT_IMPLEMENTED_CMATH_NUM_INT( round );
-NOT_IMPLEMENTED_CMATH_NUM_INT( trunc );
-NOT_IMPLEMENTED_CMATH_NUM( cbrt );
-NOT_IMPLEMENTED_CMATH_NUM( sgn );
+REAL_WRAPPER_CMATH_NUM( rad2deg, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM( deg2rad, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM( integer, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM( frac, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM( floor, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM( ceil, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_NUM( gcd, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_INT( round, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_INT( trunc, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM( cbrt, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM( sgn, OutOfDomain );
 // CMath EXPONENTIAL FUNCTION AND RELATED
-NOT_IMPLEMENTED_CMATH_NUM( arcsin );
-NOT_IMPLEMENTED_CMATH_NUM( arccos );
-NOT_IMPLEMENTED_CMATH_NUM( arctan );
-NOT_IMPLEMENTED_CMATH_NUM( arsinh );
-NOT_IMPLEMENTED_CMATH_NUM( arcosh );
-NOT_IMPLEMENTED_CMATH_NUM( artanh );
+REAL_WRAPPER_CMATH_NUM( arcsin, NotImplemented );
+REAL_WRAPPER_CMATH_NUM( arccos, NotImplemented );
+REAL_WRAPPER_CMATH_NUM( arctan, NotImplemented );
+REAL_WRAPPER_CMATH_NUM( arsinh, NotImplemented );
+REAL_WRAPPER_CMATH_NUM( arcosh, NotImplemented );
+REAL_WRAPPER_CMATH_NUM( artanh, NotImplemented );
 // CMath TRIGONOMETRY
-NOT_IMPLEMENTED_CMATH_NUM( cot );
-NOT_IMPLEMENTED_CMATH_NUM( sec );
-NOT_IMPLEMENTED_CMATH_NUM( csc );
+REAL_WRAPPER_CMATH_NUM( cot, NotImplemented );
+REAL_WRAPPER_CMATH_NUM( sec, NotImplemented );
+REAL_WRAPPER_CMATH_NUM( csc, NotImplemented );
 // CMath HIGHER MATH FUNCTIONS
-NOT_IMPLEMENTED_CMATH_NUM_NUM( factorial );
-NOT_IMPLEMENTED_CMATH_NUM( erf );
-NOT_IMPLEMENTED_CMATH_NUM( erfc );
-NOT_IMPLEMENTED_CMATH_NUM( gamma );
-NOT_IMPLEMENTED_CMATH_NUM( lnGamma );
+REAL_WRAPPER_CMATH_NUM_NUM( factorial, NotImplemented );
+REAL_WRAPPER_CMATH_NUM( erf, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM( erfc, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM( gamma, NotImplemented );
+REAL_WRAPPER_CMATH_NUM( lnGamma, NotImplemented );
 // CMath PROBABILITY
-NOT_IMPLEMENTED_CMATH_NUM_NUM( nCr );
-NOT_IMPLEMENTED_CMATH_NUM_NUM( nPr );
-NOT_IMPLEMENTED_CMATH_NUM_NUM_NUM( binomialPmf );
-NOT_IMPLEMENTED_CMATH_NUM_NUM_NUM( binomialCdf );
-NOT_IMPLEMENTED_CMATH_NUM_NUM( binomialMean );
-NOT_IMPLEMENTED_CMATH_NUM_NUM( binomialVariance );
-NOT_IMPLEMENTED_CMATH_NUM_NUM_NUM_NUM( hypergeometricPmf );
-NOT_IMPLEMENTED_CMATH_NUM_NUM_NUM_NUM( hypergeometricCdf );
-NOT_IMPLEMENTED_CMATH_NUM_NUM_NUM( hypergeometricMean );
-NOT_IMPLEMENTED_CMATH_NUM_NUM_NUM( hypergeometricVariance );
-NOT_IMPLEMENTED_CMATH_NUM_NUM( poissonPmf );
-NOT_IMPLEMENTED_CMATH_NUM_NUM( poissonCdf );
-NOT_IMPLEMENTED_CMATH_NUM( poissonMean );
-NOT_IMPLEMENTED_CMATH_NUM( poissonVariance );
+REAL_WRAPPER_CMATH_NUM_NUM( nCr, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_NUM( nPr, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_NUM_NUM( binomialPmf, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_NUM_NUM( binomialCdf, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_NUM( binomialMean, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_NUM( binomialVariance, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_NUM_NUM_NUM( hypergeometricPmf, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_NUM_NUM_NUM( hypergeometricCdf, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_NUM_NUM( hypergeometricMean, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_NUM_NUM( hypergeometricVariance, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_NUM( poissonPmf, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_NUM( poissonCdf, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM( poissonMean, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM( poissonVariance, OutOfDomain );
 // CMath LOGIC
-NOT_IMPLEMENTED_CMATH_NUM_NUM( mask );
-NOT_IMPLEMENTED_CMATH_NUM_NUM( sgnext );
-NOT_IMPLEMENTED_CMATH_NUM_NUM( ashr );
+REAL_WRAPPER_CMATH_NUM_NUM( mask, OutOfLogicRange );
+REAL_WRAPPER_CMATH_NUM_NUM( sgnext, OutOfLogicRange );
+REAL_WRAPPER_CMATH_NUM_NUM( ashr, OutOfLogicRange );
 // CMath IEEE-754 CONVERSION
-NOT_IMPLEMENTED_CMATH_NUM_NUM_NUM( decodeIeee754 );
-NOT_IMPLEMENTED_CMATH_NUM_NUM_NUM_NUM( decodeIeee754 );
-NOT_IMPLEMENTED_CMATH_NUM_NUM_NUM( encodeIeee754 );
-NOT_IMPLEMENTED_CMATH_NUM_NUM_NUM_NUM( encodeIeee754 );
+REAL_WRAPPER_CMATH_NUM_NUM_NUM( decodeIeee754, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_NUM_NUM_NUM( decodeIeee754, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_NUM_NUM( encodeIeee754, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_NUM_NUM_NUM( encodeIeee754, OutOfDomain );
 
