@@ -697,8 +697,9 @@ CNumber CMath::tanh( const CNumber & x )
 /* Wrappers towards functions defined only on real numbers  */
 /************************************************************/
 
+/* NaN is treated like real numbers for the purposes of wrappers */
 #define ENSURE_REAL(number, error)		\
-  if( !(number).isReal() )			\
+  if( !(number).isNan() && !(number).isReal() )	\
     return CMath::nan( error );
 
 #define REAL_WRAPPER_CNUMBER_1(fct, error)	\
