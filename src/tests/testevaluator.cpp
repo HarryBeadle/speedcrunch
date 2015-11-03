@@ -653,6 +653,16 @@ void test_user_functions()
     CHECK_EVAL("func1()", "20");    // = 2 * 5
 }
 
+void test_complex()
+{
+    // Check for basic complex number processing
+    CHECK_EVAL("1j", "0+1j");             // TODO : Smarter formatting
+    CHECK_EVAL("0.1j", "0.1j");
+    // Check for basic complex number evaluation
+    CHECK_EVAL("(1+1j)*(1-1j)", "2");
+    CHECK_EVAL("(1+1j)*(1+1j)", "0+2j");  // TODO : Smarter formatting
+}
+
 int main(int argc, char* argv[])
 {
     QCoreApplication app(argc, argv);
@@ -691,6 +701,8 @@ int main(int argc, char* argv[])
     test_comments();
 
     test_user_functions();
+
+    test_complex();
 
     cerr << eval_total_tests  << " total, " << eval_failed_tests << " failed";
     if (eval_failed_tests)
