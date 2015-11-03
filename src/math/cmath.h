@@ -59,9 +59,12 @@ class CNumber {
     CNumber& operator+=( const CNumber& );
     CNumber& operator-=( const CNumber& );
     CNumber operator*( const CNumber& ) const;
+    CNumber operator*( const HNumber& ) const;
+    CNumber operator*( int x) { return operator*( HNumber(x) ); }; /* Overload ambiguity resolution */
     CNumber& operator*=( const CNumber& );
     CNumber operator/( const CNumber& ) const;
     CNumber operator/( const HNumber& ) const;
+    CNumber operator/( int x) { return operator/( HNumber(x) ); }; /* Overload ambiguity resolution */
     CNumber& operator/=( const CNumber& );
     CNumber operator%( const CNumber& ) const;
     CNumber operator&( const CNumber& ) const;

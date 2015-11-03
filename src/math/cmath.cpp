@@ -254,6 +254,18 @@ CNumber CNumber::operator*( const CNumber & num ) const
 
 
 /**
+ * Multiplies with another REAL number.
+ */
+CNumber CNumber::operator*( const HNumber & num ) const
+{
+  CNumber result;
+  result.real = real*num;
+  result.imag = imag*num;
+  return result;
+}
+
+
+/**
  * Multiplies with another number.
  */
 CNumber& CNumber::operator*=( const CNumber & num )
