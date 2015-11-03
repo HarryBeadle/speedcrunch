@@ -53,6 +53,7 @@ class HNumber
 
     bool isNan() const;
     bool isZero() const;
+    bool isNearZero() const;
     bool isPositive() const;
     bool isNegative() const;
     bool isInteger() const;

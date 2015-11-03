@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "floatconvert.h"
+#include "hmath.h"
 #include "cmath.h"
 #include "cnumberparser.h"
 
@@ -440,7 +441,7 @@ char* CMath::format( const CNumber& cn, char format, int prec )
     return strdup("NaN");
 
   /* If number is real */
-  else if (cn.isReal())
+  else if (cn.imag.isNearZero())
 
     /* Reverts to normal formatting */
     return HMath::format(cn.real, format, prec);

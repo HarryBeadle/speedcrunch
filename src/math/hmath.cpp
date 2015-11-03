@@ -1996,3 +1996,7 @@ HNumber HMath::parse_str (const char * str_in, const char ** str_out) {
   return x;
 }
 
+bool HNumber::isNearZero() const {
+  return float_iszero(&(d->fnum)) || float_getexponent(&(d->fnum)) <= -80;
+}
+
