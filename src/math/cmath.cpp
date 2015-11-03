@@ -693,6 +693,33 @@ CNumber CMath::tanh( const CNumber & x )
 }
 
 
+/**
+ * Returns the cotangent of x. Note that x must be in radians.
+ */
+CNumber CMath::cot( const CNumber & x )
+{
+  return cos(x) / sin(x);
+}
+
+
+/**
+ * Returns the secant of x. Note that x must be in radians.
+ */
+CNumber CMath::sec( const CNumber & x )
+{
+  return CNumber(1) / cos(x);
+}
+
+
+/**
+ * Returns the cosecant of x. Note that x must be in radians.
+ */
+CNumber CMath::csc( const CNumber & x )
+{
+  return CNumber(1) / sin(x);
+}
+
+
 /************************************************************/
 /* Wrappers towards functions defined only on real numbers  */
 /************************************************************/
@@ -806,9 +833,7 @@ REAL_WRAPPER_CMATH_NUM( arsinh, NotImplemented );
 REAL_WRAPPER_CMATH_NUM( arcosh, NotImplemented );
 REAL_WRAPPER_CMATH_NUM( artanh, NotImplemented );
 // CMath TRIGONOMETRY
-REAL_WRAPPER_CMATH_NUM( cot, NotImplemented );
-REAL_WRAPPER_CMATH_NUM( sec, NotImplemented );
-REAL_WRAPPER_CMATH_NUM( csc, NotImplemented );
+/* All trigonometry functions accept complex numbers */
 // CMath HIGHER MATH FUNCTIONS
 REAL_WRAPPER_CMATH_NUM_NUM( factorial, NotImplemented );
 REAL_WRAPPER_CMATH_NUM( erf, OutOfDomain );
