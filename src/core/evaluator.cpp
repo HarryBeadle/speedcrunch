@@ -578,6 +578,8 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
               /* FIXME ! Handle both i and j cases */
               tokenText.append(ex.at(i));
               i++;
+	      tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
+	      tokenText = "";
               state = Start;
             } else { // We're done with integer number.
                 tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
@@ -674,6 +676,8 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
               /* FIXME ! Handle both i and j cases */
               tokenText.append(ex.at(i));
               i++;
+	      tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
+	      tokenText = "";
               state = Start;
             } else { // We're done with floating-point number.
                 tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
