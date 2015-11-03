@@ -23,7 +23,7 @@
 #include "core/functions.h"
 
 #include "core/settings.h"
-#include "math/CMath.h"
+#include "math/hmath.h"
 #include "math/cmath.h"
 
 #include <QCoreApplication>
@@ -89,6 +89,12 @@
         } \
     }
 
+#define CPLX_WRAP_1(fct, arg)			\
+  if (Settings::instance()->complexNumbers)	\
+    return CMath::fct(arg);			\
+  else						\
+    return CNumber(HMath::fct(arg.real));
+
 static FunctionRepo* s_FunctionRepoInstance = 0;
 
 // FIXME: destructor seems not to be called
@@ -109,17 +115,19 @@ CNumber Function::exec(const Function::ArgumentList& args)
 CNumber function_abs(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::abs(args.at(0));
+    CPLX_WRAP_1(abs, args.at(0));
 }
 
 CNumber function_average(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     return std::accumulate(args.begin(), args.end(), CNumber(0)) / CNumber(args.count());
 }
 
 CNumber function_absdev(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     CNumber mean = function_average(f, args);
     if (mean.isNan())
@@ -132,12 +140,14 @@ CNumber function_absdev(Function* f, const Function::ArgumentList& args)
 
 CNumber function_int(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::integer(args.at(0));
+    CPLX_WRAP_1(integer, args.at(0));
 }
 
 CNumber function_trunc(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_EITHER_ARGUMENT_COUNT(1, 2);
     CNumber num = args.at(0);
     if (args.count() == 2) {
@@ -162,23 +172,24 @@ CNumber function_trunc(Function* f, const Function::ArgumentList& args)
 CNumber function_frac(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::frac(args.at(0));
+    CPLX_WRAP_1(frac, args.at(0));
 }
 
 CNumber function_floor(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::floor(args.at(0));
+    CPLX_WRAP_1(floor, args.at(0));
 }
 
 CNumber function_ceil(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::ceil(args.at(0));
+    CPLX_WRAP_1(ceil, args.at(0));
 }
 
 CNumber function_gcd(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     for (int i = 0; i < args.count(); ++i)
         if (!args.at(i).isInteger()) {
@@ -190,6 +201,7 @@ CNumber function_gcd(Function* f, const Function::ArgumentList& args)
 
 CNumber function_round(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_EITHER_ARGUMENT_COUNT(1, 2);
     CNumber num = args.at(0);
     if (args.count() == 2) {
@@ -214,12 +226,13 @@ CNumber function_round(Function* f, const Function::ArgumentList& args)
 CNumber function_sqrt(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::sqrt(args.at(0));
+    CPLX_WRAP_1(sqrt, args.at(0));
 }
 
 CNumber function_variance(Function* f, const Function::ArgumentList& args)
 {
-    ENSURE_POSITIVE_ARGUMENT_COUNT();
+  /* TODO : complex mode switch for this function */
+  ENSURE_POSITIVE_ARGUMENT_COUNT();
 
     CNumber mean = function_average(f, args);
     if (mean.isNan())
@@ -234,6 +247,7 @@ CNumber function_variance(Function* f, const Function::ArgumentList& args)
 
 CNumber function_stddev(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     return CMath::sqrt(function_variance(f, args));
 }
@@ -241,37 +255,38 @@ CNumber function_stddev(Function* f, const Function::ArgumentList& args)
 CNumber function_cbrt(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::cbrt(args.at(0));
+    CPLX_WRAP_1(cbrt, args.at(0));
 }
 
 CNumber function_exp(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::exp(args.at(0));
+    CPLX_WRAP_1(exp, args.at(0));
 }
 
 CNumber function_ln(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::ln(args.at(0));
+    CPLX_WRAP_1(ln, args.at(0));
 }
 
 CNumber function_lg(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::lg(args.at(0));
+    CPLX_WRAP_1(lg, args.at(0));
 }
 
 CNumber function_lb(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::lb(args.at(0));
+    CPLX_WRAP_1(lb, args.at(0));
 }
 
 CNumber function_log(Function* f, const Function::ArgumentList& args)
 {
-    ENSURE_ARGUMENT_COUNT(2);
-    return CMath::log(args.at(0), args.at(1));
+     /* TODO : complex mode switch for this function */
+     ENSURE_ARGUMENT_COUNT(2);
+     return CMath::log(args.at(0), args.at(1));
 }
 
 CNumber function_sin(Function* f, const Function::ArgumentList& args)
@@ -279,7 +294,7 @@ CNumber function_sin(Function* f, const Function::ArgumentList& args)
     ENSURE_ARGUMENT_COUNT(1);
     CNumber angle = args.at(0);
     CONVERT_ARGUMENT_ANGLE(angle);
-    return CMath::sin(angle);
+    CPLX_WRAP_1(sin, angle);
 }
 
 CNumber function_cos(Function* f, const Function::ArgumentList& args)
@@ -295,7 +310,7 @@ CNumber function_tan(Function* f, const Function::ArgumentList& args)
     ENSURE_ARGUMENT_COUNT(1);
     CNumber angle = args.at(0);
     CONVERT_ARGUMENT_ANGLE(angle);
-    return CMath::tan(angle);
+    CPLX_WRAP_1(tan, angle);
 }
 
 CNumber function_cot(Function* f, const Function::ArgumentList& args)
@@ -303,7 +318,7 @@ CNumber function_cot(Function* f, const Function::ArgumentList& args)
     ENSURE_ARGUMENT_COUNT(1);
     CNumber angle = args.at(0);
     CONVERT_ARGUMENT_ANGLE(angle);
-    return CMath::cot(angle);
+    CPLX_WRAP_1(cot, angle);
 }
 
 CNumber function_sec(Function* f, const Function::ArgumentList& args)
@@ -311,7 +326,7 @@ CNumber function_sec(Function* f, const Function::ArgumentList& args)
     ENSURE_ARGUMENT_COUNT(1);
     CNumber angle = args.at(0);
     CONVERT_ARGUMENT_ANGLE(angle);
-    return CMath::sec(angle);
+    CPLX_WRAP_1(sec, angle);
 }
 
 CNumber function_csc(Function* f, const Function::ArgumentList& args)
@@ -319,13 +334,17 @@ CNumber function_csc(Function* f, const Function::ArgumentList& args)
     ENSURE_ARGUMENT_COUNT(1);
     CNumber angle = args.at(0);
     CONVERT_ARGUMENT_ANGLE(angle);
-    return CMath::csc(angle);
+    CPLX_WRAP_1(csc, angle);
 }
 
 CNumber function_arcsin(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    CNumber result = CMath::arcsin(args.at(0));
+    CNumber result;
+    if (Settings::instance()->complexNumbers)
+      result = CMath::arcsin(args.at(0));
+    else
+      result = CNumber( HMath::arccos( args.at(0).real ) );
     CONVERT_RESULT_ANGLE(result);
     return result;
 }
@@ -333,7 +352,11 @@ CNumber function_arcsin(Function* f, const Function::ArgumentList& args)
 CNumber function_arccos(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    CNumber result = CMath::arccos(args.at(0));
+    CNumber result;
+    if (Settings::instance()->complexNumbers)
+      result = CMath::arccos(args.at(0));
+    else
+      result = CNumber( HMath::arccos( args.at(0).real ) );
     CONVERT_RESULT_ANGLE(result);
     return result;
 }
@@ -341,7 +364,11 @@ CNumber function_arccos(Function* f, const Function::ArgumentList& args)
 CNumber function_arctan(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    CNumber result = CMath::arctan(args.at(0));
+    CNumber result;
+    if (Settings::instance()->complexNumbers)
+      result = CMath::arctan(args.at(0));
+    else
+      result = CNumber( HMath::arccos( args.at(0).real ) );
     CONVERT_RESULT_ANGLE(result);
     return result;
 }
@@ -349,76 +376,77 @@ CNumber function_arctan(Function* f, const Function::ArgumentList& args)
 CNumber function_sinh(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::sinh(args.at(0));
+    CPLX_WRAP_1(sinh, args.at(0));
 }
 
 CNumber function_cosh(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::cosh(args.at(0));
+    CPLX_WRAP_1(cosh, args.at(0));
 }
 
 CNumber function_tanh(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::tanh(args.at(0));
+    CPLX_WRAP_1(tanh, args.at(0));
 }
 
 CNumber function_arsinh(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::arsinh(args.at(0));
+    CPLX_WRAP_1(arsinh, args.at(0));
 }
 
 CNumber function_arcosh(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::arcosh(args.at(0));
+    CPLX_WRAP_1(arcosh, args.at(0));
 }
 
 CNumber function_artanh(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return CMath::artanh(args.at(0));
+    CPLX_WRAP_1(artanh, args.at(0));
 }
 
 CNumber function_erf(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
     ENSURE_REAL_ARGUMENT(0);
-    return CMath::erf(args.at(0));
+    CPLX_WRAP_1(erf, args.at(0));
 }
 
 CNumber function_erfc(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
     ENSURE_REAL_ARGUMENT(0);
-    return CMath::erfc(args.at(0));
+    CPLX_WRAP_1(erfc, args.at(0));
 }
 
 CNumber function_gamma(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
     ENSURE_REAL_ARGUMENT(0);
-    return CMath::gamma(args.at(0));
+    CPLX_WRAP_1(gamma, args.at(0));
 }
 
 CNumber function_lngamma(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
     ENSURE_REAL_ARGUMENT(0);
-    return CMath::lnGamma(args.at(0));
+    CPLX_WRAP_1(lnGamma, args.at(0));
 }
 
 CNumber function_sgn(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
     ENSURE_REAL_ARGUMENT(0);
-    return CMath::sgn(args.at(0));
+    CPLX_WRAP_1(sgn, args.at(0));
 }
 
 CNumber function_ncr(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(2);
     ENSURE_REAL_ARGUMENTS();
     return CMath::nCr(args.at(0), args.at(1));
@@ -426,6 +454,7 @@ CNumber function_ncr(Function* f, const Function::ArgumentList& args)
 
 CNumber function_npr(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(2);
     ENSURE_REAL_ARGUMENTS();
     return CMath::nPr(args.at(0), args.at(1));
@@ -435,18 +464,19 @@ CNumber function_degrees(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
     ENSURE_REAL_ARGUMENT(0);
-    return CMath::rad2deg(args.at(0));
+    CPLX_WRAP_1(rad2deg, args.at(0));
 }
 
 CNumber function_radians(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
     ENSURE_REAL_ARGUMENT(0);
-    return CMath::deg2rad(args.at(0));
+    CPLX_WRAP_1(deg2rad, args.at(0));
 }
 
 CNumber function_max(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     ENSURE_REAL_ARGUMENTS()
     return *std::max_element(args.begin(), args.end());
@@ -454,6 +484,7 @@ CNumber function_max(Function* f, const Function::ArgumentList& args)
 
 CNumber function_median(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     ENSURE_REAL_ARGUMENTS()
 
@@ -469,6 +500,7 @@ CNumber function_median(Function* f, const Function::ArgumentList& args)
 
 CNumber function_min(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     ENSURE_REAL_ARGUMENTS()
     return *std::min_element(args.begin(), args.end());
@@ -476,18 +508,21 @@ CNumber function_min(Function* f, const Function::ArgumentList& args)
 
 CNumber function_sum(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     return std::accumulate(args.begin(), args.end(), CNumber(0));
 }
 
 CNumber function_product(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     return std::accumulate(args.begin(), args.end(), CNumber(1), std::multiplies<CNumber>());
 }
 
 CNumber function_geomean(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
 
     CNumber result = std::accumulate(args.begin(), args.end(), CNumber(1),
@@ -507,24 +542,28 @@ CNumber function_geomean(Function* f, const Function::ArgumentList& args)
 
 CNumber function_dec(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(1);
     return CNumber(args.at(0)).setFormat('g');
 }
 
 CNumber function_hex(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(1);
     return CNumber(args.at(0)).setFormat('h');
 }
 
 CNumber function_oct(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(1);
     return CNumber(args.at(0)).setFormat('o');
 }
 
 CNumber function_bin(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(1);
     return CNumber(args.at(0)).setFormat('b');
 }
@@ -537,90 +576,105 @@ CNumber function_binompmf(Function* f, const Function::ArgumentList& args)
 
 CNumber function_binomcdf(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(3);
     return CMath::binomialCdf(args.at(0), args.at(1), args.at(2));
 }
 
 CNumber function_binommean(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(2);
     return CMath::binomialMean(args.at(0), args.at(1));
 }
 
 CNumber function_binomvar(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(2);
     return CMath::binomialVariance(args.at(0), args.at(1));
 }
 
 CNumber function_hyperpmf(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(4);
     return CMath::hypergeometricPmf(args.at(0), args.at(1), args.at(2), args.at(3));
 }
 
 CNumber function_hypercdf(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(4);
     return CMath::hypergeometricCdf(args.at(0), args.at(1), args.at(2), args.at(3));
 }
 
 CNumber function_hypermean(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(3);
     return CMath::hypergeometricMean(args.at(0), args.at(1), args.at(2));
 }
 
 CNumber function_hypervar(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(3);
     return CMath::hypergeometricVariance(args.at(0), args.at(1), args.at(2));
 }
 
 CNumber function_poipmf(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(2);
     return CMath::poissonPmf(args.at(0), args.at(1));
 }
 
 CNumber function_poicdf(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(2);
     return CMath::poissonCdf(args.at(0), args.at(1));
 }
 
 CNumber function_poimean(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(1);
     return CMath::poissonMean(args.at(0));
 }
 
 CNumber function_poivar(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(1);
     return CMath::poissonVariance(args.at(0));
 }
 
 CNumber function_mask(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(2);
     return CMath::mask(args.at(0), args.at(1));
 }
 
 CNumber function_unmask(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(2);
     return CMath::sgnext(args.at(0), args.at(1));
 }
 
 CNumber function_not(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(1);
 	return ~args.at(0);
 }
 
 CNumber function_and(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     return std::accumulate(args.begin(), args.end(), CNumber(-1),
         std::mem_fun_ref(&CNumber::operator&));
@@ -628,6 +682,7 @@ CNumber function_and(Function* f, const Function::ArgumentList& args)
 
 CNumber function_or(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     return std::accumulate(args.begin(), args.end(), CNumber(0),
         std::mem_fun_ref(&CNumber::operator|));
@@ -635,6 +690,7 @@ CNumber function_or(Function* f, const Function::ArgumentList& args)
 
 CNumber function_xor(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     return std::accumulate(args.begin(), args.end(), CNumber(0),
         std::mem_fun_ref(&CNumber::operator^));
@@ -642,30 +698,35 @@ CNumber function_xor(Function* f, const Function::ArgumentList& args)
 
 CNumber function_shl(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(2);
     return CMath::ashr(args.at(0), -args.at(1));
 }
 
 CNumber function_shr(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(2);
     return CMath::ashr(args.at(0), args.at(1));
 }
 
 CNumber function_idiv(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(2);
     return CMath::idiv(args.at(0), args.at(1));
 }
 
 CNumber function_mod(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(2);
     return args.at(0) % args.at(1);
 }
 
 CNumber function_ieee754_decode(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_EITHER_ARGUMENT_COUNT(3, 4);
     if (args.count() == 3) {
         return CMath::decodeIeee754(args.at(0), args.at(1), args.at(2));
@@ -676,6 +737,7 @@ CNumber function_ieee754_decode(Function* f, const Function::ArgumentList& args)
 
 CNumber function_ieee754_encode(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_EITHER_ARGUMENT_COUNT(3, 4);
     if (args.count() == 3) {
         return CMath::encodeIeee754(args.at(0), args.at(1), args.at(2));
@@ -686,48 +748,56 @@ CNumber function_ieee754_encode(Function* f, const Function::ArgumentList& args)
 
 CNumber function_ieee754_half_decode(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(1);
     return CMath::decodeIeee754(args.at(0), 5, 10);
 }
 
 CNumber function_ieee754_half_encode(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(1);
     return CMath::encodeIeee754(args.at(0), 5, 10);
 }
 
 CNumber function_ieee754_single_decode(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(1);
     return CMath::decodeIeee754(args.at(0), 8, 23);
 }
 
 CNumber function_ieee754_single_encode(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(1);
     return CMath::encodeIeee754(args.at(0), 8, 23);
 }
 
 CNumber function_ieee754_double_decode(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(1);
     return CMath::decodeIeee754(args.at(0), 11, 52);
 }
 
 CNumber function_ieee754_double_encode(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(1);
     return CMath::encodeIeee754(args.at(0), 11, 52);
 }
 
 CNumber function_ieee754_quad_decode(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(1);
     return CMath::decodeIeee754(args.at(0), 15, 112);
 }
 
 CNumber function_ieee754_quad_encode(Function* f, const Function::ArgumentList& args)
 {
+    /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(1);
     return CMath::encodeIeee754(args.at(0), 15, 112);
 }

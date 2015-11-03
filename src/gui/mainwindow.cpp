@@ -143,6 +143,7 @@ void MainWindow::createActions()
     m_actions.settingsBehaviorAutoResultToClipboard = new QAction(this);
     m_actions.settingsBehaviorParseAllRadixChar = new QAction(this);
     m_actions.settingsBehaviorStrictDigitGrouping = new QAction(this);
+    m_actions.settingsBehaviorComplexNumbers = new QAction(this);
     m_actions.settingsDisplayColorSchemeStandard = new QAction(this);
     m_actions.settingsDisplayColorSchemeSublime = new QAction(this);
     m_actions.settingsDisplayColorSchemeTerminal = new QAction(this);
@@ -197,6 +198,7 @@ void MainWindow::createActions()
     m_actions.settingsBehaviorAutoResultToClipboard->setCheckable(true);
     m_actions.settingsBehaviorParseAllRadixChar->setCheckable(true);
     m_actions.settingsBehaviorStrictDigitGrouping->setCheckable(true);
+    m_actions.settingsBehaviorComplexNumbers->setCheckable(true);
     m_actions.settingsDisplayColorSchemeStandard->setCheckable(true);
     m_actions.settingsDisplayColorSchemeSublime->setCheckable(true);
     m_actions.settingsDisplayColorSchemeTerminal->setCheckable(true);
@@ -330,6 +332,7 @@ void MainWindow::setActionsText()
     m_actions.settingsBehaviorAutoResultToClipboard->setText(MainWindow::tr("Automatic &Result to Clipboard"));
     m_actions.settingsBehaviorParseAllRadixChar->setText(MainWindow::tr("Detect &All Radix Characters"));
     m_actions.settingsBehaviorStrictDigitGrouping->setText(MainWindow::tr("&Strict Digit Groups Detection"));
+    m_actions.settingsBehaviorComplexNumbers->setText(MainWindow::tr("Enable complex numbers"));
     m_actions.settingsRadixCharComma->setText(MainWindow::tr("&Comma"));
     m_actions.settingsRadixCharDefault->setText(MainWindow::tr("&System Default"));
     m_actions.settingsRadixCharDot->setText(MainWindow::tr("&Dot"));
@@ -532,6 +535,7 @@ void MainWindow::createMenus()
     m_menus.behavior->addAction(m_actions.settingsBehaviorLeaveLastExpression);
     m_menus.behavior->addAction(m_actions.settingsBehaviorParseAllRadixChar);
     m_menus.behavior->addAction(m_actions.settingsBehaviorStrictDigitGrouping);
+    m_menus.behavior->addAction(m_actions.settingsBehaviorComplexNumbers);
     m_menus.behavior->addSeparator();
     m_menus.behavior->addAction(m_actions.settingsBehaviorAlwaysOnTop);
     m_menus.behavior->addAction(m_actions.settingsBehaviorMinimizeToTray);
@@ -873,6 +877,7 @@ void MainWindow::createFixedConnections()
     connect(m_actions.settingsBehaviorAutoResultToClipboard, SIGNAL(toggled(bool)), SLOT(setAutoResultToClipboardEnabled(bool)));
     connect(m_actions.settingsBehaviorParseAllRadixChar, SIGNAL(toggled(bool)), SLOT(setParseAllRadixChar(bool)));
     connect(m_actions.settingsBehaviorStrictDigitGrouping, SIGNAL(toggled(bool)), SLOT(setStrictDigitGrouping(bool)));
+    connect(m_actions.settingsBehaviorComplexNumbers, SIGNAL(toggled(bool)), SLOT(setComplexNumbers(bool)));
 
     connect(m_actions.settingsRadixCharComma, SIGNAL(triggered()), SLOT(setRadixCharacterComma()));
     connect(m_actions.settingsRadixCharDefault, SIGNAL(triggered()), SLOT(setRadixCharacterAutomatic()));
@@ -1034,6 +1039,7 @@ void MainWindow::applySettings()
 
     m_actions.settingsBehaviorParseAllRadixChar->setChecked(m_settings->parseAllRadixChar);
     m_actions.settingsBehaviorStrictDigitGrouping->setChecked(m_settings->strictDigitGrouping);
+    m_actions.settingsBehaviorComplexNumbers->setChecked(m_settings->complexNumbers);
 
     QFont font;
     font.fromString(m_settings->displayFont);
@@ -1686,6 +1692,12 @@ void MainWindow::setStrictDigitGrouping(bool b)
 {
     m_settings->strictDigitGrouping = b;
     emit radixCharacterChanged();   // FIXME?
+}
+
+void MainWindow::setComplexNumbers(bool b)
+{
+    m_settings->complexNumbers = b;
+    emit radixCharacterChanged();   // FIXME ?
 }
 
 void MainWindow::setAngleModeRadian()

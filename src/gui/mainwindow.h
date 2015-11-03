@@ -142,6 +142,7 @@ private slots:
     void setAutoResultToClipboardEnabled(bool);
     void setParseAllRadixChar(bool);
     void setStrictDigitGrouping(bool);
+    void setComplexNumbers(bool);
     void setSystemTrayIconEnabled(bool);
     void setVariableSaveEnabled(bool);
     void setUserFunctionSaveEnabled(bool b);
@@ -269,6 +270,7 @@ private:
         QAction* settingsBehaviorAutoResultToClipboard;
         QAction* settingsBehaviorParseAllRadixChar;
         QAction* settingsBehaviorStrictDigitGrouping;
+        QAction* settingsBehaviorComplexNumbers;
         QAction* settingsDisplayZoomIn;
         QAction* settingsDisplayZoomOut;
         QAction* settingsDisplayFont;

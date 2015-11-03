@@ -90,6 +90,7 @@ void Settings::load()
     windowPositionSave = settings->value(key + QLatin1String("WindowPositionSave"), true).toBool();
     parseAllRadixChar = settings->value(key + QLatin1String("ParseAllRadixChar"), true).toBool();
     strictDigitGrouping = settings->value(key + QLatin1String("StrictDigitGrouping"), true).toBool();
+    complexNumbers = settings->value(key + QLatin1String("ComplexNumbers"), false).toBool();
 
     digitGrouping = settings->value(key + QLatin1String("DigitGrouping"), 0).toInt();
     digitGrouping = std::min(3, std::max(0, digitGrouping));
@@ -237,6 +238,7 @@ void Settings::save()
     settings->setValue(key + QLatin1String("WindowPositionSave"), windowPositionSave);
     settings->setValue(key + QLatin1String("ParseAllRadixChar"), parseAllRadixChar);
     settings->setValue(key + QLatin1String("StrictDigitGrouping"), strictDigitGrouping);
+    settings->setValue(key + QLatin1String("ComplexNumbers"), complexNumbers);
 
     settings->setValue(key + QLatin1String("AngleMode"), QString(QChar(angleUnit)));
 

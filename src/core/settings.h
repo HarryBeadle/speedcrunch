@@ -39,6 +39,7 @@ public:
 
     bool parseAllRadixChar;
     bool strictDigitGrouping;
+    bool complexNumbers;
 
     char angleUnit; // 'r': radian; 'd': degree.
 
