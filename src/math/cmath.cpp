@@ -681,6 +681,33 @@ CNumber CMath::csc( const CNumber & x )
 }
 
 
+/**
+ * Returns the area hyperbolic sine of x.
+ */
+CNumber CMath::arsinh( const CNumber & x )
+{
+  return CMath::ln( x + CMath::sqrt( x*x + CNumber( 1 ) ) );
+}
+
+
+/**
+ * Returns the area hyperbolic cosine of x.
+ */
+CNumber CMath::arcosh( const CNumber & x )
+{
+  return CMath::ln( x + CMath::sqrt( x + CNumber( 1 ) ) * CMath::sqrt( x - CNumber( 1 ) ));
+}
+
+
+/**
+ * Returns the area hyperbolic tangent of x.
+ */
+CNumber CMath::artanh( const CNumber & x )
+{
+  return ( CNumber( 0.5 ) * CMath::ln( CNumber( 1 ) + x ) ) - ( CNumber( 0.5) * CMath::ln( CNumber( 1 ) - x ) );
+}
+
+
 /************************************************************/
 /* Wrappers towards functions defined only on real numbers  */
 /************************************************************/
@@ -792,9 +819,6 @@ REAL_WRAPPER_CMATH_NUM( sgn, OutOfDomain );
 REAL_WRAPPER_CMATH_NUM( arcsin, NotImplemented );
 REAL_WRAPPER_CMATH_NUM( arccos, NotImplemented );
 REAL_WRAPPER_CMATH_NUM( arctan, NotImplemented );
-REAL_WRAPPER_CMATH_NUM( arsinh, NotImplemented );
-REAL_WRAPPER_CMATH_NUM( arcosh, NotImplemented );
-REAL_WRAPPER_CMATH_NUM( artanh, NotImplemented );
 // CMath TRIGONOMETRY
 /* All trigonometry functions accept complex numbers */
 // CMath HIGHER MATH FUNCTIONS
