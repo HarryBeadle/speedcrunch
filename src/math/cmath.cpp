@@ -476,7 +476,7 @@ char* CMath::format( const CNumber& cn, char format, int prec )
 {
   /* If number is NaN */
   if (cn.isNan())
-    return "NaN";
+    return strdup("NaN");
 
   /* If number is real */
   else if (cn.isReal())
