@@ -57,19 +57,6 @@ CNumber::CNumber(int i) :
 {}
 
 
-///**
-// * Creates a new number from a string.
-// *
-// * In this implemendation, only real number parsing is support.
-// * Complex numbers are constructed by operations like 1+1*i.
-// */
-///* FIXME : Add support of (direct) complex number parsing */
-//CNumber::CNumber(const char* str) :
-//  real(str),
-//  imag(0)
-//{}
-
-
 /**
  * Creates a new number from a string.
  */
