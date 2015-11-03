@@ -708,6 +708,34 @@ CNumber CMath::artanh( const CNumber & x )
 }
 
 
+/**
+ * Returns the arc tangent of x.
+ */
+CNumber CMath::arctan( const CNumber & x )
+{
+
+  return CNumber( 0, 1 )  * ( CMath::ln( CNumber( 1 ) - CNumber( 0, 1 ) * x ) - CMath::ln( CNumber( 1 ) + CNumber( 0, 1 ) * x )  ) / 2;
+};
+
+
+/**
+ * Returns the arc sine of x.
+ */
+CNumber CMath::arcsin( const CNumber & x )
+{
+  return -CNumber( 0, 1 ) * CMath::ln( CNumber( 0, 1 )*x + sqrt( CNumber(1) - x*x  ) );
+};
+
+
+/**
+ * Returns the arc cosine of x.
+ */
+CNumber CMath::arccos( const CNumber & x )
+{
+  return -CNumber( 0, 1 ) * CMath::ln( x + sqrt( x*x - CNumber(1) ) );
+};
+
+
 /************************************************************/
 /* Wrappers towards functions defined only on real numbers  */
 /************************************************************/
@@ -816,9 +844,9 @@ REAL_WRAPPER_CMATH_NUM_INT( trunc, OutOfDomain );
 REAL_WRAPPER_CMATH_NUM( cbrt, OutOfDomain );
 REAL_WRAPPER_CMATH_NUM( sgn, OutOfDomain );
 // CMath EXPONENTIAL FUNCTION AND RELATED
-REAL_WRAPPER_CMATH_NUM( arcsin, NotImplemented );
-REAL_WRAPPER_CMATH_NUM( arccos, NotImplemented );
-REAL_WRAPPER_CMATH_NUM( arctan, NotImplemented );
+// REAL_WRAPPER_CMATH_NUM( arcsin, NotImplemented );
+// REAL_WRAPPER_CMATH_NUM( arccos, NotImplemented );
+// REAL_WRAPPER_CMATH_NUM( arctan, NotImplemented );
 // CMath TRIGONOMETRY
 /* All trigonometry functions accept complex numbers */
 // CMath HIGHER MATH FUNCTIONS
