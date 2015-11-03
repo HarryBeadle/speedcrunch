@@ -658,13 +658,16 @@ void test_complex()
     // Check for basic complex number processing
     CHECK_EVAL("1j", "0+1j");                      // TODO : Smarter formatting
     CHECK_EVAL("0.1j", "0+0.1j");                  // TODO : Smarter formatting
+    CHECK_EVAL(".1j", "0+0.1j");                   // TODO : Smarter formatting
     CHECK_EVAL("1E12j", "0+1000000000000j");       // TODO : Smarter formatting
     CHECK_EVAL("0.1E12j", "0+100000000000j");      // TODO : Smarter formatting
     CHECK_EVAL("1E-12j", "0+0.000000000001j");     // TODO : Smarter formatting
     CHECK_EVAL("0.1E-12j", "0+0.0000000000001j");  // TODO : Smarter formatting
+    // Check for some bugs introduced by first versions of complex number processing
+    CHECK_EVAL("0.1", "0.1");                      // TODO : Smarter formatting
     // Check for basic complex number evaluation
     CHECK_EVAL("(1+1j)*(1-1j)", "2");
-    CHECK_EVAL("(1+1j)*(1+1j)", "0+2j");  // TODO : Smarter formatting
+    CHECK_EVAL("(1+1j)*(1+1j)", "0+2j");           // TODO : Smarter formatting
 }
 
 int main(int argc, char* argv[])
