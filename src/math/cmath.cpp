@@ -131,6 +131,15 @@ bool CNumber::isReal() const
 
 
 /**
+ * Returns true if this number is approximately a real number
+ */
+bool CNumber::isNearReal() const
+{
+  return imag.isNearZero();
+}
+
+
+/**
  * Returns the preferred format (base/precision), default is 0
  */
 char CNumber::format() const
@@ -743,7 +752,7 @@ CNumber CMath::arccos( const CNumber & x )
 
 /* NaN is treated like real numbers for the purposes of wrappers */
 #define ENSURE_REAL(number, error)		\
-  if( !(number).isNan() && !(number).isReal() )	\
+  if( !(number).isNan() && !(number).isNearReal() )	\
     return CMath::nan( error );
 
 #define REAL_WRAPPER_CNUMBER_1(fct, error)	\
@@ -775,7 +784,7 @@ CNumber CMath::arccos( const CNumber & x )
 
 #define REAL_WRAPPER_CNUMBER_4(fct, error)	\
   int CNumber::fct() const {			\
-    if( !this->isReal() )			\
+    if( !this->isNearReal() )			\
       return 0; /* FIXME ! Better fail value */ \
     return this->real.fct();			\
   }

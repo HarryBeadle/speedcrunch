@@ -38,6 +38,7 @@ class CNumber {
     bool isInteger() const;
     bool isGaussian() const;
     bool isReal() const;
+    bool isNearReal() const;
 
 //TODO formats should be separated from numbers
 
