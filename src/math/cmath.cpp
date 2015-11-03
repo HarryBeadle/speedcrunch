@@ -765,7 +765,7 @@ CNumber CMath::csc( const CNumber & x )
 
 // CNumber
 REAL_WRAPPER_CNUMBER_4( toInt, OutOfDomain );
-REAL_WRAPPER_CNUMBER_2( operator%, OufOfDomain );
+REAL_WRAPPER_CNUMBER_2( operator%, OutOfDomain );
 REAL_WRAPPER_CNUMBER_2( operator&, OutOfLogicRange );
 REAL_WRAPPER_CNUMBER_3( operator&=, OutOfLogicRange );
 REAL_WRAPPER_CNUMBER_2( operator|, OutOfLogicRange );
