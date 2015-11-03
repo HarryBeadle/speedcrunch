@@ -36,6 +36,9 @@ CNumber CNumberParser::part () {
   else if (isdigit (*str) ) {
     return part_postfixed();
   }
+  else if (*str == '-' || *str == '+')
+    /* Should happens only for first part */
+    return part_postfixed();
   else {
     return CMath::nan();
   }
