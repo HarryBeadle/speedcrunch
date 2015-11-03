@@ -33,12 +33,10 @@ CNumber CNumberParser::part () {
   else if (*str == 'i' || *str == 'j') {
     return part_prefixed();
   }
-  else if (isdigit (*str) ) {
+  else if (isdigit (*str) || *str == '-' || *str == '+' || *str == '.') {
+    /* Example cases : 1.0 -1.0 +1.0 .5 */
     return part_postfixed();
   }
-  else if (*str == '-' || *str == '+')
-    /* Should happens only for first part */
-    return part_postfixed();
   else {
     return CMath::nan();
   }
