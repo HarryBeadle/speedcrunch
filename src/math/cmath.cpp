@@ -510,7 +510,7 @@ char* CMath::format( const CNumber& cn, char format, int prec )
     }
 
     /* Allocate string for the result */
-    int l1 = strlen(real_part) + strlen(separator) + strlen(imag_part);
+    int l1 = strlen(real_part) + strlen(separator) + strlen(prefix) + strlen(imag_part) + strlen(postfix);
     char * result = (char *) malloc(l1);
 
     /* Concatenate parts of the result */
