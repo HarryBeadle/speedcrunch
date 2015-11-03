@@ -314,32 +314,6 @@ CNumber& CNumber::operator/=( const CNumber & num )
 
 
 /**
- * Modulo (rest of integer division)
- */
-CNumber CNumber::operator%( const CNumber & num ) const
-{
-  if (isReal() && num.isReal())
-    return *this % num;
-  else
-    /* FIXME ! Not supported on complex numbers */
-    return CMath::nan(NotImplemented);
-}
-
-
-/**
- * Performs an integer divide
- */
-CNumber CMath::idiv( const CNumber & dividend, const CNumber& divisor)
-{
-  if (dividend.isReal() && divisor.isReal())
-    return HMath::idiv(dividend.real, divisor.real);
-  else
-    /* FIXME ! Not supported on complex numbers */
-    return nan(NotImplemented);
-}
-
-
-/**
  * Returns -1, 0, 1 if n1 is less than, equal to, or more than n2.
  * Only valid for real numbers, since complex ones are not an ordered field.
  */
@@ -804,6 +778,7 @@ CNumber CMath::csc( const CNumber & x )
 
 // CNumber
 REAL_WRAPPER_CNUMBER_4( toInt, OutOfDomain );
+REAL_WRAPPER_CNUMBER_2( operator%, OufOfDomain );
 REAL_WRAPPER_CNUMBER_2( operator&, OutOfLogicRange );
 REAL_WRAPPER_CNUMBER_3( operator&=, OutOfLogicRange );
 REAL_WRAPPER_CNUMBER_2( operator|, OutOfLogicRange );
@@ -821,6 +796,7 @@ REAL_WRAPPER_CMATH_NUM( frac, OutOfDomain );
 REAL_WRAPPER_CMATH_NUM( floor, OutOfDomain );
 REAL_WRAPPER_CMATH_NUM( ceil, OutOfDomain );
 REAL_WRAPPER_CMATH_NUM_NUM( gcd, OutOfDomain );
+REAL_WRAPPER_CMATH_NUM_NUM( idiv, OutOfDomain );
 REAL_WRAPPER_CMATH_NUM_INT( round, OutOfDomain );
 REAL_WRAPPER_CMATH_NUM_INT( trunc, OutOfDomain );
 REAL_WRAPPER_CMATH_NUM( cbrt, OutOfDomain );
