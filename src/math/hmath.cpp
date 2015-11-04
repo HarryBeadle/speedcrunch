@@ -24,11 +24,17 @@
 #include "math/floatconst.h"
 #include "math/floatconvert.h"
 #include "math/floathmath.h"
+#include "math/rational.h"
 
 #include <sstream>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <QString>
+#include <QStringList>
+#include <QMap>
+
+#define RATIONAL_TOL HNumber("1e-20")
 
 //TODO make this configurable
 #define HMATH_WORKING_PREC (DECPRECISION + 3)
@@ -120,10 +126,13 @@ public:
   Error error;
   //TODO do not keep formats with numbers
   char format;
+  HNumber * unit;
+  const QString * unit_name;
+  QMap<QString, Rational> * dimension;
 };
 
 HNumberPrivate::HNumberPrivate()
-  : error(Success), format(0)
+  : error(Success), format(0), unit(NULL), unit_name(NULL), dimension(NULL)
 {
   h_init();
   float_create(&fnum);
@@ -132,6 +141,9 @@ HNumberPrivate::HNumberPrivate()
 HNumberPrivate::~HNumberPrivate()
 {
   float_free(&fnum);
+  delete unit;
+  delete unit_name;
+  delete dimension;
 }
 
 typedef char (*Float1ArgND)(floatnum x);
@@ -276,6 +288,11 @@ HNumber::HNumber( const char* str ) : d( new HNumberPrivate )
   float_geterror();
 }
 
+HNumber::HNumber(const QJsonObject &json) : d( new HNumberPrivate )
+{
+    *this = deSerialize(json);
+}
+
 /**
  * Destroys this number.
  */
@@ -329,7 +346,9 @@ bool HNumber::isNegative() const
  */
 bool HNumber::isInteger() const
 {
-  return float_isinteger(&d->fnum) != 0;
+    if(!isDimensionless())
+        return false;
+    return float_isinteger(&d->fnum) != 0;
 }
 
 /**
@@ -349,6 +368,176 @@ HNumber& HNumber::setFormat(char c)
    return *this;
 }
 
+HNumber HNumber::getUnit() const {
+   if(float_isnan(&d->fnum)) return *this;
+   return (d->unit) ? *d->unit : HNumber(1);
+}
+
+QString HNumber::getUnitName() const {
+   return (d->unit) ? *d->unit_name : "";
+}
+
+bool HNumber::hasUnit() const {
+  return (d->unit && d->unit_name);
+}
+
+/**
+ * Sets the display unit
+ */
+HNumber& HNumber::setDisplayUnit(const HNumber unit, const QString &name)
+{
+   if(unit.isZero() || unit.isNan()) {
+      *this = HMath::nan(InvalidDimension);
+   } else if(!sameDimension(unit)) {
+      *this = HMath::nan(DimensionMismatch);
+   } else if(!float_isnan(&d->fnum)) {
+      stripUnits();
+      d->unit = new HNumber(unit);
+      d->unit_name = new QString(name);
+      if(unit.d->dimension) {
+          //d->dimension = new QMap<QString, Rational>(*unit.d->dimension);
+          d->unit->d->dimension = new QMap<QString, Rational>(*unit.d->dimension);
+      }
+   }
+   return *this;
+}
+
+void HNumber::stripUnits() {
+    delete d->unit;
+    delete d->unit_name;
+    d->unit = NULL;
+    d->unit_name = NULL;
+}
+
+bool HNumber::hasDimension() const
+{
+    return d->dimension;
+}
+
+bool HNumber::isDimensionless() const
+{
+    if(!hasDimension()) return true;
+    QMap<QString, Rational>::const_iterator i = d->dimension->constBegin();
+    while (i != d->dimension->constEnd()) {
+        if(!i.value().isZero()) return false;
+        ++i;
+    }
+    return true;
+}
+
+
+// remove redundant entries (where exponent == 0)
+QMap<QString, Rational> HNumber::getDimension() const
+{
+    if(hasDimension())
+        return *d->dimension;
+    else
+        return QMap<QString, Rational>();
+}
+
+void HNumber::modifyDimension(const QString &key, const Rational &exponent)
+{
+    if(hasUnit()) {
+        d->unit->modifyDimension(key, exponent);
+    }
+    if(!d->dimension)
+        d->dimension = new QMap<QString, Rational>;
+    d->dimension->insert(key, exponent);
+    cleanDimension();
+
+}
+
+void HNumber::clearDimension()
+{
+    if(hasUnit()) {
+        d->unit->clearDimension();
+    }
+    delete d->dimension;
+    d->dimension = NULL;
+
+}
+
+bool HNumber::sameDimension(const HNumber &other) const
+{
+    if(!d->dimension && !other.d->dimension)
+        return true;  //both are dimensionless
+    if(bool(d->dimension) != bool(other.d->dimension))
+        return false; //only one is dimensionless
+    if(d->dimension->count() != other.d->dimension->count())
+        return false;
+
+    QMap<QString, Rational>::const_iterator i = d->dimension->constBegin();
+    while (i != d->dimension->constEnd()) {
+        if(!other.d->dimension->contains(i.key()))
+            return false;
+        if(other.d->dimension->value(i.key()) != i.value())
+            return false;
+        ++i;
+    }
+    return true;
+
+}
+
+void HNumber::cleanDimension()
+{
+    if(!hasDimension()) return;
+    QMap<QString, Rational>::iterator i = d->dimension->begin();
+    while (i != d->dimension->end()) {
+        if(i.value().isZero()) {
+            i = d->dimension->erase(i);
+        } else
+            ++i;
+
+    }
+    if(hasUnit())
+        d->unit->cleanDimension();
+}
+
+void HNumber::serialize(QJsonObject &json) const
+{
+    const char f = format();
+    json["format"] = f;
+    json["value"] = HMath::format(*this, f, DECPRECISION);
+    if(hasUnit()) {
+        json["unit"] = HMath::format(getUnit(), 'e', DECPRECISION);
+        json["unit_name"] = getUnitName();
+    }
+    if(hasDimension()) {
+        QJsonObject dim_json;
+        QMap<QString, Rational>::const_iterator i = d->dimension->constBegin();
+        while (i !=  d->dimension->constEnd()) {
+            const Rational & exp = i.value();
+            const QString & name = i.key();
+            dim_json[name] = exp.toString();
+            ++i;
+        }
+        json["dimension"] = dim_json;
+    }
+}
+
+HNumber HNumber::deSerialize(const QJsonObject &json)
+{
+    QString str = json["value"].toString();
+    str.replace(",", ".");
+    HNumber result(str.toLatin1().constData());
+    result.setFormat(json["format"].toString().toLatin1().constData()[0]);
+
+    if(json.contains("unit")) {
+        str = json["unit"].toString();
+        result.setDisplayUnit(HNumber(str.toLatin1().constData()), json["unit_name"].toString());
+    }
+    if(json.contains("dimension")) {
+        QJsonObject dim_json = json["dimension"].toObject();
+        for(int i=0; i<dim_json.count(); ++i) {
+            QString key = dim_json.keys()[i];
+            Rational val(dim_json[key].toString());
+            result.modifyDimension(key, val);
+        }
+    }
+
+    return result;
+}
+
 /**
  * Returns the number as an int.
  * It is meant to convert small (integer) numbers only and no
@@ -366,7 +555,25 @@ HNumber& HNumber::operator=( const HNumber & hn )
 {
   d->format = hn.format();
   d->error = hn.error();
+
   float_copy(&d->fnum, &hn.d->fnum, EXACT);
+
+  clearDimension();
+  if(hn.hasDimension()) {
+      this->d->dimension = new QMap<QString, Rational>(*hn.d->dimension);
+  }
+
+  stripUnits();
+  if(hn.hasUnit()) {
+    setDisplayUnit(hn.getUnit(), hn.getUnitName());
+  }
+
+  clearDimension();
+  if(hn.hasDimension()) {
+      d->dimension = new QMap<QString, Rational> (hn.getDimension());
+      if(hasUnit())
+          d->unit->d->dimension = new QMap<QString, Rational> (hn.getDimension());
+  }
   return *this;
 }
 
@@ -375,7 +582,11 @@ HNumber& HNumber::operator=( const HNumber & hn )
  */
 HNumber HNumber::operator+( const HNumber & num ) const
 {
-  HNumber result;
+  if(this->isZero()) return num;
+  if(num.isZero()) return *this;
+  HNumber result(num);
+  if(!sameDimension(num))
+      return HMath::nan(DimensionMismatch);
   call2Args(result.d, d, num.d, checkAdd);
   return result;
 }
@@ -393,7 +604,9 @@ HNumber& HNumber::operator+=( const HNumber & num )
  */
 HNumber operator-( const HNumber & n1, const HNumber & n2 )
 {
-  HNumber result;
+  HNumber result(n1);
+  if(!n1.sameDimension(n2))
+      return HMath::nan(DimensionMismatch);
   call2Args(result.d, n1.d, n2.d, checkSub);
   return result;
 }
@@ -412,6 +625,19 @@ HNumber& HNumber::operator-=( const HNumber & num )
 HNumber HNumber::operator*( const HNumber & num ) const
 {
   HNumber result;
+  if(hasDimension())
+      result.d->dimension = new QMap<QString, Rational>(*d->dimension); //copy dimension of *this
+  else if(num.hasDimension())
+      result.d->dimension = new QMap<QString, Rational>();
+  if(num.hasDimension()){
+      QMap<QString, Rational>::const_iterator i = num.d->dimension->constBegin();
+      while (i != num.d->dimension->constEnd()) {
+          QString key = i.key();
+          Rational r(result.d->dimension->value(key));
+          result.modifyDimension(key, r + i.value());
+          ++i;
+      }
+  }
   call2Args(result.d, d, num.d, float_mul);
   return result;
 }
@@ -430,6 +656,19 @@ HNumber& HNumber::operator*=( const HNumber & num )
 HNumber HNumber::operator/( const HNumber & num ) const
 {
   HNumber result;
+  if(hasDimension())
+      result.d->dimension = new QMap<QString, Rational>(*d->dimension); //copy dimension of *this
+  else if(num.hasDimension())
+      result.d->dimension = new QMap<QString, Rational>();
+  if(num.hasDimension()){
+      QMap<QString, Rational>::const_iterator i = num.d->dimension->constBegin();
+      while (i != num.d->dimension->constEnd()) {
+          QString key = i.key();
+          Rational r(result.d->dimension->value(key));
+          result.modifyDimension(key, r - i.value());
+          ++i;
+      }
+  }
   call2Args(result.d, d, num.d, float_div);
   return result;
 }
@@ -448,6 +687,9 @@ HNumber& HNumber::operator/=( const HNumber & num )
 HNumber HNumber::operator%( const HNumber & num ) const
 {
   HNumber result;
+  if(hasDimension()) {
+      result.d->dimension = new QMap<QString, Rational>(*d->dimension);
+  }
   call2Args(result.d, d, num.d, modwrap);
   return result;
 }
@@ -463,19 +705,23 @@ int HNumber::compare( const HNumber & other ) const
 }
 
 /**
- * Returns true if l is greater than r.
+ * Returns true if l is greater than r. Yields false if the dimensions mismatch.
  */
 bool operator>( const HNumber& l, const HNumber& r )
 {
-  return l.compare( r ) > 0;
+    if(!l.sameDimension(r))
+        return false;
+    return l.compare( r ) > 0;
 }
 
 /**
- * Returns true if l is less than r.
+ * Returns true if l is less than r. Yields false if the dimensions mismatch.
  */
 bool operator<( const HNumber& l, const HNumber& r )
 {
-  return l.compare( r ) < 0;
+    if(!l.sameDimension(r))
+        return false;
+    return l.compare( r ) < 0;
 }
 
 /**
@@ -483,31 +729,39 @@ bool operator<( const HNumber& l, const HNumber& r )
  */
 bool operator>=( const HNumber& l, const HNumber& r )
 {
-  return l.compare( r ) >= 0;
+    if(!l.sameDimension(r))
+        return false;
+    return l.compare( r ) >= 0;
 }
 
 /**
- * Returns true if l is less than or equal to r.
+ * Returns true if l is less than or equal to r. Yields false if the dimensions mismatch.
  */
 bool operator<=( const HNumber& l, const HNumber& r )
 {
-  return l.compare( r ) <= 0;
+    if(!l.sameDimension(r))
+        return false;
+    return l.compare( r ) <= 0;
 }
 
 /**
- * Returns true if l is equal to r.
+ * Returns true if l is equal to r. Yields false if the dimensions mismatch.
  */
 bool operator==( const HNumber& l, const HNumber& r )
 {
-  return l.compare( r ) == 0;
+    if(!l.sameDimension(r))
+        return false;
+    return l.compare( r ) == 0;
 }
 
 /**
- * Returns true if l is not equal to r.
+ * Returns true if l is not equal to r. Yields true if the dimensions mismatch.
  */
 bool operator!=( const HNumber& l, const HNumber& r )
 {
-  return l.compare( r ) != 0;
+    if(!l.sameDimension(r))
+        return true;
+    return l.compare( r ) != 0;
 }
 
 /**
@@ -516,9 +770,11 @@ bool operator!=( const HNumber& l, const HNumber& r )
  */
 HNumber HNumber::operator&( const HNumber & num ) const
 {
-  HNumber result;
-  call2ArgsND(result.d, d, num.d, float_and);
-  return result;
+    HNumber result;
+    if(!isDimensionless() || !num.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    call2ArgsND(result.d, d, num.d, float_and);
+    return result;
 }
 
 /**
@@ -536,9 +792,11 @@ HNumber& HNumber::operator&=( const HNumber & num )
  */
 HNumber HNumber::operator|( const HNumber & num ) const
 {
-  HNumber result;
-  call2ArgsND(result.d, d, num.d, float_or);
-  return result;
+    HNumber result;
+    if(!isDimensionless() || !num.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    call2ArgsND(result.d, d, num.d, float_or);
+    return result;
 }
 
 /**
@@ -556,9 +814,11 @@ HNumber& HNumber::operator|=( const HNumber & num )
  */
 HNumber HNumber::operator^( const HNumber & num ) const
 {
-  HNumber result;
-  call2ArgsND(result.d, d, num.d, float_xor);
-  return result;
+    HNumber result;
+    if(!isDimensionless() || !num.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    call2ArgsND(result.d, d, num.d, float_xor);
+    return result;
 }
 
 /**
@@ -576,9 +836,11 @@ HNumber& HNumber::operator^=( const HNumber& num )
  */
 HNumber HNumber::operator~() const
 {
-  HNumber result;
-  call1ArgND(result.d, d, float_not);
-  return result;
+    HNumber result;
+    if(!isDimensionless())
+        return HMath::nan(InvalidDimension);
+    call1ArgND(result.d, d, float_not);
+    return result;
 }
 
 /**
@@ -587,6 +849,8 @@ HNumber HNumber::operator~() const
 HNumber operator-( const HNumber & x )
 {
   HNumber result;
+  if(x.hasDimension())
+      result.d->dimension = new QMap<QString, Rational>(*x.d->dimension);
   call1ArgND(result.d, x.d, float_neg);
   return result;
 }
@@ -600,9 +864,11 @@ HNumber operator-( const HNumber & x )
  */
 HNumber HNumber::operator<<( const HNumber & num ) const
 {
-  HNumber result;
-  call2ArgsND(result.d, d, num.d, float_shl);
-  return result;
+    HNumber result;
+    if(!isDimensionless() || !num.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    call2ArgsND(result.d, d, num.d, float_shl);
+    return result;
 }
 
 /**
@@ -615,9 +881,11 @@ HNumber HNumber::operator<<( const HNumber & num ) const
  */
 HNumber HNumber::operator>>( const HNumber & num ) const
 {
-  HNumber result;
-  call2ArgsND(result.d, d, num.d, float_shr);
-  return result;
+    HNumber result;
+    if(!isDimensionless() || !num.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    call2ArgsND(result.d, d, num.d, float_shr);
+    return result;
 }
 
 namespace /* unnamed */ {
@@ -787,7 +1055,9 @@ char* HMath::format( const HNumber& hn, char format, int prec )
  */
 HNumber HMath::rad2deg( const HNumber & angle )
 {
-  return angle * (HNumber(180) / HMath::pi());
+    if(!angle.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    return angle * (HNumber(180) / HMath::pi());
 }
 
 /**
@@ -795,7 +1065,9 @@ HNumber HMath::rad2deg( const HNumber & angle )
  */
 HNumber HMath::deg2rad( const HNumber & angle )
 {
-  return angle * (HMath::pi() / HNumber(180));
+    if(!angle.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    return angle * (HMath::pi() / HNumber(180));
 }
 
 /**
@@ -844,13 +1116,15 @@ HNumber HMath::nan(Error error)
  */
 HNumber HMath::max( const HNumber & n1, const HNumber & n2 )
 {
-  switch ( float_cmp(&n1.d->fnum, &n2.d->fnum) )
-  {
-    case 0:
-    case 1:  return n1;
-    case -1: return n2;
-    default: return HMath::nan(checkNaNParam(*n1.d, n2.d));
-  }
+    if(!n1.sameDimension(n2))
+        return HMath::nan(DimensionMismatch);
+    switch ( float_cmp(&n1.d->fnum, &n2.d->fnum) )
+    {
+        case 0:
+        case 1:  return n1;
+        case -1: return n2;
+        default: return HMath::nan(checkNaNParam(*n1.d, n2.d));
+    }
 }
 
 /**
@@ -858,13 +1132,15 @@ HNumber HMath::max( const HNumber & n1, const HNumber & n2 )
  */
 HNumber HMath::min( const HNumber & n1, const HNumber & n2 )
 {
-  switch ( float_cmp(&n1.d->fnum, &n2.d->fnum) )
-  {
-    case 0:
-    case 1:  return n2;
-    case -1: return n1;
-    default: return HMath::nan(checkNaNParam(*n1.d, n2.d));
-  }
+    if(!n1.sameDimension(n2))
+        return HMath::nan(DimensionMismatch);
+    switch ( float_cmp(&n1.d->fnum, &n2.d->fnum) )
+    {
+        case 0:
+        case 1:  return n2;
+        case -1: return n1;
+        default: return HMath::nan(checkNaNParam(*n1.d, n2.d));
+    }
 }
 
 /**
@@ -873,6 +1149,8 @@ HNumber HMath::min( const HNumber & n1, const HNumber & n2 )
 HNumber HMath::abs( const HNumber & n )
 {
   HNumber result;
+  if(n.hasDimension())
+      result.d->dimension = new QMap<QString, Rational>(*n.d->dimension);
   call1ArgND(result.d, n.d, float_abs);
   return result;
 }
@@ -882,6 +1160,8 @@ HNumber HMath::abs( const HNumber & n )
  */
 HNumber HMath::round( const HNumber & n, int prec )
 {
+  if (!n.isDimensionless())
+    return HMath::nan(InvalidDimension);
   if (n.isNan())
     return HMath::nan(checkNaNParam(*n.d));
   HNumber result(n);
@@ -906,6 +1186,8 @@ HNumber HMath::round( const HNumber & n, int prec )
  */
 HNumber HMath::trunc( const HNumber & n, int prec )
 {
+  if (!n.isDimensionless())
+    return HMath::nan(InvalidDimension);
   if (n.isNan())
     return HMath::nan(checkNaNParam(*n.d));
   HNumber result(n);
@@ -930,6 +1212,8 @@ HNumber HMath::trunc( const HNumber & n, int prec )
  */
 HNumber HMath::integer( const HNumber & n )
 {
+  if (!n.isDimensionless())
+    return HMath::nan(InvalidDimension);
   HNumber result;
   call1ArgND(result.d, n.d, float_int);
   return result;
@@ -940,6 +1224,8 @@ HNumber HMath::integer( const HNumber & n )
  */
 HNumber HMath::frac( const HNumber & n )
 {
+  if (!n.isDimensionless())
+    return HMath::nan(InvalidDimension);
   HNumber result;
   call1ArgND(result.d, n.d, float_frac);
   return result;
@@ -950,6 +1236,8 @@ HNumber HMath::frac( const HNumber & n )
  */
 HNumber HMath::floor( const HNumber & n )
 {
+  if (!n.isDimensionless())
+    return HMath::nan(InvalidDimension);
   if (n.isNan())
     return HMath::nan(checkNaNParam(*n.d));
   HNumber r(n);
@@ -962,6 +1250,8 @@ HNumber HMath::floor( const HNumber & n )
  */
 HNumber HMath::ceil( const HNumber & n )
 {
+  if (!n.isDimensionless())
+    return HMath::nan(InvalidDimension);
   if (n.isNan())
     return HMath::nan(checkNaNParam(*n.d));
   HNumber r(n);
@@ -974,6 +1264,8 @@ HNumber HMath::ceil( const HNumber & n )
  */
 HNumber HMath::gcd( const HNumber & n1, const HNumber & n2 )
 {
+  if (!n1.isDimensionless() || !n2.isDimensionless())
+    return HMath::nan(InvalidDimension);
   if( !n1.isInteger() || !n2.isInteger() )
   {
     Error error = checkNaNParam(*n1.d, n2.d);
@@ -1010,6 +1302,8 @@ HNumber HMath::gcd( const HNumber & n1, const HNumber & n2 )
  */
 HNumber HMath::idiv( const HNumber & dividend, const HNumber& divisor)
 {
+  if (!dividend.isDimensionless() || !divisor.isDimensionless())
+    return HMath::nan(InvalidDimension);
   HNumber result;
   call2ArgsND(result.d, dividend.d, divisor.d, idivwrap);
   if (result.error() == TooExpensive)
@@ -1023,6 +1317,14 @@ HNumber HMath::idiv( const HNumber & dividend, const HNumber& divisor)
 HNumber HMath::sqrt( const HNumber & n )
 {
   HNumber result;
+  if(n.hasDimension()) {
+      result.d->dimension = new QMap<QString, Rational>();
+      QMap<QString, Rational>::const_iterator i = n.d->dimension->constBegin();
+      while (i != n.d->dimension->constEnd()) {
+          result.modifyDimension(i.key(), i.value()*Rational(1,2));
+          ++i;
+      }
+  }
   call1Arg(result.d, n.d, float_sqrt);
   return result;
 }
@@ -1037,6 +1339,14 @@ HNumber HMath::cbrt( const HNumber & n )
   if( n.isZero() )
     return n;
   HNumber r;
+  if(n.hasDimension()) {
+      r.d->dimension = new QMap<QString, Rational>();
+      QMap<QString, Rational>::const_iterator i = n.d->dimension->constBegin();
+      while (i != n.d->dimension->constEnd()) {
+          r.modifyDimension(i.key(), i.value()*Rational(1,3));
+          ++i;
+      }
+  }
   floatnum rnum = &r.d->fnum;
 
   // iterations to approximate result
@@ -1091,6 +1401,14 @@ HNumber HMath::raise( const HNumber & n1, int n )
   if (n1.isNan())
     return HMath::nan(checkNaNParam(*n1.d));
   HNumber r;
+  if(n1.hasDimension()) {
+      r.d->dimension = new QMap<QString, Rational>();
+      QMap<QString, Rational>::const_iterator i = r.d->dimension->constBegin();
+      while (i != r.d->dimension->constEnd()) {
+          r.modifyDimension(i.key(), i.value()*Rational(n));
+          ++i;
+      }
+  }
   float_raisei(&r.d->fnum, &n1.d->fnum, n, HMATH_EVAL_PREC);
   roundSetError(r.d);
   return r;
@@ -1101,18 +1419,34 @@ HNumber HMath::raise( const HNumber & n1, int n )
  */
 HNumber HMath::raise(const HNumber& n1, const HNumber& n2)
 {
-  HNumber result;
+    if(!n2.isDimensionless())
+        return HMath::nan(InvalidDimension);
 
-  // Work around issue 402: Powers with negative base and non-integer exponent are NaN.
-  if (n1.isNegative() && !n2.isInteger()) {
-      HNumber n1_ = -n1;
-      HNumber n2_ = -n2;
-      call2Args(result.d, n1_.d, n2_.d, float_raise);
-      return HNumber(-1) / result;
-  }
 
-  call2Args(result.d, n1.d, n2.d, float_raise);
-  return result;
+
+    HNumber result;
+    if(n1.hasDimension()){
+        //Try to convert n2 to a Rational. If n2 is not rational, return NaN.
+        Rational exp(n2);
+        if(abs(exp.toHNumber() - n2) >= RATIONAL_TOL)
+            return HMath::nan(OutOfDomain);
+        result.d->dimension = new QMap<QString, Rational>();
+        QMap<QString, Rational>::const_iterator i = n1.d->dimension->constBegin();
+        while (i != n1.d->dimension->constEnd()) {
+            result.modifyDimension(i.key(), i.value()*exp);
+            ++i;
+        }
+    }
+    // Work around issue 402: Powers with negative base and non-integer exponent are NaN.
+    if (n1.isNegative() && !n2.isInteger()) {
+        HNumber n1_ = -n1;
+        HNumber n2_ = -n2;
+        call2Args(result.d, n1_.d, n2_.d, float_raise);
+        return HNumber(-1) / result;
+    }
+
+    call2Args(result.d, n1.d, n2.d, float_raise);
+    return result;
 }
 
 /**
@@ -1120,9 +1454,11 @@ HNumber HMath::raise(const HNumber& n1, const HNumber& n2)
  */
 HNumber HMath::exp( const HNumber & x )
 {
-  HNumber result;
-  call1Arg(result.d, x.d, float_exp);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1Arg(result.d, x.d, float_exp);
+    return result;
 };
 
 /**
@@ -1131,9 +1467,11 @@ HNumber HMath::exp( const HNumber & x )
  */
 HNumber HMath::ln( const HNumber & x )
 {
-  HNumber result;
-  call1Arg(result.d, x.d, float_ln);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1Arg(result.d, x.d, float_ln);
+    return result;
 
 }
 
@@ -1143,9 +1481,11 @@ HNumber HMath::ln( const HNumber & x )
  */
 HNumber HMath::lg( const HNumber & x )
 {
-  HNumber result;
-  call1Arg(result.d, x.d, float_lg);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1Arg(result.d, x.d, float_lg);
+    return result;
 }
 
 /**
@@ -1154,9 +1494,11 @@ HNumber HMath::lg( const HNumber & x )
  */
 HNumber HMath::lb( const HNumber & x )
 {
-  HNumber result;
-  call1Arg(result.d, x.d, float_lb);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1Arg(result.d, x.d, float_lb);
+    return result;
 }
 
 /**
@@ -1173,9 +1515,11 @@ HNumber HMath::log( const HNumber & base, const HNumber & x )
  */
 HNumber HMath::sin( const HNumber & x )
 {
-  HNumber result;
-  call1ArgPoleCheck(result.d, x.d, float_sin);
-  return result;
+   if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1ArgPoleCheck(result.d, x.d, float_sin);
+    return result;
 }
 
 /**
@@ -1183,9 +1527,11 @@ HNumber HMath::sin( const HNumber & x )
  */
 HNumber HMath::cos( const HNumber & x )
 {
-  HNumber result;
-  call1ArgPoleCheck(result.d, x.d, float_cos);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1ArgPoleCheck(result.d, x.d, float_cos);
+    return result;
 }
 
 /**
@@ -1193,9 +1539,11 @@ HNumber HMath::cos( const HNumber & x )
  */
 HNumber HMath::tan( const HNumber & x )
 {
-  HNumber result;
-  call1ArgPoleCheck(result.d, x.d, float_tan);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1ArgPoleCheck(result.d, x.d, float_tan);
+    return result;
 }
 
 /**
@@ -1227,9 +1575,11 @@ HNumber HMath::csc( const HNumber & x )
  */
 HNumber HMath::arctan( const HNumber & x )
 {
-  HNumber result;
-  call1Arg(result.d, x.d, float_arctan);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1Arg(result.d, x.d, float_arctan);
+    return result;
 };
 
 /**
@@ -1237,9 +1587,11 @@ HNumber HMath::arctan( const HNumber & x )
  */
 HNumber HMath::arcsin( const HNumber & x )
 {
-  HNumber result;
-  call1Arg(result.d, x.d, float_arcsin);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1Arg(result.d, x.d, float_arcsin);
+    return result;
 };
 
 /**
@@ -1247,9 +1599,11 @@ HNumber HMath::arcsin( const HNumber & x )
  */
 HNumber HMath::arccos( const HNumber & x )
 {
-  HNumber result;
-  call1Arg(result.d, x.d, float_arccos);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1Arg(result.d, x.d, float_arccos);
+    return result;
 };
 
 /**
@@ -1257,9 +1611,11 @@ HNumber HMath::arccos( const HNumber & x )
  */
 HNumber HMath::sinh( const HNumber & x )
 {
-  HNumber result;
-  call1Arg(result.d, x.d, float_sinh);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1Arg(result.d, x.d, float_sinh);
+    return result;
 }
 
 /**
@@ -1267,9 +1623,11 @@ HNumber HMath::sinh( const HNumber & x )
  */
 HNumber HMath::cosh( const HNumber & x )
 {
-  HNumber result;
-  call1Arg(result.d, x.d, float_cosh);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1Arg(result.d, x.d, float_cosh);
+    return result;
 }
 
 /**
@@ -1277,9 +1635,11 @@ HNumber HMath::cosh( const HNumber & x )
  */
 HNumber HMath::tanh( const HNumber & x )
 {
-  HNumber result;
-  call1Arg(result.d, x.d, float_tanh);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1Arg(result.d, x.d, float_tanh);
+    return result;
 }
 
 /**
@@ -1287,9 +1647,11 @@ HNumber HMath::tanh( const HNumber & x )
  */
 HNumber HMath::arsinh( const HNumber & x )
 {
-  HNumber result;
-  call1Arg(result.d, x.d, float_arsinh);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1Arg(result.d, x.d, float_arsinh);
+    return result;
 }
 
 /**
@@ -1297,9 +1659,11 @@ HNumber HMath::arsinh( const HNumber & x )
  */
 HNumber HMath::arcosh( const HNumber & x )
 {
-  HNumber result;
-  call1Arg(result.d, x.d, float_arcosh);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1Arg(result.d, x.d, float_arcosh);
+    return result;
 }
 
 /**
@@ -1307,9 +1671,11 @@ HNumber HMath::arcosh( const HNumber & x )
  */
 HNumber HMath::artanh( const HNumber & x )
 {
-  HNumber result;
-  call1Arg(result.d, x.d, float_artanh);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1Arg(result.d, x.d, float_artanh);
+    return result;
 }
 
 /**
@@ -1317,9 +1683,11 @@ HNumber HMath::artanh( const HNumber & x )
  */
 HNumber HMath::gamma( const HNumber & x )
 {
-  HNumber result;
-  call1Arg(result.d, x.d, float_gamma);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1Arg(result.d, x.d, float_gamma);
+    return result;
 }
 
 /**
@@ -1327,9 +1695,11 @@ HNumber HMath::gamma( const HNumber & x )
  */
 HNumber HMath::lnGamma( const HNumber & x )
 {
-  HNumber result;
-  call1Arg(result.d, x.d, float_lngamma);
-  return result;
+    if(!x.isDimensionless())
+        return HMath::nan(InvalidDimension);
+    HNumber result;
+    call1Arg(result.d, x.d, float_lngamma);
+    return result;
 }
 
 /**
@@ -1351,6 +1721,8 @@ HNumber HMath::sgn( const HNumber & x )
  */
 HNumber HMath::nCr( const HNumber & n, const HNumber & r )
 {
+  if(!n.isDimensionless() || !r.isDimensionless())
+    return HMath::nan(InvalidDimension);
   Error error = checkNaNParam(*n.d, r.d);
   if (error != Success)
     return HMath::nan(error);
@@ -1414,6 +1786,8 @@ HNumber HMath::nPr( const HNumber & n, const HNumber & r )
  */
 HNumber HMath::factorial( const HNumber & x, const HNumber & base )
 {
+  if(!x.isDimensionless() || !base.isDimensionless())
+    return HMath::nan(InvalidDimension);
   floatstruct tmp;
 
   if (float_cmp(&c1, &base.d->fnum) == 0)
@@ -1453,8 +1827,10 @@ static bool checkpn(const HNumber& p, const HNumber& n)
 HNumber HMath::binomialPmf( const HNumber & k, const HNumber & n, const
 HNumber & p )
 {
+  if(!k.isDimensionless() || !n.isDimensionless() || !p.isDimensionless())
+    return HMath::nan(InvalidDimension);
   if ( ! k.isInteger() || ! checkpn(p, n) )
-    return HMath::nan();
+    return HMath::nan(InvalidParam);
 
   HNumber result = nCr( n, k );
   if ( result.isZero() )
@@ -1479,9 +1855,10 @@ HNumber & p )
  * \return the probability of up to \p k successes, otherwise \p NaN if the
  * function is not defined for the specified parameters.
  */
-HNumber HMath::binomialCdf( const HNumber & k, const HNumber & n, const
-HNumber & p )
+HNumber HMath::binomialCdf( const HNumber & k, const HNumber & n, const HNumber & p )
 {
+  if(!k.isDimensionless() || !n.isDimensionless() || !p.isDimensionless())
+    return HMath::nan(InvalidDimension);
   // FIXME use the regularized incomplete Beta function to avoid
   // the potentially very expensive loop
   if ( ! k.isInteger() || n.isNan() )
@@ -1534,6 +1911,8 @@ HNumber & p )
  */
 HNumber HMath::binomialMean( const HNumber & n, const HNumber & p )
 {
+  if(!n.isDimensionless() || !p.isDimensionless())
+    return HMath::nan(InvalidDimension);
   if ( ! checkpn(p, n) )
     return HMath::nan();
 
@@ -1580,6 +1959,8 @@ static bool checkNMn(const HNumber& N, const HNumber& M, const HNumber& n )
 HNumber HMath::hypergeometricPmf( const HNumber & k, const HNumber & N,
                                   const HNumber & M, const HNumber & n )
 {
+  if(!k.isDimensionless() || !N.isDimensionless() || !M.isDimensionless() || !n.isDimensionless())
+    return HMath::nan(InvalidDimension);
   if ( ! k.isInteger() || ! checkNMn(N, M, n) )
     return HMath::nan();
 
@@ -1603,6 +1984,8 @@ HNumber HMath::hypergeometricPmf( const HNumber & k, const HNumber & N,
 HNumber HMath::hypergeometricCdf( const HNumber & k, const HNumber & N,
                                   const HNumber & M, const HNumber & n )
 {
+  if(!k.isDimensionless() || !N.isDimensionless() || !M.isDimensionless() || !n.isDimensionless())
+    return HMath::nan(InvalidDimension);
   // lowest index of non-zero summand in loop
   HNumber c = M + n - N;
   HNumber i = max( c, 0 );
@@ -1650,6 +2033,8 @@ HNumber HMath::hypergeometricCdf( const HNumber & k, const HNumber & N,
  */
 HNumber HMath::hypergeometricMean( const HNumber & N, const HNumber & M, const HNumber & n )
 {
+  if(!N.isDimensionless() || !M.isDimensionless() || !n.isDimensionless())
+    return HMath::nan(InvalidDimension);
   if ( ! checkNMn(N, M, n) )
     return HMath::nan();
   return n * M / N;
@@ -1688,8 +2073,9 @@ HNumber HMath::hypergeometricVariance( const HNumber & N, const HNumber & M, con
  */
 HNumber HMath::poissonPmf( const HNumber & k, const HNumber & l )
 {
-  if ( ! k.isInteger()
-         || l.isNan() || l.isNegative() )
+  if(!k.isDimensionless())
+    return HMath::nan(InvalidDimension);
+  if ( ! k.isInteger() || l.isNan() || l.isNegative() )
     return HMath::nan();
 
   if ( k.isNegative() )
@@ -1713,6 +2099,8 @@ HNumber HMath::poissonPmf( const HNumber & k, const HNumber & l )
  */
 HNumber HMath::poissonCdf( const HNumber & k, const HNumber & l )
 {
+  if(!k.isDimensionless())
+    return HMath::nan(InvalidDimension);
   // FIXME: use the incomplete gamma function to avoid a potentially
   // expensive loop
   if ( ! k.isInteger()
@@ -1774,6 +2162,8 @@ HNumber HMath::poissonVariance( const HNumber & l )
  */
 HNumber HMath::erf( const HNumber & x )
 {
+  if(!x.isDimensionless())
+    return HMath::nan(InvalidDimension);
   HNumber result;
   call1Arg(result.d, x.d, float_erf);
   return result;
@@ -1784,6 +2174,8 @@ HNumber HMath::erf( const HNumber & x )
  */
 HNumber HMath::erfc( const HNumber & x )
 {
+  if(!x.isDimensionless())
+    return HMath::nan(InvalidDimension);
   HNumber result;
   call1Arg(result.d, x.d, float_erfc);
   return result;
@@ -1794,6 +2186,8 @@ HNumber HMath::erfc( const HNumber & x )
  */
 HNumber HMath::mask ( const HNumber & val, const HNumber & bits )
 {
+  if(!val.isDimensionless() || !bits.isDimensionless())
+    return HMath::nan(InvalidDimension);
   if ( val.isNan() || bits == 0 || bits >= LOGICRANGE || ! bits.isInteger() )
     return HMath::nan();
   return val & ~(HNumber(-1) << HNumber(bits));
@@ -1804,6 +2198,8 @@ HNumber HMath::mask ( const HNumber & val, const HNumber & bits )
  */
 HNumber HMath::sgnext( const HNumber & val, const HNumber & bits )
 {
+  if(!val.isDimensionless() || !bits.isDimensionless())
+    return HMath::nan(InvalidDimension);
   if ( val.isNan() || bits == 0 || bits >= LOGICRANGE || ! bits.isInteger() )
     return HMath::nan();
   HNumber ofs = HNumber(LOGICRANGE) - bits;
@@ -1815,6 +2211,8 @@ HNumber HMath::sgnext( const HNumber & val, const HNumber & bits )
  */
 HNumber HMath::ashr( const HNumber & val, const HNumber & bits )
 {
+  if(!val.isDimensionless() || !bits.isDimensionless())
+    return HMath::nan(InvalidDimension);
   if ( val.isNan() || bits <= -LOGICRANGE || bits >= LOGICRANGE
        || ! bits.isInteger() )
     return HMath::nan();
@@ -1838,6 +2236,9 @@ HNumber HMath::decodeIeee754( const HNumber & val, const HNumber & exp_bits,
 HNumber HMath::decodeIeee754( const HNumber & val, const HNumber & exp_bits,
                               const HNumber & significand_bits, const HNumber & exp_bias )
 {
+  if(!val.isDimensionless() || !exp_bits.isDimensionless()
+       || !significand_bits.isDimensionless() || !exp_bias.isDimensionless())
+    return HMath::nan(InvalidDimension);
   if ( val.isNan()
        || exp_bits <= 0 || exp_bits >= LOGICRANGE || ! exp_bits.isInteger()
        || significand_bits <= 0 || significand_bits >= LOGICRANGE || ! significand_bits.isInteger()
@@ -1883,6 +2284,9 @@ HNumber HMath::encodeIeee754( const HNumber & val, const HNumber & exp_bits,
 HNumber HMath::encodeIeee754( const HNumber & val, const HNumber & exp_bits,
                               const HNumber & significand_bits, const HNumber & exp_bias )
 {
+  if(!val.isDimensionless() || !exp_bits.isDimensionless()
+       || !significand_bits.isDimensionless() || !exp_bias.isDimensionless())
+    return HMath::nan(InvalidDimension);
   if ( exp_bits <= 0 || exp_bits >= LOGICRANGE || ! exp_bits.isInteger()
        || significand_bits <= 0 || significand_bits >= LOGICRANGE || ! significand_bits.isInteger()
        || ! exp_bias.isInteger() )

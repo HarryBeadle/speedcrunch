@@ -24,6 +24,8 @@
 
 class CNumber;
 class SyntaxHighlighter;
+class HistoryEntry;
+class Session;
 
 class ResultDisplay : public QPlainTextEdit
 {
@@ -35,13 +37,15 @@ public:
     void append(const QString& expr, const CNumber& value);
     void appendHistory(const QStringList& expressions, const QStringList& results);
     int count() const;
-    bool isEmpty() const { return m_count == 0; }
+    bool isEmpty() const { return m_count==0; }
 
 signals:
     void shiftWheelDown();
     void shiftWheelUp();
     void shiftControlWheelDown();
     void shiftControlWheelUp();
+    void controlWheelDown();
+    void controlWheelUp();
     void expressionSelected(const QString&);
 
 public slots:
@@ -72,14 +76,13 @@ protected:
 private:
     Q_DISABLE_COPY(ResultDisplay)
 
-    int m_count;
-    QStringList m_expressions;
     SyntaxHighlighter* m_highlighter;
-    QStringList m_results;
     QBasicTimer m_scrollTimer;
     int m_scrolledLines;
     int m_scrollDirection;
     bool m_isScrollingPageOnly;
+    //QList<HistoryEntry> m_history;
+    int m_count;
 };
 
 #endif

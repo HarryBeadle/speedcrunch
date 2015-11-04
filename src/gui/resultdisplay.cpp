@@ -24,6 +24,9 @@
 #include "gui/syntaxhighlighter.h"
 #include "math/cmath.h"
 #include "math/floatconfig.h"
+#include "core/evaluator.h"
+#include "core/session.h"
+#include "core/sessionhistory.h"
 
 #include <QLatin1String>
 #include <QApplication>
@@ -33,11 +36,11 @@
 
 ResultDisplay::ResultDisplay(QWidget* parent)
     : QPlainTextEdit(parent)
-    , m_count(0)
     , m_highlighter(new SyntaxHighlighter(this))
     , m_scrolledLines(0)
     , m_scrollDirection(0)
     , m_isScrollingPageOnly(false)
+    , m_count(0)
 {
     setViewportMargins(0, 0, 0, 0);
     setBackgroundRole(QPalette::Base);
@@ -56,37 +59,6 @@ void ResultDisplay::append(const QString& expression, const CNumber& value)
     if (!value.isNan())
         appendPlainText(QLatin1String("= ") + NumberFormatter::format(value));
     appendPlainText(QLatin1String(""));
-
-    // TODO: Refactor, this only serves to save a session.
-    m_expressions.append(expression);
-    if (value.isNan()) {
-        m_results.append("");
-    } else {
-        const char format = value.format() != 0 ? value.format() : 'e';
-        char* str = CMath::format(value, format, DECPRECISION);
-        m_results.append(str);
-        free(str);
-    }
-}
-
-void ResultDisplay::appendHistory(const QStringList& expressions, const QStringList& results)
-{
-    const int count = expressions.count();
-    for (int i = 0 ; i < count; ++i) {
-        QString str = results.at(i);
-        str.replace(',', '.');
-	/* FIXME ! Modify this function for complex number support ! */
-        CNumber result(str.toLatin1().constData());
-
-        if (str.indexOf('b') == 1)
-            result.setFormat('b');
-        else if (str.indexOf('o') == 1)
-            result.setFormat('o');
-        else if (str.indexOf('x') == 1)
-            result.setFormat('h');
-
-        append(expressions.at(i), result);
-    }
 }
 
 int ResultDisplay::count() const
@@ -100,20 +72,29 @@ void ResultDisplay::rehighlight()
     updateScrollBarStyleSheet();
 }
 
+
 void ResultDisplay::clear()
 {
     m_count = 0;
-    m_expressions.clear();
-    m_results.clear();
     setPlainText(QLatin1String(""));
 }
 
+
 void ResultDisplay::refresh()
 {
-    const QStringList expressions = m_expressions;
-    const QStringList results = m_results;
     clear();
-    appendHistory(expressions, results);
+    QList<HistoryEntry> history = Evaluator::instance()->session()->historyToList();
+    m_count = history.count();
+
+    for(int i=0; i<m_count; ++i) {
+        QString expression = history[i].expr();
+        HNumber value = history[i].result();
+        appendPlainText(expression);
+        if (!value.isNan())
+            appendPlainText(QLatin1String("= ") + NumberFormatter::format(value));
+        appendPlainText(QLatin1String(""));
+    }
+
 }
 
 void ResultDisplay::scrollLines(int numberOfLines)
@@ -177,6 +158,7 @@ void ResultDisplay::scrollToTop()
     m_isScrollingPageOnly = false;
     scrollToDirection(-1);
 }
+
 
 void ResultDisplay::scrollToBottom()
 {
@@ -261,15 +243,20 @@ void ResultDisplay::fullContentScrollEvent()
 void ResultDisplay::wheelEvent(QWheelEvent* event)
 {
     if (event->modifiers() == (Qt::ShiftModifier | Qt::ControlModifier)) {
-        if (event->delta() > 0)
+        if (event->angleDelta().y() > 0)
             emit shiftControlWheelUp();
         else
             emit shiftControlWheelDown();
     } else if (event->modifiers() == Qt::ShiftModifier) {
-        if (event->delta() > 0)
+        if (event->angleDelta().y() > 0)
             emit shiftWheelUp();
         else
             emit shiftWheelDown();
+    } else if (event->modifiers() == Qt::ControlModifier) {
+        if (event->angleDelta().y() > 0)
+            emit controlWheelUp();
+        else
+            emit controlWheelDown();
     } else {
         QPlainTextEdit::wheelEvent(event);
         return;

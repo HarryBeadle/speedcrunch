@@ -30,13 +30,18 @@
 #include <QString>
 #include <QStringList>
 #include <QVector>
+#include <core/opcode.h>
+#include "core/variable.h"
+#include "core/userfunction.h"
+
+class Session;
 
 class Token {
 public:
     enum Op { InvalidOp = 0, Plus, Minus, Asterisk, Slash, Backslash, Caret,
               Super0, Super1, Super2, Super3, Super4, Super5, Super6, Super7, Super8, Super9,
               LeftPar, RightPar, Semicolon, Percent, Exclamation, Equal, Modulo,
-              LeftShift, RightShift, Ampersand, Pipe };
+              LeftShift, RightShift, Ampersand, Pipe, RightArrow };
     enum Type { stxUnknown, stxNumber, stxIdentifier, stxOperator, stxOpenPar, stxClosePar, stxSep };
 
     static const Token null;
@@ -52,6 +57,7 @@ public:
     bool isIdentifier() const { return m_type == stxIdentifier; }
     int pos() const { return m_pos; }
     QString text() const { return m_text; }
+    void addText(QString t) { m_text.append(t);}
     Type type() const { return m_type; }
 
     Token& operator=(const Token&);
@@ -78,30 +84,14 @@ class Evaluator : public QObject {
     Q_OBJECT
 
 public:
-    struct Variable {
-        enum Type { BuiltIn, UserDefined };
-        Variable() : name(""), value(CNumber(0)) { }
-        Variable(const QString& n, CNumber v, Type t = UserDefined) : name(n), value(v), type(t) { }
-        bool operator==(const Variable& other) const { return name == other.name; }
-        QString name;
-        CNumber value;
-        Type type;
-    };
-
-    struct UserFunctionDescr {
-        QString name;
-        QStringList arguments;
-        QString expression;
-
-        UserFunctionDescr(QString name, QStringList arguments, QString expression)
-            : name(name), arguments(arguments), expression(expression) {}
-    };
-
     // Needed only for issue 160 workaround.
     enum AutoFixPolicy { AutoFix, NoAutoFix };
 
     static Evaluator* instance();
     void reset();
+
+    void setSession(Session * s);
+    const Session *session();
 
     static bool isSeparatorChar(const QChar&);
     static bool isRadixChar(const QChar&);
@@ -128,47 +118,21 @@ public:
     void unsetAllUserDefinedVariables();
     bool isBuiltInVariable(const QString&) const;
     bool hasVariable(const QString&) const;
+    void initializeBuiltInVariables();
 
-    //UserFunctionDescr getUserFunction(const QString&) const;
-    QList<UserFunctionDescr> getUserFunctions() const;
-    void setUserFunction(const UserFunctionDescr&);
+    QList<UserFunction> getUserFunctions() const;
+    void setUserFunction(const UserFunction & f);
     void unsetUserFunction(const QString&);
     void unsetAllUserFunctions();
-    bool hasUserFunction(const QString&);
+    bool hasUserFunction(const QString&) const;
 
 protected:
     void compile(const Tokens&);
 
+
 private:
     Evaluator();
     Q_DISABLE_COPY(Evaluator)
-
-    struct Opcode {
-        enum { Nop = 0, Load, Ref, Function, Add, Sub, Neg, Mul, Div, Pow,
-               Fact, Modulo, IntDiv, LSh, RSh, BAnd, BOr };
-
-        unsigned type;
-        unsigned index;
-
-        Opcode() : type(Nop), index(0) {}
-        Opcode(unsigned t) : type(t), index(0) {}
-        Opcode(unsigned t, unsigned i): type(t), index(i) {}
-    };
-
-    struct UserFunction {
-        UserFunctionDescr descr;
-
-        QVector<CNumber> constants;
-        QStringList identifiers;
-        QVector<Opcode> opcodes;
-
-        bool inUse;
-
-        UserFunction(UserFunctionDescr& descr)
-            : descr(descr), inUse(false) {}
-        UserFunction(QString name, QStringList arguments, QString expression)
-            : descr(name, arguments, expression), inUse(false) {}
-    };
 
     bool m_dirty;
     QString m_error;
@@ -180,16 +144,15 @@ private:
     QVector<Opcode> m_codes;
     QVector<CNumber> m_constants;
     QStringList m_identifiers;
-    QHash<QString, Variable> m_variables;
-    QHash<QString, UserFunction*> m_userFunctions;
+    Session * m_session;
+    unsigned int m_stack_depth;
 
     const CNumber& checkOperatorResult(const CNumber&);
     static QString stringFromFunctionError(Function*);
-    void initializeBuiltInVariables();
     CNumber exec(const QVector<Opcode>& opcodes, const QVector<CNumber>& constants,
                  const QStringList& identifiers);
-    CNumber execUserFunction(UserFunction* function, QVector<CNumber>& arguments);
-    UserFunction* getUserFunction(const QString&) const;
+    CNumber execUserFunction(const UserFunction* function, QVector<CNumber>& arguments);
+    const UserFunction * getUserFunction(const QString&) const;
 };
 
 #endif

@@ -43,6 +43,7 @@ protected:
 
 private:
     enum {
+        // TODO: have this scale with screen DPI
         SizePixels = 20,
     };
 

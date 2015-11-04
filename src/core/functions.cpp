@@ -43,19 +43,25 @@
 #define ENSURE_POSITIVE_ARGUMENT_COUNT() \
     if (args.count() < 1) { \
         f->setError(InvalidParamCount); \
-        return CMath::nan(); \
+        return CMath::nan(InvalidParamCount); \
     }
 
 #define ENSURE_ARGUMENT_COUNT(i) \
     if (args.count() != (i)) { \
         f->setError(InvalidParamCount); \
-        return CMath::nan(); \
+        return CMath::nan(InvalidParamCount); \
     }
 
 #define ENSURE_EITHER_ARGUMENT_COUNT(i, j) \
     if (args.count() != (i) && args.count() != (j)) { \
         f->setError(InvalidParamCount); \
-        return CMath::nan(); \
+        return CMath::nan(InvalidParamCount); \
+    }
+
+#define ENSURE_SAME_DIMENSION() \
+    for(int i=0; i<args.count()-1; ++i) { \
+        if(!args.at(i).sameDimension(args.at((i)+1))) \
+            return CMath::nan(InvalidDimension);\
     }
 
 #define ENSURE_REAL_ARGUMENT(i) \
@@ -109,6 +115,8 @@ CNumber Function::exec(const Function::ArgumentList& args)
         return CMath::nan();
     setError(Success);
     CNumber result = (*m_ptr)(this, args);
+    if(result.error())
+        setError(result.error());
     return result;
 }
 
@@ -122,7 +130,7 @@ CNumber function_average(Function* f, const Function::ArgumentList& args)
 {
     /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
-    return std::accumulate(args.begin(), args.end(), CNumber(0)) / CNumber(args.count());
+    return std::accumulate(args.begin()+1, args.end(), *args.begin()) / CNumber(args.count());
 }
 
 CNumber function_absdev(Function* f, const Function::ArgumentList& args)
@@ -131,7 +139,7 @@ CNumber function_absdev(Function* f, const Function::ArgumentList& args)
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     CNumber mean = function_average(f, args);
     if (mean.isNan())
-        return CMath::nan();
+        return mean;   // pass the error along
     CNumber acc = 0;
     for (int i = 0; i < args.count(); ++i)
         acc += CMath::abs(args.at(i) - mean);
@@ -479,6 +487,7 @@ CNumber function_max(Function* f, const Function::ArgumentList& args)
     /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     ENSURE_REAL_ARGUMENTS()
+    ENSURE_SAME_DIMENSION();
     return *std::max_element(args.begin(), args.end());
 }
 
@@ -487,9 +496,10 @@ CNumber function_median(Function* f, const Function::ArgumentList& args)
     /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     ENSURE_REAL_ARGUMENTS()
+    ENSURE_SAME_DIMENSION();
 
     Function::ArgumentList sortedArgs = args;
-    qSort(sortedArgs);
+    std::sort(sortedArgs.begin(), sortedArgs.end());
 
     if ((args.count() & 1) == 1)
         return sortedArgs.at((args.count() - 1) / 2);
@@ -503,6 +513,7 @@ CNumber function_min(Function* f, const Function::ArgumentList& args)
     /* TODO : complex mode switch for this function */
     ENSURE_POSITIVE_ARGUMENT_COUNT();
     ENSURE_REAL_ARGUMENTS()
+    ENSURE_SAME_DIMENSION();
     return *std::min_element(args.begin(), args.end());
 }
 
@@ -537,7 +548,10 @@ CNumber function_geomean(Function* f, const Function::ArgumentList& args)
     if (args.count() == 2)
         return CMath::sqrt(result);
 
-    return CMath::exp(CMath::ln(result) / CNumber(args.count()));
+    CNumber nominal = result;
+    nominal.clearDimension();
+    result = CMath::raise(result/nominal, CNumber(1)/CNumber(args.count()));
+    return CMath::exp(CMath::ln(nominal) / CNumber(args.count()))*result;
 }
 
 CNumber function_dec(Function* f, const Function::ArgumentList& args)
@@ -708,6 +722,15 @@ CNumber function_shr(Function* f, const Function::ArgumentList& args)
     /* TODO : complex mode switch for this function */
     ENSURE_ARGUMENT_COUNT(2);
     return CMath::ashr(args.at(0), args.at(1));
+}
+
+CNumber function_when(Function* f, const Function::ArgumentList & args)
+{
+    ENSURE_ARGUMENT_COUNT(3);
+    if (args.at(0).isZero())
+        return args.at(2);
+    else
+        return args.at(1);
 }
 
 CNumber function_idiv(Function* f, const Function::ArgumentList& args)
@@ -888,6 +911,7 @@ void FunctionRepo::createFunctions()
     FUNCTION_INSERT(shr);
     FUNCTION_INSERT(idiv);
     FUNCTION_INSERT(mod);
+    //FUNCTION_INSERT(when);
 
     // IEEE-754.
     FUNCTION_INSERT(ieee754_decode);
@@ -1030,6 +1054,7 @@ void FunctionRepo::setTranslatableFunctionUsages()
     FUNCTION_USAGE_TR(shl, tr("n; bits"));
     FUNCTION_USAGE_TR(shr, tr("n; bits"));
     FUNCTION_USAGE_TR(unmask, tr("n; bits"));
+    //FUNCTION_USAGE_TR(when, tr("condition; if_TRUE; if_FALSE"));
 }
 
 void FunctionRepo::setFunctionNames()
@@ -1118,6 +1143,7 @@ void FunctionRepo::setFunctionNames()
     FUNCTION_NAME(trunc, tr("Truncation"));
     FUNCTION_NAME(unmask, tr("Sign-extend a value"));
     FUNCTION_NAME(variance, tr("Variance"));
+    //FUNCTION_NAME(when, tr("Conditional Branch"));
     FUNCTION_NAME(xor, tr("Logical XOR"));
 }
 

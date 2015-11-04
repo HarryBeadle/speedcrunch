@@ -21,6 +21,9 @@
 #ifndef MATH_HMATH_H
 #define MATH_HMATH_H
 
+#include <QString>
+#include <QJsonObject>
+
 #include "core/errors.h"
 
 #include <ostream>
@@ -29,6 +32,7 @@ class HMath;
 class HNumberPrivate;
 class CNumber;
 class CMath;
+class Rational;
 
 class HNumber
 {
@@ -49,6 +53,7 @@ class HNumber
     HNumber( const HNumber& );
     HNumber( int i );
     HNumber( const char* );
+    HNumber( const QJsonObject & json);
     ~HNumber();
 
     bool isNan() const;
@@ -69,6 +74,23 @@ class HNumber
     // 'b': binary
     char format() const;
     HNumber& setFormat( char c = 0 );
+
+
+    bool hasUnit() const ;
+    HNumber getUnit() const;
+    QString getUnitName() const;
+    HNumber& setDisplayUnit(const HNumber , const QString &name);
+    void stripUnits();
+    bool hasDimension() const;
+    bool isDimensionless() const;
+    QMap<QString, Rational> getDimension() const;
+    void modifyDimension(const QString & key, const Rational & exponent);
+    void clearDimension();
+    bool sameDimension(const HNumber & other) const;
+    void cleanDimension();
+
+    void serialize(QJsonObject & json) const;
+    static HNumber deSerialize(const QJsonObject & json);
 
     int toInt() const;
     Error error() const;

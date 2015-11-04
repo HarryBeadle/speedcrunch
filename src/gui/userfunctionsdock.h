@@ -32,8 +32,6 @@ class UserFunctionsDock : public QDockWidget
 public:
     explicit UserFunctionsDock(QWidget* parent = 0);
 
-    void updateList();
-
 signals:
     void userFunctionSelected(const QString&);
     void userFunctionEdited(const QString&);
@@ -41,6 +39,7 @@ signals:
 public slots:
     void handleRadixCharacterChange();
     void retranslateText();
+    void updateList();
 
 protected:
     virtual void changeEvent(QEvent*);

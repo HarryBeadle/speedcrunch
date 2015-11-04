@@ -50,12 +50,10 @@ public:
     bool autoCalc;
     bool autoCompletion;
     int digitGrouping;
-    bool historySave;
+    bool sessionSave;
     bool leaveLastExpression;
     bool syntaxHighlighting;
     bool systemTrayIconVisible;
-    bool variableSave;
-    bool userFunctionSave;
     bool windowAlwaysOnTop;
     bool autoResultToClipboard;
     bool windowPositionSave;
@@ -75,10 +73,10 @@ public:
 
     QString language;
 
-    QStringList history;
-    QStringList historyResults;
-    QStringList variables;
-    QList<QStringList> userFunctions;
+    //QStringList history;
+    //QStringList historyResults;
+    //QStringList variables;
+    //QList<QStringList> userFunctions;
 
     QPoint windowPosition;
     QSize windowSize;
@@ -87,7 +85,7 @@ public:
 
 private:
     Settings();
-    Q_DISABLE_COPY(Settings);
+    Q_DISABLE_COPY(Settings)
 };
 
 #endif
