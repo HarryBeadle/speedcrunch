@@ -28,7 +28,9 @@ CNumber::CNumber() :
 CNumber::CNumber( const HNumber& hn) :
   real(hn),
   imag(0)
-{}
+{
+  imag.setDimension(hn);
+}
 
 
 /**

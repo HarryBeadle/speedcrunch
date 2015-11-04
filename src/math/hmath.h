@@ -88,6 +88,7 @@ class HNumber
     void clearDimension();
     bool sameDimension(const HNumber & other) const;
     void cleanDimension();
+    void setDimension(const HNumber&);
 
     void serialize(QJsonObject & json) const;
     static HNumber deSerialize(const QJsonObject & json);

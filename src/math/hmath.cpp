@@ -558,6 +558,16 @@ HNumber& HNumber::operator=( const HNumber & hn )
 
   float_copy(&d->fnum, &hn.d->fnum, EXACT);
 
+  setDimension(hn);
+
+  return *this;
+}
+
+/**
+ * Assigns dimension from another number.
+ */
+void HNumber::setDimension( const HNumber & hn )
+  {
   clearDimension();
   if(hn.hasDimension()) {
       this->d->dimension = new QMap<QString, Rational>(*hn.d->dimension);
@@ -574,7 +584,6 @@ HNumber& HNumber::operator=( const HNumber & hn )
       if(hasUnit())
           d->unit->d->dimension = new QMap<QString, Rational> (hn.getDimension());
   }
-  return *this;
 }
 
 /**
