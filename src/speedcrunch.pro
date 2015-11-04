@@ -167,7 +167,7 @@ SOURCES += main.cpp \
            math/hmath.cpp \
            math/number.c \
 	   math/cmath.cpp \
-	   math/cnumberparser.cpp
+	   math/cnumberparser.cpp \
            math/rational.cpp
 
 RESOURCES += resources/speedcrunch.qrc

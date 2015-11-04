@@ -24,14 +24,14 @@
 
 #include <QMap>
 
-QString NumberFormatter::format(HNumber number)
+QString NumberFormatter::format(CNumber number)
 {
     Settings* settings = Settings::instance();
 
 
     //handle units
     QString unit_name = "";
-    HNumber unit(1);
+    CNumber unit(1);
     if(number.hasUnit()) {
         unit_name = ' ' + number.getUnitName();
         unit = number.getUnit();

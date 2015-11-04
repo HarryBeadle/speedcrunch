@@ -11,7 +11,7 @@ QString HistoryEntry::expr() const
     return m_expr;
 }
 
-HNumber HistoryEntry::result() const
+CNumber HistoryEntry::result() const
 {
     return m_result;
 }
@@ -21,7 +21,7 @@ void HistoryEntry::setExpr(const QString & e)
     m_expr = e;
 }
 
-void HistoryEntry::setResult(const HNumber & n)
+void HistoryEntry::setResult(const CNumber & n)
 {
     m_result = n;
 }
@@ -38,7 +38,7 @@ void HistoryEntry::serialize(QJsonObject & json) const
 void HistoryEntry::deSerialize(const QJsonObject & json)
 {
     m_expr = json["expression"].toString();
-    m_result = HNumber(json["result"].toObject());
+    m_result = CNumber(json["result"].toObject());
     return;
 }
 

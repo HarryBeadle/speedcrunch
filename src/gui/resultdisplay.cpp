@@ -51,7 +51,7 @@ ResultDisplay::ResultDisplay(QWidget* parent)
     setWordWrapMode(QTextOption::WrapAnywhere);
 }
 
-void ResultDisplay::append(const QString& expression, const CNumber& value)
+void ResultDisplay::append(const QString& expression, CNumber& value)
 {
     ++m_count;
 
@@ -88,7 +88,7 @@ void ResultDisplay::refresh()
 
     for(int i=0; i<m_count; ++i) {
         QString expression = history[i].expr();
-        HNumber value = history[i].result();
+        CNumber value = history[i].result();
         appendPlainText(expression);
         if (!value.isNan())
             appendPlainText(QLatin1String("= ") + NumberFormatter::format(value));

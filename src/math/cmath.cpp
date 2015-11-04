@@ -162,6 +162,43 @@ CNumber& CNumber::setFormat(char c)
 
 
 /**
+ * Sets the display unit
+ */
+CNumber& CNumber::setDisplayUnit(const CNumber unit, const QString &name)
+{
+  /* FIXME : This doesn't checks that real and imag part have the same unit */
+  /* after the execution.                                                   */
+  real.setDisplayUnit(unit.real, name);
+  imag.setDisplayUnit(unit.real, name);
+  return *this;
+}
+
+
+void CNumber::stripUnits() {
+  real.stripUnits();
+  imag.stripUnits();
+}
+
+
+void CNumber::modifyDimension(const QString &key, const Rational &exponent) {
+  real.modifyDimension(key, exponent);
+  imag.modifyDimension(key, exponent);
+}
+
+
+void CNumber::clearDimension(){
+  real.clearDimension();
+  imag.clearDimension();
+}
+
+
+void CNumber::cleanDimension(){
+  real.cleanDimension();
+  imag.cleanDimension();
+}
+
+
+/**
  * Returns a NaN (Not a Number) with error set to
  * passed parameter.
  */

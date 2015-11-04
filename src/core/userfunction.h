@@ -26,7 +26,7 @@
 #include<QStringList>
 #include<QVector>
 #include "core/opcode.h"
-#include "math/hmath.h"
+#include "math/cmath.h"
 
 class UserFunction
 {
@@ -37,7 +37,7 @@ private:
     QString m_description;
 
 public:
-    QVector<HNumber> constants;
+    QVector<CNumber> constants;
     QStringList identifiers;
     QVector<Opcode> opcodes;
 

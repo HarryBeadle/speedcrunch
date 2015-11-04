@@ -19,12 +19,13 @@
 #ifndef CORE_NUMBERFORMATTER_H
 #define CORE_NUMBERFORMATTER_H
 
+#include "cmath.h"
+
 #include <QtCore/QString>
 
-class CNumber;
-
 struct NumberFormatter {
-	static QString format(const CNumber&);
+        static QString format(HNumber &num) { return format(CNumber(num)); };
+	static QString format(CNumber);
 };
 
 #endif

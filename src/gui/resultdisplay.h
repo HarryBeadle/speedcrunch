@@ -34,7 +34,7 @@ class ResultDisplay : public QPlainTextEdit
 public:
     explicit ResultDisplay(QWidget* parent = 0);
 
-    void append(const QString& expr, const CNumber& value);
+    void append(const QString& expr, CNumber& value);
     void appendHistory(const QStringList& expressions, const QStringList& results);
     int count() const;
     bool isEmpty() const { return m_count==0; }

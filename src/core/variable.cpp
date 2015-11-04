@@ -21,7 +21,7 @@ void Variable::deSerialize(const QJsonObject &json)
     m_identifier = json["identifier"].toString();
     QString str = json["type"].toString();
     m_type = (str=="User") ? UserDefined : BuiltIn;
-    m_value = HNumber(json["value"].toObject());
+    m_value = CNumber(json["value"].toObject());
     return;
 }
 

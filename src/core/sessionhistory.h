@@ -26,25 +26,25 @@
 #include <QString>
 #include <QList>
 
-#include "hmath.h"
+#include "cmath.h"
 
 
 class HistoryEntry
 {
 private:
     QString m_expr;
-    HNumber m_result;
+    CNumber m_result;
 public:
     HistoryEntry() : m_expr(""), m_result(0) {}
     HistoryEntry(const QJsonObject & json);
-    HistoryEntry(const QString & expr, const HNumber & num) : m_expr(expr), m_result(num) {}
+    HistoryEntry(const QString & expr, const CNumber & num) : m_expr(expr), m_result(num) {}
     HistoryEntry(const HistoryEntry & other) :  m_expr(other.m_expr), m_result(other.m_result) {}
 
     void setExpr(const QString & e);
-    void setResult(const HNumber & n);
+    void setResult(const CNumber & n);
 
     QString expr() const;
-    HNumber result() const;
+    CNumber result() const;
 
     void serialize(QJsonObject & json) const;
     void deSerialize(const QJsonObject & json);
