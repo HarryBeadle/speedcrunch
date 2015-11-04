@@ -234,7 +234,7 @@ CNumber CNumber::deSerialize(const QJsonObject &json)
 
     if(json.contains("unit")) {
         str = json["unit"].toString();
-        result.setDisplayUnit(HNumber(str.toLatin1().constData()), json["unit_name"].toString());
+        result.setDisplayUnit(CNumber(str.toLatin1().constData()), json["unit_name"].toString());
     }
     if(json.contains("dimension")) {
         QJsonObject dim_json = json["dimension"].toObject();
