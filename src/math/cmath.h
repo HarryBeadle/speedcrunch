@@ -72,7 +72,7 @@ class CNumber {
     void cleanDimension();
 
     void serialize(QJsonObject & json) const;
-    static HNumber deSerialize(const QJsonObject & json);
+    static CNumber deSerialize(const QJsonObject & json);
 
     int toInt() const;  // Removed because too much problematic for complex numbers
     Error error() const;

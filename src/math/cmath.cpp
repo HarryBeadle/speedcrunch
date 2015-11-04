@@ -198,6 +198,55 @@ void CNumber::cleanDimension(){
 }
 
 
+/* FIXME !! (Almost) code duplicate of HNumber::serialize !! */
+void CNumber::serialize(QJsonObject &json) const
+{
+    const char f = format();
+    json["format"] = f;
+    json["value"] = CMath::format(*this, f, DECPRECISION);
+    if(hasUnit()) {
+        json["unit"] = CMath::format(getUnit(), 'e', DECPRECISION);
+        json["unit_name"] = getUnitName();
+    }
+    if(hasDimension()) {
+        QJsonObject dim_json;
+        QMap<QString, Rational>::const_iterator i = real.getDimension().constBegin();
+        while (i !=  real.getDimension().constEnd()) {
+            const Rational & exp = i.value();
+            const QString & name = i.key();
+            dim_json[name] = exp.toString();
+            ++i;
+        }
+        json["dimension"] = dim_json;
+    }
+}
+
+
+/* FIXME !! (Almost) code duplicate of HNumber::deSerialize !! */
+CNumber CNumber::deSerialize(const QJsonObject &json)
+{
+    QString str = json["value"].toString();
+    str.replace(",", ".");
+    CNumber result(str.toLatin1().constData());
+    result.setFormat(json["format"].toString().toLatin1().constData()[0]);
+
+    if(json.contains("unit")) {
+        str = json["unit"].toString();
+        result.setDisplayUnit(HNumber(str.toLatin1().constData()), json["unit_name"].toString());
+    }
+    if(json.contains("dimension")) {
+        QJsonObject dim_json = json["dimension"].toObject();
+        for(int i=0; i<dim_json.count(); ++i) {
+            QString key = dim_json.keys()[i];
+            Rational val(dim_json[key].toString());
+            result.modifyDimension(key, val);
+        }
+    }
+
+    return result;
+}
+
+
 /**
  * Returns a NaN (Not a Number) with error set to
  * passed parameter.
