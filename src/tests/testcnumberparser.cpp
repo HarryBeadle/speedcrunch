@@ -104,8 +104,8 @@ void test_create()
     CHECK_FORMAT('e', 2, HNumber("1e1000000000"), "NaN");
     CHECK_FORMAT('e', 2, HNumber("1e-1000000000"), "NaN");
 
-    // Corner cases
-    CHECK(CNumber("0+1.000000000000000000000000000000000000000000000000000000000000000000000000000000j"), "0+1j");      
+    // Long numbers, like in session history
+    CHECK(CNumber("0+1.000000000000000000000000000000000000000000000000000000000000000000000000000000j"), "0+1j");
 }
 
 int main(int argc, char* argv[])
