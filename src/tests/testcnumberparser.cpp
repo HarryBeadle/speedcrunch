@@ -91,6 +91,7 @@ void test_create()
     CHECK(CNumber("1.0e-3"), "0.001");
 
     // Complex number
+    CHECK(CNumber("0+1j"),           "0+1j");
     CHECK(CNumber("1+1j"),           "1+1j");
     CHECK(CNumber("2+2j"),           "2+2j");
     CHECK(CNumber("1.0+1.0j"),       "1+1j");
@@ -102,6 +103,9 @@ void test_create()
     CHECK(HNumber("1e-1000000000"), "NaN");
     CHECK_FORMAT('e', 2, HNumber("1e1000000000"), "NaN");
     CHECK_FORMAT('e', 2, HNumber("1e-1000000000"), "NaN");
+
+    // Corner cases
+    CHECK(CNumber("0+1.000000000000000000000000000000000000000000000000000000000000000000000000000000j"), "0+1j");      
 }
 
 int main(int argc, char* argv[])
