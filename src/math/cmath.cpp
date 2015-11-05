@@ -289,6 +289,8 @@ CNumber& CNumber::operator=( const CNumber & cn )
  */
 CNumber CNumber::operator+( const CNumber & num ) const
 {
+  if(!sameDimension(num))
+    return HMath::nan(DimensionMismatch);
   CNumber result;
   result.real = real + num.real;
   result.imag = imag + num.imag;
@@ -310,6 +312,8 @@ CNumber& CNumber::operator+=( const CNumber & num )
  */
 CNumber operator-( const CNumber & n1, const CNumber & n2 )
 {
+  if(!n1.sameDimension(n2))
+    return HMath::nan(DimensionMismatch);
   CNumber result;
   result.real = n1.real - n2.real;
   result.imag = n1.imag - n2.imag;
