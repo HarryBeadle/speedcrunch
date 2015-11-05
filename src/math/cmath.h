@@ -205,4 +205,4 @@ class CMath
 
 std::ostream & operator<<( std::ostream &, const CNumber & );
 
-#endif // CNUMBER_H
+#endif // CMATH_CMATH_H
