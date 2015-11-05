@@ -94,6 +94,8 @@ void test_create()
     CHECK(CNumber("0+1j"),           "0+1j");
     CHECK(CNumber("1+1j"),           "1+1j");
     CHECK(CNumber("2+2j"),           "2+2j");
+    CHECK(CNumber("0+1.0j"),         "0+1j");
+    CHECK(CNumber("0.0+1.0j"),       "0+1j");
     CHECK(CNumber("1.0+1.0j"),       "1+1j");
     CHECK(CNumber("1e-3+1e-3j"),     "0.001+0.001j");
     CHECK(CNumber("1.0e-3+1.0e-3j"), "0.001+0.001j");   
