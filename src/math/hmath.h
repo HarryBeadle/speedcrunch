@@ -212,4 +212,4 @@ class HMath
 
 std::ostream & operator<<( std::ostream &, const HNumber & );
 
-#endif
+#endif // MATH_HMATH_H
