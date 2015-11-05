@@ -33,6 +33,7 @@ class CNumber {
     CNumber( const CNumber& );
     CNumber( int i );
     CNumber( const char* );
+    CNumber( const QJsonObject & json );
     ~CNumber(){};
 
     bool isNan() const;

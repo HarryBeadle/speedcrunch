@@ -72,6 +72,12 @@ CNumber::CNumber(const char* str) {
 }
 
 
+CNumber::CNumber(const QJsonObject &json)
+{
+    *this = deSerialize(json);
+}
+
+
 /**
  * Returns true if this number is Not a Number (NaN).
  */
