@@ -7,6 +7,9 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <QString>
+#include <QStringList>
+
 #include "floatconvert.h"
 #include "hmath.h"
 #include "cmath.h"
