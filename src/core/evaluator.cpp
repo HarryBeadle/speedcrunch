@@ -1798,7 +1798,7 @@ void Evaluator::setVariable(const QString& id, CNumber value, Variable::Type typ
 Variable Evaluator::getVariable(const QString& id) const
 {
     if (id.isEmpty() || !m_session)
-        return Variable(QLatin1String(""), HNumber(0));
+        return Variable(QLatin1String(""), CNumber(0));
 
     return m_session->getVariable(id);
 }

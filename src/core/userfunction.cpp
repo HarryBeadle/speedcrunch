@@ -30,7 +30,7 @@ UserFunction::UserFunction(const QJsonObject &json)
 
         const QJsonArray & const_json = json["constants"].toArray();
         for(int i=0; i<const_json.size(); ++i) {
-            HNumber hn(const_json[i].toObject());
+            CNumber hn(const_json[i].toObject());
             constants.append(hn);
         }
 
