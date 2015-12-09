@@ -38,6 +38,9 @@
 #include <QFile>
 #include <QTextStream>
 
+#include <QDebug>
+#include <QElapsedTimer>
+
 QTextStream& operator<<(QTextStream& s, CNumber num)
 {
     char* str = CMath::format(num, 'f');
@@ -414,12 +417,15 @@ Evaluator::Evaluator()
 
 void Evaluator::initializeBuiltInVariables()
 {
-    setVariable(QLatin1String("e"), HMath::e(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("ℯ"), HMath::e(), Variable::BuiltIn);
+    setVariable(QLatin1String("e"), CMath::e(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("ℯ"), CMath::e(), Variable::BuiltIn);
 
-    setVariable(QLatin1String("pi"), HMath::pi(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("π"), HMath::pi(), Variable::BuiltIn);
+    setVariable(QLatin1String("pi"), CMath::pi(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("π"), CMath::pi(), Variable::BuiltIn);
 
+    if(Settings::instance()->complexNumbers) {
+        setVariable(QLatin1String("j"), CMath::i(), Variable::BuiltIn);
+    }
 
 
     setVariable(QString::fromUtf8("meter"), Units::meter(), Variable::BuiltIn);
@@ -514,6 +520,15 @@ Tokens Evaluator::tokens() const
 
 Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) const
 {
+#if 0 //def EVALUATOR_DEBUG
+    QFile debugFile("eval.log");
+    debugFile.open(QIODevice::Append);
+    QTextStream dbg(&debugFile);
+
+    QElapsedTimer timer;
+    timer.start();
+#endif
+
     // Result.
     Tokens tokens;
 
@@ -730,7 +745,7 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
               // We're done with complex number */
               /* FIXME ! Handle numbers like 1+j2 */
               /* FIXME ! Handle both i and j cases */
-              /* FIXME really necessary here? */
+
               tokenText.append(ex.at(i));
               i++;
 	      tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
@@ -842,7 +857,10 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
             expr = "(" + expr + ")";
         conv_token.addText(expr);
     }
-
+#if 0//def EVALUATOR_DEBUG
+    dbg << "Time required for token scan of " << expr << ": " << timer.nsecsElapsed() << "ns" << endl;
+    debugFile.close();
+#endif
     return tokens;
 }
 
@@ -852,6 +870,10 @@ void Evaluator::compile(const Tokens& tokens)
     QFile debugFile("eval.log");
     debugFile.open(QIODevice::WriteOnly);
     QTextStream dbg(&debugFile);
+
+
+    QElapsedTimer timer;
+    timer.start();
 #endif
 
     // Initialize variables.
@@ -1295,6 +1317,7 @@ void Evaluator::compile(const Tokens& tokens)
 
 #ifdef EVALUATOR_DEBUG
     dbg << "Dump: " << dump() << "\n";
+    dbg << "Time required for compiling: " << timer.nsecsElapsed() << "ns" << endl;
     debugFile.close();
 #endif
 
@@ -1304,6 +1327,7 @@ void Evaluator::compile(const Tokens& tokens)
         m_codes.clear();
         m_identifiers.clear();
     }
+
 }
 
 CNumber Evaluator::evalNoAssign()
@@ -1742,7 +1766,6 @@ CNumber Evaluator::eval()
         m_error = tr("%1 is a reserved name, please choose another").arg(m_assignId);
         return CMath::nan();
     }
-
     // Handle user variable or function assignment.
     if (!m_assignId.isEmpty()) {
         if (m_assignFunc) {

@@ -145,7 +145,7 @@ void Units::findUnit(CNumber & number)
 
             // TODO: replace this with a lookup to a repository
             if(i.key() == "length") {
-                unit_name += " meter";
+                unit_name += "meter";
             } else if(i.key() == "time") {
                 unit_name += " second";
             } else if(i.key() == "mass") {
