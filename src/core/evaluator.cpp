@@ -666,16 +666,7 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
                 ++i;
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
-            else if(ch == 'j') {
-              // We're done with complex number */
-              /* FIXME ! Handle numbers like 1+j2 */
-              /* FIXME ! Handle both i and j cases */
-              tokenText.append(ex.at(i));
-              i++;
-	      tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
-	      tokenText = "";
-              state = Start;
-            } else { // We're done with integer number.
+            else { // We're done with integer number.
                 tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
                 tokenText = "";
                 state = Start;
@@ -741,17 +732,7 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
                 state = InExpIndicator;
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
-            else if(ch == 'j') {
-              // We're done with complex number */
-              /* FIXME ! Handle numbers like 1+j2 */
-              /* FIXME ! Handle both i and j cases */
-
-              tokenText.append(ex.at(i));
-              i++;
-	      tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
-	      tokenText = "";
-              state = Start;
-            } else { // We're done with floating-point number.
+            else { // We're done with floating-point number.
                 tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
                 tokenText = "";
                 state = Start;
@@ -765,17 +746,7 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
                 state = InExponent;
             else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
-            else if(ch == 'j') {
-              // We're done with complex number */
-              /* FIXME ! Handle numbers like 1+j2 */
-              /* FIXME ! Handle both i and j cases */
-              /* FIXME really necessary here? */
-              tokenText.append(ex.at(i));
-              i++;
-	      tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
-	      tokenText = "";
-              state = Start;
-            } else // Invalid thing here.
+            else // Invalid thing here.
                 state = Bad;
             break;
 
@@ -784,17 +755,7 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
                 tokenText.append(ex.at(i++));
             else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
-            else if(ch == 'j') {
-              // We're done with complex number */
-              /* FIXME ! Handle numbers like 1+j2 */
-              /* FIXME ! Handle both i and j cases */
-              /* FIXME really necessary here? */
-              tokenText.append(ex.at(i));
-              i++;
-	      tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
-	      tokenText = "";
-              state = Start;
-            } else { // We're done with floating-point number.
+            else { // We're done with floating-point number.
                 tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
                 tokenText = "";
                 state = Start;
