@@ -181,8 +181,8 @@ void test_unary()
 
     CHECK_EVAL("3^3^3", "7625597484987");
 
-    CHECK_EVAL_KNOWN_ISSUE("1/-1^2", "-1", 450);
-    CHECK_EVAL_KNOWN_ISSUE("1*-1^2", "-1", 450);
+    CHECK_EVAL("1/-1^2", "-1");
+    CHECK_EVAL("1*-1^2", "-1");
 
     // Factorial has higher precedence than unary minus.
     CHECK_EVAL("-1!", "-1");
@@ -364,6 +364,10 @@ void test_function_trig()
 
     CHECK_EVAL("arcsin(sin(1))", "1");
     CHECK_EVAL("arccos(cos(1))", "1");
+    CHECK_EVAL("arctan(tan(1))", "1");
+    CHECK_EVAL("arcsin(0)", "0");
+    CHECK_EVAL("arccos(1)", "0");
+    CHECK_EVAL("arctan(0)", "0");
 
     CHECK_EVAL("degrees(0)", "0");
     CHECK_EVAL("degrees(pi/2)", "90");
@@ -657,19 +661,45 @@ void test_user_functions()
 void test_complex()
 {
     // Check for basic complex number processing
-    CHECK_EVAL("1j", "0+1j");                      // TODO : Smarter formatting
-    CHECK_EVAL("0.1j", "0+0.1j");                  // TODO : Smarter formatting
-    CHECK_EVAL(".1j", "0+0.1j");                   // TODO : Smarter formatting
-    CHECK_EVAL("1E12j", "0+1000000000000j");       // TODO : Smarter formatting
-    CHECK_EVAL("0.1E12j", "0+100000000000j");      // TODO : Smarter formatting
-    CHECK_EVAL("1E-12j", "0+0.000000000001j");     // TODO : Smarter formatting
-    CHECK_EVAL("0.1E-12j", "0+0.0000000000001j");  // TODO : Smarter formatting
+    CHECK_EVAL("1j", "1j");                      // TODO : Smarter formatting
+    CHECK_EVAL("0.1j", "0.1j");                  // TODO : Smarter formatting
+    CHECK_EVAL(".1j", "0.1j");                   // TODO : Smarter formatting
+    CHECK_EVAL("1E12j", "1000000000000j");       // TODO : Smarter formatting
+    CHECK_EVAL("0.1E12j", "100000000000j");      // TODO : Smarter formatting
+    CHECK_EVAL("1E-12j", "0.000000000001j");     // TODO : Smarter formatting
+    CHECK_EVAL("0.1E-12j", "0.0000000000001j");  // TODO : Smarter formatting
     // Check for some bugs introduced by first versions of complex number processing
     CHECK_EVAL("0.1", "0.1");                      // TODO : Smarter formatting
     // Check for basic complex number evaluation
     CHECK_EVAL("(1+1j)*(1-1j)", "2");
-    CHECK_EVAL("(1+1j)*(1+1j)", "0+2j");           // TODO : Smarter formatting
+    CHECK_EVAL("(1+1j)*(1+1j)", "2j");           // TODO : Smarter formatting
 }
+
+void test_implicit_multiplication()
+{
+    CHECK_EVAL("a = 5", "5");
+    CHECK_EVAL("5a", "25");
+    CHECK_EVAL("5.a", "25");
+    CHECK_EVAL("5.0a", "25");
+    CHECK_EVAL("5e2a", "2500");
+    CHECK_EVAL_FAIL("a5");
+    CHECK_EVAL_FAIL("a 5");
+    CHECK_EVAL("2a^3", "250");
+    CHECK_EVAL("b=2", "2");
+    CHECK_EVAL_FAIL("ab");
+    CHECK_EVAL("a b", "10");
+
+    CHECK_EVAL("a sin(pi/2)", "5");
+    CHECK_EVAL_FAIL("a sqrt(4)");
+    CHECK_EVAL("a sqrt(a^2)", "25");
+}
+
+void test_units()
+{
+    CHECK_EVAL("1 meter + 5 meter", "6 meter");
+}
+
+
 
 int main(int argc, char* argv[])
 {
@@ -680,7 +710,7 @@ int main(int argc, char* argv[])
     settings->setRadixCharacter('.');
     settings->parseAllRadixChar = true;
     settings->strictDigitGrouping = true;
-    settings->complexNumbers = true;
+    settings->complexNumbers = false;
 
     eval = Evaluator::instance();
 
@@ -713,6 +743,12 @@ int main(int argc, char* argv[])
 
     test_user_functions();
 
+    test_implicit_multiplication();
+
+    //test_units();
+
+    settings->complexNumbers = true;
+    eval->initializeBuiltInVariables();
     test_complex();
 
     cerr << eval_total_tests  << " total, " << eval_failed_tests << " failed";

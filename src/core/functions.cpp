@@ -352,7 +352,7 @@ CNumber function_arcsin(Function* f, const Function::ArgumentList& args)
     if (Settings::instance()->complexNumbers)
       result = CMath::arcsin(args.at(0));
     else
-      result = CNumber( HMath::arccos( args.at(0).real ) );
+      result = CNumber( HMath::arcsin( args.at(0).real ) );
     CONVERT_RESULT_ANGLE(result);
     return result;
 }
@@ -376,7 +376,7 @@ CNumber function_arctan(Function* f, const Function::ArgumentList& args)
     if (Settings::instance()->complexNumbers)
       result = CMath::arctan(args.at(0));
     else
-      result = CNumber( HMath::arccos( args.at(0).real ) );
+      result = CNumber( HMath::arctan( args.at(0).real ) );
     CONVERT_RESULT_ANGLE(result);
     return result;
 }

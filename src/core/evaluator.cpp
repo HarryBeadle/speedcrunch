@@ -38,8 +38,6 @@
 #include <QFile>
 #include <QTextStream>
 
-#include <QDebug>
-#include <QElapsedTimer>
 
 QTextStream& operator<<(QTextStream& s, CNumber num)
 {
@@ -524,15 +522,6 @@ Tokens Evaluator::tokens() const
 
 Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) const
 {
-#if 0 //def EVALUATOR_DEBUG
-    QFile debugFile("eval.log");
-    debugFile.open(QIODevice::Append);
-    QTextStream dbg(&debugFile);
-
-    QElapsedTimer timer;
-    timer.start();
-#endif
-
     // Result.
     Tokens tokens;
 
@@ -822,10 +811,6 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
             expr = "(" + expr + ")";
         conv_token.addText(expr);
     }
-#if 0//def EVALUATOR_DEBUG
-    dbg << "Time required for token scan of " << expr << ": " << timer.nsecsElapsed() << "ns" << endl;
-    debugFile.close();
-#endif
     return tokens;
 }
 
@@ -835,10 +820,6 @@ void Evaluator::compile(const Tokens& tokens)
     QFile debugFile("eval.log");
     debugFile.open(QIODevice::WriteOnly);
     QTextStream dbg(&debugFile);
-
-
-    QElapsedTimer timer;
-    timer.start();
 #endif
 
     // Initialize variables.
@@ -1282,7 +1263,6 @@ void Evaluator::compile(const Tokens& tokens)
 
 #ifdef EVALUATOR_DEBUG
     dbg << "Dump: " << dump() << "\n";
-    dbg << "Time required for compiling: " << timer.nsecsElapsed() << "ns" << endl;
     debugFile.close();
 #endif
 

@@ -647,7 +647,19 @@ CNumber CMath::raise( const CNumber & n1, int n )
  */
 CNumber CMath::raise( const CNumber & n1, const CNumber & n2  )
 {
-  return CMath::exp(CMath::ln(n1) * n2);
+    if(!n2.isDimensionless()
+            || (!n1.isDimensionless() && !n2.isReal()))
+        return CMath::nan(InvalidDimension);
+
+
+    if(n1.isDimensionless())
+        return CMath::exp(CMath::ln(n1) * n2);
+
+    // we can now assume that n1 has a dimension, but n2 is real
+    CNumber nominal_value = n1;
+    nominal_value.clearDimension();
+    HNumber unit = n1.real/nominal_value.real;
+    return CNumber(HMath::raise(unit, n2.real)) * CMath::raise(nominal_value, n2);
 }
 
 
