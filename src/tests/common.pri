@@ -47,7 +47,8 @@ HEADERS += ../core/book.h \
            ../math/floattrig.h \
            ../math/hmath.h \
            ../math/number.h \
-           ../math/rational.h
+           ../math/rational.h \
+           ../math/units.h
 
 SOURCES += ../core/book.cpp \
            ../core/constants.cpp \
@@ -83,5 +84,6 @@ SOURCES += ../core/book.cpp \
            ../math/number.c \
 	   ../math/cmath.cpp \
 	   ../math/cnumberparser.cpp \
-           ../math/rational.cpp
+           ../math/rational.cpp \
+           ../math/units.cpp
 

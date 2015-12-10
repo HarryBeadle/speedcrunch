@@ -28,8 +28,8 @@ void check_ser(const char* file, int line, const char* msg, const T& num, const 
     ++ser_total_tests;
     if (result != expected) {
         ++ser_failed_tests;
-        cerr << "[Line " << line << "]\t" << msg << "\tResult: " << result.toStdString();
-        cerr << "\tExpected: " << expected;
+        cerr << "[Line " << line << "]" << msg << "\nResult: " << result.toStdString();
+        cerr << "\nExpected: " << expected;
         if (issue)
             cerr << "\t[ISSUE " << issue << "]";
         else {
@@ -109,16 +109,16 @@ void check_ser_deser_cnumber(const CNumber& src) {
 int main(int, char**)
 {
     /* Serialization tests */
-    CHECK_SER(HNumber("3"), "{\"format\":0,\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"}");
-    CHECK_SER(CNumber("3"), "{\"format\":0,\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"}");
-    CHECK_SER(CNumber("3+1j"), "{\"format\":0,\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000+1.000000000000000000000000000000000000000000000000000000000000000000000000000000j\"}");
+    CHECK_SER(HNumber("3"), "{\"format\":\"g\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"}");
+    CHECK_SER(CNumber("3"), "{\"format\":\"g\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"}");
+    CHECK_SER(CNumber("3+1j"), "{\"format\":\"g\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000+1.000000000000000000000000000000000000000000000000000000000000000000000000000000j\"}");
     /* HNumber deserialization tests */
-    CHECK_DESER_HNUMBER("{\"format\": 0,\"value\": \"1\"}", "1");
-    CHECK_DESER_HNUMBER("{\"format\": 0,""\"value\": \"0.1\"}", "0.1");
+    CHECK_DESER_HNUMBER("{\"format\": \"g\",\"value\": \"1\"}", "1");
+    CHECK_DESER_HNUMBER("{\"format\": \"g\",""\"value\": \"0.1\"}", "0.1");
     /* CNumber deserialization tests */
-    CHECK_DESER_CNUMBER("{\"format\": 0,\"value\": \"1\"}", "1");
-    CHECK_DESER_CNUMBER("{\"format\": 0,\"value\": \"0.1\"}", "0.1");
-    CHECK_DESER_CNUMBER("{\"format\": 0,\"value\": \"0.0+1.0j\"}", "0+1j");
+    CHECK_DESER_CNUMBER("{\"format\": \"g\",\"value\": \"1\"}", "1");
+    CHECK_DESER_CNUMBER("{\"format\": \"g\",\"value\": \"0.1\"}", "0.1");
+    CHECK_DESER_CNUMBER("{\"format\": \"g\",\"value\": \"0.0+1.0j\"}", "0+1j");
     /* Serizalitation + deserialization tests */
     printf("%s\n", "SER-DESER");
     check_ser_deser_hnumber(HNumber("3"));

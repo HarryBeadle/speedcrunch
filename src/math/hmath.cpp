@@ -132,7 +132,7 @@ public:
 };
 
 HNumberPrivate::HNumberPrivate()
-  : error(Success), format(0), unit(NULL), unit_name(NULL), dimension(NULL)
+  : error(Success), format('g'), unit(NULL), unit_name(NULL), dimension(NULL)
 {
   h_init();
   float_create(&fnum);

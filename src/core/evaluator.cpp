@@ -492,6 +492,7 @@ void Evaluator::reset()
     m_session = NULL;
     m_stack_depth=0;
 
+    initializeBuiltInVariables();
 }
 
 void Evaluator::setSession(Session *s)
@@ -1713,7 +1714,7 @@ bool Evaluator::isBuiltInVariable(const QString& id) const
     if (FunctionRepo::instance()->find(id))
         return true;
 
-    if (!m_session->hasVariable(id))
+    if (!m_session || !m_session->hasVariable(id))
         return false;
 
     return m_session->getVariable(id).type() == Variable::BuiltIn;
@@ -1755,6 +1756,8 @@ CNumber Evaluator::eval()
             userFunction->identifiers = m_identifiers;
             userFunction->opcodes = m_codes;
 
+            if(!m_session)
+                m_session = new Session;
             m_session->addUserFunction(*userFunction);
         } else {
             if(hasUserFunction(m_assignId)) {
@@ -1779,8 +1782,9 @@ CNumber Evaluator::evalUpdateAns()
 
 void Evaluator::setVariable(const QString& id, CNumber value, Variable::Type type)
 {
-    if(m_session)
-        m_session->addVariable(Variable(id, value, type));
+    if(!m_session)
+        m_session = new Session;
+    m_session->addVariable(Variable(id, value, type));
 }
 
 Variable Evaluator::getVariable(const QString& id) const
@@ -1886,7 +1890,7 @@ void Evaluator::unsetAllUserFunctions()
 
 bool Evaluator::hasUserFunction(const QString& fname) const
 {
-    return fname.isEmpty() ? false : m_session->hasUserFunction(fname);
+    return (fname.isEmpty() || !m_session) ? false : m_session->hasUserFunction(fname);
 }
 
 const UserFunction *Evaluator::getUserFunction(const QString& fname) const
