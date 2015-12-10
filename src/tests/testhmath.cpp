@@ -195,15 +195,21 @@ void test_op()
     CHECK(HNumber(1) + HNumber(10), "11");
     CHECK(HNumber(1) + HNumber(100), "101");
     CHECK(HNumber(1) + HNumber(1000), "1001");
+    CHECK(HNumber("NaN") + HNumber(1000), "NaN");
+    CHECK(HNumber(1000) + HNumber("NaN"), "NaN");
 
     // Subtraction.
     CHECK(HNumber(0) - HNumber(0), "0");
     CHECK(HNumber(1) - HNumber(0), "1");
     CHECK(HNumber(1) - HNumber(2), "-1");
+    CHECK(HNumber("NaN") - HNumber(1000), "NaN");
+    CHECK(HNumber(1000) - HNumber("NaN"), "NaN");
 
     // Division.
     CHECK(HNumber(1) / HNumber(2), "0.5");
     CHECK(HNumber(1) / HMath::sin(PI), "NaN");
+    CHECK(HNumber("NaN") / HNumber(1000), "NaN");
+    CHECK(HNumber(1000) / HNumber("NaN"), "NaN");
 
     // Division by zero.
     CHECK(HNumber(1) / HNumber(0), "NaN");
@@ -232,6 +238,8 @@ void test_op()
     CHECK(HNumber(-2)* HNumber(5), "-10");
     CHECK(HNumber(6)* HNumber(7), "42");
     CHECK(HNumber("1.5")* HNumber("1.5"), "2.25");
+    CHECK(HNumber("NaN") * HNumber(1000), "NaN");
+    CHECK(HNumber(1000) * HNumber("NaN"), "NaN");
 }
 
 void test_functions()

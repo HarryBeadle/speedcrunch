@@ -1431,30 +1431,33 @@ HNumber HMath::raise(const HNumber& n1, const HNumber& n2)
     if(!n2.isDimensionless())
         return HMath::nan(InvalidDimension);
 
-
-
     HNumber result;
-    if(n1.hasDimension()){
-        //Try to convert n2 to a Rational. If n2 is not rational, return NaN.
-        Rational exp(n2);
-        if(abs(exp.toHNumber() - n2) >= RATIONAL_TOL)
+    HNumber temp = n1;
+    Rational exp;
+    bool change_sgn=false;
+    if(n1.hasDimension() || (n1.isNegative() && !n2.isInteger())){
+        //Try to convert n2 to a Rational. If n2 is not rational, return NaN. For negative bases only allow odd denominators.
+        exp = Rational(n2);
+        if(abs(exp.toHNumber() - n2) >= RATIONAL_TOL
+            || (n1.isNegative() && exp.denominator()%2 == 0))
             return HMath::nan(OutOfDomain);
-        result.d->dimension = new QMap<QString, Rational>();
-        QMap<QString, Rational>::const_iterator i = n1.d->dimension->constBegin();
-        while (i != n1.d->dimension->constEnd()) {
-            result.modifyDimension(i.key(), i.value()*exp);
-            ++i;
+        if(n1.hasDimension()) {
+            // Compute new dimension
+            result.d->dimension = new QMap<QString, Rational>();
+            QMap<QString, Rational>::const_iterator i = n1.d->dimension->constBegin();
+            while (i != n1.d->dimension->constEnd()) {
+                result.modifyDimension(i.key(), i.value()*exp);
+                ++i;
+            }
+        }
+        if(n1.isNegative() && !n2.isInteger()) {
+            temp = -temp;
+            change_sgn = true;
         }
     }
-    // Work around issue 402: Powers with negative base and non-integer exponent are NaN.
-    if (n1.isNegative() && !n2.isInteger()) {
-        HNumber n1_ = -n1;
-        HNumber n2_ = -n2;
-        call2Args(result.d, n1_.d, n2_.d, float_raise);
-        return HNumber(-1) / result;
-    }
 
-    call2Args(result.d, n1.d, n2.d, float_raise);
+    call2Args(result.d, temp.d, n2.d, float_raise);
+    result *= (change_sgn) ? -1 : 1;
     return result;
 }
 

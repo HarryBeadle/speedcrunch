@@ -93,6 +93,8 @@ void test_create()
     CHECK(CNumber("1e-1000000000"), "NaN");
     CHECK_FORMAT('e', 2, CNumber("1e1000000000"), "NaN");
     CHECK_FORMAT('e', 2, CNumber("1e-1000000000"), "NaN");
+
+    CHECK(CMath::i()*CMath::i(), "-1");
 }
 
 void test_format()
@@ -195,15 +197,21 @@ void test_op()
     CHECK(CNumber(1) + CNumber(10), "11");
     CHECK(CNumber(1) + CNumber(100), "101");
     CHECK(CNumber(1) + CNumber(1000), "1001");
+    CHECK(CNumber(5) + CNumber("NaN"), "NaN");
+    CHECK(CNumber("NaN") + CNumber(5), "NaN");
 
     // Subtraction.
     CHECK(CNumber(0) - CNumber(0), "0");
     CHECK(CNumber(1) - CNumber(0), "1");
     CHECK(CNumber(1) - CNumber(2), "-1");
+    CHECK(CNumber(1) - CNumber("NaN"), "NaN");
+    CHECK(CNumber("NaN") - CNumber(1), "NaN");
 
     // Division.
     CHECK(CNumber(1) / CNumber(2), "0.5");
     CHECK(CNumber(1) / CMath::sin(PI), "NaN");
+    CHECK(CNumber(1) / CNumber("NaN"), "NaN");
+    CHECK(CNumber("NaN") / CNumber(4), "NaN");
 
     // Division by zero.
     CHECK(CNumber(1) / CNumber(0), "NaN");
@@ -232,6 +240,8 @@ void test_op()
     CHECK(CNumber(-2)* CNumber(5), "-10");
     CHECK(CNumber(6)* CNumber(7), "42");
     CHECK(CNumber("1.5")* CNumber("1.5"), "2.25");
+    CHECK(CNumber(4) * CNumber("NaN"), "NaN");
+    CHECK(CNumber("NaN") * CNumber(4), "NaN");
 }
 
 void test_functions()
@@ -339,7 +349,7 @@ void test_functions()
     CHECK(CMath::frac("-0.14159"), "-0.14159");
 
     CHECK(CMath::sqrt("NaN"), "NaN");
-    CHECK(CMath::sqrt(-1), "0+1j");
+    CHECK(CMath::sqrt(-1), "1j");
     CHECK(CMath::sqrt(0), "0");
     CHECK(CMath::sqrt(1), "1");
     CHECK(CMath::sqrt(4), "2");
@@ -573,7 +583,7 @@ void test_functions()
     CHECK_PRECISE(CMath::poissonVariance("5"), "5.00000000000000000000000000000000000000000000000000");
 
     CHECK(CMath::ln("NaN"), "NaN");
-    CHECK(CMath::ln("-0.1"), "-2.30258509299404568402-3.14159265358979323846j");
+    CHECK(CMath::ln("-0.1"), "-2.30258509299404568402+3.14159265358979323846j");
     CHECK(CMath::ln("0"), "NaN");
     CHECK(CMath::ln("0.00000000001"), "-25.3284360229345025242");
     CHECK_PRECISE(CMath::ln("0.1"), "-2.30258509299404568401799145468436420760110148862877");
@@ -601,7 +611,7 @@ void test_functions()
     CHECK_PRECISE(CMath::ln("100"), "4.60517018598809136803598290936872841520220297725755");
 
     CHECK(CMath::lg("NaN"), "NaN");
-    CHECK(CMath::lg("-1"), "0-1.36437635384184134749j");
+    CHECK(CMath::lg("-1"), "1.36437635384184134749j");
     CHECK(CMath::lg("0"), "NaN");
     CHECK(CMath::lg("1e-5"), "-5");
     CHECK(CMath::lg("1e-4"), "-4");
@@ -619,7 +629,7 @@ void test_functions()
     CHECK(CMath::lg("0.00000000001"), "-11");
 
     CHECK(CMath::lb("NaN"), "NaN");
-    CHECK(CMath::lb("-1"), "0-4.53236014182719380963j");
+    CHECK(CMath::lb("-1"), "4.53236014182719380963j");
     CHECK(CMath::lb("0"), "NaN");
     CHECK(CMath::lb("1"), "0");
     CHECK(CMath::lb("2"), "1");
@@ -854,7 +864,7 @@ void test_functions()
     CHECK_PRECISE(CMath::arcsin("0.4"), "0.41151684606748801938473789761733560485570113512703");
 
     CHECK(CMath::arccos("NaN"), "NaN");
-    CHECK(CMath::arccos("-1"), "-3.14159265358979323846");  // Complex version of arccos is defined differently as pure real one
+    CHECK(CMath::arccos("-1"), "3.14159265358979323846");
     CHECK(CMath::arccos("0"), "1.57079632679489661923");
     CHECK(CMath::arccos("1"), "0");
     CHECK_PRECISE(CMath::arccos("0.1"), "1.47062890563333682288579851218705812352990872745792");

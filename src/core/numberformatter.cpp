@@ -44,7 +44,10 @@ QString NumberFormatter::format(CNumber number)
     char* str = CMath::format(number, format, settings->resultPrecision);
     QString result = QString::fromLatin1(str);
     free(str);
-    if(unit_name != "") {
+
+    if(!number.real.isZero() && !number.imag.isZero() && unit_name != " ")
+        result = "(" + result + ")";
+    if(unit_name != " ") {
         result.append(unit_name);
     }
     if (settings->radixCharacter() != '.')

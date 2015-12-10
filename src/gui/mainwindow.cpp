@@ -1614,6 +1614,7 @@ void MainWindow::setComplexNumbers(bool b)
 {
     m_settings->complexNumbers = b;
     emit radixCharacterChanged();   // FIXME ?
+    m_evaluator->initializeBuiltInVariables();
 }
 
 void MainWindow::setAngleModeRadian()

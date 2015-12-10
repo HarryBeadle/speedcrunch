@@ -426,6 +426,9 @@ void Evaluator::initializeBuiltInVariables()
     if(Settings::instance()->complexNumbers) {
         setVariable(QLatin1String("j"), CMath::i(), Variable::BuiltIn);
     }
+    else if(hasVariable("j")) {
+        unsetVariable("j", true);
+    }
 
 
     setVariable(QString::fromUtf8("meter"), Units::meter(), Variable::BuiltIn);
@@ -1449,7 +1452,10 @@ CNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<CNumber>& 
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
-                val2 = checkOperatorResult(CMath::raise(val2, val1));
+                if(Settings::instance()->complexNumbers)
+                    val2 = checkOperatorResult(CMath::raise(val2, val1));
+                else
+                    val2 = checkOperatorResult(HMath::raise(val2.real, val1.real));
                 stack.push(val2);
                 break;
 
@@ -1803,9 +1809,9 @@ bool Evaluator::hasVariable(const QString& id) const
         return m_session->hasVariable(id);
 }
 
-void Evaluator::unsetVariable(const QString& id)
+void Evaluator::unsetVariable(const QString& id, bool force_builtin)
 {
-    if(!m_session || m_session->isBuiltInVariable(id))
+    if(!m_session || (m_session->isBuiltInVariable(id) && ! force_builtin))
         return;
     m_session->removeVariable(id);
 }

@@ -114,7 +114,7 @@ public:
     QList<Variable> getUserDefinedVariables() const;
     QList<Variable> getUserDefinedVariablesPlusAns() const;
     void setVariable(const QString&, CNumber, Variable::Type = Variable::UserDefined);
-    void unsetVariable(const QString&);
+    void unsetVariable(const QString&, bool force_builtin = false);
     void unsetAllUserDefinedVariables();
     bool isBuiltInVariable(const QString&) const;
     bool hasVariable(const QString&) const;
