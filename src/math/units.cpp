@@ -4,6 +4,10 @@
 #include <QString>
 #include <QMap>
 
+#define MATCH_UNIT(val, name)   if(number.sameDimension(val)) { \
+                                    number.setDisplayUnit((val), (name));\
+                                }
+
 void Units::findUnit(CNumber & number)
 {
     QString unit_name = "";
@@ -15,106 +19,36 @@ void Units::findUnit(CNumber & number)
     /*
      *  match derived units
      */
-    if(number.sameDimension(joule())) {                             // energy or torque
-        number.setDisplayUnit(joule(), "newton meter");
-    }
-    else if(number.sameDimension(newton())) {                       // force
-        number.setDisplayUnit(newton(), "newton");
-    }
-    else if(number.sameDimension(watt())) {                         // power
-        number.setDisplayUnit(watt(), "watt");
-    }
-    else if(number.sameDimension(pascal())) {                       // pressure or energy density
-        number.setDisplayUnit(pascal(), "pascal");
-    }
-    else if(number.sameDimension(coulomb())) {                      // charge
-        number.setDisplayUnit(coulomb(), "coulomb");
-    }
-    else if(number.sameDimension(volt())) {                         // electrical potential
-        number.setDisplayUnit(volt(), "volt");
-    }
-    else if(number.sameDimension(ohm())) {                          // el. resistance
-        number.setDisplayUnit(ohm(), "ohm");
-    }
-    else if(number.sameDimension(siemens())) {                      // el. conductance
-        number.setDisplayUnit(siemens(), "siemens");
-    }
-    else if(number.sameDimension(ohm()*meter())) {                  // el. resistivity
-        number.setDisplayUnit(ohm()*meter(), "ohm meter");
-    }
-    else if(number.sameDimension(siemens()/meter())) {              // el. conductivity
-        number.setDisplayUnit(siemens()/meter(), "siemens/meter");
-    }
-    else if(number.sameDimension(siemens()/meter()/mole())) {       // molar conductivity
-        number.setDisplayUnit(siemens()/meter()/mole(),
-                              "siemens/(meter mole)");
-    }
-    else if(number.sameDimension(farad())) {                        // capacitance
-        number.setDisplayUnit(farad(), "farad");
-    }
-    else if(number.sameDimension(tesla())) {                        // magnetic flux density
-        number.setDisplayUnit(tesla(), "tesla");
-    }
-    else if(number.sameDimension(weber())) {                        // magnetic flux
-        number.setDisplayUnit(weber(), "weber");
-    }
-    else if(number.sameDimension(henry())) {                        // inductance
-        number.setDisplayUnit(henry(), "henry");
-    }
-    else if(number.sameDimension(coulomb()/cbmeter())) {            // electric charge density
-        number.setDisplayUnit(coulomb()/cbmeter(),
-                              QString::fromUtf8("coulomb/meter³"));
-    }
-    else if(number.sameDimension(coulomb()/sqmeter())) {            // surface charge density or el. flux
-        number.setDisplayUnit(coulomb()/sqmeter(),
-                              QString::fromUtf8("coulomb/meter²"));
-    }
-    else if(number.sameDimension(coulomb()/kilogram())) {           // exposure
-        number.setDisplayUnit(coulomb()/kilogram(), "coulomb/kilogram");
-    }
-    else if(number.sameDimension(farad()/meter())) {                // permittivity
-        number.setDisplayUnit(farad()/meter(), "farad/meter");
-    }
-    else if(number.sameDimension(henry()/meter())) {                // permeability
-        number.setDisplayUnit(henry()/meter(), "henry/meter");
-    }
-    else if(number.sameDimension(joule()/kilogram()/kelvin())) {    // specific heat capacity
-        number.setDisplayUnit(joule()/kilogram()/kelvin(),
-                              "joule/(kilogram kelvin)");
-    }
-    else if(number.sameDimension(joule()/mole()/kelvin())) {        // molar heat capacity
-        number.setDisplayUnit(joule()/mole()/kelvin(),
-                              "joule/(mole kelvin)");
-    }
-    else if(number.sameDimension(mole()/second()/cbmeter())) {      // catalytic activity
-        number.setDisplayUnit(mole()/second()/cbmeter(),
-                              QString::fromUtf8("mole/(second meter³)"));
-    }
-    else if(number.sameDimension(newton()/meter())) {               // surface tension
-        number.setDisplayUnit(newton()/meter(), "newton/meter");
-    }
-    else if(number.sameDimension(pascal()*second())) {              // dynamic viscosity
-        number.setDisplayUnit(pascal()*second(), "pascal second");
-    }
-    else if(number.sameDimension(volt()/meter())) {                 // el. field
-        number.setDisplayUnit(volt()/meter(), "volt/meter");
-    }
-    else if(number.sameDimension(watt()/meter()/kelvin())) {        // thermal conductivity
-        number.setDisplayUnit(watt()/meter()/kelvin(), "watt/(meter kelvin)");
-    }
-    else if(number.sameDimension(watt()/sqmeter())) {               // heat flux
-        number.setDisplayUnit(watt()/sqmeter(), "watt/meter²");
-    }
-    else if(number.sameDimension(joule()/kelvin())) {               // entropy
-        number.setDisplayUnit(joule()/kelvin(), "joule/kelvin");
-    }
-    else if(number.sameDimension(joule()/kilogram())) {             // specific energy
-        number.setDisplayUnit(joule()/kilogram(), "joule/kilogram");
-    }
-    else if(number.sameDimension(joule()/kilogram())) {             // specific energy
-        number.setDisplayUnit(joule()/kilogram(), "joule/kilogram");
-
-    }
+    MATCH_UNIT(joule(), "newton meter")                             // energy or torque
+    else MATCH_UNIT(newton(), "newton")                             // force
+    else MATCH_UNIT(watt(), "watt")                                 // power
+    else MATCH_UNIT(pascal(), "pascal")                             // pressure or energy density
+    else MATCH_UNIT(coulomb(), "coulomb")                           // charge
+    else MATCH_UNIT(volt(), "volt")                                 // electrical potential
+    else MATCH_UNIT(ohm(), "ohm")                                   // el. resistance
+    else MATCH_UNIT(siemens(), "siemens")                           // el. conductance
+    else MATCH_UNIT(ohm()*meter(), "ohm meter")                     // el. resistivity
+    else MATCH_UNIT(siemens()/meter(), "siemens/meter")             // el. conductivity
+    else MATCH_UNIT(siemens()/meter()/mole(), "siemens/(meter mole)")         // molar conductivity
+    else MATCH_UNIT(farad(), "farad")                               // capacitance
+    else MATCH_UNIT(tesla(), "tesla")                               // magnetic flux density
+    else MATCH_UNIT(weber(), "weber")                               // magnetic flux
+    else MATCH_UNIT(henry(), "henry")                               // inductance
+    else MATCH_UNIT(coulomb()/cbmeter(), "coulomb/meter³")          // electric charge density
+    else MATCH_UNIT(coulomb()/cbmeter(), "coulomb/meter²")          // surface charge density or el. flux
+    else MATCH_UNIT(coulomb()/kilogram(), "coulomb/kilogram")       // exposure
+    else MATCH_UNIT(farad()/meter(), "farad/meter")                 // permittivity
+    else MATCH_UNIT(henry()/meter(), "henry/meter")                 // permeability
+    else MATCH_UNIT(joule()/kilogram()/kelvin(),"joule/(kilogram kelvin)")    // specific heat capacity
+    else MATCH_UNIT(joule()/mole()/kelvin(), "joule/(mole kelvin")  // molar heat capacity
+    else MATCH_UNIT(mole()/second()/cbmeter(), "mole/(second meter³)")        // catalytic activity
+    else MATCH_UNIT(newton()/meter(), "newton/meter")               // surface tension
+    else MATCH_UNIT(pascal()*second(), "pascal second")             // dynamic viscosity
+    else MATCH_UNIT(volt()/meter(), "volt/meter")                   // el. field
+    else MATCH_UNIT(watt()/meter()/kelvin(), "watt/(meter kelvin)") // thermal conductivity
+    else MATCH_UNIT(watt()/sqmeter(), "watt/meter²")                // heat flux
+    else MATCH_UNIT(joule()/kelvin(), "joule/kelvin")               // entropy or heat capacity
+    else MATCH_UNIT(joule()/kilogram(), "joule/kilogram")           // specific energy
     else
     {
         /*
