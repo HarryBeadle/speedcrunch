@@ -954,17 +954,14 @@ void MainWindow::applySettings()
     m_actions.viewBitfield->setChecked(m_settings->bitfieldVisible);
     m_actions.viewUserFunctions->setChecked(m_settings->userFunctionsDockVisible);
 
-    resize(m_settings->windowSize);
-
-    if (m_settings->maximized)
-        showMaximized();
-    else if (m_settings->windowPosition.isNull()) {
+    if (!restoreGeometry(m_settings->windowGeometry)) {
+        // We couldn't restore the saved geometry; that means it was either empty
+        // or just isn't valid anymore so we use default size and position.
+        resize(640, 480);
         QDesktopWidget* desktop = QApplication::desktop();
         QRect screen = desktop->availableGeometry(this);
         move(screen.center() - rect().center());
-    } else
-        move(m_settings->windowPosition);
-
+    }
     restoreState(m_settings->windowState);
 
     m_actions.viewFullScreenMode->setChecked(m_settings->windowOnfullScreen);
@@ -1144,11 +1141,9 @@ void MainWindow::saveSettings()
         }
     }
 
-    m_settings->windowPosition = m_settings->windowPositionSave ? pos() : QPoint(0, 0);
-    m_settings->windowSize = size();
+    m_settings->windowGeometry = m_settings->windowPositionSave ? saveGeometry() : QByteArray();
     m_settings->windowState = saveState();
     m_settings->displayFont = m_widgets.display->font().toString();
-    m_settings->maximized = isMaximized();
 
     m_settings->save();
 }
