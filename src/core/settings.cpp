@@ -121,10 +121,8 @@ void Settings::load()
     windowAlwaysOnTop = settings->value(key + QLatin1String("WindowAlwaysOnTop"), false).toBool();
     bitfieldVisible = settings->value(key + QLatin1String("BitfieldVisible"), false).toBool();
 
-    windowPosition = settings->value(key + QLatin1String("WindowPosition"), QPoint()).toPoint();
-    windowSize = settings->value(key + QLatin1String("WindowSize"), QSize(640, 480)).toSize();
     windowState = settings->value(key + QLatin1String("State")).toByteArray();
-    maximized = settings->value(key + QLatin1String("Maximized"), false).toBool();
+    windowGeometry = settings->value(key + QLatin1String("WindowGeometry")).toByteArray();
 
     key = KEY + QLatin1String("/Display/");
     displayFont = settings->value(key + QLatin1String("DisplayFont"), QFont().toString()).toString();
@@ -260,11 +258,9 @@ void Settings::save()
     settings->setValue(key + QLatin1String("StatusBarVisible"), statusBarVisible);
     settings->setValue(key + QLatin1String("VariablesDockVisible"), variablesDockVisible);
     settings->setValue(key + QLatin1String("UserFunctionsDockVisible"), userFunctionsDockVisible);
-    settings->setValue(key + QLatin1String("WindowPosition"), windowPosition);
-    settings->setValue(key + QLatin1String("WindowSize"), windowSize);
     settings->setValue(key + QLatin1String("WindowAlwaysOnTop"), windowAlwaysOnTop);
     settings->setValue(key + QLatin1String("State"), windowState);
-    settings->setValue(key + QLatin1String("Maximized"), maximized);
+    settings->setValue(key + QLatin1String("WindowGeometry"), windowGeometry);
     settings->setValue(key + QLatin1String("BitfieldVisible"), bitfieldVisible);
 
     key = KEY + QLatin1String("/Display/");

@@ -79,10 +79,8 @@ public:
     QStringList variables;
     QList<QStringList> userFunctions;
 
-    QPoint windowPosition;
-    QSize windowSize;
     QByteArray windowState;
-    bool maximized;
+    QByteArray windowGeometry;
 
 private:
     Settings();
