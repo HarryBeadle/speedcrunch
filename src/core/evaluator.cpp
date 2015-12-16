@@ -206,6 +206,8 @@ static Token::Op matchOperator(const QString& text)
           result = Token::RightShift;
         else if(text == "->")
             result = Token::RightArrow;
+        else if(text == "in")
+            result = Token::RightArrow;
     }
 #if 0
     else if (text.length() == 3) {
@@ -577,6 +579,8 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
                 ++i;
             } else if (ch.isNull()) // Terminator character.
                 state = Finish;
+            else if (isIdentifier(ch)) // Identifier or alphanumeric operator
+                state = InIdentifier;
             else { // Look for operator match.
                 int op;
                 QString s;
@@ -615,17 +619,25 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
                     state = Bad;
             }
 
-            // Beginning with unknown alphanumeric?  Could be identifier or function.
-            if (state == Bad && isIdentifier(ch))
-                state = InIdentifier;
+            //// Beginning with unknown alphanumeric?  Could be identifier or function.
+            //if (state == Bad && isIdentifier(ch))
+            //    state = InIdentifier;
             break;
 
+        /* Manage both identifier and alphanumeric operators */
         case InIdentifier:
             // Consume as long as alpha, dollar sign, underscore, or digit.
             if (isIdentifier(ch) || ch.isDigit())
                 tokenText.append(ex.at(i++));
             else { // We're done with identifier.
-                tokens.append(Token(Token::stxIdentifier, tokenText, tokenStart));
+                // if token is an operator
+                if (matchOperator(tokenText)) {
+                    tokens.append(Token(Token::stxOperator, tokenText, tokenStart));
+                }
+                // else, normal identifier
+                else {
+                    tokens.append(Token(Token::stxIdentifier, tokenText, tokenStart));
+                }
                 tokenStart = i;
                 tokenText = "";
                 state = Start;
@@ -809,7 +821,9 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
         }
         if(must_fence)
             expr = "(" + expr + ")";
-        conv_token.addText(expr);
+        // We must replace "in" by "->" to manage alphanumeric unit conversion operator "in"
+        // addUnit does it
+        conv_token.addUnit(expr);
     }
     return tokens;
 }

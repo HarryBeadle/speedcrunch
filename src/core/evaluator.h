@@ -57,7 +57,7 @@ public:
     bool isIdentifier() const { return m_type == stxIdentifier; }
     int pos() const { return m_pos; }
     QString text() const { return m_text; }
-    void addText(QString t) { m_text.append(t);}
+    void addUnit(QString t) { m_text = "->" + t;} // Needed for support of alphanumeric unit conversion operator "in"
     Type type() const { return m_type; }
 
     Token& operator=(const Token&);
