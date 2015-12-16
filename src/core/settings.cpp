@@ -258,12 +258,9 @@ void Settings::save()
     settings->setValue(key + QLatin1String("StatusBarVisible"), statusBarVisible);
     settings->setValue(key + QLatin1String("VariablesDockVisible"), variablesDockVisible);
     settings->setValue(key + QLatin1String("UserFunctionsDockVisible"), userFunctionsDockVisible);
-    //settings->setValue(key + QLatin1String("WindowPosition"), windowPosition);
-    //settings->setValue(key + QLatin1String("WindowSize"), windowSize);
     settings->setValue(key + QLatin1String("WindowAlwaysOnTop"), windowAlwaysOnTop);
     settings->setValue(key + QLatin1String("State"), windowState);
     settings->setValue(key + QLatin1String("WindowGeometry"), windowGeometry);
-    //settings->setValue(key + QLatin1String("Maximized"), maximized);
     settings->setValue(key + QLatin1String("BitfieldVisible"), bitfieldVisible);
 
     key = KEY + QLatin1String("/Display/");
