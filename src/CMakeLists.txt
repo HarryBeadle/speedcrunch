@@ -40,7 +40,6 @@ endif(WIN32)
 
 string(COMPARE EQUAL "${CMAKE_CXX_COMPILER_ID}" MSVC USING_MSVC)
 if(USING_MSVC)
-    add_definitions(/Wall)
     add_definitions(-D_USE_MATH_DEFINES)
 else()
     add_definitions(-Wall)
