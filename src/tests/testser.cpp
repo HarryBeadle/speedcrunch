@@ -118,7 +118,7 @@ int main(int, char**)
     /* CNumber deserialization tests */
     CHECK_DESER_CNUMBER("{\"format\": \"g\",\"value\": \"1\"}", "1");
     CHECK_DESER_CNUMBER("{\"format\": \"g\",\"value\": \"0.1\"}", "0.1");
-    CHECK_DESER_CNUMBER("{\"format\": \"g\",\"value\": \"0.0+1.0j\"}", "0+1j");
+    CHECK_DESER_CNUMBER("{\"format\": \"g\",\"value\": \"0.0+1.0j\"}", "1j");
     /* Serizalitation + deserialization tests */
     printf("%s\n", "SER-DESER");
     check_ser_deser_hnumber(HNumber("3"));

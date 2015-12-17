@@ -19,7 +19,7 @@ equals(QT_MAJOR_VERSION, 4) {
 
 win32-g++:QMAKE_LFLAGS += -static
 
-DEFINES += SPEEDCRUNCH_VERSION="\"\\\"pw\\\"\""
+DEFINES += SPEEDCRUNCH_VERSION="\"\\\"units+complex\\\"\""
 DEFINES += QT_USE_QSTRINGBUILDER
 win32:DEFINES += _USE_MATH_DEFINES
 

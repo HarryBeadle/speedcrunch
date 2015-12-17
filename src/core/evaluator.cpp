@@ -4,6 +4,8 @@
 // Copyright (C) 2007, 2008, 2009, 2010, 2013 Helder Correia <helder.pereira.correia@gmail.com>
 // Copyright (C) 2009 Wolf Lammen <ookami1@gmx.de>
 // Copyright (C) 2014 Tey <teyut@free.fr>
+// Copyright (C) 2015 Pol Welter <polwelter@gmail.com>
+// Copyright (C) 2015 Hadrien Thevenau
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -522,7 +524,7 @@ Tokens Evaluator::tokens() const
     return scan(m_expression);
 }
 
-Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) const
+Tokens Evaluator::scan(const QString& expr) const
 {
     // Result.
     Tokens tokens;
@@ -542,15 +544,6 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
 
     // Force a terminator.
     ex.append(QChar());
-
-#if 0
-    // Work around issue 160 until new more flexible parser is written.
-    if (policy == AutoFix) {
-        if (ex.at(0) == '-')
-            ex.prepend('0');
-        ex.replace("(-", "(0-");
-    }
-#endif
 
     // Main loop.
     while (state != Bad && state != Finish && i < ex.length()) {
@@ -867,19 +860,6 @@ void Evaluator::compile(const Tokens& tokens)
         // Unknown token is invalid.
         if (tokenType == Token::stxUnknown)
             break;
-#if 0
-        // Special case for percentage.
-        if (tokenType == Token::stxOperator && token.asOperator() == Token::Percent
-             && syntaxStack.itemCount() >= 1 && !syntaxStack.top().isOperator())
-        {
-            m_constants.append(CNumber("0.01"));
-            m_codes.append(Opcode(Opcode::Load, m_constants.count() - 1));
-            m_codes.append(Opcode(Opcode::Mul));
-#ifdef EVALUATOR_DEBUG
-            dbg << "  Handling percentage" << "\n";
-#endif
-        }
-#endif
 
         // Try to apply all parsing rules.
         if (1 || token.asOperator() != Token::Percent) {
@@ -1018,28 +998,6 @@ void Evaluator::compile(const Tokens& tokens)
 #endif
                     }
                 }
-
-#if 0
-                // Rule for unary postfix operator in simplified function syntax. This handles case like "sin 90!"
-                if (!ruleFound && syntaxStack.itemCount() >= 3) {
-                    Token op = syntaxStack.top();
-                    Token x = syntaxStack.top(1);
-                    Token id = syntaxStack.top(2);
-                    if (id.isIdentifier() && m_functions->find(id.text())) {
-                        if (!x.isOperator() && op.asOperator() == Token::Exclamation)
-                        {
-                            ruleFound = true;
-                            syntaxStack.pop();
-                            syntaxStack.pop();
-                            syntaxStack.push(x);
-                            m_codes.append(Opcode(Opcode::Fact));
-#ifdef EVALUATOR_DEBUG
-                            dbg << "    Rule for unary operator in simplified function syntax" << "\n";
-#endif
-                        }
-                    }
-                }
-#endif
 
                 // Rule for function arguments, if token is ; or ): id (arg1 ; arg2 -> id (arg.
                 if (!ruleFound && syntaxStack.itemCount() >= 5
@@ -1211,20 +1169,6 @@ void Evaluator::compile(const Tokens& tokens)
                             m_codes.append(Opcode(Opcode::Neg));
 #ifdef EVALUATOR_DEBUG
                         dbg << "    Rule for unary operator (auxiliary)" << "\n";
-#endif
-                    } else {
-#if 0
-                        x = op;
-                        op = syntaxStack.top();
-                        if (!x.isOperator() && op.isOperator())
-                        {
-                            // If we don't really find the rule, restore ruleFound as if nothing happened, see below.
-                            bool ruleFoundOldValue = ruleFound;
-                            ruleFound = true;
-                            if (op.asOperator() == Token::Exclamation)
-                                m_codes.append(Opcode(Opcode::Fact));
-                            else ruleFound = ruleFoundOldValue;
-                        }
 #endif
                     }
                     if (ruleFound) {

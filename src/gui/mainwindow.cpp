@@ -1108,37 +1108,6 @@ void MainWindow::checkInitialDigitGrouping()
 
 void MainWindow::saveSettings()
 {
-#if 0
-    if (m_settings->sessionSave) {
-        m_settings->history = m_widgets.editor->history();
-        m_settings->historyResults = m_widgets.editor->historyResults();
-    } else {
-        m_settings->history.clear();
-        m_settings->historyResults.clear();
-    }
-
-    if (m_settings->variableSave) {
-        m_settings->variables.clear();
-        QList<Variable> variables = m_evaluator->getUserDefinedVariablesPlusAns();
-        for (int i = 0; i < variables.count(); ++i) {
-            QString name = variables.at(i).identifier();
-            char* value = CMath::format(variables.at(i).value(), 'e', DECPRECISION);
-            m_settings->variables.append(QString("%1=%2").arg(name).arg(value));
-            free(value);
-        }
-    }
-
-    if (m_settings->userFunctionSave) {
-        QList<UserFunction> userFunctions = m_evaluator->getUserFunctions();
-        for (int i = 0; i < userFunctions.count(); ++i) {
-            UserFunction descr = userFunctions.at(i);
-            QStringList funcParts;
-            funcParts << descr.name() << descr.arguments() << descr.expression();
-            m_settings->userFunctions.append(funcParts);
-        }
-    }
-#endif
-
     m_settings->windowGeometry = m_settings->windowPositionSave ? saveGeometry() : QByteArray();
     m_settings->windowState = saveState();
     m_settings->displayFont = m_widgets.display->font().toString();
@@ -2123,33 +2092,6 @@ void MainWindow::evaluateEditorExpression()
     emit historyChanged();
     emit variablesChanged();
 
-#if 0
-     * //TODO: remove this
-    m_widgets.display->append(expr, result);
-    m_widgets.display->scrollToBottom();
-
-    if (result.isNan()) {
-        m_widgets.editor->appendHistory(expr, "");
-    } else {
-        const char format = result.format() != 0 ? result.format() : 'e';
-        char* num = CMath::format(result, format, DECPRECISION);
-        m_widgets.editor->appendHistory(expr, num);
-        free(num);
-        m_widgets.editor->setAnsAvailable(true);
-    }
-
-    if (m_settings->userFunctionsDockVisible)
-        m_docks.userFunctions->updateList();
-
-    if (m_settings->historyDockVisible) {
-        HistoryWidget* history = qobject_cast<HistoryWidget*>(m_docks.history->widget());
-        history->append(expr);
-    }
-
-    if (m_settings->variablesDockVisible)
-        m_docks.variables->updateList();
-#endif
-
     if (m_settings->bitfieldVisible)
         m_widgets.bitField->updateBits(result);
 
@@ -2227,7 +2169,7 @@ void MainWindow::handleEditorTextChange()
         if (expr.isEmpty())
             return;
 
-        Tokens tokens = m_evaluator->scan(expr, Evaluator::NoAutoFix);
+        Tokens tokens = m_evaluator->scan(expr);
         if (tokens.count() == 1) {
             bool operatorCondition =
                 tokens.at(0).asOperator() == Token::Plus

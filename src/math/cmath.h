@@ -65,11 +65,11 @@ class CNumber {
     CNumber& setDisplayUnit(const CNumber, const QString &name);
     void stripUnits();
     bool hasDimension() const { return real.hasDimension(); }
-    bool isDimensionless() const { return real.isDimensionless(); };
-    QMap<QString, Rational> getDimension() const { return real.getDimension(); };
+    bool isDimensionless() const { return real.isDimensionless(); }
+    QMap<QString, Rational> getDimension() const { return real.getDimension(); }
     void modifyDimension(const QString & key, const Rational & exponent);
     void clearDimension();
-    bool sameDimension(const CNumber & other) const { return real.sameDimension(other.real); } ;
+    bool sameDimension(const CNumber & other) const { return real.sameDimension(other.real); }
     void cleanDimension();
 
     void serialize(QJsonObject & json) const;
@@ -84,11 +84,11 @@ class CNumber {
     CNumber& operator-=( const CNumber& );
     CNumber operator*( const CNumber& ) const;
     CNumber operator*( const HNumber& ) const;
-    CNumber operator*( int x) { return operator*( HNumber(x) ); }; /* Overload ambiguity resolution */
+    CNumber operator*( int x) { return operator*( HNumber(x) ); } /* Overload ambiguity resolution */
     CNumber& operator*=( const CNumber& );
     CNumber operator/( const CNumber& ) const;
     CNumber operator/( const HNumber& ) const;
-    CNumber operator/( int x) { return operator/( HNumber(x) ); }; /* Overload ambiguity resolution */
+    CNumber operator/( int x) { return operator/( HNumber(x) ); } /* Overload ambiguity resolution */
     CNumber& operator/=( const CNumber& );
     CNumber operator%( const CNumber& ) const;
     CNumber operator&( const CNumber& ) const;

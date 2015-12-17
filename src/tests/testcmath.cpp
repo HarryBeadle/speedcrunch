@@ -468,8 +468,8 @@ void test_functions()
     CHECK(CMath::raise("2", "2"), "4");
     CHECK(CMath::raise("3", "3"), "27");
     CHECK(CMath::raise("4", "4"), "256");
-    CHECK(CMath::raise("-27", CNumber("1") / CNumber("3")), "-3");
-    CHECK(CMath::raise("-27", CNumber("-1") / CNumber("3")), "-0.33333333333333333333");
+    CHECK(CMath::raise("-27", CNumber("1") / CNumber("3")), "1.5+2.59807621135331594029j");
+    CHECK(CMath::raise("-27", CNumber("-1") / CNumber("3")), "0.16666666666666666667-0.28867513459481288225j");
     CHECK_PRECISE(CMath::raise("2", "0.1"), "1.07177346253629316421300632502334202290638460497756");
     CHECK_PRECISE(CMath::raise("2", "0.2"), "1.14869835499703500679862694677792758944385088909780");
     CHECK_PRECISE(CMath::raise("2", "0.3"), "1.23114441334491628449939306916774310987613776110082");

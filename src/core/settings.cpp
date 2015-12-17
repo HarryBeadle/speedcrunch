@@ -2,6 +2,7 @@
 // Copyright (C) 2004, 2005, 2007, 2008 Ariya Hidayat <ariya@kde.org>
 // Copyright (C) 2005-2006 Johan Thelin <e8johan@gmail.com>
 // Copyright (C) 2007-2009 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (C) 2015 Pol Welter <polwelter@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -126,85 +127,6 @@ void Settings::load()
     key = KEY + QLatin1String("/Display/");
     displayFont = settings->value(key + QLatin1String("DisplayFont"), QFont().toString()).toString();
     colorScheme = settings->value(key + QLatin1String("ColorScheme"), 0).toInt();
-#if 0
-    // Load history.
-    key = KEY + QLatin1String("/History/");
-    history.clear();
-    int count = settings->value(key + QLatin1String("Count"), 0).toInt();
-    for (int i = 0; i < count; ++i) {
-        QString keyname = QString(key + QLatin1String("Expression%1")).arg(i);
-        QString str = settings->value(keyname).toString();
-        if (!str.isEmpty()) {
-            QString expr;
-            for (int c = 0; c < str.length(); ++c)
-                if (str.at(c) >= 32)
-                    expr.append(str.at(c));
-            history.append(expr);
-        }
-    }
-
-    // Load results.
-    historyResults.clear();
-    for (int i = 0; i < count; ++i) {
-        QString keyname = QString(key + QLatin1String("Expression%1Result")).arg(i);
-        QVariant value = settings->value(keyname);
-        if (value.isValid())
-            historyResults.append(value.toString());
-    }
-    if (history.count() != historyResults.count()) {
-        // Avoid application crash because of new features with old settings files.
-        history.clear();
-        historyResults.clear();
-    }
-
-    // Load variables.
-    key = KEY + QLatin1String("/Variables/");
-    variables.clear();
-    settings->beginGroup(key);
-    QStringList names = settings->childKeys();
-    settings->endGroup();
-    for (int k = 0; k < names.count(); ++k) {
-        QString name = names.at(k);
-        QString keyname = key + name;
-        QString value = settings->value(keyname).toString();
-        // Treat upper case escape code.
-        for (int c = 0; c < name.length(); ++c) {
-            if (name.at(c) == '_') {
-                name.remove(c, 1);
-                if (name.at(c) != '_')
-                    name[c] = name.at(c).toUpper();
-            }
-        }
-        // Load.
-        if (!value.isEmpty())
-            variables.append(QString::fromLatin1("%1=%2").arg(name).arg(value));
-    }
-
-    // Load user functions.
-    key = KEY + QLatin1String("/UserFunctions/");
-    userFunctions.clear();
-    settings->beginGroup(key);
-    names = settings->childKeys();
-    settings->endGroup();
-    for (int k = 0; k < names.count(); ++k) {
-        QString name = names.at(k);
-        QString keyname = key + name;
-        QStringList value = settings->value(keyname).toStringList();
-        // Treat upper case escape code.
-        for (int c = 0; c < name.length(); ++c) {
-            if (name.at(c) == '_') {
-                name.remove(c, 1);
-                if (name.at(c) != '_')
-                    name[c] = name.at(c).toUpper();
-            }
-        }
-        // Load.
-        if (!value.isEmpty()) {
-            value.prepend(name);
-            userFunctions.append(value);
-        }
-    }
-#endif
     delete settings;
 }
 
@@ -265,95 +187,6 @@ void Settings::save()
     settings->setValue(key + QLatin1String("DisplayFont"), displayFont);
     settings->setValue(key + QLatin1String("ColorScheme"), colorScheme);
 
-#if 0
-    // Save history.
-    if (sessionSave) {
-        key = KEY + QLatin1String("/History/");
-        QStringList realHistory = history;
-        QStringList realHistoryResults = historyResults;
-
-        if (history.count() > 100) {
-            realHistory.clear();
-            realHistoryResults.clear();
-            unsigned start = history.count() - 100;
-            for (int j = start; j < history.count(); ++j) {
-                realHistory.append(history.at(j));
-                realHistoryResults.append(historyResults.at(j));
-            }
-        }
-
-        settings->beginGroup(key);
-        QStringList hkeys = settings->childKeys();
-        settings->endGroup();
-
-        for (k = 0; k < hkeys.count(); k++) {
-            settings->remove(key + "Expression" + QString::number(k));
-            settings->remove(key + "Expression" + QString::number(k) + "Result");
-        }
-
-        settings->setValue(key + QLatin1String("/Count/"), (int)history.count());
-        for (i = 0; i < realHistory.count(); i++) {
-            settings->setValue((key + "Expression" + QString::number(i)), realHistory.at(i));
-            settings->setValue((key + "Expression" + QString::number(i) + "Result"), realHistoryResults.at(i));
-        }
-    }
-
-    // Save variables.
-    if (variableSave) {
-        key = KEY + QLatin1String("/Variables/");
-        settings->beginGroup(key);
-        QStringList vkeys = settings->childKeys();
-        settings->endGroup();
-
-        for (k = 0; k < vkeys.count(); ++k)
-            settings->remove(key + vkeys.at(k));
-
-        for (i = 0; i < variables.count(); ++i) {
-            QStringList s = variables[i].split('=');
-            if (s.count() == 2) {
-                QString name = "";
-                QString value = s.at(1);
-                int length = s.at(0).length();
-                for (int c = 0; c < length; ++c) {
-                    if (s.at(0).at(c).isUpper() || s.at(0).at(c) == '_') {
-                        name += '_';
-                        name += s.at(0).at(c).toLower();
-                    } else
-                        name += s.at(0).at(c);
-                }
-                settings->setValue(key + name, value);
-            }
-        }
-    }
-
-    // Save user functions.
-    if (userFunctionSave) {
-        key = KEY + QLatin1String("/UserFunctions/");
-        settings->beginGroup(key);
-        QStringList vkeys = settings->childKeys();
-        settings->endGroup();
-
-        for (k = 0; k < vkeys.count(); ++k)
-            settings->remove(key + vkeys.at(k));
-
-        for (i = 0; i < userFunctions.count(); ++i) {
-            QStringList s = userFunctions.at(i);
-            if (s.count() >= 2) {
-                QString name = "";
-                QVariant value(s.mid(1));
-                int length = s.at(0).length();
-                for (int c = 0; c < length; ++c) {
-                    if (s.at(0).at(c).isUpper() || s.at(0).at(c) == '_') {
-                        name += '_';
-                        name += s.at(0).at(c).toLower();
-                    } else
-                        name += s.at(0).at(c);
-                }
-                settings->setValue(key + name, value);
-            }
-        }
-    }
-#endif
 
     delete settings;
 }

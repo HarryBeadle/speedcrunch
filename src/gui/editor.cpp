@@ -225,7 +225,7 @@ void Editor::doMatchingLeft()
 
     // Check for right par.
     QString subtext = text().left(currentPosition);
-    Tokens tokens = m_evaluator->scan(subtext, Evaluator::NoAutoFix);
+    Tokens tokens = m_evaluator->scan(subtext);
     if (!tokens.valid() || tokens.count() < 1)
         return;
     Token lastToken = tokens.at(tokens.count() - 1);
@@ -326,7 +326,7 @@ void Editor::triggerAutoComplete()
     // Tokenize the expression (this is very fast).
     const int currentPosition = textCursor().position();
     QString subtext = text().left(currentPosition);
-    const Tokens tokens = m_evaluator->scan(subtext, Evaluator::NoAutoFix);
+    const Tokens tokens = m_evaluator->scan(subtext);
     if (!tokens.valid() || tokens.count() < 1)
         return;
 

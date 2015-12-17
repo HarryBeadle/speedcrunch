@@ -84,9 +84,6 @@ class Evaluator : public QObject {
     Q_OBJECT
 
 public:
-    // Needed only for issue 160 workaround.
-    enum AutoFixPolicy { AutoFix, NoAutoFix };
-
     static Evaluator* instance();
     void reset();
 
@@ -104,7 +101,7 @@ public:
     CNumber evalUpdateAns();
     QString expression() const;
     bool isValid();
-    Tokens scan(const QString&, AutoFixPolicy = AutoFix) const;
+    Tokens scan(const QString&) const;
     void setExpression(const QString&);
     Tokens tokens() const;
     bool isUserFunctionAssign() const;

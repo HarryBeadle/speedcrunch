@@ -91,11 +91,11 @@ void test_create()
     CHECK(CNumber("1.0e-3"), "0.001");
 
     // Complex number
-    CHECK(CNumber("0+1j"),           "0+1j");
+    CHECK(CNumber("0+1j"),           "1j");
     CHECK(CNumber("1+1j"),           "1+1j");
     CHECK(CNumber("2+2j"),           "2+2j");
-    CHECK(CNumber("0+1.0j"),         "0+1j");
-    CHECK(CNumber("0.0+1.0j"),       "0+1j");
+    CHECK(CNumber("0+1.0j"),         "1j");
+    CHECK(CNumber("0.0+1.0j"),       "1j");
     CHECK(CNumber("1.0+1.0j"),       "1+1j");
     CHECK(CNumber("1e-3+1e-3j"),     "0.001+0.001j");
     CHECK(CNumber("1.0e-3+1.0e-3j"), "0.001+0.001j");   
@@ -107,7 +107,7 @@ void test_create()
     CHECK_FORMAT('e', 2, HNumber("1e-1000000000"), "NaN");
 
     // Long numbers, like in session history
-    CHECK(CNumber("0+1.000000000000000000000000000000000000000000000000000000000000000000000000000000j"), "0+1j");
+    CHECK(CNumber("0+1.000000000000000000000000000000000000000000000000000000000000000000000000000000j"), "1j");
 }
 
 int main(int argc, char* argv[])

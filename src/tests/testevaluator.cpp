@@ -135,31 +135,11 @@ void test_unary()
     CHECK_EVAL("--ABS(-3)", "3");
     CHECK_EVAL("---ABS(-4)", "-4");
 
-    // See http://en.wikipedia.org/wiki/Empty_product.
-    CHECK_EVAL("0^0", "NaN");
-
-    CHECK_EVAL("1^0", "1");
-    CHECK_EVAL("1^1", "1");
-    CHECK_EVAL("1^2", "1");
-    CHECK_EVAL("1^3", "1");
-
     // Operator ^ has higher precedence than unary minus.
     CHECK_EVAL("-1^0", "-1");
     CHECK_EVAL("-1^1", "-1");
     CHECK_EVAL("-1^2", "-1");
     CHECK_EVAL("-1^3", "-1");
-
-    CHECK_EVAL("2^0", "1");
-    CHECK_EVAL("2^1", "2");
-    CHECK_EVAL("2^2", "4");
-    CHECK_EVAL("2^3", "8");
-    CHECK_EVAL("2^4", "16");
-    CHECK_EVAL("2^5", "32");
-    CHECK_EVAL("2^6", "64");
-    CHECK_EVAL("2^7", "128");
-    CHECK_EVAL("2^8", "256");
-    CHECK_EVAL("2^9", "512");
-    CHECK_EVAL("2^10", "1024");
 
     CHECK_EVAL("-2^0", "-1");
     CHECK_EVAL("-2^1", "-2");
@@ -188,10 +168,38 @@ void test_unary()
     CHECK_EVAL("-1!", "-1");
     CHECK_EVAL("-2!", "-2");
     CHECK_EVAL("-3!", "-6");
+
+    CHECK_EVAL("5*10%", "0.5");
+    CHECK_EVAL("10+10%", "10.1");
+    CHECK_EVAL("a=10", "10");
+    CHECK_EVAL("a%", "0.1");
+
+    // Percent operator has precedence over ^.
+    CHECK_EVAL("5^200%", "25");
 }
 
 void test_binary()
 {
+    // See http://en.wikipedia.org/wiki/Empty_product.
+    CHECK_EVAL("0^0", "NaN");
+
+    CHECK_EVAL("1^0", "1");
+    CHECK_EVAL("1^1", "1");
+    CHECK_EVAL("1^2", "1");
+    CHECK_EVAL("1^3", "1");
+
+    CHECK_EVAL("2^0", "1");
+    CHECK_EVAL("2^1", "2");
+    CHECK_EVAL("2^2", "4");
+    CHECK_EVAL("2^3", "8");
+    CHECK_EVAL("2^4", "16");
+    CHECK_EVAL("2^5", "32");
+    CHECK_EVAL("2^6", "64");
+    CHECK_EVAL("2^7", "128");
+    CHECK_EVAL("2^8", "256");
+    CHECK_EVAL("2^9", "512");
+    CHECK_EVAL("2^10", "1024");
+
     CHECK_EVAL("0+0", "0");
     CHECK_EVAL("1+0", "1");
     CHECK_EVAL("0+1", "1");
