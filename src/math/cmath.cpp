@@ -213,7 +213,7 @@ void CNumber::cleanDimension(){
 void CNumber::serialize(QJsonObject &json) const
 {
     const char f = format();
-    json["format"] = (f==0) ? "NULL" : QString(f);
+    json["format"] = (f=='\0') ? "NULL" : QString(f);
     json["value"] = CMath::format(*this, f, DECPRECISION);
     if(hasUnit()) {
         json["unit"] = CMath::format(getUnit(), 'e', DECPRECISION);
@@ -240,7 +240,7 @@ CNumber CNumber::deSerialize(const QJsonObject &json)
     str.replace(",", ".");
     CNumber result(str.toLatin1().constData());
     QString f = json["format"].toString();
-    result.setFormat( (f=="NULL") ? 0: f.toLatin1().constData()[0]);
+    result.setFormat( (f=="NULL") ? '\0': f.at(0).toLatin1());
 
     if(json.contains("unit")) {
         str = json["unit"].toString();

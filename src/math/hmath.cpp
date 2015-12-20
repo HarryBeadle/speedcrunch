@@ -132,7 +132,7 @@ public:
 };
 
 HNumberPrivate::HNumberPrivate()
-  : error(Success), format(0), unit(NULL), unit_name(NULL), dimension(NULL)
+  : error(Success), format('\0'), unit(NULL), unit_name(NULL), dimension(NULL)
 {
   h_init();
   float_create(&fnum);
@@ -496,7 +496,7 @@ void HNumber::cleanDimension()
 void HNumber::serialize(QJsonObject &json) const
 {
     const char f = format();
-    json["format"] = (f==0) ? "NULL" : QString(f);
+    json["format"] = (f=='\0') ? "NULL" : QString(f);
     json["value"] = HMath::format(*this, f, DECPRECISION);
     if(hasUnit()) {
         json["unit"] = HMath::format(getUnit(), 'e', DECPRECISION);
@@ -521,7 +521,7 @@ HNumber HNumber::deSerialize(const QJsonObject &json)
     str.replace(",", ".");
     HNumber result(str.toLatin1().constData());
     QString f = json["format"].toString();
-    result.setFormat( (f=="NULL") ? 0: f.toLatin1().constData()[0]);
+    result.setFormat( (f=="NULL") ? '\0': f.at(0).toLatin1());
 
     if(json.contains("unit")) {
         str = json["unit"].toString();

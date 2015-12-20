@@ -5,7 +5,7 @@
 // Copyright (C) 2009 Wolf Lammen <ookami1@gmx.de>
 // Copyright (C) 2014 Tey <teyut@free.fr>
 // Copyright (C) 2015 Pol Welter <polwelter@gmail.com>
-// Copyright (C) 2015 Hadrien Thevenau
+// Copyright (C) 2015 Hadrien Theveneau <theveneau@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
