@@ -2217,7 +2217,7 @@ void MainWindow::openUpdatesURL()
 
 void MainWindow::openFeedbackURL()
 {
-    QDesktopServices::openUrl(QUrl(QString::fromLatin1("https://code.google.com/p/speedcrunch/issues/entry")));
+    QDesktopServices::openUrl(QUrl(QString::fromLatin1("https://bitbucket.org/heldercorreia/speedcrunch/issues?status=new&status=open")));
 }
 
 void MainWindow::openCommunityURL()
