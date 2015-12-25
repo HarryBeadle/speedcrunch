@@ -1242,7 +1242,9 @@ void MainWindow::copyResultToClipboard()
 {
     QClipboard* cb = QApplication::clipboard();
     HNumber num = m_evaluator->getVariable(QLatin1String("ans")).value;
-    char* strToCopy = HMath::format(num, m_settings->resultFormat, m_settings->resultPrecision);
+    char fmt = num.format();
+    char* strToCopy = HMath::format(num, fmt ? fmt : m_settings->resultFormat,
+                                    m_settings->resultPrecision);
     QString final(strToCopy);
     if (m_settings->radixCharacter() == ',')
         final.replace('.', ',');
