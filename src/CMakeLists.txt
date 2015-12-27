@@ -109,9 +109,12 @@ endif(NOT WIN32)
 
 if(WIN32)
     include(../pkg/QtWin32Deploy.cmake)
-    qtwin32_check_qt_version(5.5)
     qtwin32_deploy_modules(${BINDIR} qtwin32_Qt5Widgets)
     qtwin32_deploy_default_qt_conf(${BINDIR})
+    if(${qtwin32_QT_MINOR_VERSION} VERSION_LESS 5.5)
+        # Qt 5.4 and below also require ICU.
+        qtwin32_deploy_modules(${BINDIR} qtwin32_ICU)
+    endif()
 endif(WIN32)
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${BINDIR})
 include(InstallRequiredSystemLibraries)
