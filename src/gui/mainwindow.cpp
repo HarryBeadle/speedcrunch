@@ -1229,7 +1229,9 @@ void MainWindow::copyResultToClipboard()
 {
     QClipboard* cb = QApplication::clipboard();
     CNumber num = m_evaluator->getVariable(QLatin1String("ans")).value();
-    char* strToCopy = CMath::format(num, m_settings->resultFormat, m_settings->resultPrecision);
+    char fmt = num.format();
+    char* strToCopy = CMath::format(num, fmt ? fmt : m_settings->resultFormat,
+                                    m_settings->resultPrecision);
     QString final(strToCopy);
     if (m_settings->radixCharacter() == ',')
         final.replace('.', ',');
@@ -2025,7 +2027,7 @@ void MainWindow::openUpdatesURL()
 
 void MainWindow::openFeedbackURL()
 {
-    QDesktopServices::openUrl(QUrl(QString::fromLatin1("https://code.google.com/p/speedcrunch/issues/entry")));
+    QDesktopServices::openUrl(QUrl(QString::fromLatin1("https://bitbucket.org/heldercorreia/speedcrunch/issues?status=new&status=open")));
 }
 
 void MainWindow::openCommunityURL()
@@ -2055,7 +2057,7 @@ void MainWindow::restoreSession() {
 
     QFile file(data_path);
     if (!file.open(QIODevice::ReadOnly))
-       return;
+        return;
 
     QByteArray data = file.readAll();
     QJsonDocument doc(QJsonDocument::fromJson(data));
