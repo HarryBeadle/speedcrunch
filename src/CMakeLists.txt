@@ -142,6 +142,23 @@ if(WIN32)
     set(CPACK_NSIS_HELP_LINK "http://groups.google.com/group/speedcrunch")
     set(CPACK_NSIS_URL_INFO_ABOUT "http://speedcrunch.org")
     set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL true)
+
+    if(${CMAKE_SIZEOF_VOID_P} EQUAL 8)
+        # When building a 64-bit installer, we add a check to make it fail on 32-bit systems
+        # because CPack doesn't do that by itself. Using this variable is probably a bit of a hack
+        # though.
+        set(CPACK_NSIS_DEFINES
+            "!include 'x64.nsh'
+             Function x64Check
+             \\\${IfNot} \\\${RunningX64}
+                 MessageBox MB_OK|MB_ICONEXCLAMATION 'This installer can only be run on 64-bit Windows.'
+                 Quit
+             \\\${EndIf}
+             FunctionEnd
+
+             Page custom x64Check
+            ")
+    endif()
 endif(WIN32)
 
 include(CPack)
