@@ -36,6 +36,7 @@ void Units::findUnit(CNumber & number)
 
     /*
      *  match derived units
+     *  TODO: Store these units in a data structure to match the dimension vector more efficiently
      */
     MATCH_UNIT(joule(), "newton meter")                             // energy or torque
     else MATCH_UNIT(newton(), "newton")                             // force
@@ -53,7 +54,7 @@ void Units::findUnit(CNumber & number)
     else MATCH_UNIT(weber(), "weber")                               // magnetic flux
     else MATCH_UNIT(henry(), "henry")                               // inductance
     else MATCH_UNIT(coulomb()/cbmeter(), "coulomb/meter³")          // electric charge density
-    else MATCH_UNIT(coulomb()/cbmeter(), "coulomb/meter²")          // surface charge density or el. flux
+    else MATCH_UNIT(coulomb()/sqmeter(), "coulomb/meter²")          // surface charge density or el. flux
     else MATCH_UNIT(coulomb()/kilogram(), "coulomb/kilogram")       // exposure
     else MATCH_UNIT(farad()/meter(), "farad/meter")                 // permittivity
     else MATCH_UNIT(henry()/meter(), "henry/meter")                 // permeability
@@ -97,7 +98,7 @@ void Units::findUnit(CNumber & number)
 
             // TODO: replace this with a lookup to a repository
             if(i.key() == "length") {
-                unit_name += "meter";
+                unit_name += " meter";
             } else if(i.key() == "time") {
                 unit_name += " second";
             } else if(i.key() == "mass") {
@@ -116,7 +117,7 @@ void Units::findUnit(CNumber & number)
             unit_name += exponent;
             ++i;
         }
-        number.setDisplayUnit(unit, unit_name);
+        number.setDisplayUnit(unit, unit_name.trimmed());
     }
 }
 
