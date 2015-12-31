@@ -153,7 +153,6 @@ static Token::Op matchOperator(const QString& text)
         case ';': result = Token::Semicolon; break;
         case '(': result = Token::LeftPar; break;
         case ')': result = Token::RightPar; break;
-        case '%': result = Token::Percent; break;
         case '!': result = Token::Exclamation; break;
         case '=': result = Token::Equal; break;
         case '\\': result = Token::Backslash; break;
@@ -185,7 +184,6 @@ static int opPrecedence(Token::Op op)
     int prec;
     switch(op) {
     case Token::Exclamation: prec = 8; break;
-    case Token::Percent: prec = 8; break;
     case Token::Caret: prec = 7; break;
     case Token::Asterisk: prec = 5; break;
     case Token::Slash: prec = 6; break;
@@ -744,20 +742,8 @@ void Evaluator::compile(const Tokens& tokens)
 #endif
         }
 
-        // Special case for percentage.
-        if (tokenType == Token::stxOperator && token.asOperator() == Token::Percent
-             && syntaxStack.itemCount() >= 1 && !syntaxStack.top().isOperator())
-        {
-            m_constants.append(HNumber("0.01"));
-            m_codes.append(Opcode(Opcode::Load, m_constants.count() - 1));
-            m_codes.append(Opcode(Opcode::Mul));
-#ifdef EVALUATOR_DEBUG
-            dbg << "  Handling percentage" << "\n";
-#endif
-        }
-
         // For any other operator, try to apply all parsing rules.
-        if (tokenType == Token::stxOperator && token.asOperator() != Token::Percent) {
+        if (tokenType == Token::stxOperator) {
 #ifdef EVALUATOR_DEBUG
             dbg << "  Checking rules..." << "\n";
 #endif
@@ -1081,8 +1067,7 @@ void Evaluator::compile(const Tokens& tokens)
             }
 
             // Can't apply rules anymore, push the token.
-            if (token.asOperator() != Token::Percent)
-                syntaxStack.push(token);
+            syntaxStack.push(token);
         }
     }
 
