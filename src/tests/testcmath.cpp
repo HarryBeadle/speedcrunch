@@ -37,7 +37,7 @@ static int cmath_new_failed_tests = 0;
 
 static CNumber PI;
 
-static void check_value(const char* file, int line, const char* msg, const CNumber& n, const char* expected, int issue = 0)
+static void check_value(const char*, int line, const char* msg, const CNumber& n, const char* expected, int issue = 0)
 {
     ++cmath_total_tests;
     char* result = CMath::format(n, 'f');
@@ -947,7 +947,7 @@ void test_functions()
     CHECK_FORMAT('h', 0, CMath::encodeIeee754("1.5", "2", "1"), "0x3");
 }
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
     cmath_total_tests  = 0;
     cmath_failed_tests = 0;

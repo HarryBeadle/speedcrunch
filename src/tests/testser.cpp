@@ -19,7 +19,7 @@ static int ser_failed_tests = 0;
 static int ser_new_failed_tests = 0;
 
 template <class T>
-void check_ser(const char* file, int line, const char* msg, const T& num, const char* expected, int issue = 0) {
+void check_ser(const char*, int line, const char* msg, const T& num, const char* expected, int issue = 0) {
     /* Serialization */
     QJsonObject obj;
     num.serialize(obj);
@@ -41,7 +41,7 @@ void check_ser(const char* file, int line, const char* msg, const T& num, const 
     }
 }
 
-void check_deser_cnumber(const char* file, int line, const char* msg, const char* str,  const char* expected, int issue = 0) {
+void check_deser_cnumber(const char*, int line, const char* msg, const char* str,  const char* expected, int issue = 0) {
     /* Deserialization */
     QJsonDocument doc = QJsonDocument::fromJson(str);
     CNumber num(doc.object());
@@ -63,7 +63,7 @@ void check_deser_cnumber(const char* file, int line, const char* msg, const char
     free(result);
 }
 
-void check_deser_hnumber(const char* file, int line, const char* msg, const char* str,  const char* expected, int issue = 0) {
+void check_deser_hnumber(const char*, int line, const char* msg, const char* str,  const char* expected, int issue = 0) {
     /* Deserialization */
     QJsonDocument doc = QJsonDocument::fromJson(str);
     HNumber num(doc.object());

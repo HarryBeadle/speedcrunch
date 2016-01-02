@@ -55,7 +55,7 @@ static void checkAutoFix(const char* file, int line, const char* msg, const QStr
     }
 }
 
-static void checkDivisionByZero(const char* file, int line, const char* msg, const QString& expr)
+static void checkDivisionByZero(const char*, int line, const char* msg, const QString& expr)
 {
     ++eval_total_tests;
 
@@ -68,7 +68,7 @@ static void checkDivisionByZero(const char* file, int line, const char* msg, con
     }
 }
 
-static void checkEval(const char* file, int line, const char* msg, const QString& expr, const char* expected, int issue = 0, bool shouldFail = false)
+static void checkEval(const char*, int line, const char* msg, const QString& expr, const char* expected, int issue = 0, bool shouldFail = false)
 {
     ++eval_total_tests;
 
@@ -98,7 +98,7 @@ static void checkEval(const char* file, int line, const char* msg, const QString
     }
 }
 
-static void checkEvalPrecise(const char* file, int line, const char* msg, const QString& expr, const char* expected)
+static void checkEvalPrecise(const char*, int line, const char* msg, const QString& expr, const char* expected)
 {
     ++eval_total_tests;
 

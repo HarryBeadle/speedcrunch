@@ -36,7 +36,7 @@ static int cmath_total_tests  = 0;
 static int cmath_failed_tests = 0;
 static int cmath_new_failed_tests = 0;
 
-static void check_value(const char* file, int line, const char* msg, const CNumber& n, const char* expected, int issue = 0)
+static void check_value(const char*, int line, const char* msg, const CNumber& n, const char* expected, int issue = 0)
 {
     ++cmath_total_tests;
     char* result = CMath::format(n, 'f');
@@ -110,7 +110,7 @@ void test_create()
     CHECK(CNumber("0+1.000000000000000000000000000000000000000000000000000000000000000000000000000000j"), "1j");
 }
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
     cmath_total_tests  = 0;
     cmath_failed_tests = 0;
