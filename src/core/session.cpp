@@ -19,6 +19,7 @@
 #include "session.h"
 #include "sessionhistory.h"
 #include "variable.h"
+#include "evaluator.h"
 
 #include <QFile>
 #include <QJsonDocument>
@@ -93,8 +94,8 @@ int Session::deSerialize(const QJsonObject &json, bool merge=false)
     QJsonArray func_obj = json["functions"].toArray();
     n = func_obj.size();
     for(int i=0; i<n; ++i) {
-        QJsonObject func = func_obj[i].toObject();
-        userFunctions[func["name"].toString()].deSerialize(func);
+        UserFunction func(func_obj[i].toObject());
+        addUserFunction(func);
     }
     return version==SPEEDCRUNCH_VERSION;
 
@@ -169,8 +170,14 @@ void Session::clearHistory()
 
 void Session::addUserFunction(const UserFunction &func)
 {
-    QString name = func.name();
-    userFunctions[name] = func;
+    if(func.opcodes.isEmpty()) {
+        // We need to compile the function, so pretend the user typed it.
+        Evaluator::instance()->setExpression(func.name() + "(" + func.arguments().join(";") + ")=" + func.expression());
+        Evaluator::instance()->eval();
+    } else {
+        QString name = func.name();
+        userFunctions[name] = func;
+    }
 }
 
 void Session::removeUserFunction(const QString &str)

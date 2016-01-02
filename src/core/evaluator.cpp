@@ -1686,14 +1686,13 @@ CNumber Evaluator::eval()
                 }
             }
 
-            UserFunction* userFunction = new UserFunction(m_assignId, m_assignArg, m_expression.section("=", 1, 1).trimmed());
-            userFunction->constants = m_constants;
-            userFunction->identifiers = m_identifiers;
-            userFunction->opcodes = m_codes;
+            UserFunction userFunction(m_assignId, m_assignArg, m_expression.section("=", 1, 1).trimmed());
+            userFunction.constants = m_constants;
+            userFunction.identifiers = m_identifiers;
+            userFunction.opcodes = m_codes;
 
-            if(!m_session)
-                m_session = new Session;
-            m_session->addUserFunction(*userFunction);
+            setUserFunction(userFunction);
+
         } else {
             if(hasUserFunction(m_assignId)) {
                 m_error = tr("%1 is a user function name, please choose another or delete the function").arg(m_assignId);
@@ -1801,16 +1800,9 @@ QList<UserFunction> Evaluator::getUserFunctions() const
 
 void Evaluator::setUserFunction(const UserFunction &f)
 {
-    if(!f.opcodes.isEmpty()) {
-        // already compiled
-        m_session->addUserFunction(f);
-    }
-    else {
-        // We need to compile the function, so pretend the user typed it.
-        setExpression(f.name() + "(" + f.arguments().join(";") + ")=" + f.expression());
-        eval();
-    }
-
+    if(!m_session)
+        m_session = new Session;
+    m_session->addUserFunction(f);
 }
 
 void Evaluator::unsetUserFunction(const QString& fname)
