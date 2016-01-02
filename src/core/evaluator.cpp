@@ -191,7 +191,6 @@ static Token::Op matchOperator(const QString& text)
         case ';': result = Token::Semicolon; break;
         case '(': result = Token::LeftPar; break;
         case ')': result = Token::RightPar; break;
-        case '%': result = Token::Percent; break;
         case '!': result = Token::Exclamation; break;
         case '=': result = Token::Equal; break;
         case '\\': result = Token::Backslash; break;
@@ -229,7 +228,6 @@ static int opPrecedence(Token::Op op)
     int prec;
     switch(op) {
     case Token::Exclamation: prec = 800; break;
-    case Token::Percent: prec = 800; break;
     case Token::Caret: prec = 700; break;
     case Token::Asterisk:
     case Token::Slash: prec = 500; break;
@@ -862,7 +860,7 @@ void Evaluator::compile(const Tokens& tokens)
             break;
 
         // Try to apply all parsing rules.
-        if (1 || token.asOperator() != Token::Percent) {
+        if (1) { // TODO: Remove this
 #ifdef EVALUATOR_DEBUG
             dbg << "  Checking rules..." << "\n";
 #endif
@@ -922,12 +920,6 @@ void Evaluator::compile(const Tokens& tokens)
                     Token y = syntaxStack.top(1);
                     if (postfix.isOperator() && !y.isOperator())
                         switch (postfix.asOperator()) {
-                            case Token::Percent:
-                                syntaxStack.pop();
-                                m_constants.append(HNumber("0.01"));
-                                m_codes.append(Opcode(Opcode::Load, m_constants.count() - 1));
-                                m_codes.append(Opcode(Opcode::Mul));
-                                break;
                             case Token::Exclamation:
                                 ruleFound = true;
                                 syntaxStack.pop();
@@ -1187,8 +1179,7 @@ void Evaluator::compile(const Tokens& tokens)
 
 
             // Can't apply rules anymore, push the token.
-            if (1 || token.asOperator() != Token::Percent)
-                syntaxStack.push(token);
+            syntaxStack.push(token);
 
             // For identifier, generate code to load from reference.
             if (tokenType == Token::stxIdentifier) {
