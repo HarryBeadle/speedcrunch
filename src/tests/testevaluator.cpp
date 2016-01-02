@@ -169,13 +169,7 @@ void test_unary()
     CHECK_EVAL("-2!", "-2");
     CHECK_EVAL("-3!", "-6");
 
-    CHECK_EVAL("5*10%", "0.5");
-    CHECK_EVAL("10+10%", "10.1");
     CHECK_EVAL("a=10", "10");
-    CHECK_EVAL("a%", "0.1");
-
-    // Percent operator has precedence over ^.
-    CHECK_EVAL("5^200%", "25");
 }
 
 void test_binary()
