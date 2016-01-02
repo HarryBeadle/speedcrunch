@@ -862,7 +862,7 @@ void Evaluator::compile(const Tokens& tokens)
             break;
 
         // Try to apply all parsing rules.
-        if (1 || token.asOperator() != Token::Percent) {
+        if (token.asOperator() != Token::Percent) {
 #ifdef EVALUATOR_DEBUG
             dbg << "  Checking rules..." << "\n";
 #endif
@@ -1187,7 +1187,7 @@ void Evaluator::compile(const Tokens& tokens)
 
 
             // Can't apply rules anymore, push the token.
-            if (1 || token.asOperator() != Token::Percent)
+            if (token.asOperator() != Token::Percent)
                 syntaxStack.push(token);
 
             // For identifier, generate code to load from reference.

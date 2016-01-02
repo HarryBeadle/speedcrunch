@@ -455,6 +455,7 @@ void test_functions()
     CHECK(HMath::raise("NaN", "NaN"), "NaN");
     CHECK(HMath::raise("NaN", "0"), "NaN");
     CHECK(HMath::raise("-1", "NaN"), "NaN");
+    CHECK(HMath::raise("0", "0"), "NaN");
     CHECK(HMath::raise(10, -3), "0.001");
     CHECK(HMath::raise(10, -2), "0.01");
     CHECK(HMath::raise(10, -1), "0.1");
@@ -468,6 +469,7 @@ void test_functions()
     CHECK(HMath::raise("4", "4"), "256");
     CHECK(HMath::raise("-27", HNumber("1") / HNumber("3")), "-3");
     CHECK(HMath::raise("-27", HNumber("-1") / HNumber("3")), "-0.33333333333333333333");
+    CHECK(HMath::raise("-2", HMath::pi()), "NaN");
     CHECK_PRECISE(HMath::raise("2", "0.1"), "1.07177346253629316421300632502334202290638460497756");
     CHECK_PRECISE(HMath::raise("2", "0.2"), "1.14869835499703500679862694677792758944385088909780");
     CHECK_PRECISE(HMath::raise("2", "0.3"), "1.23114441334491628449939306916774310987613776110082");
