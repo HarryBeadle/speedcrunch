@@ -40,7 +40,6 @@ endif(WIN32)
 
 string(COMPARE EQUAL "${CMAKE_CXX_COMPILER_ID}" MSVC USING_MSVC)
 if(USING_MSVC)
-    add_definitions(/Wall)
     add_definitions(-D_USE_MATH_DEFINES)
 else()
     add_definitions(-Wall)
@@ -88,19 +87,101 @@ if(NOT WIN32)
     set(SHAREDIR "share/")
     set(MENUDIR "${SHAREDIR}/applications/")
     set(ICONDIR "${SHAREDIR}/pixmaps/")
+    set(BINDIR "bin")
+else(NOT WIN32)
+    set(BINDIR ".")
+    set(DATADIR ".")
 endif(NOT WIN32)
 
-option(PORTABLE "Enable to build in portable mode" OFF)
+option(PORTABLE_SPEEDCRUNCH "Enable to build in portable mode" OFF)
 if(PORTABLE_SPEEDCRUNCH)
     add_definitions(-DSPEEDCRUNCH_PORTABLE)
 endif(PORTABLE_SPEEDCRUNCH)
 
-install(TARGETS ${PROGNAME} DESTINATION bin)
+install(TARGETS ${PROGNAME} DESTINATION ${BINDIR})
 
 if(NOT WIN32)
     install(FILES ../pkg/speedcrunch.desktop DESTINATION ${MENUDIR})
     install(FILES resources/speedcrunch.png DESTINATION ${ICONDIR})
+else(NOT WIN32)
+    install(FILES ../pkg/COPYING.rtf DESTINATION ${DATADIR})
 endif(NOT WIN32)
+
+if(WIN32)
+    include(../pkg/QtWin32Deploy.cmake)
+    qtwin32_deploy_modules(${BINDIR} qtwin32_Qt5Widgets)
+    qtwin32_deploy_default_qt_conf(${BINDIR})
+    if(${qtwin32_QT_MINOR_VERSION} VERSION_LESS 5.5)
+        # Qt 5.4 and below also require ICU.
+        qtwin32_deploy_modules(${BINDIR} qtwin32_ICU)
+    endif()
+endif(WIN32)
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${BINDIR})
+include(InstallRequiredSystemLibraries)
+
+################################# PACKAGE #####################################
+
+set(CPACK_PACKAGE_VENDOR SpeedCrunch)
+set(CPACK_PACKAGE_VERSION ${speedcrunch_VERSION})
+set(CPACK_PACKAGE_INSTALL_DIRECTORY SpeedCrunch)
+set(CPACK_PACKAGE_EXECUTABLES ${PROGNAME} SpeedCrunch)
+
+if(WIN32)
+    if(NOT CPACK_GENERATOR)
+        if(PORTABLE_SPEEDCRUNCH)
+            set(CPACK_GENERATOR ZIP)
+        else(PORTABLE_SPEEDCRUNCH)
+            set(CPACK_GENERATOR NSIS)
+        endif(PORTABLE_SPEEDCRUNCH)
+    endif(NOT CPACK_GENERATOR)
+
+    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/../pkg/COPYING.rtf")
+    set(CPACK_NSIS_EXECUTABLES_DIRECTORY ${BINDIR})
+    set(CPACK_NSIS_INSTALLED_ICON_NAME "${BINDIR}\\\\${PROGNAME}.exe,0")
+    set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\resources\\\\speedcrunch.ico")
+    set(CPACK_NSIS_HELP_LINK "http://groups.google.com/group/speedcrunch")
+    set(CPACK_NSIS_URL_INFO_ABOUT "http://speedcrunch.org")
+    set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL true)
+
+    set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS
+        "WriteRegStr SHCTX 'Software\\\\RegisteredApplications' 'SpeedCrunch' 'Software\\\\SpeedCrunch\\\\Capabilities'
+         WriteRegStr SHCTX 'Software\\\\SpeedCrunch\\\\Capabilities' 'ApplicationDescription' 'SpeedCrunch is a high-precision scientific calculator'
+         WriteRegStr SHCTX 'Software\\\\SpeedCrunch\\\\Capabilities' 'ApplicationName' 'SpeedCrunch'
+         WriteRegStr SHCTX 'Software\\\\SpeedCrunch\\\\Capabilities\\\\UrlAssociations' 'calculator' 'SpeedCrunch.Url.calculator'
+
+         WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator' '' 'SpeedCrunch'
+         WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator' 'FriendlyTypeName' 'SpeedCrunch'
+         WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator\\\\shell\\\\open\\\\command' '' '\\\"$INSTDIR\\\\${BINDIR}\\\\${PROGNAME}.exe\\\"'
+         WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator\\\\Application' 'ApplicationCompany' 'SpeedCrunch'
+
+         WriteRegStr SHCTX 'Software\\\\Classes\\\\Applications\\\\${PROGNAME}.exe' 'FriendlyAppName' 'SpeedCrunch'
+         ")
+    set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
+        "DeleteRegValue SHCTX 'Software\\\\RegisteredApplications' 'SpeedCrunch'
+         DeleteRegKey SHCTX 'Software\\\\SpeedCrunch'
+         DeleteRegKey SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator'
+         DeleteRegKey SHCTX 'Software\\\\Classes\\\\Applications\\\\${PROGNAME}.exe'
+         ")
+
+    if(${CMAKE_SIZEOF_VOID_P} EQUAL 8)
+        # When building a 64-bit installer, we add a check to make it fail on 32-bit systems
+        # because CPack doesn't do that by itself. Using this variable is probably a bit of a hack
+        # though.
+        set(CPACK_NSIS_DEFINES
+            "!include 'x64.nsh'
+             Function x64Check
+             \\\${IfNot} \\\${RunningX64}
+                 MessageBox MB_OK|MB_ICONEXCLAMATION 'This installer can only be run on 64-bit Windows.'
+                 Quit
+             \\\${EndIf}
+             FunctionEnd
+
+             Page custom x64Check
+            ")
+    endif()
+endif(WIN32)
+
+include(CPack)
 
 ################################ UNINSTALL #####################################
 
