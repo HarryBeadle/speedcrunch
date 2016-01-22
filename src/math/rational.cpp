@@ -237,8 +237,8 @@ QString Rational::toString() const
 
 HNumber Rational::toHNumber() const
 {
-    HNumber num(QString::number(m_num).toLatin1().constData());
-    HNumber denom(QString::number(m_denom).toLatin1().constData());
+    HNumber num(m_num);
+    HNumber denom(m_denom);
     QString str = NumberFormatter::format(num);
     str = NumberFormatter::format(denom);
     return num/denom;
