@@ -214,9 +214,9 @@ void CNumber::serialize(QJsonObject &json) const
 {
     const char f = format();
     json["format"] = (f=='\0') ? "NULL" : QString(f);
-    json["value"] = CMath::format(*this, f, DECPRECISION);
+    json["value"] = QString(CMath::format(*this, f, DECPRECISION));
     if(hasUnit()) {
-        json["unit"] = CMath::format(getUnit(), 'e', DECPRECISION);
+        json["unit"] = QString(CMath::format(getUnit(), 'e', DECPRECISION));
         json["unit_name"] = getUnitName();
     }
     if(hasDimension()) {

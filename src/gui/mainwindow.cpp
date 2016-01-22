@@ -74,7 +74,31 @@
 
 #ifdef Q_OS_WIN32
 #include "windows.h"
+#include <shlobj.h>
 #endif // Q_OS_WIN32
+
+QString getDataPath() {
+#ifdef SPEEDCRUNCH_PORTABLE
+    return QApplication::applicationDirPath();
+#elif QT_VERSION >= QT_VERSION_CHECK(5, 4, 0)
+    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+#elif defined(Q_OS_WIN)
+    // We can't use AppDataLocation, so we simply use the Win32 API to emulate it.
+    WCHAR w32path[MAX_PATH];
+    HRESULT result = SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, w32path);
+    Q_ASSERT(SUCCEEDED(result));
+    QString path = QString::fromWCharArray(w32path);
+    path.append('\\');
+    path.append(QCoreApplication::organizationName());
+    path.append('\\');
+    path.append(QCoreApplication::applicationName());
+    return QDir::fromNativeSeparators(path);
+#else
+    // Any non-Windows with Qt < 5.4. Since DataLocation and AppDataLocation are (mostly?)
+    // equivalent outside of Windows, that should be fine.
+    return QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+#endif
+}
 
 QTranslator* MainWindow::createTranslator(const QString& langCode)
 {
@@ -2046,11 +2070,7 @@ void MainWindow::copy()
 }
 
 void MainWindow::restoreSession() {
-#ifdef SPEEDCRUNCH_PORTABLE
-    QString data_path = QApplication::applicationDirPath();
-#else
-    QString data_path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-#endif
+    QString data_path = getDataPath();
     QDir qdir;
     qdir.mkpath(data_path);
     data_path.append("/history.json");
@@ -2252,11 +2272,7 @@ void MainWindow::closeEvent(QCloseEvent* e)
 {
     saveSettings();
     if(m_settings->sessionSave) {
-#ifdef SPEEDCRUNCH_PORTABLE
-        QString data_path = QApplication::applicationDirPath();
-#else
-        QString data_path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-#endif
+        QString data_path = getDataPath();
         QDir qdir;
         qdir.mkpath(data_path);
         data_path.append("/history.json");

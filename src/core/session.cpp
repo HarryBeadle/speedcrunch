@@ -32,7 +32,7 @@
 
 void Session::serialize(QJsonObject &json) const
 {
-    json["version"] = SPEEDCRUNCH_VERSION;
+    json["version"] = QString(SPEEDCRUNCH_VERSION);
 
     // history
     QJsonArray hist_entries;
