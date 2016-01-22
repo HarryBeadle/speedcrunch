@@ -594,9 +594,10 @@ HNumber HNumber::operator+( const HNumber & num ) const
 {
   if(this->isZero()) return num;
   if(num.isZero()) return *this;
-  HNumber result(num);
   if(!sameDimension(num))
-      return HMath::nan(DimensionMismatch);
+    return HMath::nan(DimensionMismatch);
+  HNumber result;
+  result.setDimension(*this);
   call2Args(result.d, d, num.d, checkAdd);
   return result;
 }
@@ -614,9 +615,11 @@ HNumber& HNumber::operator+=( const HNumber & num )
  */
 HNumber operator-( const HNumber & n1, const HNumber & n2 )
 {
-  HNumber result(n1);
+
   if(!n1.sameDimension(n2))
       return HMath::nan(DimensionMismatch);
+  HNumber result;
+  result.setDimension(n1);
   call2Args(result.d, n1.d, n2.d, checkSub);
   return result;
 }
