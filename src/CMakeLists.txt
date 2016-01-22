@@ -70,6 +70,7 @@ endif(x11)
 enable_testing()
 
 add_executable(testhmath ${testhmath_SOURCES})
+target_link_libraries(testhmath ${QT_LIBRARIES})
 add_test(testhmath testhmath)
 
 add_executable(testevaluator ${testevaluator_SOURCES} ${testevaluator_HEADERS_MOC})
@@ -78,6 +79,18 @@ add_test(testevaluator testevaluator)
 
 add_executable(testfloatnum ${testfloatnum_SOURCES})
 add_test(testfloatnum testfloatnum)
+
+add_executable(testcmath ${testcmath_SOURCES})
+target_link_libraries(testcmath ${QT_LIBRARIES})
+add_test(testcmath testcmath)
+
+add_executable(testcnumberparser ${testcnumberparser_SOURCES})
+target_link_libraries(testcnumberparser ${QT_LIBRARIES})
+add_test(testcnumberparser testcnumberparser)
+
+add_executable(testser ${testser_SOURCES})
+target_link_libraries(testser ${QT_LIBRARIES})
+add_test(testser testser)
 
 include_directories(${CMAKE_BINARY_DIR} thirdparty core gui math)
 
