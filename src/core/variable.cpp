@@ -32,7 +32,7 @@ void Variable::serialize(QJsonObject &json) const
     QJsonObject value;
     m_value.serialize(value);
     json["value"] = value;
-    json["type"] = (m_type==UserDefined) ? "User" : "BuiltIn";
+    json["type"] = (m_type==UserDefined) ? QStringLiteral("User") : QStringLiteral("BuiltIn");
     return;
 }
 
