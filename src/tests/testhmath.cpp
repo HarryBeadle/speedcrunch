@@ -20,6 +20,8 @@
 #include "math/hmath.h"
 #include "math/floatconst.h"
 
+#include <QtCore/QCoreApplication>
+
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
@@ -947,8 +949,10 @@ void test_functions()
     CHECK_FORMAT('h', 0, HMath::encodeIeee754("1.5", "2", "1"), "0x3");
 }
 
-int main(int, char**)
+int main(int argc, char* argv[])
 {
+    QCoreApplication app(argc, argv);
+
     hmath_total_tests  = 0;
     hmath_failed_tests = 0;
 
