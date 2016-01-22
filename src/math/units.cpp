@@ -108,7 +108,7 @@ void Units::findUnit(CNumber & number)
             } else if(i.key() == "amount") {
                 unit_name += " mole";
             } else if(i.key() == "luminous intensity") {
-                unit_name += " canedela";
+                unit_name += " candela";
             } else if(i.key() == "temperature") {
                 unit_name += " kelvin";
             } else {
