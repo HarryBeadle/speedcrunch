@@ -563,7 +563,7 @@ char* CMath::format( const CNumber& cn, char format, int prec )
     /* Use complex number formatting */
 
     /* Format real part */
-    const char * real_part = cn.real.isZero()? "" : HMath::format(cn.real, format, prec);
+    const char * real_part = cn.real.isZero()? strdup("") : HMath::format(cn.real, format, prec);
 
     /* Format imaginary part */
     const char * imag_part = "";
