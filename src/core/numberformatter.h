@@ -25,7 +25,7 @@
 #include <QtCore/QString>
 
 struct NumberFormatter {
-        static QString format(HNumber &num) { return format(CNumber(num)); };
+    static QString format(HNumber &num) { return format(CNumber(num)); }
 	static QString format(CNumber);
 };
 

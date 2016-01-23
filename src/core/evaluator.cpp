@@ -1686,6 +1686,8 @@ CNumber Evaluator::eval()
                 }
             }
 
+            if(m_codes.isEmpty())
+                return CMath::nan();
             UserFunction userFunction(m_assignId, m_assignArg, m_expression.section("=", 1, 1).trimmed());
             userFunction.constants = m_constants;
             userFunction.identifiers = m_identifiers;

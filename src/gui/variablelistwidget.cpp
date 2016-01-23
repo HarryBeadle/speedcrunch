@@ -22,6 +22,7 @@
 
 #include "core/evaluator.h"
 #include "core/settings.h"
+#include "core/numberformatter.h"
 
 #include <QEvent>
 #include <QTimer>
@@ -212,10 +213,5 @@ void VariableListWidget::keyPressEvent(QKeyEvent* event)
 
 static QString formatValue(const CNumber& value)
 {
-    char* formatted = CMath::format(value, 'g');
-    QString result = QString::fromLatin1(formatted);
-    if (Settings::instance()->radixCharacter() != '.')
-        result.replace('.', Settings::instance()->radixCharacter());
-    free(formatted);
-    return result;
+    return NumberFormatter::format(value);
 }
