@@ -239,8 +239,6 @@ HNumber Rational::toHNumber() const
 {
     HNumber num(m_num);
     HNumber denom(m_denom);
-    QString str = NumberFormatter::format(num);
-    str = NumberFormatter::format(denom);
     return num/denom;
 
 }
