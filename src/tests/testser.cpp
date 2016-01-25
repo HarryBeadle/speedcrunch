@@ -31,6 +31,8 @@ using namespace std;
 #define CHECK_SER(x,y) check_ser(__FILE__, __LINE__, #x, x, y)
 #define CHECK_DESER_HNUMBER(x,y) check_deser_hnumber(__FILE__, __LINE__, #x, x, y)
 #define CHECK_DESER_CNUMBER(x,y) check_deser_cnumber(__FILE__, __LINE__, #x, x, y)
+#define CHECK_SER_DESER_HNUMBER(x,y) check_ser_deser_hnumber(__FILE__, __LINE__, #x, x, y)
+#define CHECK_SER_DESER_CNUMBER(x,y) check_ser_deser_cnumber(__FILE__, __LINE__, #x, x, y)
 
 static int ser_total_tests = 0;
 static int ser_failed_tests = 0;
@@ -103,25 +105,49 @@ void check_deser_hnumber(const char*, int line, const char* msg, const char* str
     free(result);
 }
 
-void check_ser_deser_hnumber(const HNumber& src) {
+void check_ser_deser_hnumber(const char*, int line, const char* msg, const HNumber& src, const char* expected, int issue = 0) {
     /* Serialization + deserialization */
     QJsonObject obj;
     src.serialize(obj);
     HNumber dest = HNumber::deSerialize(obj);
-    /* Checking result */
+    /* Test result and display info */
     char* result = HMath::format(dest, 'g', 50);
-    printf("%s\n", result);
+    if (strcmp(result, expected)) {
+        ++ser_failed_tests;
+	cerr << "[Line " << line << "]\t" << msg << "\tResult: " << result;
+        cerr << "\tExpected: " << expected;
+	if (issue)
+            cerr << "\t[ISSUE " << issue << "]";
+        else {
+            cerr << "\t[NEW]";
+            ++ser_new_failed_tests;
+        }
+        cerr << endl;
+    }
+    /* Cleanup */
     free(result);
 }
 
-void check_ser_deser_cnumber(const CNumber& src) {
+void check_ser_deser_cnumber(const char*, int line, const char* msg, const CNumber& src, const char* expected, int issue = 0) {
     /* Serialization + deserialization */
     QJsonObject obj;
     src.serialize(obj);
     CNumber dest = CNumber::deSerialize(obj);
-    /* Checking result */
+    /* Test result and display info */
     char* result = CMath::format(dest, 'g', 50);
-    printf("%s\n", result);
+    if (strcmp(result, expected)) {
+        ++ser_failed_tests;
+	cerr << "[Line " << line << "]\t" << msg << "\tResult: " << result;
+        cerr << "\tExpected: " << expected;
+	if (issue)
+            cerr << "\t[ISSUE " << issue << "]";
+        else {
+            cerr << "\t[NEW]";
+            ++ser_new_failed_tests;
+        }
+        cerr << endl;
+    }
+    /* Cleanup */
     free(result);
 }
 
@@ -145,10 +171,9 @@ int main(int, char**)
     CHECK_DESER_CNUMBER("{\"format\": \"g\",\"value\": \"1\"}", "1");
     CHECK_DESER_CNUMBER("{\"format\": \"g\",\"value\": \"0.1\"}", "0.1");
     CHECK_DESER_CNUMBER("{\"format\": \"g\",\"value\": \"0.0+1.0j\"}", "1j");
-    /* Serizalitation + deserialization tests */
-    printf("%s\n", "SER-DESER");
-    check_ser_deser_hnumber(HNumber("3"));
-    check_ser_deser_cnumber(CNumber("3"));
-    check_ser_deser_cnumber(CNumber("3+1j"));
+    /* Serizalization + deserialization tests */
+    CHECK_SER_DESER_HNUMBER(HNumber("3"), "3.00000000000000000000000000000000000000000000000000");
+    CHECK_SER_DESER_CNUMBER(CNumber("3"), "3.00000000000000000000000000000000000000000000000000");
+    CHECK_SER_DESER_CNUMBER(CNumber("3+1j"), "3.00000000000000000000000000000000000000000000000000+1.00000000000000000000000000000000000000000000000000j");
 }
 
