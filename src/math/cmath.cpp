@@ -846,7 +846,7 @@ CNumber CMath::arcosh( const CNumber & x )
  */
 CNumber CMath::artanh( const CNumber & x )
 {
-  return ( CNumber( 0.5 ) * CMath::ln( CNumber( 1 ) + x ) ) - ( CNumber( 0.5) * CMath::ln( CNumber( 1 ) - x ) );
+  return ( CNumber( "0.5" ) * CMath::ln( CNumber( 1 ) + x ) ) - ( CNumber( "0.5" ) * CMath::ln( CNumber( 1 ) - x ) );
 }
 
 
