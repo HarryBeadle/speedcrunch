@@ -983,6 +983,15 @@ void test_functions()
     CHECK_FORMAT('h', 0, CMath::encodeIeee754("1.5", "2", "1"), "0x3");
 }
 
+void test_branches()
+{
+    /* Test behavior of complex functions relative to branch cuts */
+
+    CHECK(CMath::artanh("1.5-0.0000001j"), "0.8047189562170405873-1.57079624679489661923j");
+    CHECK(CMath::artanh("1.5"),            "0.8047189562170501873-1.57079632679489661923j");
+    CHECK(CMath::artanh("1.5+0.0000001j"), "0.8047189562170405873+1.57079624679489661923j");
+}
+
 int main(int, char**)
 {
     cmath_total_tests  = 0;
@@ -995,6 +1004,7 @@ int main(int, char**)
     test_format();
     test_op();
     test_functions();
+    test_branches();
 
     if (cmath_failed_tests)
         cerr << cmath_total_tests  << " total, "
