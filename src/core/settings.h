@@ -27,6 +27,8 @@
 #include <QtCore/QStringList>
 #include <QtCore/QList>
 
+QString getDataPath();
+
 class Settings {
 public:
     static Settings* instance();
@@ -69,7 +71,7 @@ public:
     bool windowOnfullScreen;
     bool bitfieldVisible;
 
-    int colorScheme;
+    QString colorScheme;
     QString displayFont;
 
     QString language;

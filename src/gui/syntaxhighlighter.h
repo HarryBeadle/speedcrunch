@@ -20,20 +20,13 @@
 #ifndef GUI_SYNTAXHIGHLIGHTER_H
 #define GUI_SYNTAXHIGHLIGHTER_H
 
+#include <QtCore/QJsonDocument>
 #include <QSyntaxHighlighter>
 
 class QPlainTextEdit;
 
-class SyntaxHighlighter : public QSyntaxHighlighter {
+class ColorScheme {
 public:
-    enum ColorScheme {
-        Terminal = 0,
-        Standard = 1,
-        Sublime = 2,
-        SolarizedLight = 3,
-        SolarizedDark = 4
-    };
-
     enum Role {
         Cursor,
         Number,
@@ -50,14 +43,28 @@ public:
         EditorBackground
     };
 
+    ColorScheme() : m_valid(false) { }
+    ColorScheme(const QJsonDocument& doc);
+    bool isValid() const { return m_valid; }
+    QColor colorForRole(Role role) const;
+
+    static QStringList enumerate();
+    static ColorScheme loadFromFile(const QString& path);
+    static ColorScheme loadByName(const QString& name);
+
+private:
+    bool m_valid;
+    QHash<Role, QColor> m_colors;
+};
+
+class SyntaxHighlighter : public QSyntaxHighlighter {
+public:
     explicit SyntaxHighlighter(QPlainTextEdit*);
 
-    void setColorScheme(ColorScheme);
-    QColor colorForRole(Role role) const { return m_colorScheme[role]; }
-    void setColorForRole(Role role, const QColor& color) { m_colorScheme[role] = color; }
+    void setColorScheme(ColorScheme&&);
+    QColor colorForRole(ColorScheme::Role role) const { return m_colorScheme.colorForRole(role); }
 
     void update();
-
     virtual void highlightBlock(const QString&);
 
 private:
@@ -68,7 +75,7 @@ private:
     void groupDigits(const QString& text, int pos, int length);
     void formatDigitsGroup(const QString& text, int start, int end, bool invert, int size);
 
-    QHash<Role, QColor> m_colorScheme;
+    ColorScheme m_colorScheme;
 };
 
 #endif

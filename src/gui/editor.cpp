@@ -251,13 +251,13 @@ void Editor::doMatchingLeft()
             hilite1.cursor = textCursor();
             hilite1.cursor.setPosition(matchPosition);
             hilite1.cursor.setPosition(matchPosition + 1, QTextCursor::KeepAnchor);
-            hilite1.format.setBackground(m_highlighter->colorForRole(SyntaxHighlighter::Matched));
+            hilite1.format.setBackground(m_highlighter->colorForRole(ColorScheme::Matched));
 
             QTextEdit::ExtraSelection hilite2;
             hilite2.cursor = textCursor();
             hilite2.cursor.setPosition(lastToken.pos());
             hilite2.cursor.setPosition(lastToken.pos() + 1, QTextCursor::KeepAnchor);
-            hilite2.format.setBackground(m_highlighter->colorForRole(SyntaxHighlighter::Matched));
+            hilite2.format.setBackground(m_highlighter->colorForRole(ColorScheme::Matched));
 
             QList<QTextEdit::ExtraSelection> extras;
             extras << hilite1;
@@ -302,13 +302,13 @@ void Editor::doMatchingRight()
             hilite1.cursor = textCursor();
             hilite1.cursor.setPosition(currentPosition+matchPosition);
             hilite1.cursor.setPosition(currentPosition+matchPosition + 1, QTextCursor::KeepAnchor);
-            hilite1.format.setBackground(m_highlighter->colorForRole(SyntaxHighlighter::Matched));
+            hilite1.format.setBackground(m_highlighter->colorForRole(ColorScheme::Matched));
 
             QTextEdit::ExtraSelection hilite2;
             hilite2.cursor = textCursor();
             hilite2.cursor.setPosition(currentPosition+firstToken.pos());
             hilite2.cursor.setPosition(currentPosition+firstToken.pos() + 1, QTextCursor::KeepAnchor);
-            hilite2.format.setBackground(m_highlighter->colorForRole(SyntaxHighlighter::Matched));
+            hilite2.format.setBackground(m_highlighter->colorForRole(ColorScheme::Matched));
 
             QList<QTextEdit::ExtraSelection> extras;
             extras << hilite1;
@@ -609,7 +609,7 @@ void Editor::paintEvent(QPaintEvent* event)
     cursor.setRight(cursor.right() + 1);
 
     QPainter painter(viewport());
-    painter.fillRect(cursor, m_highlighter->colorForRole(SyntaxHighlighter::Cursor));
+    painter.fillRect(cursor, m_highlighter->colorForRole(ColorScheme::Cursor));
 }
 
 void Editor::historyBack()
@@ -776,7 +776,7 @@ void Editor::rehighlight()
 {
     m_highlighter->update();
     setStyleSheet(QString("QPlainTextEdit { background: %1; }")
-                  .arg(m_highlighter->colorForRole(SyntaxHighlighter::EditorBackground).name()));
+                  .arg(m_highlighter->colorForRole(ColorScheme::EditorBackground).name()));
 }
 
 void Editor::updateHistory()
