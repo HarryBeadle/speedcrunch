@@ -42,7 +42,8 @@
 static const char* DefaultColorScheme = "Terminal";
 
 
-QString getDataPath() {
+QString getDataPath()
+{
 #ifdef SPEEDCRUNCH_PORTABLE
     return QApplication::applicationDirPath();
 #elif QT_VERSION >= QT_VERSION_CHECK(5, 4, 0)

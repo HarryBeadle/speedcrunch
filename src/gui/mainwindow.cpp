@@ -378,9 +378,8 @@ void MainWindow::createActionGroups()
     m_actionGroups.angle->addAction(m_actions.settingsAngleUnitDegree);
 
     m_actionGroups.colorScheme = new QActionGroup(this);
-    for (QAction* action : m_actions.settingsDisplayColorSchemes) {
+    for (QAction* action : m_actions.settingsDisplayColorSchemes)
         m_actionGroups.colorScheme->addAction(action);
-    }
 
     m_actionGroups.digitGrouping = new QActionGroup(this);
     m_actionGroups.digitGrouping->addAction(m_actions.settingsBehaviorDigitGroupingNone);
@@ -524,9 +523,8 @@ void MainWindow::createMenus()
 
     m_menus.display = m_menus.settings->addMenu("");
     m_menus.colorScheme = m_menus.display->addMenu("");
-    for (QAction* action : m_actions.settingsDisplayColorSchemes) {
+    for (QAction* action : m_actions.settingsDisplayColorSchemes)
         m_menus.colorScheme->addAction(action);
-    }
     m_menus.display->addAction(m_actions.settingsDisplayFont);
 
     m_menus.settings->addAction(m_actions.settingsLanguage);
@@ -918,9 +916,8 @@ void MainWindow::createFixedConnections()
 
     connect(m_actions.settingsDisplayFont, SIGNAL(triggered()), SLOT(showFontDialog()));
 
-    for (QAction* action : m_actions.settingsDisplayColorSchemes) {
+    for (QAction* action : m_actions.settingsDisplayColorSchemes)
         connect(action, SIGNAL(triggered()), SLOT(applySelectedColorScheme()));
-    }
 
     connect(this, SIGNAL(languageChanged()), SLOT(retranslateText()));
 }
@@ -1021,9 +1018,8 @@ void MainWindow::applySettings()
     m_widgets.editor->setFont(font);
 
     for (QAction* action : m_actions.settingsDisplayColorSchemes) {
-        if (m_settings->colorScheme == action->data().toString()) {
+        if (m_settings->colorScheme == action->data().toString())
             action->setChecked(true);
-        }
     }
 
     m_actions.viewStatusBar->setChecked(m_settings->statusBarVisible);

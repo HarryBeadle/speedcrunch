@@ -49,7 +49,8 @@ static const QVector<std::pair<QString, ColorScheme::Role>> RoleNames {
     { QStringLiteral("editorbackground"), ColorScheme::EditorBackground },
 };
 
-static QVector<QString> colorSchemeSearchPaths() {
+static QVector<QString> colorSchemeSearchPaths()
+{
     static QVector<QString> searchPaths;
     if (searchPaths.isEmpty()) {
         // By only populating the paths in a function when they're used, we ensure all the QApplication
@@ -60,7 +61,8 @@ static QVector<QString> colorSchemeSearchPaths() {
     return searchPaths;
 }
 
-QColor getFallbackColor(ColorScheme::Role role) {
+QColor getFallbackColor(ColorScheme::Role role)
+{
     switch (role) {
     case ColorScheme::Background:
     case ColorScheme::EditorBackground:
@@ -70,66 +72,65 @@ QColor getFallbackColor(ColorScheme::Role role) {
     }
 }
 
-ColorScheme::ColorScheme(const QJsonDocument& doc) : m_valid(false) {
-    if (!doc.isObject()) {
+ColorScheme::ColorScheme(const QJsonDocument& doc)
+    : m_valid(false)
+{
+    if (!doc.isObject())
         return;
-    }
     QJsonObject obj = doc.object();
     for (std::pair<QString, ColorScheme::Role> role : RoleNames) {
         QJsonValue v = obj.value(role.first);
-        if (v.isUndefined()) {
+        if (v.isUndefined())
             // Having a key missing is fine...
             continue;
-        }
         QColor color = QColor(v.toString());
-        if (!color.isValid()) {
+        if (!color.isValid())
             // ...having one that's not a color is not.
             return;
-        }
         m_colors.insert(role.second, color);
     }
     m_valid = true;
 }
 
-QColor ColorScheme::colorForRole(Role role) const {
+QColor ColorScheme::colorForRole(Role role) const
+{
     QColor color = m_colors[role];
-    if (!color.isValid()) {
+    if (!color.isValid())
         return getFallbackColor(role);
-    } else {
+    else
         return color;
-    }
 }
 
-QStringList ColorScheme::enumerate() {
+QStringList ColorScheme::enumerate()
+{
     QMap<QString, void*> colorSchemes;
     for (QString searchPath : colorSchemeSearchPaths()) {
         QDir dir(searchPath);
         dir.setFilter(QDir::Files | QDir::Readable);
         dir.setNameFilters({ QString("*.%1").arg(ColorSchemeExtension) });
-        for (QFileInfo info : dir.entryInfoList()) {
+        for (QFileInfo info : dir.entryInfoList())
             colorSchemes.insert(info.completeBaseName(), nullptr);
-        }
     }
     // Since this is a QMap, the keys are already sorted in ascending order.
     return colorSchemes.keys();
 }
 
-ColorScheme ColorScheme::loadFromFile(const QString& path) {
+ColorScheme ColorScheme::loadFromFile(const QString& path)
+{
     QFile file(path);
-    if (!file.open(QIODevice::ReadOnly)) {
+    if (!file.open(QIODevice::ReadOnly))
         return ColorScheme();
-    }
     // TODO: Better error handling.
     return ColorScheme(QJsonDocument::fromJson(file.readAll()));
 }
 
-ColorScheme ColorScheme::loadByName(const QString& name) {
+ColorScheme ColorScheme::loadByName(const QString& name)
+{
     for (QString path : colorSchemeSearchPaths()) {
         QString fileName = QString("%1/%2.%3").arg(path, name, ColorSchemeExtension);
         ColorScheme colorScheme = loadFromFile(fileName);
-        if (colorScheme.isValid()) {
+        if (colorScheme.isValid())
             return colorScheme;
-        }
     }
     return ColorScheme();
 }
