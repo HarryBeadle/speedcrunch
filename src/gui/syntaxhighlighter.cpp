@@ -32,7 +32,7 @@
 #include <QPlainTextEdit>
 
 
-static const char* ColorSchemeExtension = "color-scheme";
+static const char* ColorSchemeExtension = "json";
 static const QVector<std::pair<QString, ColorScheme::Role>> RoleNames {
     { QStringLiteral("cursor"), ColorScheme::Cursor },
     { QStringLiteral("number"), ColorScheme::Number },
