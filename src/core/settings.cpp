@@ -27,6 +27,43 @@
 #include <QSettings>
 #include <QApplication>
 #include <QFont>
+#include <QtCore/QStandardPaths>
+
+#ifdef Q_OS_WIN
+# define WIN32_LEAN_AND_MEAN
+# ifndef NOMINMAX
+#  define NOMINMAX
+# endif
+# include <Windows.h>
+# include <ShlObj.h>
+#endif
+
+
+static const char* DefaultColorScheme = "Terminal";
+
+
+QString getDataPath() {
+#ifdef SPEEDCRUNCH_PORTABLE
+    return QApplication::applicationDirPath();
+#elif QT_VERSION >= QT_VERSION_CHECK(5, 4, 0)
+    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+#elif defined(Q_OS_WIN)
+    // We can't use AppDataLocation, so we simply use the Win32 API to emulate it.
+    WCHAR w32path[MAX_PATH];
+    HRESULT result = SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, w32path);
+    Q_ASSERT(SUCCEEDED(result));
+    QString path = QString::fromWCharArray(w32path);
+    path.append('\\');
+    path.append(QCoreApplication::organizationName());
+    path.append('\\');
+    path.append(QCoreApplication::applicationName());
+    return QDir::fromNativeSeparators(path);
+#else
+    // Any non-Windows with Qt < 5.4. Since DataLocation and AppDataLocation are (mostly?)
+    // equivalent outside of Windows, that should be fine.
+    return QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+#endif
+}
 
 static Settings* s_settingsInstance = 0;
 static char s_radixCharacter = 0;
@@ -126,7 +163,7 @@ void Settings::load()
 
     key = KEY + QLatin1String("/Display/");
     displayFont = settings->value(key + QLatin1String("DisplayFont"), QFont().toString()).toString();
-    colorScheme = settings->value(key + QLatin1String("ColorScheme"), 0).toInt();
+    colorScheme = settings->value(key + QLatin1String("ColorSchemeName"), DefaultColorScheme).toString();
 
     // Load history.
     key = KEY + QLatin1String("/History/");
@@ -266,7 +303,7 @@ void Settings::save()
     key = KEY + QLatin1String("/Display/");
 
     settings->setValue(key + QLatin1String("DisplayFont"), displayFont);
-    settings->setValue(key + QLatin1String("ColorScheme"), colorScheme);
+    settings->setValue(key + QLatin1String("ColorSchemeName"), colorScheme);
 
     // Save history.
     if (historySave) {
