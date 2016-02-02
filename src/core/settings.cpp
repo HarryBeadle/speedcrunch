@@ -53,13 +53,19 @@ QString getDataPath() {
     HRESULT result = SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, w32path);
     Q_ASSERT(SUCCEEDED(result));
     QString path = QString::fromWCharArray(w32path);
-    path.append('\\');
-    path.append(QCoreApplication::organizationName());
-    path.append('\\');
-    path.append(QCoreApplication::applicationName());
+    QString orgName = QCoreApplication::organizationName();
+    QString appName = QCoreApplication::applicationName();
+    if (!orgName.isEmpty()) {
+        path.append('\\');
+        path.append(orgName);
+    }
+    if (!appName.isEmpty()) {
+        path.append('\\');
+        path.append(appName);
+    }
     return QDir::fromNativeSeparators(path);
 #else
-    // Any non-Windows with Qt < 5.4. Since DataLocation and AppDataLocation are (mostly?)
+    // Any non-Windows with Qt < 5.4. Since DataLocation and AppDataLocation are
     // equivalent outside of Windows, that should be fine.
     return QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 #endif
