@@ -64,9 +64,9 @@ QColor getFallbackColor(ColorScheme::Role role) {
     switch (role) {
     case ColorScheme::Background:
     case ColorScheme::EditorBackground:
-        return QColor("#FFFFFF");
+        return QApplication::palette().color(QPalette::Base);
     default:
-        return QColor("000000");
+        return QApplication::palette().color(QPalette::Text);
     }
 }
 
