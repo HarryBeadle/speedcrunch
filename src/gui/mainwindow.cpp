@@ -222,6 +222,7 @@ void MainWindow::createActions()
         QAction* action = new QAction(this);
         action->setCheckable(true);
         action->setText(colorScheme);
+        action->setData(colorScheme);
         m_actions.settingsDisplayColorSchemes.append(action);
     }
 }
@@ -1020,7 +1021,7 @@ void MainWindow::applySettings()
     m_widgets.editor->setFont(font);
 
     for (QAction* action : m_actions.settingsDisplayColorSchemes) {
-        if (m_settings->colorScheme == action->text()) {
+        if (m_settings->colorScheme == action->data().toString()) {
             action->setChecked(true);
         }
     }
@@ -1302,7 +1303,7 @@ void MainWindow::setResultPrecisionAutomatic()
 
 void MainWindow::applySelectedColorScheme()
 {
-    m_settings->colorScheme = m_actionGroups.colorScheme->checkedAction()->text();
+    m_settings->colorScheme = m_actionGroups.colorScheme->checkedAction()->data().toString();
     emit colorSchemeChanged();
 }
 
