@@ -68,7 +68,7 @@ public:
     virtual void highlightBlock(const QString&);
 
 private:
-    Q_DISABLE_COPY(SyntaxHighlighter);
+    Q_DISABLE_COPY(SyntaxHighlighter)
     SyntaxHighlighter();
     SyntaxHighlighter(QObject*);
     SyntaxHighlighter(QTextDocument*);

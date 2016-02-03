@@ -22,6 +22,7 @@
 
 #include "core/evaluator.h"
 #include "core/settings.h"
+#include "core/numberformatter.h"
 
 #include <QEvent>
 #include <QTimer>
@@ -33,7 +34,7 @@
 #include <QTreeWidget>
 #include <QVBoxLayout>
 
-static QString formatValue(const HNumber& value);
+static QString formatValue(const CNumber& value);
 
 VariableListWidget::VariableListWidget(QWidget* parent)
     : QWidget(parent)
@@ -107,13 +108,13 @@ void VariableListWidget::fillTable()
     m_filterTimer->stop();
     m_variables->clear();
     QString term = m_searchFilter->text();
-    QList<Evaluator::Variable> variables = Evaluator::instance()->getUserDefinedVariables();
+    QList<Variable> variables = Evaluator::instance()->getUserDefinedVariables();
 
     for (int i = 0; i < variables.count(); ++i) {
-        QString varName = variables.at(i).name;
+        QString varName = variables.at(i).identifier();
 
         QStringList namesAndValues;
-        namesAndValues << varName << formatValue(variables.at(i).value);
+        namesAndValues << varName << formatValue(variables.at(i).value());
 
         if (term.isEmpty()
             || namesAndValues.at(0).contains(term, Qt::CaseInsensitive)
@@ -210,12 +211,7 @@ void VariableListWidget::keyPressEvent(QKeyEvent* event)
     QWidget::keyPressEvent(event);
 }
 
-static QString formatValue(const HNumber& value)
+static QString formatValue(const CNumber& value)
 {
-    char* formatted = HMath::format(value, 'g');
-    QString result = QString::fromLatin1(formatted);
-    if (Settings::instance()->radixCharacter() != '.')
-        result.replace('.', Settings::instance()->radixCharacter());
-    free(formatted);
-    return result;
+    return NumberFormatter::format(value);
 }

@@ -108,7 +108,7 @@ AboutBox::AboutBox(QWidget* parent, Qt::WindowFlags f)
     msg += "</p><p>";
 
     msg += "<p><b>";
-    msg += tr("Copyright (C) 2004-2015 The SpeedCrunch developers");
+    msg += tr("Copyright (C) 2004-2016 The SpeedCrunch developers");
     msg += "</b></p>";
 
     msg += "<p>";

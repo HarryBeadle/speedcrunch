@@ -55,12 +55,12 @@ static void checkAutoFix(const char* file, int line, const char* msg, const QStr
     }
 }
 
-static void checkDivisionByZero(const char* file, int line, const char* msg, const QString& expr)
+static void checkDivisionByZero(const char*, int line, const char* msg, const QString& expr)
 {
     ++eval_total_tests;
 
     eval->setExpression(expr);
-    HNumber rn = eval->evalUpdateAns();
+    CNumber rn = eval->evalUpdateAns();
 
     if (eval->error().isEmpty()) {
         ++eval_failed_tests;
@@ -68,12 +68,12 @@ static void checkDivisionByZero(const char* file, int line, const char* msg, con
     }
 }
 
-static void checkEval(const char* file, int line, const char* msg, const QString& expr, const char* expected, int issue = 0, bool shouldFail = false)
+static void checkEval(const char*, int line, const char* msg, const QString& expr, const char* expected, int issue = 0, bool shouldFail = false)
 {
     ++eval_total_tests;
 
     eval->setExpression(expr);
-    HNumber rn = eval->evalUpdateAns();
+    CNumber rn = eval->evalUpdateAns();
 
     if (!eval->error().isEmpty()) {
         if (!shouldFail) {
@@ -81,7 +81,7 @@ static void checkEval(const char* file, int line, const char* msg, const QString
             cerr << "[Line " << line << "]\t:" << msg << "  Error: " << qPrintable(eval->error()) << endl;
         }
     } else {
-        char* result = HMath::format(rn, 'f');
+        char* result = CMath::format(rn, 'f');
         if (shouldFail || strcmp(result, expected)) {
             ++eval_failed_tests;
             cerr << "[Line " << line << "]\t" << msg << "\tResult: " << result;
@@ -98,16 +98,16 @@ static void checkEval(const char* file, int line, const char* msg, const QString
     }
 }
 
-static void checkEvalPrecise(const char* file, int line, const char* msg, const QString& expr, const char* expected)
+static void checkEvalPrecise(const char*, int line, const char* msg, const QString& expr, const char* expected)
 {
     ++eval_total_tests;
 
     eval->setExpression(expr);
-    HNumber rn = eval->evalUpdateAns();
+    CNumber rn = eval->evalUpdateAns();
 
     // We compare up to 50 decimals, not exact number because it's often difficult
     // to represent the result as an irrational number, e.g. PI.
-    char* result = HMath::format(rn, 'f', 50);
+    char* result = CMath::format(rn, 'f', 50);
     if (strcmp(result, expected)) {
         ++eval_failed_tests;
         cerr << "[Line" << line <<"]:\t" << msg << "  Result: " << result << ", "<< "Expected: " << expected << endl;
@@ -135,31 +135,11 @@ void test_unary()
     CHECK_EVAL("--ABS(-3)", "3");
     CHECK_EVAL("---ABS(-4)", "-4");
 
-    // See http://en.wikipedia.org/wiki/Empty_product.
-    CHECK_EVAL("0^0", "NaN");
-
-    CHECK_EVAL("1^0", "1");
-    CHECK_EVAL("1^1", "1");
-    CHECK_EVAL("1^2", "1");
-    CHECK_EVAL("1^3", "1");
-
     // Operator ^ has higher precedence than unary minus.
     CHECK_EVAL("-1^0", "-1");
     CHECK_EVAL("-1^1", "-1");
     CHECK_EVAL("-1^2", "-1");
     CHECK_EVAL("-1^3", "-1");
-
-    CHECK_EVAL("2^0", "1");
-    CHECK_EVAL("2^1", "2");
-    CHECK_EVAL("2^2", "4");
-    CHECK_EVAL("2^3", "8");
-    CHECK_EVAL("2^4", "16");
-    CHECK_EVAL("2^5", "32");
-    CHECK_EVAL("2^6", "64");
-    CHECK_EVAL("2^7", "128");
-    CHECK_EVAL("2^8", "256");
-    CHECK_EVAL("2^9", "512");
-    CHECK_EVAL("2^10", "1024");
 
     CHECK_EVAL("-2^0", "-1");
     CHECK_EVAL("-2^1", "-2");
@@ -179,18 +159,41 @@ void test_unary()
     CHECK_EVAL("-cos(pi)^3", "1");
     CHECK_EVAL("1*(-cos(pi)^2)", "-1");
 
-    CHECK_EVAL_KNOWN_ISSUE("3^3^3", "19683", 448);
-    CHECK_EVAL_KNOWN_ISSUE("1/-1^2", "-1", 450);
-    CHECK_EVAL_KNOWN_ISSUE("1*-1^2", "-1", 450);
+    CHECK_EVAL("3^3^3", "7625597484987");
+
+    CHECK_EVAL("1/-1^2", "-1");
+    CHECK_EVAL("1*-1^2", "-1");
 
     // Factorial has higher precedence than unary minus.
     CHECK_EVAL("-1!", "-1");
     CHECK_EVAL("-2!", "-2");
     CHECK_EVAL("-3!", "-6");
+
+    CHECK_EVAL("a=10", "10");
 }
 
 void test_binary()
 {
+    // See http://en.wikipedia.org/wiki/Empty_product.
+    CHECK_EVAL("0^0", "NaN");
+
+    CHECK_EVAL("1^0", "1");
+    CHECK_EVAL("1^1", "1");
+    CHECK_EVAL("1^2", "1");
+    CHECK_EVAL("1^3", "1");
+
+    CHECK_EVAL("2^0", "1");
+    CHECK_EVAL("2^1", "2");
+    CHECK_EVAL("2^2", "4");
+    CHECK_EVAL("2^3", "8");
+    CHECK_EVAL("2^4", "16");
+    CHECK_EVAL("2^5", "32");
+    CHECK_EVAL("2^6", "64");
+    CHECK_EVAL("2^7", "128");
+    CHECK_EVAL("2^8", "256");
+    CHECK_EVAL("2^9", "512");
+    CHECK_EVAL("2^10", "1024");
+
     CHECK_EVAL("0+0", "0");
     CHECK_EVAL("1+0", "1");
     CHECK_EVAL("0+1", "1");
@@ -363,6 +366,10 @@ void test_function_trig()
 
     CHECK_EVAL("arcsin(sin(1))", "1");
     CHECK_EVAL("arccos(cos(1))", "1");
+    CHECK_EVAL("arctan(tan(1))", "1");
+    CHECK_EVAL("arcsin(0)", "0");
+    CHECK_EVAL("arccos(1)", "0");
+    CHECK_EVAL("arctan(0)", "0");
 
     CHECK_EVAL("degrees(0)", "0");
     CHECK_EVAL("degrees(pi/2)", "90");
@@ -653,6 +660,49 @@ void test_user_functions()
     CHECK_EVAL("func1()", "20");    // = 2 * 5
 }
 
+void test_complex()
+{
+    // Check for basic complex number processing
+    CHECK_EVAL("1j", "1j");                      // TODO : Smarter formatting
+    CHECK_EVAL("0.1j", "0.1j");                  // TODO : Smarter formatting
+    CHECK_EVAL(".1j", "0.1j");                   // TODO : Smarter formatting
+    CHECK_EVAL("1E12j", "1000000000000j");       // TODO : Smarter formatting
+    CHECK_EVAL("0.1E12j", "100000000000j");      // TODO : Smarter formatting
+    CHECK_EVAL("1E-12j", "0.000000000001j");     // TODO : Smarter formatting
+    CHECK_EVAL("0.1E-12j", "0.0000000000001j");  // TODO : Smarter formatting
+    // Check for some bugs introduced by first versions of complex number processing
+    CHECK_EVAL("0.1", "0.1");                      // TODO : Smarter formatting
+    // Check for basic complex number evaluation
+    CHECK_EVAL("(1+1j)*(1-1j)", "2");
+    CHECK_EVAL("(1+1j)*(1+1j)", "2j");           // TODO : Smarter formatting
+}
+
+void test_implicit_multiplication()
+{
+    CHECK_EVAL("a = 5", "5");
+    CHECK_EVAL("5a", "25");
+    CHECK_EVAL("5.a", "25");
+    CHECK_EVAL("5.0a", "25");
+    CHECK_EVAL("5e2a", "2500");
+    CHECK_EVAL_FAIL("a5");
+    CHECK_EVAL_FAIL("a 5");
+    CHECK_EVAL("2a^3", "250");
+    CHECK_EVAL("b=2", "2");
+    CHECK_EVAL_FAIL("ab");
+    CHECK_EVAL("a b", "10");
+
+    CHECK_EVAL("a sin(pi/2)", "5");
+    CHECK_EVAL_FAIL("a sqrt(4)");
+    CHECK_EVAL("a sqrt(a^2)", "25");
+}
+
+void test_units()
+{
+    CHECK_EVAL("1 meter + 5 meter", "6 meter");
+}
+
+
+
 int main(int argc, char* argv[])
 {
     QCoreApplication app(argc, argv);
@@ -662,8 +712,11 @@ int main(int argc, char* argv[])
     settings->setRadixCharacter('.');
     settings->parseAllRadixChar = true;
     settings->strictDigitGrouping = true;
+    settings->complexNumbers = false;
 
     eval = Evaluator::instance();
+
+    eval->initializeBuiltInVariables();
 
     test_constants();
     test_unary();
@@ -691,6 +744,14 @@ int main(int argc, char* argv[])
     test_comments();
 
     test_user_functions();
+
+    test_implicit_multiplication();
+
+    //test_units();
+
+    settings->complexNumbers = true;
+    eval->initializeBuiltInVariables();
+    test_complex();
 
     cerr << eval_total_tests  << " total, " << eval_failed_tests << " failed";
     if (eval_failed_tests)

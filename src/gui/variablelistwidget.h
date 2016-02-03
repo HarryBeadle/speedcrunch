@@ -30,6 +30,7 @@ class QLineEdit;
 class QTimer;
 class QTreeWidget;
 class QTreeWidgetItem;
+class Variable;
 
 class VariableListWidget : public QWidget
 {

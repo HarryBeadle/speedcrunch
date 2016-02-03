@@ -1,5 +1,6 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2013 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (C) 2015 Pol Welter <polwelter@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -19,12 +20,13 @@
 #ifndef CORE_NUMBERFORMATTER_H
 #define CORE_NUMBERFORMATTER_H
 
+#include "cmath.h"
+
 #include <QtCore/QString>
 
-class HNumber;
-
 struct NumberFormatter {
-	static QString format(const HNumber&);
+    static QString format(HNumber &num) { return format(CNumber(num)); }
+	static QString format(CNumber);
 };
 
 #endif

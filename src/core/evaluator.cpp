@@ -4,6 +4,8 @@
 // Copyright (C) 2007, 2008, 2009, 2010, 2013 Helder Correia <helder.pereira.correia@gmail.com>
 // Copyright (C) 2009 Wolf Lammen <ookami1@gmx.de>
 // Copyright (C) 2014 Tey <teyut@free.fr>
+// Copyright (C) 2015 Pol Welter <polwelter@gmail.com>
+// Copyright (C) 2015 Hadrien Theveneau <theveneau@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -21,20 +23,27 @@
 // Boston, MA 02110-1301, USA.
 
 #include "core/evaluator.h"
-
+#include "core/session.h"
 #include "core/settings.h"
+#include "math/rational.h"
+#include "math/units.h"
 
 #include <QCoreApplication>
 #include <QStack>
 
-//#define EVALUATOR_DEBUG
+#define EVALUATOR_DEBUG
+#define MAX_STACK_DEPTH 100
+#define ALLOW_IMPLICIT_MULT
+
+
 #ifdef EVALUATOR_DEBUG
 #include <QFile>
 #include <QTextStream>
 
-QTextStream& operator<<(QTextStream& s, HNumber num)
+
+QTextStream& operator<<(QTextStream& s, CNumber num)
 {
-    char* str = HMath::format(num, 'f');
+    char* str = CMath::format(num, 'f');
     s << str;
     free(str);
     return s;
@@ -48,9 +57,10 @@ static void s_deleteEvaluator()
     delete s_evaluatorInstance;
 }
 
-const HNumber& Evaluator::checkOperatorResult(const HNumber& n)
+const CNumber& Evaluator::checkOperatorResult(const CNumber& n)
 {
     switch (n.error()) {
+    case Success: break;
     case NoOperand:
         if(m_assignFunc == false)
             m_error = Evaluator::tr("cannot operate on a NaN");
@@ -71,7 +81,16 @@ const HNumber& Evaluator::checkOperatorResult(const HNumber& n)
         m_error = Evaluator::tr("overflow - integer result exceeds maximum limit for integers");
         break;
     case TooExpensive:
-        m_error = Evaluator::tr("too time consuming computation was rejected");
+        m_error = Evaluator::tr("too time consuming - computation was rejected");
+        break;
+    case DimensionMismatch:
+        m_error = Evaluator::tr("dimension mismatch - quantities with different dimensions cannot be compared, added, etc.");
+        break;
+    case InvalidDimension:
+        m_error = Evaluator::tr("invalid dimension - operation might require dimensionless arguments");
+        break;
+    case EvalUnstable:
+        m_error = Evaluator::tr("Computation aborted - encountered numerical instability");
         break;
     default:;
     }
@@ -86,6 +105,7 @@ QString Evaluator::stringFromFunctionError(Function* function)
     QString result = QString::fromLatin1("<b>%1</b>: ");
 
     switch (function->error()) {
+    case Success: break;
     case InvalidParamCount:
         result += Evaluator::tr("wrong number of arguments");
         break;
@@ -93,25 +113,43 @@ QString Evaluator::stringFromFunctionError(Function* function)
         result += Evaluator::tr("does not take NaN as an argument");
         break;
     case Overflow:
+        result += Evaluator::tr("overflow - huge result is out of SpeedCrunch's number range");
+        break;
     case Underflow:
+        result += Evaluator::tr("underflow - tiny result is out of SpeedCrunch's number range");
+        break;
     case OutOfLogicRange:
+        result += Evaluator::tr("overflow - logic result exceeds maximum of 256 bits");
+        break;
     case OutOfIntegerRange:
         result += Evaluator::tr("result out of range");
         break;
     case ZeroDivide:
+        result += Evaluator::tr("division by zero");
+        break;
     case EvalUnstable:
+        result += Evaluator::tr("Computation aborted - encountered numerical instability");
+        break;
     case OutOfDomain:
         result += Evaluator::tr("undefined for argument domain");
         break;
     case TooExpensive:
         result += Evaluator::tr("computation too expensive");
         break;
+    case InvalidDimension:
+        result += Evaluator::tr("invalid dimension - function might require dimensionless arguments");
+        break;
+    case DimensionMismatch:
+        result += Evaluator::tr("dimension mismatch - quantities with different dimensions cannot be compared, added, etc.");
+        break;
+    case IONoBase:
     case BadLiteral:
     case InvalidPrecision:
     case InvalidParam:
         result += Evaluator::tr("internal error, please report a bug");
         break;
     default:
+        result += Evaluator::tr("error");
         break;
     };
 
@@ -167,6 +205,10 @@ static Token::Op matchOperator(const QString& text)
           result = Token::LeftShift;
         else if(text == ">>")
           result = Token::RightShift;
+        else if(text == "->")
+            result = Token::RightArrow;
+        else if(text == "in")
+            result = Token::RightArrow;
     }
 #if 0
     else if (text.length() == 3) {
@@ -174,31 +216,34 @@ static Token::Op matchOperator(const QString& text)
             result = Token::Modulo;
     }
 #endif
+    else if(text.startsWith("->"))
+        result = Token::RightArrow;
 
    return result;
 }
 
-// Helper function: give operator precedence e.g. "+" is 1 while "*" is 3.
+// Helper function: give operator precedence e.g. "+" is 300 while "*" is 500.
 static int opPrecedence(Token::Op op)
 {
     int prec;
     switch(op) {
-    case Token::Exclamation: prec = 8; break;
-    case Token::Caret: prec = 7; break;
-    case Token::Asterisk: prec = 5; break;
-    case Token::Slash: prec = 6; break;
+    case Token::Exclamation: prec = 800; break;
+    case Token::Caret: prec = 700; break;
+    case Token::Asterisk:
+    case Token::Slash: prec = 500; break;
     case Token::Modulo:
-    case Token::Backslash: prec = 6; break;
+    case Token::Backslash: prec = 600; break;
     case Token::Plus:
-    case Token::Minus: prec = 3; break;
+    case Token::Minus: prec = 300; break;
     case Token::LeftShift:
-    case Token::RightShift: prec = 2; break;
-    case Token::Ampersand: prec = 1; break;
-    case Token::Pipe: prec = 0; break;
+    case Token::RightShift: prec = 200; break;
+    case Token::Ampersand: prec = 100; break;
+    case Token::Pipe: prec = 50; break;
+    case Token::RightArrow: prec = 0;
     case Token::RightPar:
-    case Token::Semicolon: prec = -1; break;
-    case Token::LeftPar: prec = -2; break;
-    default: prec = -2; break;
+    case Token::Semicolon: prec = -100; break;
+    case Token::LeftPar: prec = -200; break;
+    default: prec = -200; break;
     }
     return prec;
 }
@@ -225,10 +270,10 @@ Token& Token::operator=(const Token& token)
     return*this;
 }
 
-HNumber Token::asNumber() const
+CNumber Token::asNumber() const
 {
     QString text = m_text;
-    return isNumber() ? HNumber((const char*)text.toLatin1()) : HNumber(0);
+    return isNumber() ? CNumber((const char*)text.toLatin1()) : CNumber(0);
 }
 
 Token::Op Token::asOperator() const
@@ -372,11 +417,42 @@ Evaluator::Evaluator()
 
 void Evaluator::initializeBuiltInVariables()
 {
-    setVariable(QLatin1String("e"), HMath::e(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("ℯ"), HMath::e(), Variable::BuiltIn);
+    setVariable(QLatin1String("e"), CMath::e(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("ℯ"), CMath::e(), Variable::BuiltIn);
 
-    setVariable(QLatin1String("pi"), HMath::pi(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("π"), HMath::pi(), Variable::BuiltIn);
+    setVariable(QLatin1String("pi"), CMath::pi(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("π"), CMath::pi(), Variable::BuiltIn);
+
+    if(Settings::instance()->complexNumbers) {
+        setVariable(QLatin1String("j"), CMath::i(), Variable::BuiltIn);
+    }
+    else if(hasVariable("j")) {
+        unsetVariable("j", true);
+    }
+
+
+    setVariable(QString::fromUtf8("meter"), Units::meter(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("second"), Units::second(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("kilogram"), Units::kilogram(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("ampere"), Units::ampere(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("mole"), Units::mole(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("candela"), Units::candela(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("kelvin"), Units::kelvin(), Variable::BuiltIn);
+
+    setVariable(QString::fromUtf8("newton"), Units::newton(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("joule"), Units::joule(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("watt"), Units::watt(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("pascal"), Units::pascal(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("coulomb"), Units::coulomb(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("volt"), Units::volt(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("ohm"), Units::ohm(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("watt"), Units::watt(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("farad"), Units::farad(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("watt"), Units::watt(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("tesla"), Units::tesla(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("weber"), Units::weber(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("henry"), Units::henry(), Variable::BuiltIn);
+    setVariable(QString::fromUtf8("siemens"), Units::siemens(), Variable::BuiltIn);
 }
 
 void Evaluator::setExpression(const QString& expr)
@@ -416,7 +492,20 @@ void Evaluator::reset()
     m_assignId = QString();
     m_assignFunc = false;
     m_assignArg.clear();
-    unsetAllUserDefinedVariables(); // Initializes built-in variables.
+    m_session = NULL;
+    m_stack_depth=0;
+
+    initializeBuiltInVariables();
+}
+
+void Evaluator::setSession(Session *s)
+{
+    m_session = s;
+}
+
+const Session *Evaluator::session()
+{
+    return m_session;
 }
 
 QString Evaluator::error() const
@@ -433,7 +522,7 @@ Tokens Evaluator::tokens() const
     return scan(m_expression);
 }
 
-Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) const
+Tokens Evaluator::scan(const QString& expr) const
 {
     // Result.
     Tokens tokens;
@@ -453,13 +542,6 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
 
     // Force a terminator.
     ex.append(QChar());
-
-    // Work around issue 160 until new more flexible parser is written.
-    if (policy == AutoFix) {
-        if (ex.at(0) == '-')
-            ex.prepend('0');
-        ex.replace("(-", "(0-");
-    }
 
     // Main loop.
     while (state != Bad && state != Finish && i < ex.length()) {
@@ -488,6 +570,8 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
                 ++i;
             } else if (ch.isNull()) // Terminator character.
                 state = Finish;
+            else if (isIdentifier(ch)) // Identifier or alphanumeric operator
+                state = InIdentifier;
             else { // Look for operator match.
                 int op;
                 QString s;
@@ -526,17 +610,25 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
                     state = Bad;
             }
 
-            // Beginning with unknown alphanumeric?  Could be identifier, or function.
-            if (state == Bad && isIdentifier(ch))
-                state = InIdentifier;
+            //// Beginning with unknown alphanumeric?  Could be identifier or function.
+            //if (state == Bad && isIdentifier(ch))
+            //    state = InIdentifier;
             break;
 
+        /* Manage both identifier and alphanumeric operators */
         case InIdentifier:
             // Consume as long as alpha, dollar sign, underscore, or digit.
             if (isIdentifier(ch) || ch.isDigit())
                 tokenText.append(ex.at(i++));
             else { // We're done with identifier.
-                tokens.append(Token(Token::stxIdentifier, tokenText, tokenStart));
+                // if token is an operator
+                if (matchOperator(tokenText)) {
+                    tokens.append(Token(Token::stxOperator, tokenText, tokenStart));
+                }
+                // else, normal identifier
+                else {
+                    tokens.append(Token(Token::stxIdentifier, tokenText, tokenStart));
+                }
                 tokenStart = i;
                 tokenText = "";
                 state = Start;
@@ -679,6 +771,51 @@ Tokens Evaluator::scan(const QString& expr, Evaluator::AutoFixPolicy policy) con
         // Invalidating here too, because usually when we set state to Bad, the case Bad won't be run.
         tokens.setValid(false);
 
+
+    // Find the correct text for the conversion operator (->)
+    // Advance up to the next operator with lower precedence, excluding higher precedence ops in parenthesis.
+    // WARNING: This assumes that there is no UNARY operator with lower precedence than the conversion operator.
+    for(int i=0; i<tokens.length(); ++i) {
+        //Find conversion operator
+        if(!tokens.at(i).isOperator() || tokens.at(i).asOperator()!=Token::RightArrow)
+            continue;
+        Token & conv_token = tokens[i];
+
+        bool must_fence = false;
+        int parens = 0;
+        QString expr = "";
+
+        //Make sure the next token cannot be mistake for part of a number
+        if(tokens.length()>i+1) {
+            QString s = tokens.at(i+1).text().toUpper();
+            if((QString("1234567890XBOED").contains(s[0]) || isRadixChar(s[0])) &&
+                  (s.length()<=1 || QString("0123456789abcdef").contains(s[1])))
+                must_fence=true;
+        }
+        while(++i<tokens.length()) {
+            if(tokens.at(i).isOperator()) {
+                int prec = opPrecedence(tokens.at(i).asOperator());
+                if(tokens.at(i).asOperator() == Token::LeftPar)
+                    ++parens;
+                else if(tokens.at(i).asOperator() == Token::RightPar)
+                    --parens;
+                else if (prec <= opPrecedence(Token::Asterisk) && !parens)
+                    must_fence = true;
+                //break if all parenthesis are matched and a lower priority op has been found
+                else if(parens==0 && prec <= opPrecedence(Token::RightArrow))
+                    break;
+            }
+            if(i>1 && (tokens.at(i-1).isIdentifier() || tokens.at(i-1).isNumber()) && (tokens.at(i).isIdentifier() || tokens.at(i).isNumber())) {
+                expr.append(" "); // Add a space to emphasize implicit multiplication
+            }
+            expr.append(tokens.at(i).text());
+        }
+        if(must_fence)
+            expr = "(" + expr + ")";
+        // We must replace "in" by "->" to manage alphanumeric unit conversion operator "in"
+        // addUnit does it
+        conv_token.addUnit(expr);
+    }
     return tokens;
 }
 
@@ -722,28 +859,8 @@ void Evaluator::compile(const Tokens& tokens)
         if (tokenType == Token::stxUnknown)
             break;
 
-        // For constants, push immediately to stack. Generate code to load from a constant.
-        if (tokenType == Token::stxNumber) {
-            syntaxStack.push(token);
-            m_constants.append(token.asNumber());
-            m_codes.append(Opcode(Opcode::Load, m_constants.count() - 1));
-#ifdef EVALUATOR_DEBUG
-            dbg << "  Push " << token.asNumber() << " to constant pools" << "\n";
-#endif
-        }
-
-        // For identifier, push immediately to stack. Generate code to load from reference.
-        if (tokenType == Token::stxIdentifier) {
-            syntaxStack.push(token);
-            m_identifiers.append(token.text());
-            m_codes.append(Opcode(Opcode::Ref, m_identifiers.count() - 1));
-#ifdef EVALUATOR_DEBUG
-            dbg << "  Push " << token.text() << " to identifier pools" << "\n";
-#endif
-        }
-
-        // For any other operator, try to apply all parsing rules.
-        if (tokenType == Token::stxOperator) {
+        // Try to apply all parsing rules.
+        if (1) { // TODO: Remove this
 #ifdef EVALUATOR_DEBUG
             dbg << "  Checking rules..." << "\n";
 #endif
@@ -795,7 +912,9 @@ void Evaluator::compile(const Tokens& tokens)
                     }
                 }
 
-                // Rule for postfix operators.
+                // Rule for postfix operators: Y POSTFIX -> Y
+                // Condition: Y is not an operator, POSTFIX is a postfix op.
+                // Since we evaluate from left to right, we need not check precedence at this point.
                 if (!ruleFound && syntaxStack.itemCount() >= 2) {
                     Token postfix = syntaxStack.top();
                     Token y = syntaxStack.top(1);
@@ -804,15 +923,13 @@ void Evaluator::compile(const Tokens& tokens)
                             case Token::Exclamation:
                                 ruleFound = true;
                                 syntaxStack.pop();
-                                syntaxStack.pop();
-                                syntaxStack.push(y);
                                 m_codes.append(Opcode(Opcode::Fact));
                                 break;
                             default:;
-#ifdef EVALUATOR_DEBUG
-                                dbg << "    Rule for postfix operator" << "\n";
-#endif
                         }
+#ifdef EVALUATOR_DEBUG
+                        if(ruleFound) dbg << "    Rule for postfix operator " << postfix.text() << "\n";
+#endif
                 }
 
                 // Rule for parenthesis: (Y) -> Y.
@@ -820,8 +937,7 @@ void Evaluator::compile(const Tokens& tokens)
                     Token right = syntaxStack.top();
                     Token y = syntaxStack.top(1);
                     Token left = syntaxStack.top(2);
-                    if (right.isOperator() && !y.isOperator() && left.isOperator()
-                         && right.asOperator() == Token::RightPar
+                    if (!y.isOperator() && right.asOperator() == Token::RightPar
                          && left.asOperator() == Token::LeftPar)
                     {
                         ruleFound = true;
@@ -849,17 +965,17 @@ void Evaluator::compile(const Tokens& tokens)
                         syntaxStack.pop();
                         syntaxStack.push(arg);
 #ifdef EVALUATOR_DEBUG
-                        dbg << "    Rule for simplified function syntax" << "\n";
+                        dbg << "    Rule for simplified function syntax; function " << id.text() << "\n";
 #endif
                     }
                 }
 
-                // R.ule for unary operator in simplified function syntax. This handles case like "sin -90".
+                // Rule for unary operator in simplified function syntax. This handles case like "sin -90".
                 if (!ruleFound && syntaxStack.itemCount() >= 3) {
                     Token x = syntaxStack.top();
                     Token op = syntaxStack.top(1);
                     Token id = syntaxStack.top(2);
-                    if (!x.isOperator() && op.isOperator() && id.isIdentifier()
+                    if (!x.isOperator() && id.isIdentifier()
                          && FunctionRepo::instance()->find(id.text())
                          && (op.asOperator() == Token::Plus || op.asOperator() == Token::Minus))
                     {
@@ -870,36 +986,12 @@ void Evaluator::compile(const Tokens& tokens)
                         if (op.asOperator() == Token::Minus)
                             m_codes.append(Opcode(Opcode::Neg));
 #ifdef EVALUATOR_DEBUG
-                        dbg << "    Rule for unary operator in simplified function syntax" << "\n";
+                        dbg << "    Rule for unary operator in simplified function syntax; function " << id.text() << "\n";
 #endif
                     }
                 }
 
-#if 0
-                // Rule for unary postfix operator in simplified function syntax. This handles case like "sin 90!"
-                if (!ruleFound && syntaxStack.itemCount() >= 3) {
-                    Token op = syntaxStack.top();
-                    Token x = syntaxStack.top(1);
-                    Token id = syntaxStack.top(2);
-                    if (id.isIdentifier() && m_functions->find(id.text())) {
-                        if (!x.isOperator() && op.isOperator() &&
-                             op.asOperator() == Token::Exclamation)
-                        {
-                            ruleFound = true;
-                            syntaxStack.pop();
-                            syntaxStack.pop();
-                            syntaxStack.push(x);
-                            m_codes.append(Opcode(Opcode::Fact));
-#ifdef EVALUATOR_DEBUG
-                            dbg << "    Rule for unary operator in simplified function syntax"
-                                << "\n";
-#endif
-                        }
-                    }
-                }
-#endif
-
-                // Rule for function arguments, if token is , or ): id (arg1 ; arg2 -> id (arg.
+                // Rule for function arguments, if token is ; or ): id (arg1 ; arg2 -> id (arg.
                 if (!ruleFound && syntaxStack.itemCount() >= 5
                      && (token.asOperator() == Token::RightPar
                          || token.asOperator() == Token::Semicolon))
@@ -939,8 +1031,7 @@ void Evaluator::compile(const Tokens& tokens)
                         syntaxStack.push(Token(Token::stxNumber));
                         m_codes.append(Opcode(Opcode::Function, 0));
 #ifdef EVALUATOR_DEBUG
-                        dbg << "    Rule for function call with parentheses, but without argument"
-                            << "\n";
+                        dbg << "    Rule for function call with parentheses, but without argument" << "\n";
 #endif
                     }
                 }
@@ -955,15 +1046,20 @@ void Evaluator::compile(const Tokens& tokens)
                     Token op = syntaxStack.top(1);
                     Token a = syntaxStack.top(2);
                     if (!a.isOperator() && !b.isOperator() && op.isOperator()
-                         && token.asOperator() != Token::LeftPar
-                         && token.asOperator() != Token::Caret
-                         && opPrecedence(op.asOperator()) >= opPrecedence(token.asOperator()))
+                         && ((token.isOperator() && opPrecedence(op.asOperator()) >= opPrecedence(token.asOperator())
+                              && token.asOperator() != Token::LeftPar
+                              && token.asOperator() != Token::Caret)    // token is normal operator
+                             || (!token.isOperator()                    // token may represent implicit multiplication
+                                 && opPrecedence(op.asOperator()) >= opPrecedence(Token::Asterisk))))
                     {
                         ruleFound = true;
                         syntaxStack.pop();
                         syntaxStack.pop();
                         syntaxStack.pop();
-                        syntaxStack.push(b);
+                        if(b.isIdentifier()) //prefer identifiers to numbers on the stack (for implicit mult)
+                            syntaxStack.push(b);
+                        else
+                            syntaxStack.push(a);
                         switch (op.asOperator()) {
                             // Simple binary operations.
                             case Token::Plus:      m_codes.append(Opcode::Add); break;
@@ -977,6 +1073,8 @@ void Evaluator::compile(const Tokens& tokens)
                             case Token::RightShift: m_codes.append(Opcode::RSh); break;
                             case Token::Ampersand: m_codes.append(Opcode::BAnd); break;
                             case Token::Pipe:      m_codes.append(Opcode::BOr); break;
+                            case Token::RightArrow:
+                                m_codes.append(Opcode(Opcode::Conv, op.text().mid(2))); break;
                             default: break;
                         };
 #ifdef EVALUATOR_DEBUG
@@ -984,73 +1082,86 @@ void Evaluator::compile(const Tokens& tokens)
 #endif
                     }
                 }
+#ifdef ALLOW_IMPLICIT_MULT
+
+                /* Rule for implicit multiplication:  NUMBER IDENTIFIER     -> IDENTIFIER
+                 *                                    IDENTIFIER IDENTIFIER -> IDENTIFIER
+                 * Action: Treat as A * B.
+                 * Note that the second operand must not be a number. The result is always an identifier.
+                 */
+                if(!ruleFound && syntaxStack.itemCount() >= 2) {
+                    Token b = syntaxStack.top();
+                    Token a = syntaxStack.top(1);
+
+                    if((a.isNumber() || a.isIdentifier()) && (b.isIdentifier())
+                            && token.asOperator() != Token::LeftPar
+                            && ((token.isOperator()
+                                 && opPrecedence(Token::Asterisk) >= opPrecedence(token.asOperator())) // token is normal operator
+                                || !token.isOperator())) // token represents implicit multiplication
+                    {
+                        ruleFound = true;
+                        syntaxStack.pop();
+                        syntaxStack.pop();
+                        if(b.isIdentifier()) //prefer identifiers to numbers on the stack
+                            syntaxStack.push(b);
+                        else
+                            syntaxStack.push(a);
+                        m_codes.append(Opcode::Mul);
+#ifdef EVALUATOR_DEBUG
+                        dbg << "    Rule for implicit multiplication" << "\n";
+#endif
+                    }
+
+                }
+#endif
+
 
                 // Rule for unary operator:  (op1) (op2) X -> (op1) X.
                 // Conditions: op2 is unary, token is not '('.
-                // Action: push (op2) to result e.g. "* - 2" becomes "*".
                 if (!ruleFound && token.asOperator() != Token::LeftPar
                         && syntaxStack.itemCount() >= 3)
                 {
                     Token x = syntaxStack.top();
                     Token op2 = syntaxStack.top(1);
                     Token op1 = syntaxStack.top(2);
-                    if (!x.isOperator() && op1.isOperator() && op2.isOperator()
-                         && (op2.asOperator() == Token::Plus || op2.asOperator() == Token::Minus))
+                    if (!x.isOperator() && op1.isOperator()
+                         && (op2.asOperator() == Token::Plus || op2.asOperator() == Token::Minus)
+                         && (!token.isOperator()
+                             || opPrecedence(token.asOperator()) <= opPrecedence(Token::Asterisk)))
                     {
                         ruleFound = true;
                         if (op2.asOperator() == Token::Minus)
                             m_codes.append(Opcode(Opcode::Neg));
-                    }
-#if 0
-                    else { // Maybe postfix.
-                        x = op2;
-                        op2 = syntaxStack.top();
-                        if (!x.isOperator() && op1.isOperator() && op2.isOperator()
-                             && op2.asOperator() == Token::Exclamation)
-                        {
-                            ruleFound = true;
-                            m_codes.append(Opcode(Opcode::Fact));
-                        }
-                    }
-#endif
-                    if (ruleFound) {
+
                         syntaxStack.pop();
                         syntaxStack.pop();
                         syntaxStack.push(x);
 #ifdef EVALUATOR_DEBUG
-                        dbg << "    Rule for unary operator" << "\n";
+                        dbg << "    Rule for unary operator" << op2.text() << "\n";
 #endif
                     }
                 }
 
-                // auxiliary rule for unary operator:  (op) X -> X
-                // conditions: op is unary, op is first in syntax stack,
-                // token is not '(' or '^' or '!' or any power operator
-                // action: push (op) to result
+                // auxiliary rule for unary prefix operator:  (op) X -> X
+                // conditions: op is unary, op is first in syntax stack
+                // action: create code for (op). Unary MINUS or PLUS are treated with the precedence of multiplication.
                 if (!ruleFound && token.asOperator() != Token::LeftPar
-                     && token.asOperator() != Token::Exclamation
+                     //&& token.asOperator() != Token::Exclamation
                      && syntaxStack.itemCount() == 2)
                 {
                     Token x = syntaxStack.top();
                     Token op = syntaxStack.top(1);
-                    if (!x.isOperator() && op.isOperator()
-                         && (op.asOperator() == Token::Plus || op.asOperator() == Token::Minus))
+                    if (!x.isOperator()
+                        && (op.asOperator() == Token::Plus || op.asOperator() == Token::Minus)
+                        && ((token.isOperator() && opPrecedence(token.asOperator()) <= opPrecedence(Token::Asterisk))
+                            || !token.isOperator()))
                     {
                         ruleFound = true;
                         if (op.asOperator() == Token::Minus)
                             m_codes.append(Opcode(Opcode::Neg));
-                    } else {
-                        x = op;
-                        op = syntaxStack.top();
-                        if (!x.isOperator() && op.isOperator())
-                        {
-                            // If we don't really find the rule, restore ruleFound as if nothing happened, see below.
-                            bool ruleFoundOldValue = ruleFound;
-                            ruleFound = true;
-                            if (op.asOperator() == Token::Exclamation)
-                                m_codes.append(Opcode(Opcode::Fact));
-                            else ruleFound = ruleFoundOldValue;
-                        }
+#ifdef EVALUATOR_DEBUG
+                        dbg << "    Rule for unary operator (auxiliary)" << "\n";
+#endif
                     }
                     if (ruleFound) {
                         syntaxStack.pop();
@@ -1066,8 +1177,27 @@ void Evaluator::compile(const Tokens& tokens)
                     break;
             }
 
+
             // Can't apply rules anymore, push the token.
             syntaxStack.push(token);
+
+            // For identifier, generate code to load from reference.
+            if (tokenType == Token::stxIdentifier) {
+                m_identifiers.append(token.text());
+                m_codes.append(Opcode(Opcode::Ref, m_identifiers.count() - 1));
+#ifdef EVALUATOR_DEBUG
+                dbg << "  Push " << token.text() << " to identifier pools" << "\n";
+#endif
+            }
+
+            // For constants, generate code to load from a constant.
+            if (tokenType == Token::stxNumber) {
+                m_constants.append(token.asNumber());
+                m_codes.append(Opcode(Opcode::Load, m_constants.count() - 1));
+#ifdef EVALUATOR_DEBUG
+                dbg << "  Push " << token.asNumber() << " to constant pools" << "\n";
+#endif
+            }
         }
     }
 
@@ -1091,11 +1221,12 @@ void Evaluator::compile(const Tokens& tokens)
         m_codes.clear();
         m_identifiers.clear();
     }
+
 }
 
-HNumber Evaluator::evalNoAssign()
+CNumber Evaluator::evalNoAssign()
 {
-    HNumber result;
+    CNumber result;
 
     if (m_dirty) {
         Tokens tokens = scan(m_expression);
@@ -1103,7 +1234,7 @@ HNumber Evaluator::evalNoAssign()
         // Invalid expression?
         if (!tokens.valid()) {
             m_error = tr("invalid expression");
-            return HNumber(0);
+            return CNumber(0);
         }
 
         // Variable assignment?
@@ -1162,16 +1293,16 @@ HNumber Evaluator::evalNoAssign()
     return result;
 }
 
-HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& constants,
+CNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<CNumber>& constants,
                         const QStringList& identifiers) {
-    QStack<HNumber> stack;
+    QStack<CNumber> stack;
     QHash<int, QString> refs;
     int index;
-    HNumber val1, val2;
-    QVector<HNumber> args;
+    CNumber val1, val2;
+    QVector<CNumber> args;
     QString fname;
     Function* function;
-    UserFunction* userFunction = NULL;
+    const UserFunction* userFunction = NULL;
 
     for (int pc = 0; pc < opcodes.count(); ++pc) {
         const Opcode& opcode = opcodes.at(pc);
@@ -1191,7 +1322,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::Neg:
                 if (stack.count() < 1) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val1 = checkOperatorResult(-val1);
@@ -1202,7 +1333,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::Add:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1213,7 +1344,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::Sub:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1224,7 +1355,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::Mul:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1235,7 +1366,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::Div:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1246,28 +1377,31 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::Pow:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
-                val2 = checkOperatorResult(HMath::raise(val2, val1));
+                if(Settings::instance()->complexNumbers)
+                    val2 = checkOperatorResult(CMath::raise(val2, val1));
+                else
+                    val2 = checkOperatorResult(HMath::raise(val2.real, val1.real));
                 stack.push(val2);
                 break;
 
             case Opcode::Fact:
                 if (stack.count() < 1) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
-                val1 = checkOperatorResult(HMath::factorial(val1));
+                val1 = checkOperatorResult(CMath::factorial(val1));
                 stack.push(val1);
                 break;
 
             case Opcode::Modulo:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1278,18 +1412,18 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::IntDiv:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
                 val2 = checkOperatorResult(val2 / val1);
-                stack.push(HMath::integer(val2));
+                stack.push(CMath::integer(val2));
                 break;
 
             case Opcode::LSh:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1300,7 +1434,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::RSh:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1311,7 +1445,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::BAnd:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1322,7 +1456,7 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
             case Opcode::BOr:
                 if (stack.count() < 2) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
                 val1 = stack.pop();
                 val2 = stack.pop();
@@ -1330,28 +1464,47 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
                 stack.push(val2);
                 break;
 
+            case Opcode::Conv:
+                if (stack.count() < 2) {
+                    m_error = tr("invalid expression");
+                    return HMath::nan();
+                }
+                val1 = stack.pop();
+                val2 = stack.pop();
+                if(val1.isZero()) {
+                    m_error = tr("unit must not be zero");
+                    return HMath::nan();
+                }
+                if(!val1.sameDimension(val2)) {
+                    m_error = tr("Conversion failed - dimension mismatch");
+                    return HMath::nan();
+                }
+                val2.setDisplayUnit(val1, opcode.text);
+                stack.push(val2);
+                break;
+
             // Reference.
             case Opcode::Ref:
                 fname = identifiers.at(index);
                 if (m_assignArg.contains(fname)) // Argument.
-                    stack.push(HMath::nan());
+                    stack.push(CMath::nan());
                 else if (hasVariable(fname)) // Variable.
-                    stack.push(getVariable(fname).value);
+                    stack.push(getVariable(fname).value());
                 else { // Function.
                     function = FunctionRepo::instance()->find(fname);
                     if (function) {
-                        stack.push(HMath::nan());
+                        stack.push(CMath::nan());
                         refs.insert(stack.count(), fname);
                     } else if (m_assignFunc) {
                         // Allow arbitrary identifiers when declaring user functions.
-                        stack.push(HMath::nan());
+                        stack.push(CMath::nan());
                         refs.insert(stack.count(), fname);
                     } else if (hasUserFunction(fname)) {
-                        stack.push(HMath::nan());
+                        stack.push(CMath::nan());
                         refs.insert(stack.count(), fname);
                     } else {
-                        m_error = fname + ": " + tr("unknown function or variable");
-                        return HMath::nan();
+                        m_error = "<b>" + fname + "</b>: " + tr("unknown function or variable");
+                        return CMath::nan();
                     }
                 }
                 break;
@@ -1372,13 +1525,13 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
                 }
 
                 if (!function && !userFunction && !m_assignFunc) {
-                    m_error = fname + ": " + tr("unknown function or variable");
-                    return HMath::nan();
+                    m_error = "<b>" + fname + "</b>: " + tr("unknown function or variable");
+                    return CMath::nan();
                 }
 
                 if (stack.count() < index) {
                     m_error = tr("invalid expression");
-                    return HMath::nan();
+                    return CMath::nan();
                 }
 
                 args.clear();
@@ -1391,30 +1544,30 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
 
                 // Show function signature if the user gave no argument (yet).
                 if (userFunction) {
-                    if (!args.count() && userFunction->descr.arguments.count() != 0) {
-                        m_error = QString::fromLatin1("%1(%2)").arg(userFunction->descr.name)
-                            .arg(userFunction->descr.arguments.join(";"));
-                        return HMath::nan();
+                    if (!args.count() && userFunction->arguments().count() != 0) {
+                        m_error = QString::fromLatin1("<b>%1</b>(%2)").arg(userFunction->name())
+                            .arg(userFunction->arguments().join(";"));
+                        return CMath::nan();
                     }
                 } else if (function) {
                     if (!args.count()) {
-                        m_error = QString::fromLatin1("%1(%2)").arg(fname).arg(function->usage());
-                        return HMath::nan();
+                        m_error = QString::fromLatin1("<b>%1</b>(%2)").arg(fname).arg(function->usage());
+                        return CMath::nan();
                     }
                 }
 
                 if (m_assignFunc) {
                     // Allow arbitrary identifiers when declaring user functions.
-                    stack.push(HMath::nan());
+                    stack.push(CMath::nan());
                 } else if (userFunction) {
                     stack.push(execUserFunction(userFunction, args));
                     if (!m_error.isEmpty())
-                        return HMath::nan();
+                        return CMath::nan();
                 } else {
                     stack.push(function->exec(args));
                     if (function->error()) {
                         m_error = stringFromFunctionError(function);
-                        return HMath::nan();
+                        return CMath::nan();
                     }
                 }
                 break;
@@ -1427,13 +1580,12 @@ HNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<HNumber>& 
     // More than one value in stack? Unsuccesfull execution...
     if (stack.count() != 1) {
         m_error = tr("invalid expression");
-        return HMath::nan();
+        return CMath::nan();
     }
-
     return stack.pop();
 }
 
-HNumber Evaluator::execUserFunction(UserFunction* function, QVector<HNumber>& arguments) {
+CNumber Evaluator::execUserFunction(const UserFunction* function, QVector<CNumber>& arguments) {
     /* TODO:
      *   OK ignore missing variables or user functions when declaring a user function.
      *   OK prohibit user function recursion by using a flag in UserFunction.
@@ -1442,20 +1594,22 @@ HNumber Evaluator::execUserFunction(UserFunction* function, QVector<HNumber>& ar
      *   OK show a list of user functions and allow the user to delete them.
      *   - replace user variables by user functions (with no argument) ?
      */
-    if (arguments.count() != function->descr.arguments.count()) {
-        m_error = "<b>" + function->descr.name + "</b>: " + tr("wrong number of arguments");
-        return HMath::nan();
+    if (arguments.count() != function->arguments().count()) {
+        m_error = "<b>" + function->name() + "</b>: " + tr("wrong number of arguments");
+        return CMath::nan();
     }
 
-    if (function->inUse) {
-        m_error = "<b>" + function->descr.name + "</b>: " + tr("user function recursion is not supported");
-        return HMath::nan();
-    }
 
-    function->inUse = true;
+
+    ++m_stack_depth;
+    if(m_stack_depth>MAX_STACK_DEPTH) {
+        m_error = "<b>" + function->name() + "</b>: " + tr("Maximum recursion depth exceeded");
+        --m_stack_depth;
+        return CMath::nan();
+    }
 
     QVector<Opcode> newOpcodes;
-    QVector<HNumber> newConstants = function->constants; // Copy
+    QVector<CNumber> newConstants = function->constants; // Copy
 
     // Replace references to function arguments by constants.
     for (int i = 0; i < function->opcodes.count(); ++i) {
@@ -1464,7 +1618,7 @@ HNumber Evaluator::execUserFunction(UserFunction* function, QVector<HNumber>& ar
         if (opcode.type == Opcode::Ref) {
             // Check if the identifier is an argument name.
             QString name = function->identifiers.at(opcode.index);
-            int argIdx = function->descr.arguments.indexOf(name);
+            int argIdx = function->arguments().indexOf(name);
             if (argIdx >= 0) {
                 // Replace the reference by a constant value.
                 opcode = Opcode(Opcode::Load, newConstants.count());
@@ -1475,13 +1629,12 @@ HNumber Evaluator::execUserFunction(UserFunction* function, QVector<HNumber>& ar
         newOpcodes.append(opcode);
     }
 
-    HNumber result = exec(newOpcodes, newConstants, function->identifiers);
-    if (!m_error.isEmpty()) {
-        // Tell the user where the error happened.
-        m_error = "<b>" + function->descr.name + "</b>: " + m_error;
+    CNumber result = exec(newOpcodes, newConstants, function->identifiers);
+    if (!m_error.isEmpty() && !m_error.contains(tr("Maximum recursion depth exceeded"))) {
+        // Tell the user where the error happened, but avoid spamming them when the stack overflowed
+        m_error = "<b>" + function->name() + "</b>: " + m_error;
     }
-
-    function->inUse = false;
+    --m_stack_depth;
     return result;
 }
 
@@ -1496,54 +1649,56 @@ bool Evaluator::isBuiltInVariable(const QString& id) const
     if (FunctionRepo::instance()->find(id))
         return true;
 
-    if (!m_variables.contains(id))
+    if (!m_session || !m_session->hasVariable(id))
         return false;
 
-    return m_variables.value(id).type == Variable::BuiltIn;
+    return m_session->getVariable(id).type() == Variable::BuiltIn;
 }
 
-HNumber Evaluator::eval()
+CNumber Evaluator::eval()
 {
-    HNumber result = evalNoAssign(); // This sets m_assignId.
+    CNumber result = evalNoAssign(); // This sets m_assignId.
 
     if (isBuiltInVariable(m_assignId)) {
         m_error = tr("%1 is a reserved name, please choose another").arg(m_assignId);
-        return HMath::nan();
+        return CMath::nan();
     }
-
     // Handle user variable or function assignment.
     if (!m_assignId.isEmpty()) {
         if (m_assignFunc) {
             if(hasVariable(m_assignId)) {
                 m_error = tr("%1 is a variable name, please choose another or delete the variable").arg(m_assignId);
-                return HMath::nan();
+                return CMath::nan();
             }
 
-            // Check that each arguments are unique and not a reserved identifier.
+            // Check that each arguments is unique and not a reserved identifier.
             for (int i = 0; i < m_assignArg.count() - 1; ++i) {
                 const QString &argName = m_assignArg.at(i);
 
                 if (m_assignArg.indexOf(argName, i + 1) != -1) {
                     m_error = tr("argument %1 is used more than once").arg(argName);
-                    return HMath::nan();
+                    return CMath::nan();
                 }
 
                 if (isBuiltInVariable(argName)) {
                     m_error = tr("%1 is a reserved name, please choose another").arg(argName);
-                    return HMath::nan();
+                    return CMath::nan();
                 }
             }
 
-            UserFunction* userFunction = new UserFunction(m_assignId, m_assignArg, m_expression.section("=", 1, 1).trimmed());
-            userFunction->constants = m_constants;
-            userFunction->identifiers = m_identifiers;
-            userFunction->opcodes = m_codes;
+            if(m_codes.isEmpty())
+                return CMath::nan();
+            UserFunction userFunction(m_assignId, m_assignArg, m_expression.section("=", 1, 1).trimmed());
+            userFunction.constants = m_constants;
+            userFunction.identifiers = m_identifiers;
+            userFunction.opcodes = m_codes;
 
-            m_userFunctions.insert(m_assignId, userFunction);
+            setUserFunction(userFunction);
+
         } else {
             if(hasUserFunction(m_assignId)) {
                 m_error = tr("%1 is a user function name, please choose another or delete the function").arg(m_assignId);
-                return HMath::nan();
+                return CMath::nan();
             }
 
             setVariable(m_assignId, result);
@@ -1553,51 +1708,55 @@ HNumber Evaluator::eval()
     return result;
 }
 
-HNumber Evaluator::evalUpdateAns()
+CNumber Evaluator::evalUpdateAns()
 {
-    HNumber result = eval();
+    CNumber result = eval();
     if (m_error.isEmpty() && !m_assignFunc)
         setVariable(QLatin1String("ans"), result, Variable::BuiltIn);
     return result;
 }
 
-void Evaluator::setVariable(const QString& id, HNumber value, Variable::Type type)
+void Evaluator::setVariable(const QString& id, CNumber value, Variable::Type type)
 {
-    m_variables.insert(id, Variable(id, value, type));
+    if(!m_session)
+        m_session = new Session;
+    m_session->addVariable(Variable(id, value, type));
 }
 
-Evaluator::Variable Evaluator::getVariable(const QString& id) const
+Variable Evaluator::getVariable(const QString& id) const
 {
-    if (id.isEmpty())
-        return Variable(QLatin1String(""), HNumber(0));
+    if (id.isEmpty() || !m_session)
+        return Variable(QLatin1String(""), CNumber(0));
 
-    return m_variables.value(id);
+    return m_session->getVariable(id);
 }
 
 bool Evaluator::hasVariable(const QString& id) const
 {
-    return id.isEmpty() ? false : m_variables.contains(id);
+    if (id.isEmpty() || !m_session)
+        return false;
+    else
+        return m_session->hasVariable(id);
 }
 
-void Evaluator::unsetVariable(const QString& id)
+void Evaluator::unsetVariable(const QString& id, bool force_builtin)
 {
-    if (isBuiltInVariable(id))
+    if(!m_session || (m_session->isBuiltInVariable(id) && ! force_builtin))
         return;
-
-    m_variables.remove(id);
+    m_session->removeVariable(id);
 }
 
-QList<Evaluator::Variable> Evaluator::getVariables() const
+QList<Variable> Evaluator::getVariables() const
 {
-    return m_variables.values();
+    return m_session ? m_session->variablesToList() : QList<Variable>();
 }
 
-QList<Evaluator::Variable> Evaluator::getUserDefinedVariables() const
+QList<Variable> Evaluator::getUserDefinedVariables() const
 {
-    QList<Variable> result = m_variables.values();
+    QList<Variable> result = getVariables();
     auto iter = result.begin();
     while (iter != result.end()) {
-        if ((*iter).type == Variable::BuiltIn)
+        if ((*iter).type() == Variable::BuiltIn)
             iter = result.erase(iter);
         else
             ++iter;
@@ -1605,21 +1764,21 @@ QList<Evaluator::Variable> Evaluator::getUserDefinedVariables() const
     return result;
 }
 
-QList<Evaluator::Variable> Evaluator::getUserDefinedVariablesPlusAns() const
+QList<Variable> Evaluator::getUserDefinedVariablesPlusAns() const
 {
-    QList<Evaluator::Variable> result = getUserDefinedVariables();
+    QList<Variable> result = getUserDefinedVariables();
     Variable ans = getVariable(QLatin1String("ans"));
-    if (!ans.name.isEmpty())
+    if (!ans.identifier().isEmpty())
         result.append(ans);
     return result;
 }
 
 void Evaluator::unsetAllUserDefinedVariables()
 {
-    HNumber ansBackup = getVariable(QLatin1String("ans")).value;
-    m_variables.clear();
+    if(!m_session) return;
+    CNumber ansBackup = getVariable(QLatin1String("ans")).value();
+    m_session->clearVariables();
     setVariable(QLatin1String("ans"), ansBackup, Variable::BuiltIn);
-    initializeBuiltInVariables();
 }
 
 static void replaceSuperscriptPowersWithCaretEquivalent(QString& expr)
@@ -1636,47 +1795,39 @@ static void replaceSuperscriptPowersWithCaretEquivalent(QString& expr)
     expr.replace(QString::fromUtf8("⁹"), QLatin1String("^9"));
 }
 
-QList<Evaluator::UserFunctionDescr> Evaluator::getUserFunctions() const
+QList<UserFunction> Evaluator::getUserFunctions() const
 {
-    QList<UserFunctionDescr> result;
-    auto iter = m_userFunctions.begin();
-    while (iter != m_userFunctions.end()) {
-        result.append(iter.value()->descr);
-        ++iter;
-    }
-    return result;
+        return m_session ? m_session->UserFunctionsToList() : QList<UserFunction>();
 }
 
-void Evaluator::setUserFunction(const UserFunctionDescr& descr)
+void Evaluator::setUserFunction(const UserFunction &f)
 {
-    // We need to compile the function, so pretend the user typed it.
-    setExpression(descr.name + "(" + descr.arguments.join(";") + ")=" + descr.expression);
-    eval();
+    if(!m_session)
+        m_session = new Session;
+    m_session->addUserFunction(f);
 }
 
 void Evaluator::unsetUserFunction(const QString& fname)
 {
-    UserFunction *function = m_userFunctions.take(fname);
-    if (function) delete function;
-    // FIXME: would "m_userFunctions.remove(fname);" be enough ?
+    m_session->removeUserFunction(fname);
 }
 
 void Evaluator::unsetAllUserFunctions()
 {
-    while (!m_userFunctions.isEmpty()) {
-        unsetUserFunction(m_userFunctions.begin().key());
-    }
+    m_session->clearUserFunctions();
 }
 
-bool Evaluator::hasUserFunction(const QString& fname)
+bool Evaluator::hasUserFunction(const QString& fname) const
 {
-    return fname.isEmpty() ? false : m_userFunctions.contains(fname);
+    return (fname.isEmpty() || !m_session) ? false : m_session->hasUserFunction(fname);
 }
 
-Evaluator::UserFunction* Evaluator::getUserFunction(const QString& fname) const
+const UserFunction *Evaluator::getUserFunction(const QString& fname) const
 {
-    // TODO: handle the fname.isEmpty() case ?
-    return m_userFunctions.value(fname);
+    if(hasUserFunction(fname))
+        return m_session->getUserFunction(fname);
+    else
+        return NULL;
 }
 
 QString Evaluator::autoFix(const QString& expr)
@@ -1746,8 +1897,8 @@ QString Evaluator::dump()
     result.append("  Constants:\n");
     for (c = 0; c < m_constants.count(); ++c) {
         QString vtext;
-        HNumber val = m_constants.at(c);
-        char* ss = HMath::format(val, 'f');
+        CNumber val = m_constants.at(c);
+        char* ss = CMath::format(val, 'f');
         result += QString("    #%1 = %2\n").arg(c).arg(ss);
         free(ss);
     }

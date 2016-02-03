@@ -31,6 +31,10 @@ class Constants;
 class ConstantsDock;
 class Editor;
 class Evaluator;
+class Session;
+class HistoryEntry;
+class Variable;
+class UserFunction;
 class FunctionRepo;
 class FunctionsDock;
 class HistoryDock;
@@ -63,6 +67,9 @@ signals:
     void resultFormatChanged();
     void resultPrecisionChanged();
     void syntaxHighlightingChanged();
+    void historyChanged();
+    void variablesChanged();
+    void functionsChanged();
 
 public slots:
     void copy();
@@ -101,7 +108,7 @@ private slots:
     void openCommunityURL();
     void openNewsURL();
     void retranslateText();
-    void saveSession();
+    void saveSessionDialog();
     void selectEditorExpression();
     void setAlwaysOnTopEnabled(bool);
     void setAngleModeDegree();
@@ -115,7 +122,7 @@ private slots:
     void setFullScreenEnabled(bool);
     void setFunctionsDockVisible(bool);
     void setHistoryDockVisible(bool);
-    void setHistorySaveEnabled(bool);
+    void setSessionSaveEnabled(bool);
     void setLeaveLastExpressionEnabled(bool);
     void setRadixCharacterAutomatic();
     void setRadixCharacter(char);
@@ -142,9 +149,8 @@ private slots:
     void setAutoResultToClipboardEnabled(bool);
     void setParseAllRadixChar(bool);
     void setStrictDigitGrouping(bool);
+    void setComplexNumbers(bool);
     void setSystemTrayIconEnabled(bool);
-    void setVariableSaveEnabled(bool);
-    void setUserFunctionSaveEnabled(bool b);
     void setVariablesDockVisible(bool);
     void setUserFunctionsDockVisible(bool);
     void setWindowPositionSaveEnabled(bool);
@@ -191,9 +197,7 @@ private:
     void checkInitialResultPrecision();
     void checkInitialLanguage();
     void checkInitialDigitGrouping();
-    void restoreHistory();
-    void restoreVariables();
-    void restoreUserFunctions();
+    void restoreSession();
     void deleteStatusBar();
     void deleteBitField();
     void deleteBookDock();
@@ -203,6 +207,7 @@ private:
     void deleteVariablesDock();
     void deleteUserFunctionsDock();
     void saveSettings();
+    void saveSession(QString &fname);
     void setActionsText();
     void setMenusText();
     void setStatusBarText();
@@ -251,9 +256,7 @@ private:
         QAction* settingsResultFormatHexadecimal;
         QAction* settingsAngleUnitRadian;
         QAction* settingsAngleUnitDegree;
-        QAction* settingsBehaviorSaveHistoryOnExit;
-        QAction* settingsBehaviorSaveVariablesOnExit;
-        QAction* settingsBehaviorSaveUserFunctionsOnExit;
+        QAction* settingsBehaviorSaveSessionOnExit;
         QAction* settingsBehaviorSaveWindowPositionOnExit;
         QAction* settingsBehaviorPartialResults;
         QAction* settingsBehaviorAutoCompletion;
@@ -269,6 +272,7 @@ private:
         QAction* settingsBehaviorAutoResultToClipboard;
         QAction* settingsBehaviorParseAllRadixChar;
         QAction* settingsBehaviorStrictDigitGrouping;
+        QAction* settingsBehaviorComplexNumbers;
         QAction* settingsDisplayZoomIn;
         QAction* settingsDisplayZoomOut;
         QAction* settingsDisplayFont;
@@ -350,6 +354,7 @@ private:
     Evaluator* m_evaluator;
     FunctionRepo* m_functions;
     Settings* m_settings;
+    Session* m_session;
     QTranslator* m_translator;
     QPlainTextEdit* m_copyWidget;
 };

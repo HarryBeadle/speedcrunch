@@ -26,6 +26,7 @@
 #include "core/functions.h"
 #include "core/numberformatter.h"
 #include "core/settings.h"
+#include "core/session.h"
 #include "gui/syntaxhighlighter.h"
 
 #include <QEvent>
@@ -136,38 +137,9 @@ QSize Editor::sizeHint() const
     return QSize(width, height);
 }
 
-QStringList Editor::history() const
-{
-    return m_history;
-}
-
-QStringList Editor::historyResults() const
-{
-    return m_historyResults;
-}
-
-void Editor::setHistory(const QStringList& history)
-{
-    m_history = history;
-    m_currentHistoryIndex = m_history.count();
-}
-
-void Editor::setHistoryResults(const QStringList& results)
-{
-    m_historyResults = results;
-}
-
-void Editor::appendHistory(const QStringList& expressions, const QStringList& results)
-{
-    m_history += expressions;
-    m_historyResults += results;
-    m_currentHistoryIndex = m_history.count();
-}
-
 void Editor::clearHistory()
 {
     m_history.clear();
-    m_historyResults.clear();
     m_currentHistoryIndex = 0;
 }
 
@@ -191,16 +163,6 @@ void Editor::setAutoCalcEnabled(bool enable)
     m_isAutoCalcEnabled = enable;
 }
 
-void Editor::appendHistory(const QString& expression, const QString& result)
-{
-    if (expression.isEmpty())
-        return;
-
-    m_history.append(expression);
-    m_historyResults.append(result);
-    m_currentHistoryIndex = m_history.count();
-}
-
 void Editor::checkAutoComplete()
 {
     if (!m_isAutoCompletionEnabled)
@@ -210,6 +172,7 @@ void Editor::checkAutoComplete()
     m_completionTimer->setSingleShot(true);
     m_completionTimer->start();
 }
+
 
 void Editor::checkMatching()
 {
@@ -262,7 +225,7 @@ void Editor::doMatchingLeft()
 
     // Check for right par.
     QString subtext = text().left(currentPosition);
-    Tokens tokens = m_evaluator->scan(subtext, Evaluator::NoAutoFix);
+    Tokens tokens = m_evaluator->scan(subtext);
     if (!tokens.valid() || tokens.count() < 1)
         return;
     Token lastToken = tokens.at(tokens.count() - 1);
@@ -363,7 +326,7 @@ void Editor::triggerAutoComplete()
     // Tokenize the expression (this is very fast).
     const int currentPosition = textCursor().position();
     QString subtext = text().left(currentPosition);
-    const Tokens tokens = m_evaluator->scan(subtext, Evaluator::NoAutoFix);
+    const Tokens tokens = m_evaluator->scan(subtext);
     if (!tokens.valid() || tokens.count() < 1)
         return;
 
@@ -396,26 +359,48 @@ void Editor::triggerAutoComplete()
 
     // Find matches in variables names.
     QStringList vchoices;
-    QList<Evaluator::Variable> variables = m_evaluator->getVariables();
+    QList<Variable> variables = m_evaluator->getVariables();
     for (int i = 0; i < variables.count(); ++i)
-        if (variables.at(i).name.startsWith(id, Qt::CaseInsensitive))
-            vchoices.append(QString("%1:%2").arg(variables.at(i).name)
-                .arg(NumberFormatter::format(variables.at(i).value)));
+        if (variables.at(i).identifier().startsWith(id, Qt::CaseInsensitive))
+            vchoices.append(QString("%1:%2").arg(variables.at(i).identifier())
+                .arg(NumberFormatter::format(variables.at(i).value())));
     vchoices.sort();
     choices += vchoices;
 
     // Find matches in user functions.
     QStringList ufchoices;
-    QList<Evaluator::UserFunctionDescr> userFunctions = m_evaluator->getUserFunctions();
+    QList<UserFunction> userFunctions = m_evaluator->getUserFunctions();
     for (int i = 0; i < userFunctions.count(); ++i)
-        if (userFunctions.at(i).name.startsWith(id, Qt::CaseInsensitive))
-            ufchoices.append(QString("%1:User function").arg(userFunctions.at(i).name));
+        if (userFunctions.at(i).name().startsWith(id, Qt::CaseInsensitive))
+            ufchoices.append(QString("%1:User function").arg(userFunctions.at(i).name()));
     ufchoices.sort();
     choices += ufchoices;
 
     // TODO: if we are assigning a user function, find matches in its arguments names and
     //       replace variables names that collide. But we cannot know if we are assigning
     //       a user function without evaluating the expression (a token scan will not be enough).
+    if(Evaluator::instance()->isUserFunctionAssign())
+    {
+        for(int i=2; i<tokens.size(); ++i) {
+            if(tokens[i].asOperator() == Token::Semicolon)
+                continue;
+            if(tokens[i].asOperator() == Token::RightPar)
+                break;
+            if(tokens[i].isIdentifier()) {
+                QString arg = tokens[i].text();
+                if(!arg.startsWith(id, Qt::CaseInsensitive)) continue;
+                for(int j=0; j<choices.size(); ++j){
+                    if(choices[j].split(":")[0]==arg) {
+                        choices.removeAt(j);
+                        j--;
+                    }
+                }
+                choices.append(arg + ": Argument");
+            }
+        }
+    }
+
+
 
     // No match, don't bother with completion.
     if (!choices.count())
@@ -509,7 +494,7 @@ void Editor::autoCalc()
 
     // Same reason as above, do not update "ans".
     m_evaluator->setExpression(str);
-    const HNumber num = m_evaluator->evalNoAssign();
+    const CNumber num = m_evaluator->evalNoAssign();
 
     if (m_evaluator->error().isEmpty()) {
         if (num.isNan() && m_evaluator->isUserFunctionAssign()) {
@@ -566,7 +551,7 @@ void Editor::autoCalcSelection()
 
     // Same reason as above, do not update "ans".
     m_evaluator->setExpression(str);
-    const HNumber num = m_evaluator->evalNoAssign();
+    const CNumber num = m_evaluator->evalNoAssign();
 
     if (m_evaluator->error().isEmpty()) {
         if (num.isNan() && m_evaluator->isUserFunctionAssign()) {
@@ -637,7 +622,7 @@ void Editor::historyBack()
     if (m_currentHistoryIndex == m_history.count())
         m_savedCurrentEditor = toPlainText();
     --m_currentHistoryIndex;
-    setText(m_history.at(m_currentHistoryIndex));
+    setText(m_history.at(m_currentHistoryIndex).expr());
     moveCursorToEnd(this);
     ensureCursorVisible();
 }
@@ -653,7 +638,7 @@ void Editor::historyForward()
     if (m_currentHistoryIndex == m_history.count())
         setText(m_savedCurrentEditor);
     else
-        setText(m_history.at(m_currentHistoryIndex));
+        setText(m_history.at(m_currentHistoryIndex).expr());
     moveCursorToEnd(this);
     ensureCursorVisible();
 }
@@ -780,9 +765,9 @@ void Editor::keyPressEvent(QKeyEvent* event)
 
 void Editor::wheelEvent(QWheelEvent* event)
 {
-    if (event->delta() > 0)
+    if (event->angleDelta().y() > 0)
         historyBack();
-    else if (event->delta() < 0)
+    else if (event->angleDelta().y() < 0)
         historyForward();
     event->accept();
 }
@@ -791,7 +776,13 @@ void Editor::rehighlight()
 {
     m_highlighter->update();
     setStyleSheet(QString("QPlainTextEdit { background: %1; }")
-        .arg(m_highlighter->colorForRole(ColorScheme::EditorBackground).name()));
+                  .arg(m_highlighter->colorForRole(ColorScheme::EditorBackground).name()));
+}
+
+void Editor::updateHistory()
+{
+    m_history = Evaluator::instance()->session()->historyToList();
+    m_currentHistoryIndex = m_history.count();
 }
 
 void Editor::setAnsAvailable(bool available)
