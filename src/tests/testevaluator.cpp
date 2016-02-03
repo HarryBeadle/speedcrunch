@@ -699,6 +699,9 @@ void test_implicit_multiplication()
     /* 3 sin (3 pi) was evaluated but not 3 sin (3) */
     CHECK_EVAL("3 sin (3 pi)", "0");
     CHECK_EVAL("3 sin (3)",    "0.4233600241796016663");
+
+    CHECK_EVAL("2 (2 + 1)", "6");
+    CHECK_EVAL("2 (a)", "10");
 }
 
 void test_units()
