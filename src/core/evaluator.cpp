@@ -883,7 +883,7 @@ void Evaluator::compile(const Tokens& tokens)
                         syntaxStack.pop();
                         syntaxStack.pop();
                         syntaxStack.pop();
-                        syntaxStack.push(arg);
+                        syntaxStack.push(Token::stxIdentifier);  // Fixes issue 538: 3 sin (3 pi) was evaluated but not 3 sin (3)
                         m_codes.append(Opcode(Opcode::Function, argCount));
 #ifdef EVALUATOR_DEBUG
                         dbg << "    Rule for function last argument " << argCount << " \n";
