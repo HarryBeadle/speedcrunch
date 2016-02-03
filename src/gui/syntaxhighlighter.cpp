@@ -24,59 +24,117 @@
 #include "core/functions.h"
 #include "core/settings.h"
 
+#include <QtCore/QDir>
+#include <QtCore/QJsonObject>
 #include <QLatin1String>
 #include <QApplication>
 #include <QPalette>
 #include <QPlainTextEdit>
 
-#define SH(x,r,g,b) (setColorForRole(SyntaxHighlighter::x, QColor(r,g,b)))
 
-void SyntaxHighlighter::setColorScheme(SyntaxHighlighter::ColorScheme id)
+static const char* ColorSchemeExtension = "json";
+static const QVector<std::pair<QString, ColorScheme::Role>> RoleNames {
+    { QStringLiteral("cursor"), ColorScheme::Cursor },
+    { QStringLiteral("number"), ColorScheme::Number },
+    { QStringLiteral("parens"), ColorScheme::Parens },
+    { QStringLiteral("result"), ColorScheme::Result },
+    { QStringLiteral("comment"), ColorScheme::Comment },
+    { QStringLiteral("matched"), ColorScheme::Matched },
+    { QStringLiteral("function"), ColorScheme::Function },
+    { QStringLiteral("operator"), ColorScheme::Operator },
+    { QStringLiteral("variable"), ColorScheme::Variable },
+    { QStringLiteral("scrollbar"), ColorScheme::ScrollBar },
+    { QStringLiteral("separator"), ColorScheme::Separator },
+    { QStringLiteral("background"), ColorScheme::Background },
+    { QStringLiteral("editorbackground"), ColorScheme::EditorBackground },
+};
+
+static QVector<QString> colorSchemeSearchPaths()
 {
-    switch (id) {
-    case SyntaxHighlighter::Sublime:
-        SH(Cursor, 100, 200, 255);  SH(Function, 213, 38, 106);   SH(EditorBackground, 29, 30, 24);
-        SH(Number, 173, 119, 158);  SH(Operator, 242, 248, 214);
-        SH(Parens, 103, 112, 88);   SH(Variable, 64, 181, 238);
-        SH(Result, 197, 218, 107);  SH(ScrollBar, 110, 120, 100);
-        SH(Comment, 55, 55, 50);    SH(Separator, 197, 218, 107);
-        SH(Matched, 163, 126, 219); SH(Background, 39, 40, 34);
-        break;
-    case SyntaxHighlighter::Terminal:
-        SH(Cursor, 140, 100, 140);  SH(Function, 239, 41, 40);    SH(EditorBackground, 38, 0, 26);
-        SH(Number, 255, 255, 255);  SH(Operator, 196, 160, 0);
-        SH(Parens, 173, 127, 168);  SH(Variable, 74, 154, 7);
-        SH(Result, 104, 159, 207);  SH(ScrollBar, 140, 100, 140);
-        SH(Comment, 65, 25, 55);    SH(Separator, 100, 80, 123);
-        SH(Matched, 100, 80, 123);  SH(Background, 48, 10, 36);
-        break;
-    case SyntaxHighlighter::SolarizedDark:
-        SH(Cursor, 220, 50, 47);    SH(Function, 38, 139, 210);   SH(EditorBackground, 0, 43, 54);
-        SH(Number, 131, 148, 150);  SH(Operator, 181, 137, 0);
-        SH(Parens, 253, 246, 227);  SH(Variable, 133, 153, 0);
-        SH(Result, 253, 246, 227);  SH(ScrollBar, 211, 54, 130);
-        SH(Comment, 88, 110, 117);  SH(Separator, 181, 137, 0);
-        SH(Matched, 108, 113, 196); SH(Background, 7, 54, 66);
-        break;
-    case SyntaxHighlighter::SolarizedLight:
-        SH(Cursor, 220, 50, 47);    SH(Function, 38, 139, 210);   SH(EditorBackground, 238, 232, 213);
-        SH(Number, 101, 123, 131);  SH(Operator, 181, 137, 0);
-        SH(Parens, 0, 43, 54);      SH(Variable, 133, 153, 0);
-        SH(Result, 7, 54, 66);      SH(ScrollBar, 203, 75, 22);
-        SH(Comment, 88, 110, 117);  SH(Separator, 181, 137, 0);
-        SH(Matched, 108, 113, 196); SH(Background, 253, 246, 227);
-        break;
-    case SyntaxHighlighter::Standard:
+    static QVector<QString> searchPaths;
+    if (searchPaths.isEmpty()) {
+        // By only populating the paths in a function when they're used, we ensure all the QApplication
+        // fields that are used by QStandardPaths are set.
+        searchPaths.append(QString("%1/color-schemes").arg(getDataPath()));
+        searchPaths.append(QStringLiteral(":/color-schemes"));
+    }
+    return searchPaths;
+}
+
+QColor getFallbackColor(ColorScheme::Role role)
+{
+    switch (role) {
+    case ColorScheme::Background:
+    case ColorScheme::EditorBackground:
+        return QApplication::palette().color(QPalette::Base);
     default:
-        SH(Cursor, 255, 100, 100);  SH(Function, 74, 154, 7);     SH(EditorBackground, 220, 220, 220);
-        SH(Number, 40, 40, 40);     SH(Operator, 150, 150, 150);
-        SH(Parens, 255, 160, 50);   SH(Variable, 239, 41, 40);
-        SH(Result, 0, 100, 200);    SH(ScrollBar, 255, 120, 50);
-        SH(Comment, 210, 210, 210); SH(Separator, 100, 80, 123);
-        SH(Matched, 100, 80, 123);  SH(Background, 255, 255, 255);
-        break;
+        return QApplication::palette().color(QPalette::Text);
     }
 }
+
+ColorScheme::ColorScheme(const QJsonDocument& doc)
+    : m_valid(false)
+{
+    if (!doc.isObject())
+        return;
+    QJsonObject obj = doc.object();
+    for (std::pair<QString, ColorScheme::Role> role : RoleNames) {
+        QJsonValue v = obj.value(role.first);
+        if (v.isUndefined())
+            // Having a key missing is fine...
+            continue;
+        QColor color = QColor(v.toString());
+        if (!color.isValid())
+            // ...having one that's not a color is not.
+            return;
+        m_colors.insert(role.second, color);
+    }
+    m_valid = true;
+}
+
+QColor ColorScheme::colorForRole(Role role) const
+{
+    QColor color = m_colors[role];
+    if (!color.isValid())
+        return getFallbackColor(role);
+    else
+        return color;
+}
+
+QStringList ColorScheme::enumerate()
+{
+    QMap<QString, void*> colorSchemes;
+    for (QString searchPath : colorSchemeSearchPaths()) {
+        QDir dir(searchPath);
+        dir.setFilter(QDir::Files | QDir::Readable);
+        dir.setNameFilters({ QString("*.%1").arg(ColorSchemeExtension) });
+        for (QFileInfo info : dir.entryInfoList())
+            colorSchemes.insert(info.completeBaseName(), nullptr);
+    }
+    // Since this is a QMap, the keys are already sorted in ascending order.
+    return colorSchemes.keys();
+}
+
+ColorScheme ColorScheme::loadFromFile(const QString& path)
+{
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly))
+        return ColorScheme();
+    // TODO: Better error handling.
+    return ColorScheme(QJsonDocument::fromJson(file.readAll()));
+}
+
+ColorScheme ColorScheme::loadByName(const QString& name)
+{
+    for (QString path : colorSchemeSearchPaths()) {
+        QString fileName = QString("%1/%2.%3").arg(path, name, ColorSchemeExtension);
+        ColorScheme colorScheme = loadFromFile(fileName);
+        if (colorScheme.isValid())
+            return colorScheme;
+    }
+    return ColorScheme();
+}
+
 
 SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit* edit)
     : QSyntaxHighlighter(edit)
@@ -85,16 +143,20 @@ SyntaxHighlighter::SyntaxHighlighter(QPlainTextEdit* edit)
     update();
 }
 
+void SyntaxHighlighter::setColorScheme(ColorScheme&& colorScheme) {
+    m_colorScheme = colorScheme;
+}
+
 void SyntaxHighlighter::highlightBlock(const QString& text)
 {
     if (!Settings::instance()->syntaxHighlighting) {
-        setFormat(0, text.length(), colorForRole(Number));
+        setFormat(0, text.length(), colorForRole(ColorScheme::Number));
         return;
     }
 
     if (text.startsWith(QLatin1String("="))) {
-        setFormat(0, 1, colorForRole(Operator));
-        setFormat(1, text.length(), colorForRole(Result));
+        setFormat(0, 1, colorForRole(ColorScheme::Operator));
+        setFormat(1, text.length(), colorForRole(ColorScheme::Result));
         if (Settings::instance()->digitGrouping > 0)
             groupDigits(text, 1, text.length() - 1);
         return;
@@ -102,7 +164,7 @@ void SyntaxHighlighter::highlightBlock(const QString& text)
 
     int questionMarkIndex = text.indexOf('?');
     if (questionMarkIndex != -1)
-        setFormat(questionMarkIndex, text.length(), colorForRole(Comment));
+        setFormat(questionMarkIndex, text.length(), colorForRole(ColorScheme::Comment));
 
     Tokens tokens = Evaluator::instance()->scan(text, Evaluator::NoAutoFix);
 
@@ -115,29 +177,29 @@ void SyntaxHighlighter::highlightBlock(const QString& text)
         switch (token.type()) {
         case Token::stxNumber:
         case Token::stxUnknown:
-            color = colorForRole(Number);
+            color = colorForRole(ColorScheme::Number);
             // TODO: color thousand separators differently? It might help troubleshooting issues
             //       in non-strict mode where more than 95k characters are valid separators.
             break;
 
         case Token::stxOperator:
-            color = colorForRole(Operator);
+            color = colorForRole(ColorScheme::Operator);
             break;
 
         case Token::stxSep:
-            color = colorForRole(Separator);
+            color = colorForRole(ColorScheme::Separator);
             break;
 
         case Token::stxOpenPar:
         case Token::stxClosePar:
-            color = colorForRole(Parens);
+            color = colorForRole(ColorScheme::Parens);
             break;
 
         case Token::stxIdentifier:
-            color = colorForRole(Variable);
+            color = colorForRole(ColorScheme::Variable);
             if (Evaluator::instance()->hasUserFunction(token.text())
                 || functionNames.contains(tokenText, Qt::CaseInsensitive))
-                color = colorForRole(Function);
+                color = colorForRole(ColorScheme::Function);
             break;
 
         default:
@@ -166,10 +228,10 @@ void SyntaxHighlighter::highlightBlock(const QString& text)
 
 void SyntaxHighlighter::update()
 {
-    ColorScheme id = static_cast<ColorScheme>(Settings::instance()->colorScheme);
-    setColorScheme(id);
+    QString name = Settings::instance()->colorScheme;
+    setColorScheme(ColorScheme::loadByName(name));
 
-    QColor backgroundColor = colorForRole(Background);
+    QColor backgroundColor = colorForRole(ColorScheme::Background);
     QWidget* parentWidget = static_cast<QWidget*>(parent());
     QPalette pal = parentWidget->palette();
     pal.setColor(QPalette::Active, QPalette::Base, backgroundColor);

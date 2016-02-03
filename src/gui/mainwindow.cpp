@@ -143,11 +143,6 @@ void MainWindow::createActions()
     m_actions.settingsBehaviorAutoResultToClipboard = new QAction(this);
     m_actions.settingsBehaviorParseAllRadixChar = new QAction(this);
     m_actions.settingsBehaviorStrictDigitGrouping = new QAction(this);
-    m_actions.settingsDisplayColorSchemeStandard = new QAction(this);
-    m_actions.settingsDisplayColorSchemeSublime = new QAction(this);
-    m_actions.settingsDisplayColorSchemeTerminal = new QAction(this);
-    m_actions.settingsDisplayColorSchemeSolarizedDark = new QAction(this);
-    m_actions.settingsDisplayColorSchemeSolarizedLight = new QAction(this);
     m_actions.settingsDisplayFont = new QAction(this);
     m_actions.settingsLanguage = new QAction(this);
     m_actions.settingsRadixCharComma = new QAction(this);
@@ -197,11 +192,6 @@ void MainWindow::createActions()
     m_actions.settingsBehaviorAutoResultToClipboard->setCheckable(true);
     m_actions.settingsBehaviorParseAllRadixChar->setCheckable(true);
     m_actions.settingsBehaviorStrictDigitGrouping->setCheckable(true);
-    m_actions.settingsDisplayColorSchemeStandard->setCheckable(true);
-    m_actions.settingsDisplayColorSchemeSublime->setCheckable(true);
-    m_actions.settingsDisplayColorSchemeTerminal->setCheckable(true);
-    m_actions.settingsDisplayColorSchemeSolarizedDark->setCheckable(true);
-    m_actions.settingsDisplayColorSchemeSolarizedLight->setCheckable(true);
     m_actions.settingsRadixCharComma->setCheckable(true);
     m_actions.settingsRadixCharDefault->setCheckable(true);
     m_actions.settingsRadixCharDot->setCheckable(true);
@@ -228,11 +218,13 @@ void MainWindow::createActions()
     m_actions.viewBitfield->setCheckable(true);
     m_actions.viewUserFunctions->setCheckable(true);
 
-    m_actions.settingsDisplayColorSchemeStandard->setData(SyntaxHighlighter::Standard);
-    m_actions.settingsDisplayColorSchemeSublime->setData(SyntaxHighlighter::Sublime);
-    m_actions.settingsDisplayColorSchemeTerminal->setData(SyntaxHighlighter::Terminal);
-    m_actions.settingsDisplayColorSchemeSolarizedDark->setData(SyntaxHighlighter::SolarizedDark);
-    m_actions.settingsDisplayColorSchemeSolarizedLight->setData(SyntaxHighlighter::SolarizedLight);
+    for (QString colorScheme : ColorScheme::enumerate()) {
+        QAction* action = new QAction(this);
+        action->setCheckable(true);
+        action->setText(colorScheme);
+        action->setData(colorScheme);
+        m_actions.settingsDisplayColorSchemes.append(action);
+    }
 }
 
 void MainWindow::retranslateText()
@@ -346,11 +338,6 @@ void MainWindow::setActionsText()
     m_actions.settingsResultFormatHexadecimal->setText(MainWindow::tr("&Hexadecimal"));
     m_actions.settingsResultFormatOctal->setText(MainWindow::tr("&Octal"));
     m_actions.settingsResultFormatScientific->setText(MainWindow::tr("&Scientific"));
-    m_actions.settingsDisplayColorSchemeStandard->setText(QLatin1String("Standard"));
-    m_actions.settingsDisplayColorSchemeSublime->setText(QLatin1String("Sublime"));
-    m_actions.settingsDisplayColorSchemeTerminal->setText(QLatin1String("Terminal"));
-    m_actions.settingsDisplayColorSchemeSolarizedDark->setText(QLatin1String("Solarized Dark"));
-    m_actions.settingsDisplayColorSchemeSolarizedLight->setText(QLatin1String("Solarized Light"));
     m_actions.settingsDisplayFont->setText(MainWindow::tr("&Font..."));
     m_actions.settingsLanguage->setText(MainWindow::tr("&Language..."));
 
@@ -391,11 +378,8 @@ void MainWindow::createActionGroups()
     m_actionGroups.angle->addAction(m_actions.settingsAngleUnitDegree);
 
     m_actionGroups.colorScheme = new QActionGroup(this);
-    m_actionGroups.colorScheme->addAction(m_actions.settingsDisplayColorSchemeStandard);
-    m_actionGroups.colorScheme->addAction(m_actions.settingsDisplayColorSchemeSublime);
-    m_actionGroups.colorScheme->addAction(m_actions.settingsDisplayColorSchemeTerminal);
-    m_actionGroups.colorScheme->addAction(m_actions.settingsDisplayColorSchemeSolarizedDark);
-    m_actionGroups.colorScheme->addAction(m_actions.settingsDisplayColorSchemeSolarizedLight);
+    for (QAction* action : m_actions.settingsDisplayColorSchemes)
+        m_actionGroups.colorScheme->addAction(action);
 
     m_actionGroups.digitGrouping = new QActionGroup(this);
     m_actionGroups.digitGrouping->addAction(m_actions.settingsBehaviorDigitGroupingNone);
@@ -539,11 +523,8 @@ void MainWindow::createMenus()
 
     m_menus.display = m_menus.settings->addMenu("");
     m_menus.colorScheme = m_menus.display->addMenu("");
-    m_menus.colorScheme->addAction(m_actions.settingsDisplayColorSchemeStandard);
-    m_menus.colorScheme->addAction(m_actions.settingsDisplayColorSchemeSublime);
-    m_menus.colorScheme->addAction(m_actions.settingsDisplayColorSchemeTerminal);
-    m_menus.colorScheme->addAction(m_actions.settingsDisplayColorSchemeSolarizedDark);
-    m_menus.colorScheme->addAction(m_actions.settingsDisplayColorSchemeSolarizedLight);
+    for (QAction* action : m_actions.settingsDisplayColorSchemes)
+        m_menus.colorScheme->addAction(action);
     m_menus.display->addAction(m_actions.settingsDisplayFont);
 
     m_menus.settings->addAction(m_actions.settingsLanguage);
@@ -935,9 +916,8 @@ void MainWindow::createFixedConnections()
 
     connect(m_actions.settingsDisplayFont, SIGNAL(triggered()), SLOT(showFontDialog()));
 
-    QList<QAction*> colorSchemeActions = m_actionGroups.colorScheme->actions();
-    for (int i = 0; i < colorSchemeActions.size(); ++i)
-        connect(colorSchemeActions.at(i), SIGNAL(triggered()), SLOT(applySelectedColorScheme()));
+    for (QAction* action : m_actions.settingsDisplayColorSchemes)
+        connect(action, SIGNAL(triggered()), SLOT(applySelectedColorScheme()));
 
     connect(this, SIGNAL(languageChanged()), SLOT(retranslateText()));
 }
@@ -1037,16 +1017,10 @@ void MainWindow::applySettings()
     m_widgets.display->setFont(font);
     m_widgets.editor->setFont(font);
 
-    if (m_settings->colorScheme == SyntaxHighlighter::Standard)
-        m_actions.settingsDisplayColorSchemeStandard->setChecked(true);
-    else if (m_settings->colorScheme == SyntaxHighlighter::Sublime)
-        m_actions.settingsDisplayColorSchemeSublime->setChecked(true);
-    else if (m_settings->colorScheme == SyntaxHighlighter::Terminal)
-        m_actions.settingsDisplayColorSchemeTerminal->setChecked(true);
-    else if (m_settings->colorScheme == SyntaxHighlighter::SolarizedDark)
-        m_actions.settingsDisplayColorSchemeSolarizedDark->setChecked(true);
-    else if (m_settings->colorScheme == SyntaxHighlighter::SolarizedLight)
-        m_actions.settingsDisplayColorSchemeSolarizedLight->setChecked(true);
+    for (QAction* action : m_actions.settingsDisplayColorSchemes) {
+        if (m_settings->colorScheme == action->data().toString())
+            action->setChecked(true);
+    }
 
     m_actions.viewStatusBar->setChecked(m_settings->statusBarVisible);
 
@@ -1325,7 +1299,7 @@ void MainWindow::setResultPrecisionAutomatic()
 
 void MainWindow::applySelectedColorScheme()
 {
-    m_settings->colorScheme = m_actionGroups.colorScheme->checkedAction()->data().toInt();
+    m_settings->colorScheme = m_actionGroups.colorScheme->checkedAction()->data().toString();
     emit colorSchemeChanged();
 }
 

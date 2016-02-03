@@ -305,6 +305,6 @@ void ResultDisplay::updateScrollBarStyleSheet()
         "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {"
         "   background: %1;"
         "}"
-    ).arg(m_highlighter->colorForRole(SyntaxHighlighter::Background).name())
-     .arg(m_highlighter->colorForRole(SyntaxHighlighter::ScrollBar).name()));
+    ).arg(m_highlighter->colorForRole(ColorScheme::Background).name())
+     .arg(m_highlighter->colorForRole(ColorScheme::ScrollBar).name()));
 }

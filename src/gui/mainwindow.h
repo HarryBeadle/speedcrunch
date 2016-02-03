@@ -272,11 +272,7 @@ private:
         QAction* settingsDisplayZoomIn;
         QAction* settingsDisplayZoomOut;
         QAction* settingsDisplayFont;
-        QAction* settingsDisplayColorSchemeStandard;
-        QAction* settingsDisplayColorSchemeSublime;
-        QAction* settingsDisplayColorSchemeTerminal;
-        QAction* settingsDisplayColorSchemeSolarizedDark;
-        QAction* settingsDisplayColorSchemeSolarizedLight;
+        QVector<QAction*> settingsDisplayColorSchemes;
         QAction* settingsRadixCharDefault;
         QAction* settingsRadixCharDot;
         QAction* settingsRadixCharComma;
