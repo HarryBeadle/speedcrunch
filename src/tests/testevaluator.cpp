@@ -692,8 +692,16 @@ void test_implicit_multiplication()
     CHECK_EVAL("a b", "10");
 
     CHECK_EVAL("a sin(pi/2)", "5");
-    CHECK_EVAL_FAIL("a sqrt(4)");
+    CHECK_EVAL("a sqrt(4)",   "10");
     CHECK_EVAL("a sqrt(a^2)", "25");
+
+    /* Tests issue 538 */
+    /* 3 sin (3 pi) was evaluated but not 3 sin (3) */
+    CHECK_EVAL("3 sin (3 pi)", "0");
+    CHECK_EVAL("3 sin (3)",    "0.4233600241796016663");
+
+    CHECK_EVAL("2 (2 + 1)", "6");
+    CHECK_EVAL("2 (a)", "10");
 }
 
 void test_units()
