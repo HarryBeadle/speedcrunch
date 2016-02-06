@@ -19,7 +19,7 @@
 
 #include "bitfieldwidget.h"
 
-#include "math/hmath.h"
+#include "math/cmath.h"
 
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -144,15 +144,15 @@ BitFieldWidget::BitFieldWidget(QWidget* parent) :
 
 void BitFieldWidget::wheelEvent(QWheelEvent* we)
 {
-    if (we->delta() > 0)
+    if (we->angleDelta().y() > 0)
         shiftBitsLeft();
     else
         shiftBitsRight();
 }
 
-void BitFieldWidget::updateBits(const HNumber& number)
+void BitFieldWidget::updateBits(const CNumber& number)
 {
-    QString binaryNumberString = HMath::format(number, 'b');
+    QString binaryNumberString = CMath::format(number, 'b');
     QListIterator<BitWidget*> bitsIterator(m_bitWidgets);
 
     if (number.isZero() || !number.isInteger())

@@ -21,16 +21,24 @@
 #ifndef MATH_HMATH_H
 #define MATH_HMATH_H
 
+#include <QString>
+#include <QJsonObject>
+
 #include "core/errors.h"
 
 #include <ostream>
 
 class HMath;
 class HNumberPrivate;
+class CNumber;
+class CMath;
+class Rational;
 
 class HNumber
 {
   friend class HMath;
+  friend class CNumber;
+  friend class CMath;
   friend HNumber operator-( const HNumber & );
   friend HNumber operator-( const HNumber &, const HNumber& );
   friend bool operator>( const HNumber& l, const HNumber& r );
@@ -45,10 +53,12 @@ class HNumber
     HNumber( const HNumber& );
     HNumber( int i );
     HNumber( const char* );
+    HNumber( const QJsonObject & json);
     ~HNumber();
 
     bool isNan() const;
     bool isZero() const;
+    bool isNearZero() const;
     bool isPositive() const;
     bool isNegative() const;
     bool isInteger() const;
@@ -64,6 +74,24 @@ class HNumber
     // 'b': binary
     char format() const;
     HNumber& setFormat( char c = 0 );
+
+
+    bool hasUnit() const ;
+    HNumber getUnit() const;
+    QString getUnitName() const;
+    HNumber& setDisplayUnit(const HNumber , const QString &name);
+    void stripUnits();
+    bool hasDimension() const;
+    bool isDimensionless() const;
+    QMap<QString, Rational> getDimension() const;
+    void modifyDimension(const QString & key, const Rational & exponent);
+    void clearDimension();
+    bool sameDimension(const HNumber & other) const;
+    void cleanDimension();
+    void setDimension(const HNumber&);
+
+    void serialize(QJsonObject & json) const;
+    static HNumber deSerialize(const QJsonObject & json);
 
     int toInt() const;
     Error error() const;
@@ -98,6 +126,8 @@ class HMath
   public:
     // FORMAT
     static char * format( const HNumber & n, char format = 'g', int prec = -1 );
+    // PARSING
+    static HNumber parse_str (const char * str_in, const char ** str_out);
     // CONSTANTS
     static HNumber e();
     static HNumber phi();
@@ -182,4 +212,4 @@ class HMath
 
 std::ostream & operator<<( std::ostream &, const HNumber & );
 
-#endif
+#endif // MATH_HMATH_H

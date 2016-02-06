@@ -223,13 +223,13 @@ void Constants::Private::populate()
     PUSH_CONSTANT("Down-Quark Mass"   , QLatin1String("4.8")   , QString::fromUtf8("MeV/c²"));
     PUSH_CONSTANT("Charm-Quark Mass"  , QLatin1String("1.275") , QString::fromUtf8("GeV/c²"));
     PUSH_CONSTANT("Strange-Quark Mass", QLatin1String("95")    , QString::fromUtf8("MeV/c²"));
-    PUSH_CONSTANT("Top-Quark Mass"    , QLatin1String("173.07"), QString::fromUtf8("GeV/c²"));
+    PUSH_CONSTANT("Top-Quark Mass"    , QLatin1String("173.21"), QString::fromUtf8("GeV/c²"));
     PUSH_CONSTANT("Bottom-Quark Mass" , QLatin1String("4.18")  , QString::fromUtf8("GeV/c²"));
 
     // Bosons
     PUSH_CONSTANT("W-Boson Mass"    , QLatin1String("80.385") , QString::fromUtf8("GeV/c²"));
     PUSH_CONSTANT("Z-Boson Mass"    , QLatin1String("91.1876"), QString::fromUtf8("GeV/c²"));
-    PUSH_CONSTANT("Higgs-Boson Mass", QLatin1String("125.9")  , QString::fromUtf8("GeV/c²"));
+    PUSH_CONSTANT("Higgs-Boson Mass", QLatin1String("125.7")  , QString::fromUtf8("GeV/c²"));
 
     // Hadrons
     PUSH_CONSTANT("Proton Mass"      , QLatin1String("938.272046"), QString::fromUtf8("MeV/c²"));
@@ -413,6 +413,7 @@ void Constants::Private::retranslateText()
     I18N_CONSTANT(Constants::tr("Zinc"));
     I18N_CONSTANT(Constants::tr("Zirconium"));
 
+    // K.A. Olive et al. (Particle Data Group), Chin. Phys. C, 38, 090001 (2014).
     // http://pdg.lbl.gov/index.html
     cat = Constants::tr("Particle Masses");
 

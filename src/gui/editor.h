@@ -21,12 +21,14 @@
 #define GUI_EDITOR_H
 
 #include <QPlainTextEdit>
+#include "core/sessionhistory.h"
 
 struct Constant;
 class ConstantCompletion;
 class EditorCompletion;
 class Evaluator;
-class HNumber;
+class Session;
+class CNumber;
 class SyntaxHighlighter;
 
 class QEvent;
@@ -48,16 +50,12 @@ public:
     void clearHistory();
     int cursorPosition() const;
     void doBackspace();
-    QStringList history() const;
-    QStringList historyResults() const;
     char radixChar() const;
     void setAnsAvailable(bool);
     void setAutoCalcEnabled(bool);
     void setAutoCompletionEnabled(bool);
     void setCursorPosition(int pos);
     void setText(const QString&);
-    void setHistory(const QStringList&);
-    void setHistoryResults(const QStringList&);
     QSize sizeHint() const;
     void stopAutoCalc();
     void stopAutoComplete();
@@ -78,8 +76,6 @@ signals:
     void shiftPageUpPressed();
 
 public slots:
-    void appendHistory(const QString& result, const QString& expression);
-    void appendHistory(const QStringList& expressions, const QStringList& results);
     void cancelConstantCompletion();
     void evaluate();
     void decreaseFontPointSize();
@@ -87,6 +83,7 @@ public slots:
     void insert(const QString&);
     void insertConstant(const QString&);
     void rehighlight();
+    void updateHistory();
 
 protected slots:
     virtual void insertFromMimeData(const QMimeData*);
@@ -125,12 +122,12 @@ private:
     ConstantCompletion* m_constantCompletion;
     Evaluator* m_evaluator;
     SyntaxHighlighter* m_highlighter;
-    QStringList m_history;
-    QStringList m_historyResults;
+    QList<HistoryEntry> m_history;
     QString m_savedCurrentEditor;
     int m_currentHistoryIndex;
     QTimer* m_matchingTimer;
     bool m_shouldPaintCustomCursor;
+    const Session * m_session;
 };
 
 class EditorCompletion : public QObject {

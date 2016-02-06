@@ -6719,7 +6719,7 @@ static int testfailed(char* msg)
 
 #endif /* _FLOATNUMTEST */
 
-int main(int argc, char** argv)
+int main(int argc, char* argv[])
 {
 
 #ifdef _FLOATNUMTEST

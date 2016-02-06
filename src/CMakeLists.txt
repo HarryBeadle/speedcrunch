@@ -1,144 +1,206 @@
-PROJECT(speedcrunch)
+cmake_minimum_required(VERSION 2.8.11)
 
-cmake_minimum_required(VERSION 2.4.4)
+project(speedcrunch)
+set(speedcrunch_VERSION "master" )
 
-if(COMMAND cmake_policy)
-    cmake_policy(SET CMP0003 NEW)
-    cmake_policy(SET CMP0005 OLD)
-endif(COMMAND cmake_policy)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_COLOR_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_COLOR_MAKEFILE      ON)
-set(CMAKE_VERBOSE_MAKEFILE    OFF)
-set(CMAKE_INCLUDE_CURRENT_DIR TRUE)
+find_package(Qt5Core)
+find_package(Qt5Widgets)
 
-set(QT_MIN_VERSION "4.8.0")
+if(APPLE)
+    set(PROGNAME SpeedCrunch)
+    set(MACOSX_BUNDLE_ICON_FILE speedcrunch.icns)
+    set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${speedcrunch_VERSION})
+    set(MACOSX_BUNDLE_VERSION ${speedcrunch_VERSION})
+    set(MACOSX_BUNDLE_LONG_VERSION_STRING Version ${speedcrunch_VERSION})
+    set(CMAKE_OSX_ARCHITECTURES ppc;i386)
+else(APPLE)
+    set(PROGNAME speedcrunch)
+endif(APPLE)
 
-SET( speedcrunch_VERSION "master" )
-
-IF( APPLE )
-  SET( PROGNAME SpeedCrunch )
-  SET( MACOSX_BUNDLE_ICON_FILE speedcrunch.icns )
-  SET( MACOSX_BUNDLE_SHORT_VERSION_STRING ${speedcrunch_VERSION} )
-  SET( MACOSX_BUNDLE_VERSION ${speedcrunch_VERSION} )
-  SET( MACOSX_BUNDLE_LONG_VERSION_STRING Version ${speedcrunch_VERSION} )
-  SET( CMAKE_OSX_ARCHITECTURES ppc;i386 )
-ELSE( APPLE )
-  SET( PROGNAME speedcrunch )
-ENDIF( APPLE )
-
-ADD_DEFINITIONS("-DSPEEDCRUNCH_VERSION=\\\"${speedcrunch_VERSION}\\\"")
+ADD_DEFINITIONS("-DSPEEDCRUNCH_VERSION=\"${speedcrunch_VERSION}\"")
 ADD_DEFINITIONS(-DQT_USE_QSTRINGBUILDER)
 
-# sources
-INCLUDE(SourceFiles.cmake)
+include(SourceFiles.cmake)
 
-IF( MINGW )
-  # resource compilation for mingw
-  ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/speedcrunchico.o
-                      COMMAND windres.exe -I${CMAKE_CURRENT_SOURCE_DIR} -i${CMAKE_CURRENT_SOURCE_DIR}/resources/speedcrunch.rc -o ${CMAKE_CURRENT_BINARY_DIR}/speedcrunchico.o )
-  SET(speedcrunch_SOURCES ${speedcrunch_SOURCES} ${CMAKE_CURRENT_BINARY_DIR}/speedcrunchico.o)
-ELSE(MINGW)
-  SET(speedcrunch_SOURCES ${speedcrunch_SOURCES} resources/speedcrunch.rc)
-ENDIF(MINGW)
+if(WIN32)
+    set(WIN32_RES_FILE ${CMAKE_CURRENT_BINARY_DIR}/speedcrunch.rc.obj)
+    if(MINGW)
+        add_custom_command(OUTPUT ${WIN32_RES_FILE}
+                           COMMAND windres.exe ${CMAKE_CURRENT_SOURCE_DIR}/resources/speedcrunch.rc ${WIN32_RES_FILE})
+    else(MINGW)
+        add_custom_command(OUTPUT ${WIN32_RES_FILE}
+                           COMMAND rc.exe /fo ${WIN32_RES_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/resources/speedcrunch.rc)
+    endif(MINGW)
+endif(WIN32)
 
-# Enable all warnings and C++11 required flags on some compilers.
 string(COMPARE EQUAL "${CMAKE_CXX_COMPILER_ID}" MSVC USING_MSVC)
 if(USING_MSVC)
-    add_definitions(/Wall)
+    add_definitions(-D_USE_MATH_DEFINES)
 else()
     add_definitions(-Wall)
     add_definitions(-std=c++0x)
 endif()
 
-# setup for Qt4
-SET(QT_USE_QTNETWORK TRUE)
-#SET(QT_USE_QTXML TRUE)
-find_package(Qt4 REQUIRED)
-include(${QT_USE_FILE})
+qt5_add_RESOURCES( speedcrunch_RESOURCES_SOURCES ${speedcrunch_RESOURCES} )
+add_executable(${PROGNAME} WIN32 MACOSX_BUNDLE ${speedcrunch_SOURCES} ${speedcrunch_HEADERS_MOC} ${speedcrunch_RESOURCES_SOURCES} ${speedcrunch_FORMS_HEADERS} ${WIN32_RES_FILE})
 
-# build everything
-qt4_add_RESOURCES( speedcrunch_RESOURCES_SOURCES ${speedcrunch_RESOURCES} )
-QT4_WRAP_UI( speedcrunch_FORMS_HEADERS ${speedcrunch_FORMS} )
-QT4_WRAP_CPP( speedcrunch_HEADERS_MOC ${speedcrunch_HEADERS} )
-ADD_EXECUTABLE( ${PROGNAME} WIN32 MACOSX_BUNDLE ${speedcrunch_SOURCES} ${speedcrunch_HEADERS_MOC} ${speedcrunch_RESOURCES_SOURCES} ${speedcrunch_FORMS_HEADERS} )
+if(APPLE)
+    set( speedcrunch_RESOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources )
+    add_custom_command(TARGET ${PROGNAME} POST_BUILD
+                       COMMAND mkdir ARGS -p ${speedcrunch_RESOURCE_DIR}
+                       COMMAND cp ARGS -f resources/${MACOSX_BUNDLE_ICON_FILE} ${speedcrunch_RESOURCE_DIR})
+endif(APPLE)
 
-IF( APPLE )
-  SET( speedcrunch_RESOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources )
-  ADD_CUSTOM_COMMAND( TARGET ${PROGNAME} POST_BUILD
-    COMMAND mkdir ARGS -p ${speedcrunch_RESOURCE_DIR}
-    COMMAND cp ARGS -f resources/${MACOSX_BUNDLE_ICON_FILE} ${speedcrunch_RESOURCE_DIR} )
-ENDIF( APPLE )
+add_custom_target(confclean COMMAND rm -rf Makefile CMakeFiles/ CMakeCache.txt cmake_install.cmake DartTestfile.txt install_manifest.txt)
 
-ADD_CUSTOM_TARGET( confclean COMMAND rm -rf Makefile CMakeFiles/ CMakeCache.txt cmake_install.cmake DartTestfile.txt install_manifest.txt )
+set(QT_LIBRARIES Qt5::Widgets)
 
 find_library(x11 X11)
-IF(x11)
-  TARGET_LINK_LIBRARIES(${PROGNAME} ${QT_LIBRARIES} X11)
-ELSE(x11)
-  TARGET_LINK_LIBRARIES(${PROGNAME} ${QT_LIBRARIES})
-ENDIF(x11)
+if(x11)
+    target_link_libraries(${PROGNAME} ${QT_LIBRARIES} X11)
+else(x11)
+    target_link_libraries(${PROGNAME} ${QT_LIBRARIES})
+endif(x11)
 
-# only needed for static builds when directx is enabled in qt and you
-# get a linker error because of missing a directx function
-#IF(WIN32)
-#  TARGET_LINK_LIBRARIES( speedcrunch dxguid )
-#ENDIF(WIN32)
+enable_testing()
 
-# set(EXECUTABLE_OUTPUT_PATH ${speedcrunch_BINARY_DIR}/../bin)
+add_executable(testhmath ${testhmath_SOURCES})
+target_link_libraries(testhmath ${QT_LIBRARIES})
+add_test(testhmath testhmath)
 
-# required for regression tests
-ENABLE_TESTING()
+add_executable(testevaluator ${testevaluator_SOURCES} ${testevaluator_HEADERS_MOC})
+target_link_libraries(testevaluator ${QT_LIBRARIES})
+add_test(testevaluator testevaluator)
 
-ADD_EXECUTABLE(testhmath ${testhmath_SOURCES})
-ADD_TEST(testhmath testhmath)
+add_executable(testfloatnum ${testfloatnum_SOURCES})
+add_test(testfloatnum testfloatnum)
 
-QT4_WRAP_CPP(testevaluator_HEADERS_MOC ${testevaluator_HEADERS})
-ADD_EXECUTABLE(testevaluator ${testevaluator_SOURCES} ${testevaluator_HEADERS_MOC})
-TARGET_LINK_LIBRARIES(testevaluator ${QT_LIBRARIES})
-ADD_TEST(testevaluator testevaluator)
+add_executable(testcmath ${testcmath_SOURCES})
+target_link_libraries(testcmath ${QT_LIBRARIES})
+add_test(testcmath testcmath)
 
-ADD_EXECUTABLE(testfloatnum ${testfloatnum_SOURCES})
-ADD_TEST(testfloatnum testfloatnum)
+add_executable(testcnumberparser ${testcnumberparser_SOURCES})
+target_link_libraries(testcnumberparser ${QT_LIBRARIES})
+add_test(testcnumberparser testcnumberparser)
 
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR} thirdparty core gui math)
+add_executable(testser ${testser_SOURCES})
+target_link_libraries(testser ${QT_LIBRARIES})
+add_test(testser testser)
+
+include_directories(${CMAKE_BINARY_DIR} thirdparty core gui math)
 
 ################################# INSTALL ######################################
 
-# macros, definitions and options
-IF(NOT WIN32)
-  SET(SHAREDIR  "share/")
-  SET(MENUDIR   "${SHAREDIR}/applications/")
-  SET(ICONDIR   "${SHAREDIR}/pixmaps/")
-ENDIF(NOT WIN32)
+if(NOT WIN32)
+    set(SHAREDIR "share/")
+    set(MENUDIR "${SHAREDIR}/applications/")
+    set(ICONDIR "${SHAREDIR}/pixmaps/")
+    set(BINDIR "bin")
+else(NOT WIN32)
+    set(BINDIR ".")
+    set(DATADIR ".")
+endif(NOT WIN32)
 
-# portable edition
-OPTION(PORTABLE "Enable to build in portable mode" OFF)
-IF(PORTABLE_SPEEDCRUNCH)
-  ADD_DEFINITIONS(-DSPEEDCRUNCH_PORTABLE)
-ENDIF(PORTABLE_SPEEDCRUNCH)
+option(PORTABLE_SPEEDCRUNCH "Enable to build in portable mode" OFF)
+if(PORTABLE_SPEEDCRUNCH)
+    add_definitions(-DSPEEDCRUNCH_PORTABLE)
+endif(PORTABLE_SPEEDCRUNCH)
 
-# executable
-INSTALL(TARGETS     ${PROGNAME}
-        DESTINATION bin
-)
+install(TARGETS ${PROGNAME} DESTINATION ${BINDIR})
 
-IF(NOT WIN32)
-# freedesktop menu
-INSTALL(FILES       ../pkg/speedcrunch.desktop
-        DESTINATION ${MENUDIR}
-)
+if(NOT WIN32)
+    install(FILES ../pkg/speedcrunch.desktop DESTINATION ${MENUDIR})
+    install(FILES resources/speedcrunch.png DESTINATION ${ICONDIR})
+else(NOT WIN32)
+    install(FILES ../pkg/COPYING.rtf DESTINATION ${DATADIR})
+endif(NOT WIN32)
 
-# icon
-INSTALL(FILES       resources/speedcrunch.png
-        DESTINATION ${ICONDIR}
-)
-ENDIF(NOT WIN32)
+if(WIN32)
+    include(../pkg/QtWin32Deploy.cmake)
+    qtwin32_deploy_modules(${BINDIR} qtwin32_Qt5Widgets)
+    qtwin32_deploy_default_qt_conf(${BINDIR})
+    if(${qtwin32_QT_MINOR_VERSION} VERSION_LESS 5.5)
+        # Qt 5.4 and below also require ICU.
+        qtwin32_deploy_modules(${BINDIR} qtwin32_ICU)
+    endif()
+endif(WIN32)
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${BINDIR})
+include(InstallRequiredSystemLibraries)
+
+################################# PACKAGE #####################################
+
+set(CPACK_PACKAGE_VENDOR SpeedCrunch)
+set(CPACK_PACKAGE_VERSION ${speedcrunch_VERSION})
+set(CPACK_PACKAGE_INSTALL_DIRECTORY SpeedCrunch)
+set(CPACK_PACKAGE_EXECUTABLES ${PROGNAME} SpeedCrunch)
+
+if(WIN32)
+    if(NOT CPACK_GENERATOR)
+        if(PORTABLE_SPEEDCRUNCH)
+            set(CPACK_GENERATOR ZIP)
+        else(PORTABLE_SPEEDCRUNCH)
+            set(CPACK_GENERATOR NSIS)
+        endif(PORTABLE_SPEEDCRUNCH)
+    endif(NOT CPACK_GENERATOR)
+
+    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/../pkg/COPYING.rtf")
+    set(CPACK_NSIS_EXECUTABLES_DIRECTORY ${BINDIR})
+    set(CPACK_NSIS_INSTALLED_ICON_NAME "${BINDIR}\\\\${PROGNAME}.exe,0")
+    set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\resources\\\\speedcrunch.ico")
+    set(CPACK_NSIS_HELP_LINK "http://groups.google.com/group/speedcrunch")
+    set(CPACK_NSIS_URL_INFO_ABOUT "http://speedcrunch.org")
+    set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL true)
+
+    set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS
+        "WriteRegStr SHCTX 'Software\\\\RegisteredApplications' 'SpeedCrunch' 'Software\\\\SpeedCrunch\\\\Capabilities'
+         WriteRegStr SHCTX 'Software\\\\SpeedCrunch\\\\Capabilities' 'ApplicationDescription' 'SpeedCrunch is a high-precision scientific calculator'
+         WriteRegStr SHCTX 'Software\\\\SpeedCrunch\\\\Capabilities' 'ApplicationName' 'SpeedCrunch'
+         WriteRegStr SHCTX 'Software\\\\SpeedCrunch\\\\Capabilities\\\\UrlAssociations' 'calculator' 'SpeedCrunch.Url.calculator'
+
+         WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator' '' 'SpeedCrunch'
+         WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator' 'FriendlyTypeName' 'SpeedCrunch'
+         WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator\\\\shell\\\\open\\\\command' '' '\\\"$INSTDIR\\\\${BINDIR}\\\\${PROGNAME}.exe\\\"'
+         WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator\\\\Application' 'ApplicationCompany' 'SpeedCrunch'
+
+         WriteRegStr SHCTX 'Software\\\\Classes\\\\Applications\\\\${PROGNAME}.exe' 'FriendlyAppName' 'SpeedCrunch'
+         ")
+    set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
+        "DeleteRegValue SHCTX 'Software\\\\RegisteredApplications' 'SpeedCrunch'
+         DeleteRegKey SHCTX 'Software\\\\SpeedCrunch'
+         DeleteRegKey SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator'
+         DeleteRegKey SHCTX 'Software\\\\Classes\\\\Applications\\\\${PROGNAME}.exe'
+         ")
+
+    if(${CMAKE_SIZEOF_VOID_P} EQUAL 8)
+        # When building a 64-bit installer, we add a check to make it fail on 32-bit systems
+        # because CPack doesn't do that by itself. Using this variable is probably a bit of a hack
+        # though.
+        set(CPACK_NSIS_DEFINES
+            "!include 'x64.nsh'
+             Function x64Check
+             \\\${IfNot} \\\${RunningX64}
+                 MessageBox MB_OK|MB_ICONEXCLAMATION 'This installer can only be run on 64-bit Windows.'
+                 Quit
+             \\\${EndIf}
+             FunctionEnd
+
+             Page custom x64Check
+            ")
+    endif()
+endif(WIN32)
+
+include(CPack)
 
 ################################ UNINSTALL #####################################
 
-CONFIGURE_FILE( "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
                 "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
                 IMMEDIATE @ONLY)
 
-ADD_CUSTOM_TARGET(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+add_custom_target(uninstall "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
 

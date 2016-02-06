@@ -2,6 +2,7 @@
 // Copyright (C) 2004, 2005, 2007, 2008 Ariya Hidayat <ariya@kde.org>
 // Copyright (C) 2005-2006 Johan Thelin <e8johan@gmail.com>
 // Copyright (C) 2007-2009 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (C) 2015 Pol Welter <polwelter@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,6 +28,50 @@
 #include <QSettings>
 #include <QApplication>
 #include <QFont>
+#include <QtCore/QStandardPaths>
+
+#ifdef Q_OS_WIN
+# define WIN32_LEAN_AND_MEAN
+# ifndef NOMINMAX
+#  define NOMINMAX
+# endif
+# include <Windows.h>
+# include <ShlObj.h>
+#endif
+
+
+static const char* DefaultColorScheme = "Terminal";
+
+
+QString getDataPath()
+{
+#ifdef SPEEDCRUNCH_PORTABLE
+    return QApplication::applicationDirPath();
+#elif QT_VERSION >= QT_VERSION_CHECK(5, 4, 0)
+    return QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+#elif defined(Q_OS_WIN)
+    // We can't use AppDataLocation, so we simply use the Win32 API to emulate it.
+    WCHAR w32path[MAX_PATH];
+    HRESULT result = SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, w32path);
+    Q_ASSERT(SUCCEEDED(result));
+    QString path = QString::fromWCharArray(w32path);
+    QString orgName = QCoreApplication::organizationName();
+    QString appName = QCoreApplication::applicationName();
+    if (!orgName.isEmpty()) {
+        path.append('\\');
+        path.append(orgName);
+    }
+    if (!appName.isEmpty()) {
+        path.append('\\');
+        path.append(appName);
+    }
+    return QDir::fromNativeSeparators(path);
+#else
+    // Any non-Windows with Qt < 5.4. Since DataLocation and AppDataLocation are
+    // equivalent outside of Windows, that should be fine.
+    return QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+#endif
+}
 
 static Settings* s_settingsInstance = 0;
 static char s_radixCharacter = 0;
@@ -79,17 +124,16 @@ void Settings::load()
     autoAns = settings->value(key + QLatin1String("AutoAns"), true).toBool();
     autoCalc = settings->value(key + QLatin1String("AutoCalc"), true).toBool();
     autoCompletion = settings->value(key + QLatin1String("AutoCompletion"), true).toBool();
-    historySave = settings->value(key + QLatin1String("HistorySave"), true).toBool();
+    sessionSave = settings->value(key + QLatin1String("SessionSave"), true).toBool();
     leaveLastExpression = settings->value(key + QLatin1String("LeaveLastExpression"), false).toBool();
     language = settings->value(key + QLatin1String("Language"), "C").toString();
-    variableSave = settings->value(key + QLatin1String("VariableSave"), true).toBool();
-    userFunctionSave = settings->value(key + QLatin1String("UserFunctionSave"), true).toBool();
     syntaxHighlighting = settings->value(key + QLatin1String("SyntaxHighlighting"), true).toBool();
     systemTrayIconVisible = settings->value(key + QLatin1String("SystemTrayIconVisible"), false).toBool();
     autoResultToClipboard = settings->value(key + QLatin1String("AutoResultToClipboard"), false).toBool();
     windowPositionSave = settings->value(key + QLatin1String("WindowPositionSave"), true).toBool();
     parseAllRadixChar = settings->value(key + QLatin1String("ParseAllRadixChar"), true).toBool();
     strictDigitGrouping = settings->value(key + QLatin1String("StrictDigitGrouping"), true).toBool();
+    complexNumbers = settings->value(key + QLatin1String("ComplexNumbers"), false).toBool();
 
     digitGrouping = settings->value(key + QLatin1String("DigitGrouping"), 0).toInt();
     digitGrouping = std::min(3, std::max(0, digitGrouping));
@@ -121,92 +165,12 @@ void Settings::load()
     windowAlwaysOnTop = settings->value(key + QLatin1String("WindowAlwaysOnTop"), false).toBool();
     bitfieldVisible = settings->value(key + QLatin1String("BitfieldVisible"), false).toBool();
 
-    windowPosition = settings->value(key + QLatin1String("WindowPosition"), QPoint()).toPoint();
-    windowSize = settings->value(key + QLatin1String("WindowSize"), QSize(640, 480)).toSize();
     windowState = settings->value(key + QLatin1String("State")).toByteArray();
-    maximized = settings->value(key + QLatin1String("Maximized"), false).toBool();
+    windowGeometry = settings->value(key + QLatin1String("WindowGeometry")).toByteArray();
 
     key = KEY + QLatin1String("/Display/");
     displayFont = settings->value(key + QLatin1String("DisplayFont"), QFont().toString()).toString();
-    colorScheme = settings->value(key + QLatin1String("ColorScheme"), 0).toInt();
-
-    // Load history.
-    key = KEY + QLatin1String("/History/");
-    history.clear();
-    int count = settings->value(key + QLatin1String("Count"), 0).toInt();
-    for (int i = 0; i < count; ++i) {
-        QString keyname = QString(key + QLatin1String("Expression%1")).arg(i);
-        QString str = settings->value(keyname).toString();
-        if (!str.isEmpty()) {
-            QString expr;
-            for (int c = 0; c < str.length(); ++c)
-                if (str.at(c) >= 32)
-                    expr.append(str.at(c));
-            history.append(expr);
-        }
-    }
-
-    // Load results.
-    historyResults.clear();
-    for (int i = 0; i < count; ++i) {
-        QString keyname = QString(key + QLatin1String("Expression%1Result")).arg(i);
-        QVariant value = settings->value(keyname);
-        if (value.isValid())
-            historyResults.append(value.toString());
-    }
-    if (history.count() != historyResults.count()) {
-        // Avoid application crash because of new features with old settings files.
-        history.clear();
-        historyResults.clear();
-    }
-
-    // Load variables.
-    key = KEY + QLatin1String("/Variables/");
-    variables.clear();
-    settings->beginGroup(key);
-    QStringList names = settings->childKeys();
-    settings->endGroup();
-    for (int k = 0; k < names.count(); ++k) {
-        QString name = names.at(k);
-        QString keyname = key + name;
-        QString value = settings->value(keyname).toString();
-        // Treat upper case escape code.
-        for (int c = 0; c < name.length(); ++c) {
-            if (name.at(c) == '_') {
-                name.remove(c, 1);
-                if (name.at(c) != '_')
-                    name[c] = name.at(c).toUpper();
-            }
-        }
-        // Load.
-        if (!value.isEmpty())
-            variables.append(QString::fromLatin1("%1=%2").arg(name).arg(value));
-    }
-
-    // Load user functions.
-    key = KEY + QLatin1String("/UserFunctions/");
-    userFunctions.clear();
-    settings->beginGroup(key);
-    names = settings->childKeys();
-    settings->endGroup();
-    for (int k = 0; k < names.count(); ++k) {
-        QString name = names.at(k);
-        QString keyname = key + name;
-        QStringList value = settings->value(keyname).toStringList();
-        // Treat upper case escape code.
-        for (int c = 0; c < name.length(); ++c) {
-            if (name.at(c) == '_') {
-                name.remove(c, 1);
-                if (name.at(c) != '_')
-                    name[c] = name.at(c).toUpper();
-            }
-        }
-        // Load.
-        if (!value.isEmpty()) {
-            value.prepend(name);
-            userFunctions.append(value);
-        }
-    }
+    colorScheme = settings->value(key + QLatin1String("ColorSchemeName"), DefaultColorScheme).toString();
 
     delete settings;
 }
@@ -219,13 +183,10 @@ void Settings::save()
     if (!settings)
         return;
 
-    int k, i;
     QString key = KEY + QLatin1String("/General/");
 
-    settings->setValue(key + QLatin1String("HistorySave"), historySave);
+    settings->setValue(key + QLatin1String("SessionSave"), sessionSave);
     settings->setValue(key + QLatin1String("LeaveLastExpression"), leaveLastExpression);
-    settings->setValue(key + QLatin1String("VariableSave"), variableSave);
-    settings->setValue(key + QLatin1String("UserFunctionSave"), userFunctionSave);
     settings->setValue(key + QLatin1String("AutoCompletion"), autoCompletion);
     settings->setValue(key + QLatin1String("AutoAns"), autoAns);
     settings->setValue(key + QLatin1String("AutoCalc"), autoCalc);
@@ -237,6 +198,7 @@ void Settings::save()
     settings->setValue(key + QLatin1String("WindowPositionSave"), windowPositionSave);
     settings->setValue(key + QLatin1String("ParseAllRadixChar"), parseAllRadixChar);
     settings->setValue(key + QLatin1String("StrictDigitGrouping"), strictDigitGrouping);
+    settings->setValue(key + QLatin1String("ComplexNumbers"), complexNumbers);
 
     settings->setValue(key + QLatin1String("AngleMode"), QString(QChar(angleUnit)));
 
@@ -260,105 +222,16 @@ void Settings::save()
     settings->setValue(key + QLatin1String("StatusBarVisible"), statusBarVisible);
     settings->setValue(key + QLatin1String("VariablesDockVisible"), variablesDockVisible);
     settings->setValue(key + QLatin1String("UserFunctionsDockVisible"), userFunctionsDockVisible);
-    settings->setValue(key + QLatin1String("WindowPosition"), windowPosition);
-    settings->setValue(key + QLatin1String("WindowSize"), windowSize);
     settings->setValue(key + QLatin1String("WindowAlwaysOnTop"), windowAlwaysOnTop);
     settings->setValue(key + QLatin1String("State"), windowState);
-    settings->setValue(key + QLatin1String("Maximized"), maximized);
+    settings->setValue(key + QLatin1String("WindowGeometry"), windowGeometry);
     settings->setValue(key + QLatin1String("BitfieldVisible"), bitfieldVisible);
 
     key = KEY + QLatin1String("/Display/");
 
     settings->setValue(key + QLatin1String("DisplayFont"), displayFont);
-    settings->setValue(key + QLatin1String("ColorScheme"), colorScheme);
+    settings->setValue(key + QLatin1String("ColorSchemeName"), colorScheme);
 
-    // Save history.
-    if (historySave) {
-        key = KEY + QLatin1String("/History/");
-        QStringList realHistory = history;
-        QStringList realHistoryResults = historyResults;
-
-        if (history.count() > 100) {
-            realHistory.clear();
-            realHistoryResults.clear();
-            unsigned start = history.count() - 100;
-            for (int j = start; j < history.count(); ++j) {
-                realHistory.append(history.at(j));
-                realHistoryResults.append(historyResults.at(j));
-            }
-        }
-
-        settings->beginGroup(key);
-        QStringList hkeys = settings->childKeys();
-        settings->endGroup();
-
-        for (k = 0; k < hkeys.count(); k++) {
-            settings->remove(key + "Expression" + QString::number(k));
-            settings->remove(key + "Expression" + QString::number(k) + "Result");
-        }
-
-        settings->setValue(key + QLatin1String("/Count/"), (int)history.count());
-        for (i = 0; i < realHistory.count(); i++) {
-            settings->setValue((key + "Expression" + QString::number(i)), realHistory.at(i));
-            settings->setValue((key + "Expression" + QString::number(i) + "Result"), realHistoryResults.at(i));
-        }
-    }
-
-    // Save variables.
-    if (variableSave) {
-        key = KEY + QLatin1String("/Variables/");
-        settings->beginGroup(key);
-        QStringList vkeys = settings->childKeys();
-        settings->endGroup();
-
-        for (k = 0; k < vkeys.count(); ++k)
-            settings->remove(key + vkeys.at(k));
-
-        for (i = 0; i < variables.count(); ++i) {
-            QStringList s = variables[i].split('=');
-            if (s.count() == 2) {
-                QString name = "";
-                QString value = s.at(1);
-                int length = s.at(0).length();
-                for (int c = 0; c < length; ++c) {
-                    if (s.at(0).at(c).isUpper() || s.at(0).at(c) == '_') {
-                        name += '_';
-                        name += s.at(0).at(c).toLower();
-                    } else
-                        name += s.at(0).at(c);
-                }
-                settings->setValue(key + name, value);
-            }
-        }
-    }
-
-    // Save user functions.
-    if (userFunctionSave) {
-        key = KEY + QLatin1String("/UserFunctions/");
-        settings->beginGroup(key);
-        QStringList vkeys = settings->childKeys();
-        settings->endGroup();
-
-        for (k = 0; k < vkeys.count(); ++k)
-            settings->remove(key + vkeys.at(k));
-
-        for (i = 0; i < userFunctions.count(); ++i) {
-            QStringList s = userFunctions.at(i);
-            if (s.count() >= 2) {
-                QString name = "";
-                QVariant value(s.mid(1));
-                int length = s.at(0).length();
-                for (int c = 0; c < length; ++c) {
-                    if (s.at(0).at(c).isUpper() || s.at(0).at(c) == '_') {
-                        name += '_';
-                        name += s.at(0).at(c).toLower();
-                    } else
-                        name += s.at(0).at(c);
-                }
-                settings->setValue(key + name, value);
-            }
-        }
-    }
 
     delete settings;
 }

@@ -2,6 +2,7 @@
 // Copyright (C) 2004 Ariya Hidayat <ariya@kde.org>
 // Copyright (C) 2005-2006 Johan Thelin <e8johan@gmail.com>
 // Copyright (C) 2007-2013 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (C) 2015 Pol Welter <polwelter@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -26,6 +27,8 @@
 #include <QtCore/QStringList>
 #include <QtCore/QList>
 
+QString getDataPath();
+
 class Settings {
 public:
     static Settings* instance();
@@ -39,6 +42,7 @@ public:
 
     bool parseAllRadixChar;
     bool strictDigitGrouping;
+    bool complexNumbers;
 
     char angleUnit; // 'r': radian; 'd': degree.
 
@@ -49,12 +53,10 @@ public:
     bool autoCalc;
     bool autoCompletion;
     int digitGrouping;
-    bool historySave;
+    bool sessionSave;
     bool leaveLastExpression;
     bool syntaxHighlighting;
     bool systemTrayIconVisible;
-    bool variableSave;
-    bool userFunctionSave;
     bool windowAlwaysOnTop;
     bool autoResultToClipboard;
     bool windowPositionSave;
@@ -69,24 +71,22 @@ public:
     bool windowOnfullScreen;
     bool bitfieldVisible;
 
-    int colorScheme;
+    QString colorScheme;
     QString displayFont;
 
     QString language;
 
-    QStringList history;
-    QStringList historyResults;
-    QStringList variables;
-    QList<QStringList> userFunctions;
+    //QStringList history;
+    //QStringList historyResults;
+    //QStringList variables;
+    //QList<QStringList> userFunctions;
 
-    QPoint windowPosition;
-    QSize windowSize;
     QByteArray windowState;
-    bool maximized;
+    QByteArray windowGeometry;
 
 private:
     Settings();
-    Q_DISABLE_COPY(Settings);
+    Q_DISABLE_COPY(Settings)
 };
 
 #endif

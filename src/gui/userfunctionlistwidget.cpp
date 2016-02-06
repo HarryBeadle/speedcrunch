@@ -109,13 +109,13 @@ void UserFunctionListWidget::fillTable()
     m_filterTimer->stop();
     m_userFunctions->clear();
     QString term = m_searchFilter->text();
-    QList<Evaluator::UserFunctionDescr> userFunctions = Evaluator::instance()->getUserFunctions();
+    QList<UserFunction> userFunctions = Evaluator::instance()->getUserFunctions();
 
     for (int i = 0; i < userFunctions.count(); ++i) {
-        QString fname = userFunctions.at(i).name + "(" + userFunctions.at(i).arguments.join(";")  + ")";
+        QString fname = userFunctions.at(i).name() + "(" + userFunctions.at(i).arguments().join(";")  + ")";
 
         QStringList namesAndValues;
-        namesAndValues << fname << userFunctions.at(i).expression;
+        namesAndValues << fname << userFunctions.at(i).expression();
 
         if (term.isEmpty()
             || namesAndValues.at(0).contains(term, Qt::CaseInsensitive)
