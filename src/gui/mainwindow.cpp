@@ -1596,7 +1596,8 @@ void MainWindow::exportHtml()
 
     QTextStream stream(& file);
     stream.setCodec("UTF-8");
-    stream << m_widgets.display->document()->toHtml("utf-8");
+    //stream << m_widgets.display->document()->toHtml("utf-8");
+    stream << m_widgets.display->exportHtml();
 
     file.close();
 }
