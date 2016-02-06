@@ -12,10 +12,12 @@ equals(QT_MAJOR_VERSION, 4) {
         error(Qt 4.8 or newer is required but version $$[QT_VERSION] was detected.)
     }
 
-    !win32 {
+    !win32|win32-g++ {
         QMAKE_CXXFLAGS += -std=c++0x
     }
 }
+
+win32-g++:QMAKE_LFLAGS += -static
 
 DEFINES += SPEEDCRUNCH_VERSION=\\\"master\\\"
 DEFINES += QT_USE_QSTRINGBUILDER
@@ -62,6 +64,15 @@ HEADERS += core/book.h \
            core/evaluator.h \
            core/functions.h \
            core/manual.h \
+           core/session.h \
+           core/errors.h \
+           core/numberformatter.h \
+           core/pageserver.h \
+           core/settings.h \
+           core/opcode.h \
+           core/sessionhistory.h \
+           core/variable.h \
+           core/userfunction.h \
            gui/aboutbox.h \
            gui/bitfieldwidget.h \
            gui/bookdock.h \
@@ -79,7 +90,30 @@ HEADERS += core/book.h \
            gui/userfunctionsdock.h \
            gui/userfunctionlistwidget.h \
            gui/manualwindow.h \
-           gui/mainwindow.h
+           gui/mainwindow.h \
+           gui/syntaxhighlighter.h \
+           math/floatcommon.h \
+           math/floatconfig.h \
+           math/floatconst.h \
+           math/floatconvert.h \
+           math/floaterf.h \
+           math/floatexp.h \
+           math/floatgamma.h \
+           math/floathmath.h \
+           math/floatincgamma.h \
+           math/floatio.h \
+           math/floatipower.h \
+           math/floatlog.h \
+           math/floatlogic.h \
+           math/floatlong.h \
+           math/floatnum.h \
+           math/floatpower.h \
+           math/floatseries.h \
+           math/floattrig.h \
+           math/hmath.h \
+           math/number.h \
+           math/rational.h \
+           math/units.h
 
 SOURCES += main.cpp \
            core/book.cpp \
@@ -90,6 +124,11 @@ SOURCES += main.cpp \
            core/numberformatter.cpp \
            core/pageserver.cpp \
            core/settings.cpp \
+           core/session.cpp \
+           core/sessionhistory.cpp \
+           core/variable.cpp \
+           core/userfunction.cpp \
+           core/opcode.cpp \
            gui/aboutbox.cpp \
            gui/bitfieldwidget.cpp \
            gui/bookdock.cpp \
@@ -125,8 +164,13 @@ SOURCES += main.cpp \
            math/floatpower.c \
            math/floatseries.c \
            math/floattrig.c \
+           math/floatincgamma.c \
            math/hmath.cpp \
-           math/number.c
+           math/number.c \
+	   math/cmath.cpp \
+	   math/cnumberparser.cpp \
+           math/rational.cpp \
+           math/units.cpp
 
 RESOURCES += resources/speedcrunch.qrc
 TRANSLATIONS += resources/locale/ar.ts \

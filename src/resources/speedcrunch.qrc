@@ -1,5 +1,5 @@
-<!DOCTYPE RCC><RCC version="1.0">
-    <qresource>
+<RCC>
+    <qresource prefix="/">
         <file>speedcrunch.png</file>
         <file>locale/ar.qm</file>
         <file>locale/ca_ES.qm</file>
@@ -35,5 +35,10 @@
         <file>locale/uz@Latn.qm</file>
         <file>locale/vi.qm</file>
         <file>locale/zh_CN.qm</file>
+        <file>color-schemes/Terminal.json</file>
+        <file>color-schemes/Solarized Dark.json</file>
+        <file>color-schemes/Solarized Light.json</file>
+        <file>color-schemes/Standard.json</file>
+        <file>color-schemes/Sublime.json</file>
     </qresource>
 </RCC>

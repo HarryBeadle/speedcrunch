@@ -26,9 +26,8 @@ int main(int argc, char* argv[])
 {
     QApplication application(argc, argv);
 
-    QCoreApplication::setApplicationName("speedcrunch");
+    QCoreApplication::setApplicationName("SpeedCrunch");
     QCoreApplication::setOrganizationDomain("speedcrunch.org");
-    QCoreApplication::setOrganizationName("SpeedCrunch");
 
     MainWindow window;
     window.show();
