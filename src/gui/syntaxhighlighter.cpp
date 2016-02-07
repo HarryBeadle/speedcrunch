@@ -436,4 +436,8 @@ void SyntaxHighlighter::asHtml(QString& html)
     // Finally retreive the syntax higlighted and formatted html.
     html = tempCursor.selection().toHtml();
     delete tempDocument;
+
+    // Inject CSS, so to avoid a white margin
+    html.replace("<head>", QString("<head> <style> body {background-color: %1;}</style>")
+                                    .arg(colorForRole(ColorScheme::Background).name()));
 }
