@@ -1,0 +1,206 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2016, The SpeedCrunch Developers
+# This file is distributed under the same license as the SpeedCrunch
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SpeedCrunch 0.12\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-02-09 16:04+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.2.0\n"
+
+#: ../reference/ieee754.rst:2
+msgid "IEEE-754 Functions"
+msgstr ""
+
+#: ../reference/ieee754.rst:6
+msgid ""
+"IEEE-754 is a standard for the representation of and computations with "
+"floating point numbers in binary systems. It is widely used by floating "
+"point implementations in CPUs. These functions implement encoding and "
+"decoding binary representations of floating point numbers according to "
+"IEEE-754."
+msgstr ""
+
+#: ../reference/ieee754.rst:11
+msgid ""
+"An IEEE-754 binary float consists of three parts: a sign bit, the "
+"exponent and the significand (sometimes called the mantissa). From these "
+"parts, the value is then calculated using the following formula: ``-1 ^ "
+"sign * 2 ^ (exponent - bias)  * 1.significand``.  The standard defines "
+"multiple binary formats of different sizes that all follow these rules, "
+"but differ in the number of bits allocated for the exponent and "
+"significand. The bias for the default formats is defined as ``bias = (2 ^"
+" (exponent_bits - 1)) - 1``. See `this article`_ for a more detailed "
+"introduction into the subject."
+msgstr ""
+
+#: ../reference/ieee754.rst:21
+msgid "The following binary float formats are defined by the standard:"
+msgstr ""
+
+#: ../reference/ieee754.rst:24
+msgid "Name"
+msgstr ""
+
+#: ../reference/ieee754.rst:24
+msgid "Also known as"
+msgstr ""
+
+#: ../reference/ieee754.rst:24
+msgid "Exponent bits"
+msgstr ""
+
+#: ../reference/ieee754.rst:24
+msgid "Significand bits"
+msgstr ""
+
+#: ../reference/ieee754.rst:26
+msgid "``binary16``"
+msgstr ""
+
+#: ../reference/ieee754.rst:26
+msgid "Half precision"
+msgstr ""
+
+#: ../reference/ieee754.rst:26
+msgid "5"
+msgstr ""
+
+#: ../reference/ieee754.rst:26
+msgid "10"
+msgstr ""
+
+#: ../reference/ieee754.rst:27
+msgid "``binary32``"
+msgstr ""
+
+#: ../reference/ieee754.rst:27
+msgid "Single precisision"
+msgstr ""
+
+#: ../reference/ieee754.rst:27
+msgid "8"
+msgstr ""
+
+#: ../reference/ieee754.rst:27
+msgid "23"
+msgstr ""
+
+#: ../reference/ieee754.rst:28
+msgid "``binary64``"
+msgstr ""
+
+#: ../reference/ieee754.rst:28
+msgid "Double precision"
+msgstr ""
+
+#: ../reference/ieee754.rst:28
+msgid "11"
+msgstr ""
+
+#: ../reference/ieee754.rst:28
+msgid "52"
+msgstr ""
+
+#: ../reference/ieee754.rst:29
+msgid "``binary128``"
+msgstr ""
+
+#: ../reference/ieee754.rst:29
+msgid "Quad precision"
+msgstr ""
+
+#: ../reference/ieee754.rst:29
+msgid "15"
+msgstr ""
+
+#: ../reference/ieee754.rst:29
+msgid "112"
+msgstr ""
+
+#: ../reference/ieee754.rst:32
+msgid ""
+"In many programming languages, the ``binary32`` format is available as "
+"``float`` and ``binary64`` is available as ``double``."
+msgstr ""
+
+#: ../reference/ieee754.rst:38
+msgid "Encode a floating point number into a IEEE-754 binary representation."
+msgstr ""
+
+#: ../reference/ieee754.rst:40
+msgid "The floating point value to encode."
+msgstr ""
+
+#: ../reference/ieee754.rst:41 ../reference/ieee754.rst:51
+msgid "The lenth of the exponent part, in bits."
+msgstr ""
+
+#: ../reference/ieee754.rst:42 ../reference/ieee754.rst:52
+msgid "The length of the signficand part, in bits."
+msgstr ""
+
+#: ../reference/ieee754.rst:43 ../reference/ieee754.rst:53
+msgid ""
+"The exponent bias to use. Derived from the length of the exponent if not "
+"specified."
+msgstr ""
+
+#: ../reference/ieee754.rst:48
+msgid "Calculate the value of an IEEE-754 binary float."
+msgstr ""
+
+#: ../reference/ieee754.rst:50
+msgid "The binary float to decode."
+msgstr ""
+
+#: ../reference/ieee754.rst:58
+msgid "Encode ``x`` in the half-precision binary format."
+msgstr ""
+
+#: ../reference/ieee754.rst:62
+msgid "Decode the half-precision binary float ``x``."
+msgstr ""
+
+#: ../reference/ieee754.rst:66
+msgid "Encode ``x`` in the single-precision binary format."
+msgstr ""
+
+#: ../reference/ieee754.rst:70
+msgid "Decode the single-precision binary float ``x``."
+msgstr ""
+
+#: ../reference/ieee754.rst:74
+msgid "Encode ``x`` in the double-precision binary format."
+msgstr ""
+
+#: ../reference/ieee754.rst:78
+msgid "Decode the double-precision binary float ``x``."
+msgstr ""
+
+#: ../reference/ieee754.rst:82
+msgid "Encode ``x`` in the quad-precision binary format."
+msgstr ""
+
+#: ../reference/ieee754.rst:86
+msgid "Decode the quad-precision binary float ``x``."
+msgstr ""
+
+#: ../reference/index.rst:2
+msgid "Reference"
+msgstr ""
+
+#: ../reference/index.rst:4
+msgid "Reference of integrated functions etc."
+msgstr ""
+
