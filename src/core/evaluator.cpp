@@ -31,7 +31,7 @@
 #include <QCoreApplication>
 #include <QStack>
 
-#define EVALUATOR_DEBUG
+//#define EVALUATOR_DEBUG
 #define MAX_STACK_DEPTH 100
 #define ALLOW_IMPLICIT_MULT
 
