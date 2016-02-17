@@ -35,10 +35,11 @@ find_program(
     NAMES sphinx-build
     PATHS ${extra_sphinx_paths})
 
+set(DOCTOOL_EXECUTABLE ${PYTHON_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/doc-tool.py")
 
 add_custom_command(
     OUTPUT manual.qrc
-    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/doc-tool.py
+    COMMAND ${DOCTOOL_EXECUTABLE}
             --sphinx-build-binary="${SPHINX_EXECUTABLE}"
             --qcollectiongenerator-binary=${QCOLLECTIONGENERATOR_EXECUTABLE}
             --source-dir="${CMAKE_CURRENT_SOURCE_DIR}"

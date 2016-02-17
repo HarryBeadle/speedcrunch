@@ -59,6 +59,14 @@ macx {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.5
 }
 
+manual.target = $$OUT_PWD/doc/manual.qrc
+win32:PY_COMMAND = py
+else:PY_COMMAND = python
+manual.commands = $$PY_COMMAND $$PWD/../doc/manual/doc-tool.py \
+        --source-dir=$$PWD/../doc/manual \
+        build-bundled-docs --build-dir=$$OUT_PWD/doc
+QMAKE_EXTRA_TARGETS = manual
+
 HEADERS += core/book.h \
            core/constants.h \
            core/evaluator.h \
@@ -172,7 +180,7 @@ SOURCES += main.cpp \
            math/rational.cpp \
            math/units.cpp
 
-RESOURCES += resources/speedcrunch.qrc
+RESOURCES += resources/speedcrunch.qrc $$OUT_PWD/doc/manual.qrc
 TRANSLATIONS += resources/locale/ar.ts \
                 resources/locale/ca_ES.ts \
                 resources/locale/cs_CZ.ts \

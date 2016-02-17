@@ -66,7 +66,7 @@ def generate_qrc(f, files, prefix="/"):
 
 
 # commands
-def build_html_docs(tools, args):
+def build_standalone_docs(tools, args):
     for lang in LANGUAGES:
         build_docs(tools, args.source_dir, args.build_dir, lang)
 
@@ -99,12 +99,12 @@ def build_argument_parser():
 
     # build-html-docs
     parser_build_html = subparsers.add_parser(
-        "build-html-docs",
-        help="Build HTML docs for all languages")
+        "build-standalone-docs",
+        help="Build stand-alone HTML docs for all languages")
     parser_build_html.add_argument(
         "--build-dir", "-b", default="_build-html",
         help="Output base directory (default: %(default)s")
-    parser_build_html.set_defaults(func=build_html_docs)
+    parser_build_html.set_defaults(func=build_standalone_docs)
 
     # build-bundled-docs
     parser_build_bundled = subparsers.add_parser(
