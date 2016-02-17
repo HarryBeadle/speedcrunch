@@ -19,9 +19,11 @@
 #ifndef GUI_MANUALWINDOW_H
 #define GUI_MANUALWINDOW_H
 
-#include "core/manual.h"
-
 #include <QTextBrowser>
+
+QT_BEGIN_NAMESPACE
+class QHelpEngineCore;
+QT_END_NAMESPACE
 
 class QCloseEvent;
 class QEvent;
@@ -32,6 +34,7 @@ class ManualWindow : public QTextBrowser {
 
 public:
     ManualWindow(QWidget* parent = 0);
+    void showHelpForKeyword(const QString &id);
 
 signals:
     void windowClosed();
@@ -46,7 +49,10 @@ protected:
 
 private:
     Q_DISABLE_COPY(ManualWindow)
-    Manual* m_manual;
+
+    QVariant loadResource(int type, const QUrl &name);
+
+    QHelpEngineCore *m_helpEngine;
 };
 
 #endif // GUI_MANUALWINDOW_H

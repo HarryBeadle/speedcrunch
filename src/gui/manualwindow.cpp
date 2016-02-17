@@ -18,33 +18,49 @@
 
 #include "gui/manualwindow.h"
 
-#include "core/manual.h"
-
 #include <QtCore/QEvent>
+#include <QtHelp/QHelpEngineCore>
+#include "core/settings.h"
 
 ManualWindow::ManualWindow(QWidget* parent)
     : QTextBrowser(parent)
-    , m_manual(new Manual(this))
 {
-    setLineWrapMode(QTextEdit::NoWrap);
+    this->resize(640, 480);
+
+    QString collectionFile = Settings::getDataPath() + "/manual/SpeedCrunch.qhc";
+
+    m_helpEngine = new QHelpEngineCore(collectionFile, this);
+    if (!m_helpEngine->setupData()) {
+        delete m_helpEngine;
+        m_helpEngine = 0;
+    }
+
     retranslateText();
-    openPage(QUrl("index"));
+    QStringList filters = m_helpEngine->customFilters();
+    m_helpEngine->setCurrentFilter(filters.first());
+    showHelpForKeyword("home");
+}
+
+void ManualWindow::showHelpForKeyword(const QString &id)
+{
+    if (m_helpEngine) {
+        QMap<QString, QUrl> links = m_helpEngine->linksForIdentifier(id);
+        if (links.count())
+            setSource(links.constBegin().value());
+    }
 }
 
 void ManualWindow::openPage(const QUrl& url)
 {
-    QString content = m_manual->getPageContent(url.toString());
-    if (!content.isNull())
-        setHtml(content);
+    setSource(url);
 }
 
 void ManualWindow::retranslateText()
 {
     setWindowTitle(tr("User Manual"));
-    QString content = m_manual->getCurrentPageContent();
-    if (!content.isNull())
-        setHtml(content);
 }
+
+
 void ManualWindow::changeEvent(QEvent* event)
 {
     if (event->type() == QEvent::LanguageChange)
@@ -57,4 +73,16 @@ void ManualWindow::closeEvent(QCloseEvent* event)
 {
     emit windowClosed();
     QTextBrowser::closeEvent(event);
+}
+
+QVariant ManualWindow::loadResource(int type, const QUrl &name)
+{
+    QByteArray ba;
+    if (type < 4 && m_helpEngine && name.scheme()=="qthelp") {
+        QUrl url(name);
+        if (name.isRelative())
+            url = source().resolved(url);
+        ba = m_helpEngine->fileData(url);
+    }
+    return ba;
 }

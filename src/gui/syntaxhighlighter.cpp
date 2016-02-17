@@ -55,7 +55,7 @@ static QVector<QString> colorSchemeSearchPaths()
     if (searchPaths.isEmpty()) {
         // By only populating the paths in a function when they're used, we ensure all the QApplication
         // fields that are used by QStandardPaths are set.
-        searchPaths.append(QString("%1/color-schemes").arg(getDataPath()));
+        searchPaths.append(QString("%1/color-schemes").arg(Settings::getDataPath()));
         searchPaths.append(QStringLiteral(":/color-schemes"));
     }
     return searchPaths;

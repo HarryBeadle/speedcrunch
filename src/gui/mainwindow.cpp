@@ -2021,7 +2021,7 @@ void MainWindow::copy()
 }
 
 void MainWindow::restoreSession() {
-    QString data_path = getDataPath();
+    QString data_path = Settings::getDataPath();
     QDir qdir;
     qdir.mkpath(data_path);
     data_path.append("/history.json");
@@ -2223,7 +2223,7 @@ void MainWindow::closeEvent(QCloseEvent* e)
 {
     saveSettings();
     if(m_settings->sessionSave) {
-        QString data_path = getDataPath();
+        QString data_path = Settings::getDataPath();
         QDir qdir;
         qdir.mkpath(data_path);
         data_path.append("/history.json");

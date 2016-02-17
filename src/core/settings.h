@@ -27,11 +27,10 @@
 #include <QtCore/QStringList>
 #include <QtCore/QList>
 
-QString getDataPath();
-
 class Settings {
 public:
     static Settings* instance();
+    static QString getDataPath();
 
     void load();
     void save();
