@@ -24,11 +24,11 @@ Have fun with SpeedCrunch!
 Indices and tables
 ==================
 
-.. only:: builder_qthelp
+.. only:: sc_bundled_docs
 
    * :ref:`genindex`
 
-.. only:: not builder_qthelp
+.. only:: not sc_bundled_docs
 
    * :ref:`genindex`
    * :ref:`search`
