@@ -65,7 +65,11 @@ else:PY_COMMAND = python
 manual.commands = $$PY_COMMAND $$PWD/../doc/manual/doc-tool.py \
         --source-dir=$$PWD/../doc/manual \
         build-bundled-docs --build-dir=$$OUT_PWD/doc
-QMAKE_EXTRA_TARGETS = manual
+
+manual2.target = doc/manual.qrc
+manual2.depends = manual
+
+QMAKE_EXTRA_TARGETS = manual manual2
 
 HEADERS += core/book.h \
            core/constants.h \
