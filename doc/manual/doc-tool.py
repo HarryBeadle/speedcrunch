@@ -76,7 +76,7 @@ def build_bundled_docs(tools, args):
     for lang in LANGUAGES:
         basename = "manual-%s" % lang
         build_docs(tools, args.source_dir, args.build_dir, lang,
-                   builder="qthelp", tags=["sc_bundled_docs"],
+                   builder="qthelp2", tags=["sc_bundled_docs"],
                    extra_config={"qthelp_basename": basename})
         tools.qcollectiongenerator(os.path.join(args.build_dir, lang,
                                                 "%s.qhcp" % basename))
