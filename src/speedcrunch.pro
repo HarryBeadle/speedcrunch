@@ -25,7 +25,7 @@ win32:DEFINES += _USE_MATH_DEFINES
 
 TEMPLATE = app
 TARGET = speedcrunch
-QT += network
+QT += network help
 
 DEPENDPATH += . \
               core \
