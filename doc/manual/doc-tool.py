@@ -81,9 +81,10 @@ def build_bundled_docs(tools, args):
         tools.qcollectiongenerator(os.path.join(args.build_dir, lang,
                                                 "%s.qhcp" % basename))
         resources.append(("%s.qch" % basename, "%s/%s.qch" % (lang, basename)))
-        resources.append(("%s.qhp" % basename, "%s/%s.qhp" % (lang, basename)))
+        resources.append(("%s.qhc" % basename, "%s/%s.qhc" % (lang, basename)))
     with open(os.path.join(args.build_dir, "manual.qrc"), "w",
               encoding="utf-8") as f:
+        print("Creating resource file...")
         generate_qrc(f, resources, prefix="/manual")
 
 
