@@ -35,8 +35,9 @@ needs_sphinx = '1.3'
 # ones.
 sys.path.append(os.path.abspath('extensions'))
 
-extensions = ['qtkeyword']
+extensions = ['qtkeyword', 'speedcrunch_domain']
 ignore_qtkeywords = not tags.has('sc_bundled_docs')
+primary_domain = 'sc'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
