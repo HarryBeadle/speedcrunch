@@ -59,17 +59,19 @@ macx {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.5
 }
 
-manual.target = $$OUT_PWD/doc/manual.qrc
+manual.target = DUMMY_MANUAL_TARGET
 win32:PY_COMMAND = py
 else:PY_COMMAND = python
 manual.commands = $$PY_COMMAND $$PWD/../doc/manual/doc-tool.py \
         --source-dir=$$PWD/../doc/manual \
         build-bundled-docs --build-dir=$$OUT_PWD/doc
 
+manual1.target = $$OUT_PWD/doc/manual.qrc
+manual1.depends = manual
 manual2.target = doc/manual.qrc
-manual2.depends = manual
+manual2.depends = manual1
 
-QMAKE_EXTRA_TARGETS = manual manual2
+QMAKE_EXTRA_TARGETS = manual manual1 manual2
 
 HEADERS += core/book.h \
            core/constants.h \
