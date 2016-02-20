@@ -62,10 +62,7 @@ void ManualServer::setupHelpEngine()
     QString collectionFile = deployDocs() ;
 
     m_helpEngine = new QHelpEngineCore(collectionFile, this);
-    /*if (!m_helpEngine->setupData()) {
-        delete m_helpEngine;
-        m_helpEngine = 0;
-    }*/
+
     QStringList filters = m_helpEngine->customFilters();
     m_helpEngine->setCurrentFilter(filters.first());
 }
@@ -77,8 +74,9 @@ ManualServer *ManualServer::instance()
     return s_instance;
 }
 
-bool ManualServer::URLforKeyword(const QString &id, QUrl &result) const
+bool ManualServer::URLforKeyword(const QString &id, QUrl &result)
 {
+    ensureCorrectLanguage();
     result = "";
     if(!m_helpEngine)
         return 0;
@@ -90,8 +88,9 @@ bool ManualServer::URLforKeyword(const QString &id, QUrl &result) const
     return 1;
 }
 
-QByteArray ManualServer::fileData(const QUrl &url) const
+QByteArray ManualServer::fileData(const QUrl &url)
 {
+    ensureCorrectLanguage();
     return m_helpEngine->fileData(url);
 }
 
@@ -109,5 +108,5 @@ void ManualServer::ensureCorrectLanguage()
 
 ManualServer::ManualServer()
 {
-    setupHelpEngine();
+    m_helpEngine = NULL;
 }

@@ -38,17 +38,19 @@ private:
 
 public:
     static ManualServer* instance();
-    bool URLforKeyword(const QString &id, QUrl &result) const;
-    QByteArray fileData(const QUrl &url) const;
+    bool URLforKeyword(const QString &id, QUrl &result);
+    QByteArray fileData(const QUrl &url);
 
 public slots:
     void ensureCorrectLanguage();
 
 private:
-    void languageChanged();
-    QHelpEngineCore *m_helpEngine;
     ManualServer();
     Q_DISABLE_COPY(ManualServer)
+
+    void languageChanged();
+
+    QHelpEngineCore *m_helpEngine;
     static ManualServer* s_instance;
     QString m_deployedLanguage;
 };
