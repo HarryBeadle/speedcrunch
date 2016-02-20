@@ -74,7 +74,7 @@ ManualServer *ManualServer::instance()
     return s_instance;
 }
 
-bool ManualServer::URLforKeyword(const QString &id, QUrl &result)
+bool ManualServer::URLforKeyword(const QString id, QUrl &result)
 {
     ensureCorrectLanguage();
     result = "";
@@ -96,7 +96,6 @@ QByteArray ManualServer::fileData(const QUrl &url)
 
 void ManualServer::languageChanged()
 {
-    delete m_helpEngine;
     setupHelpEngine();
 }
 

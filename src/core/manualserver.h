@@ -38,7 +38,7 @@ private:
 
 public:
     static ManualServer* instance();
-    bool URLforKeyword(const QString &id, QUrl &result);
+    bool URLforKeyword(const QString id, QUrl &result);
     QByteArray fileData(const QUrl &url);
 
 public slots:

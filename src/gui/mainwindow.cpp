@@ -173,6 +173,7 @@ void MainWindow::createActions()
     m_actions.helpCommunity = new QAction(this);
     m_actions.helpNews = new QAction(this);
     m_actions.helpAbout = new QAction(this);
+    m_actions.contextHelp = new QAction(this);
 
     m_actions.settingsAngleUnitDegree->setCheckable(true);
     m_actions.settingsAngleUnitRadian->setCheckable(true);
@@ -346,6 +347,7 @@ void MainWindow::setActionsText()
     m_actions.settingsLanguage->setText(MainWindow::tr("&Language..."));
 
     m_actions.helpManual->setText(MainWindow::tr("User &Manual"));
+    m_actions.contextHelp->setText(MainWindow::tr("Context Help"));
     m_actions.helpUpdates->setText(MainWindow::tr("Check &Updates"));
     m_actions.helpFeedback->setText(MainWindow::tr("Send &Feedback"));
     m_actions.helpCommunity->setText(MainWindow::tr("Join &Community"));
@@ -414,7 +416,7 @@ void MainWindow::createActionShortcuts()
     m_actions.viewUserFunctions->setShortcut(Qt::CTRL + Qt::Key_5);
     m_actions.settingsAngleUnitDegree->setShortcut(Qt::Key_F10);
     m_actions.settingsAngleUnitRadian->setShortcut(Qt::Key_F9);
-    m_actions.settingsResultFormatGeneral->setShortcut(Qt::Key_F1);
+    //m_actions.settingsResultFormatGeneral->setShortcut(Qt::Key_F1);
     m_actions.settingsResultFormatFixed->setShortcut(Qt::Key_F2);
     m_actions.settingsResultFormatEngineering->setShortcut(Qt::Key_F3);
     m_actions.settingsResultFormatScientific->setShortcut(Qt::Key_F4);
@@ -423,6 +425,7 @@ void MainWindow::createActionShortcuts()
     m_actions.settingsResultFormatHexadecimal->setShortcut(Qt::Key_F7);
     m_actions.settingsRadixCharDot->setShortcut(Qt::CTRL + Qt::Key_Period);
     m_actions.settingsRadixCharComma->setShortcut(Qt::CTRL + Qt::Key_Comma);
+    m_actions.contextHelp->setShortcut(Qt::Key_F1);
 }
 
 void MainWindow::createMenus()
@@ -535,6 +538,7 @@ void MainWindow::createMenus()
     m_menus.help = new QMenu("", this);
     menuBar()->addMenu(m_menus.help);
     m_menus.help->addAction(m_actions.helpManual);
+    m_menus.help->addAction(m_actions.contextHelp);
     m_menus.help->addSeparator();
     m_menus.help->addAction(m_actions.helpUpdates);
     m_menus.help->addAction(m_actions.helpFeedback);
@@ -876,6 +880,7 @@ void MainWindow::createFixedConnections()
     connect(m_actions.settingsLanguage, SIGNAL(triggered()), SLOT(showLanguageChooserDialog()));
 
     connect(m_actions.helpManual, SIGNAL(triggered()), SLOT(showManualWindow()));
+    connect(m_actions.contextHelp, SIGNAL(triggered()), SLOT(showContextHelp()));
     connect(m_actions.helpUpdates, SIGNAL(triggered()), SLOT(openUpdatesURL()));
     connect(m_actions.helpFeedback, SIGNAL(triggered()), SLOT(openFeedbackURL()));
     connect(m_actions.helpCommunity, SIGNAL(triggered()), SLOT(openCommunityURL()));
@@ -1039,6 +1044,22 @@ void MainWindow::showManualWindow()
     connect(m_widgets.manual, SIGNAL(windowClosed()), SLOT(handleManualClosed()));
 }
 
+void MainWindow::showContextHelp() {
+    QString kw = "";
+    if(m_widgets.editor->hasFocus())
+    {
+        kw = m_widgets.editor->getKeyword();
+        if(kw != "") {
+            QUrl tg;
+            if(m_manualServer->URLforKeyword(kw, tg))
+            {
+                showManualWindow();
+                m_widgets.manual->openPage(tg);
+            }
+        }
+    }
+}
+
 void MainWindow::showReadyMessage()
 {
     showStateLabel(tr("Type an expression here"));
@@ -1145,6 +1166,7 @@ MainWindow::MainWindow()
     applySettings();
     QTimer::singleShot(0, m_widgets.editor, SLOT(setFocus()));
 
+    //Create the manual server AFTER the UI is created. This way the creation of the QHelpEngine is delayed.
     m_manualServer = ManualServer::instance();
     connect(this, SIGNAL(languageChanged()), m_manualServer, SLOT(ensureCorrectLanguage()));
 }

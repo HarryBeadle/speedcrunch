@@ -161,6 +161,7 @@ private slots:
     void showFontDialog();
     void showLanguageChooserDialog();
     void showManualWindow();
+    void showContextHelp();
     void showReadyMessage();
     void showResultFormatContextMenu(const QPoint&);
     void showSessionImportDialog();
@@ -288,6 +289,7 @@ private:
         QAction* helpCommunity;
         QAction* helpNews;
         QAction* helpAbout;
+        QAction* contextHelp;
     } m_actions;
 
     struct {

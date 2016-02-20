@@ -318,31 +318,10 @@ void Editor::doMatchingRight()
     }
 }
 
-void Editor::triggerAutoComplete()
+
+// matches a list of built-in functions and variables to a fragment of the name
+QStringList Editor::matchFragment(const QString & id) const
 {
-    if (!m_isAutoCompletionEnabled)
-        return;
-
-    // Tokenize the expression (this is very fast).
-    const int currentPosition = textCursor().position();
-    QString subtext = text().left(currentPosition);
-    const Tokens tokens = m_evaluator->scan(subtext);
-    if (!tokens.valid() || tokens.count() < 1)
-        return;
-
-    Token lastToken = tokens.at(tokens.count()-1);
-
-    // Last token must be an identifier.
-    if (!lastToken.isIdentifier())
-        return;
-    const QString id = lastToken.text();
-    if (id.length() < 1)
-        return;
-
-    // No space after identifier.
-    if (lastToken.pos() + id.length() < subtext.length())
-        return;
-
     // Find matches in function names.
     const QStringList fnames = FunctionRepo::instance()->getIdentifiers();
     QStringList choices;
@@ -372,9 +351,62 @@ void Editor::triggerAutoComplete()
     QList<UserFunction> userFunctions = m_evaluator->getUserFunctions();
     for (int i = 0; i < userFunctions.count(); ++i)
         if (userFunctions.at(i).name().startsWith(id, Qt::CaseInsensitive))
-            ufchoices.append(QString("%1:User function").arg(userFunctions.at(i).name()));
+            ufchoices.append(QString("%1:" + tr("User function")).arg(userFunctions.at(i).name()));
     ufchoices.sort();
     choices += ufchoices;
+
+    return choices;
+}
+
+QString Editor::getKeyword() const
+{
+    // Tokenize the expression
+    const int currentPosition = textCursor().position();
+    const Tokens tokens = m_evaluator->scan(text());
+
+    // find the token at the cursor
+    for(int i=tokens.size()-1; i>=0; --i) {
+        const Token & token = tokens[i];
+        if(token.pos()>currentPosition)
+            continue;
+        if(token.isIdentifier()){
+            QStringList matches = matchFragment(token.text());
+            if(!matches.empty())
+                return matches.first().split(":").first();
+        }
+
+        // try further to the left
+        continue;
+    }
+    return "";
+}
+
+void Editor::triggerAutoComplete()
+{
+    if (!m_isAutoCompletionEnabled)
+        return;
+
+    // Tokenize the expression (this is very fast).
+    const int currentPosition = textCursor().position();
+    QString subtext = text().left(currentPosition);
+    const Tokens tokens = m_evaluator->scan(subtext);
+    if (!tokens.valid() || tokens.count() < 1)
+        return;
+
+    Token lastToken = tokens.at(tokens.count()-1);
+
+    // Last token must be an identifier.
+    if (!lastToken.isIdentifier())
+        return;
+    const QString id = lastToken.text();
+    if (id.length() < 1)
+        return;
+
+    // No space after identifier.
+    if (lastToken.pos() + id.length() < subtext.length())
+        return;
+
+    QStringList choices(matchFragment(id));
 
     // TODO: if we are assigning a user function, find matches in its arguments names and
     //       replace variables names that collide. But we cannot know if we are assigning
@@ -395,11 +427,10 @@ void Editor::triggerAutoComplete()
                         j--;
                     }
                 }
-                choices.append(arg + ": Argument");
+                choices.append(arg + ": " + tr("Argument"));
             }
         }
     }
-
 
 
     // No match, don't bother with completion.
