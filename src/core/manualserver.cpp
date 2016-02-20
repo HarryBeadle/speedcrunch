@@ -21,7 +21,7 @@
 #include "core/settings.h"
 
 #include <QFile>
-#include <QHelpEngineCore>
+#include <QtHelp/QHelpEngineCore>
 #include <QString>
 
 #define DEPLOY_LANG(lang)     QFile::copy(":/manual/manual-lang.qch", dest + "manual-lang.qhc");\

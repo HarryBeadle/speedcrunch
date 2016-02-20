@@ -39,6 +39,7 @@
 #include "gui/historydock.h"
 #include "gui/historywidget.h"
 #include "gui/manualwindow.h"
+#include "core/manualserver.h"
 #include "gui/resultdisplay.h"
 #include "gui/syntaxhighlighter.h"
 #include "gui/variablesdock.h"
@@ -1116,6 +1117,7 @@ MainWindow::MainWindow()
     m_functions = FunctionRepo::instance();
     m_evaluator->setSession(m_session);
     m_evaluator->initializeBuiltInVariables();
+    m_manualServer = ManualServer::instance();
 
     m_translator = 0;
     m_settings = Settings::instance();

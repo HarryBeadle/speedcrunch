@@ -21,13 +21,10 @@
 
 #include <QTextBrowser>
 
-QT_BEGIN_NAMESPACE
-class QHelpEngineCore;
-QT_END_NAMESPACE
-
 class QCloseEvent;
 class QEvent;
 class QUrl;
+class ManualServer;
 
 class ManualWindow : public QTextBrowser {
     Q_OBJECT
@@ -51,8 +48,7 @@ private:
     Q_DISABLE_COPY(ManualWindow)
 
     QVariant loadResource(int type, const QUrl &name);
-
-    QHelpEngineCore *m_helpEngine;
+    ManualServer *m_server;
 };
 
 #endif // GUI_MANUALWINDOW_H

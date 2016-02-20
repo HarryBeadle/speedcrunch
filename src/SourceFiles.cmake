@@ -7,7 +7,7 @@ core/book.h
 core/constants.h
 core/evaluator.h
 core/functions.h
-core/manual.h
+core/manualserver.h
 core/session.h
 core/errors.h
 core/numberformatter.h
@@ -66,7 +66,7 @@ core/book.cpp
 core/constants.cpp
 core/evaluator.cpp
 core/functions.cpp
-core/manual.cpp
+core/manualserver.cpp
 core/numberformatter.cpp
 core/pageserver.cpp
 core/settings.cpp

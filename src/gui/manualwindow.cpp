@@ -17,37 +17,26 @@
 // Boston, MA 02110-1301, USA.
 
 #include "gui/manualwindow.h"
+#include "core/settings.h"
+#include "core/manualserver.h"
 
 #include <QtCore/QEvent>
 #include <QtHelp/QHelpEngineCore>
-#include "core/settings.h"
+
 
 ManualWindow::ManualWindow(QWidget* parent)
     : QTextBrowser(parent)
 {
     this->resize(640, 480);
 
-    QString collectionFile = Settings::getDataPath() + "/manual/SpeedCrunch.qhc";
-
-    m_helpEngine = new QHelpEngineCore(collectionFile, this);
-    if (!m_helpEngine->setupData()) {
-        delete m_helpEngine;
-        m_helpEngine = 0;
-    }
 
     retranslateText();
-    QStringList filters = m_helpEngine->customFilters();
-    m_helpEngine->setCurrentFilter(filters.first());
     showHelpForKeyword("home");
 }
 
 void ManualWindow::showHelpForKeyword(const QString &id)
 {
-    if (m_helpEngine) {
-        QMap<QString, QUrl> links = m_helpEngine->linksForIdentifier(id);
-        if (links.count())
-            setSource(links.constBegin().value());
-    }
+
 }
 
 void ManualWindow::openPage(const QUrl& url)
@@ -78,11 +67,11 @@ void ManualWindow::closeEvent(QCloseEvent* event)
 QVariant ManualWindow::loadResource(int type, const QUrl &name)
 {
     QByteArray ba;
-    if (type < 4 && m_helpEngine && name.scheme()=="qthelp") {
+    if (type < 4 && name.scheme()=="qthelp") {
         QUrl url(name);
         if (name.isRelative())
-            url = source().resolved(url);
-        ba = m_helpEngine->fileData(url);
+            url = source().resolved(name);
+        ba = m_server->fileData(url);
     }
     return ba;
 }

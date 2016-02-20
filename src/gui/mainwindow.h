@@ -31,18 +31,19 @@ class Constants;
 class ConstantsDock;
 class Editor;
 class Evaluator;
-class Session;
 class HistoryEntry;
-class Variable;
 class UserFunction;
 class FunctionRepo;
 class FunctionsDock;
 class HistoryDock;
 class ManualWindow;
+class ManualServer;
 class ResultDisplay;
+class Session;
 class Settings;
-class VariablesDock;
 class UserFunctionsDock;
+class Variable;
+class VariablesDock;
 
 class QActionGroup;
 class QHBoxLayout;
@@ -357,6 +358,7 @@ private:
     Session* m_session;
     QTranslator* m_translator;
     QPlainTextEdit* m_copyWidget;
+    ManualServer* m_manualServer;
 };
 
 #endif // GUI_MAINWINDOW_H
