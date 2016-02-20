@@ -195,6 +195,13 @@ set(qtwin32_Qt5Gui_DEPS qtwin32_Qt5Core)
 # qtwin32_Qt5Widgets - libraries and plugins for a basic Widgets application
 set(qtwin32_Qt5Widgets_LIBS Qt5Widgets)
 set(qtwin32_Qt5Widgets_DEPS qtwin32_Qt5Gui)
+# qtwin32_Qt5Sql - basic QtSql libraries
+set(qtwin32_Qt5Sql_LIBS Qt5Sql)
+set(qtwin32_Qt5Sql_DEPS qtwin32_Qt5Core)
+# qtwin32_Qt5Help - libraries and plugins for QtHelp
+set(qtwin32_Qt5Help_LIBS Qt5Help Qt5CLucene)
+set(qtwin32_Qt5Help_PLUGINS sqldrivers/qsqlite)
+set(qtwin32_Qt5Help_DEPS qtwin32_Qt5Core qtwin32_Qt5Network qtwin32_Qt5Sql qtwin32_Qt5Widgets)
 # qtwin32_Qt5Svg - libraries and plugins for QtSvg (does this really depend on Widgets?)
 set(qtwin32_Qt5Svg_LIBS Qt5Svg)
 set(qtwin32_Qt5Svg_PLUGINS iconengines/qsvgicon imageformats/qsvg)

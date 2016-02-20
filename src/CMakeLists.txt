@@ -10,6 +10,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5Core)
 find_package(Qt5Widgets)
+find_package(Qt5Help)
 
 if(APPLE)
     set(PROGNAME SpeedCrunch)
@@ -69,7 +70,7 @@ endif(APPLE)
 
 add_custom_target(confclean COMMAND rm -rf Makefile CMakeFiles/ CMakeCache.txt cmake_install.cmake DartTestfile.txt install_manifest.txt)
 
-set(QT_LIBRARIES Qt5::Widgets)
+set(QT_LIBRARIES Qt5::Widgets Qt5::Help)
 
 find_library(x11 X11)
 if(x11)
@@ -133,7 +134,7 @@ endif(NOT WIN32)
 
 if(WIN32)
     include(../pkg/QtWin32Deploy.cmake)
-    qtwin32_deploy_modules(${BINDIR} qtwin32_Qt5Widgets)
+    qtwin32_deploy_modules(${BINDIR} qtwin32_Qt5Widgets qtwin32_Qt5Help)
     qtwin32_deploy_default_qt_conf(${BINDIR})
     if(${qtwin32_QT_MINOR_VERSION} VERSION_LESS 5.5)
         # Qt 5.4 and below also require ICU.
