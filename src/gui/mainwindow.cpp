@@ -1117,7 +1117,9 @@ MainWindow::MainWindow()
     m_functions = FunctionRepo::instance();
     m_evaluator->setSession(m_session);
     m_evaluator->initializeBuiltInVariables();
+
     m_manualServer = ManualServer::instance();
+    connect(this, SIGNAL(languageChanged()), m_manualServer, SLOT(ensureCorrectLanguage()));
 
     m_translator = 0;
     m_settings = Settings::instance();

@@ -20,6 +20,7 @@
 #define CORE_MANUALSERVER_H
 
 #include <QObject>
+#include <QMap>
 
 class QHelpEngineCore;
 
@@ -41,13 +42,15 @@ public:
     QByteArray fileData(const QUrl &url) const;
 
 public slots:
-    void update();
+    void ensureCorrectLanguage();
 
 private:
+    void languageChanged();
     QHelpEngineCore *m_helpEngine;
     ManualServer();
     Q_DISABLE_COPY(ManualServer)
     static ManualServer* s_instance;
+    QString m_deployedLanguage;
 };
 
 #endif // CORE_MANUALSERVER_H

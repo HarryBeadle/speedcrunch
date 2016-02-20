@@ -9,8 +9,8 @@ import subprocess
 import sys
 
 
-SOURCE_LANGUAGE = "en"
-LANGUAGES = ["de", "en", "es", "fr"]
+SOURCE_LANGUAGE = "en_US"
+LANGUAGES = ["de_DE", "en_US", "es_ES", "fr_FR"]
 
 DOC_DIR = os.path.dirname(os.path.abspath(__file__))
 

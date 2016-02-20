@@ -23,11 +23,18 @@
 #include <QFile>
 #include <QtHelp/QHelpEngineCore>
 #include <QString>
+#include <QMap>
+#include <QEvent>
 
-#define DEPLOY_LANG(lang)     QFile::copy(":/manual/manual-lang.qch", dest + "manual-lang.qhc");\
-                              QFile::copy(":/manual/manual-lang.qch", dest + "manual-lang.qch")
+#define FALLBACK_LANG "en_US"
 
+#define COPY_OVERWRITE(source, dest) \
+    if (QFile::exists(dest)) \
+        QFile::remove(dest); \
+    QFile::copy(source, dest);
 
+#define QHC_NAME(lang) ("manual-" + QString(lang) + ".qhc")
+#define QCH_NAME(lang) ("manual-" + QString(lang) + ".qch")
 
 ManualServer* ManualServer::s_instance = NULL;
 
@@ -36,20 +43,29 @@ QString ManualServer::deployDocs()
     Q_INIT_RESOURCE(manual);
 
     QString dest = Settings::getDataPath() + "/manual/";
+    QString lang = Settings::instance()->language;
 
-    DEPLOY_LANG(en);
-    return dest;
+    if(!(QFile(":/manual/" + QHC_NAME(lang)).exists()
+        && QFile(":/manual/" + QCH_NAME(lang)).exists()))
+        lang = FALLBACK_LANG;
+
+    COPY_OVERWRITE(":/manual/" + QHC_NAME(lang), dest + QHC_NAME(lang));
+    COPY_OVERWRITE(":/manual/" + QCH_NAME(lang), dest + QCH_NAME(lang));
+
+    m_deployedLanguage = lang;
+
+    return dest + "manual-" + lang + ".qhc";
 }
 
 void ManualServer::setupHelpEngine()
 {
-    QString collectionFile = deployDocs() + "manual-en.qhc";
+    QString collectionFile = deployDocs() ;
 
     m_helpEngine = new QHelpEngineCore(collectionFile, this);
-    if (!m_helpEngine->setupData()) {
+    /*if (!m_helpEngine->setupData()) {
         delete m_helpEngine;
         m_helpEngine = 0;
-    }
+    }*/
     QStringList filters = m_helpEngine->customFilters();
     m_helpEngine->setCurrentFilter(filters.first());
 }
@@ -60,8 +76,6 @@ ManualServer *ManualServer::instance()
         s_instance = new ManualServer();
     return s_instance;
 }
-
-void ManualServer::update() {}
 
 bool ManualServer::URLforKeyword(const QString &id, QUrl &result) const
 {
@@ -81,8 +95,19 @@ QByteArray ManualServer::fileData(const QUrl &url) const
     return m_helpEngine->fileData(url);
 }
 
+void ManualServer::languageChanged()
+{
+    delete m_helpEngine;
+    setupHelpEngine();
+}
+
+void ManualServer::ensureCorrectLanguage()
+{
+    if(Settings::instance()->language != m_deployedLanguage)
+        languageChanged();
+}
+
 ManualServer::ManualServer()
 {
     setupHelpEngine();
 }
-

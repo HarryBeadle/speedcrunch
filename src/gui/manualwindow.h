@@ -42,6 +42,7 @@ public slots:
 
 protected:
     virtual void changeEvent(QEvent*);
+    virtual void keyPressEvent(QKeyEvent * ev);
 	virtual void closeEvent(QCloseEvent*);
 
 private:

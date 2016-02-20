@@ -21,6 +21,7 @@
 #include "core/manualserver.h"
 
 #include <QtCore/QEvent>
+#include <QKeyEvent>
 #include <QtHelp/QHelpEngineCore>
 
 
@@ -29,14 +30,16 @@ ManualWindow::ManualWindow(QWidget* parent)
 {
     this->resize(640, 480);
 
-
+    m_server = ManualServer::instance();
     retranslateText();
     showHelpForKeyword("home");
 }
 
 void ManualWindow::showHelpForKeyword(const QString &id)
 {
-
+    QUrl url;
+    if(m_server->URLforKeyword(id, url))
+        openPage(url);
 }
 
 void ManualWindow::openPage(const QUrl& url)
@@ -52,10 +55,23 @@ void ManualWindow::retranslateText()
 
 void ManualWindow::changeEvent(QEvent* event)
 {
-    if (event->type() == QEvent::LanguageChange)
+    if (event->type() == QEvent::LanguageChange) {
         retranslateText();
+        m_server->ensureCorrectLanguage();
+        this->reload();
+    }
     else
         QTextBrowser::changeEvent(event);
+}
+
+void ManualWindow::keyPressEvent(QKeyEvent *ev)
+{
+    if(ev->key() == Qt::Key_Escape) {
+        ev->accept();
+        this->close();
+    }
+    else
+        QTextBrowser::keyPressEvent(ev);
 }
 
 void ManualWindow::closeEvent(QCloseEvent* event)
