@@ -31,7 +31,7 @@
 #include <QCoreApplication>
 #include <QStack>
 
-#define EVALUATOR_DEBUG
+//#define EVALUATOR_DEBUG
 #define MAX_STACK_DEPTH 100
 #define ALLOW_IMPLICIT_MULT
 
@@ -883,7 +883,7 @@ void Evaluator::compile(const Tokens& tokens)
                         syntaxStack.pop();
                         syntaxStack.pop();
                         syntaxStack.pop();
-                        syntaxStack.push(arg);
+                        syntaxStack.push(Token::stxIdentifier);  // Fixes issue 538: 3 sin (3 pi) was evaluated but not 3 sin (3)
                         m_codes.append(Opcode(Opcode::Function, argCount));
 #ifdef EVALUATOR_DEBUG
                         dbg << "    Rule for function last argument " << argCount << " \n";
@@ -931,6 +931,36 @@ void Evaluator::compile(const Tokens& tokens)
                         if(ruleFound) dbg << "    Rule for postfix operator " << postfix.text() << "\n";
 #endif
                 }
+
+#ifdef ALLOW_IMPLICIT_MULT
+                /* Rule #2 for implicit multiplication with parentheses: NUMBER ( NUMBER )     -> IDENTIFIER
+                 *                                                       NUMBER ( IDENTIFIER ) -> IDENTIFIER
+                 * Action: Treat as A * B.
+                 * Note that this rule must be before parenthesis rule.
+                 */
+                if(!ruleFound && syntaxStack.itemCount() >= 4) {
+                    Token par2 = syntaxStack.top();
+                    Token b    = syntaxStack.top(1);
+                    Token par1 = syntaxStack.top(2);
+                    Token a = syntaxStack.top(3);
+
+                    if((b.isNumber() || b.isIdentifier()) && a.isNumber()
+                            && par1.asOperator() == Token::LeftPar
+                            && par2.asOperator() == Token::RightPar)
+                    {
+                        ruleFound = true;
+                        syntaxStack.pop();
+                        syntaxStack.pop();
+                        syntaxStack.pop();
+                        syntaxStack.pop();
+                        syntaxStack.push(Token::stxIdentifier);
+                        m_codes.append(Opcode::Mul);
+#ifdef EVALUATOR_DEBUG
+                        dbg << "    Rule #2 for implicit multiplication" << "\n";
+#endif
+                    }
+                }
+#endif
 
                 // Rule for parenthesis: (Y) -> Y.
                 if (!ruleFound && syntaxStack.itemCount() >= 3) {
@@ -1082,10 +1112,10 @@ void Evaluator::compile(const Tokens& tokens)
 #endif
                     }
                 }
-#ifdef ALLOW_IMPLICIT_MULT
 
-                /* Rule for implicit multiplication:  NUMBER IDENTIFIER     -> IDENTIFIER
-                 *                                    IDENTIFIER IDENTIFIER -> IDENTIFIER
+#ifdef ALLOW_IMPLICIT_MULT
+                /* Rule #1 for implicit multiplication:  NUMBER IDENTIFIER     -> IDENTIFIER
+                 *                                       IDENTIFIER IDENTIFIER -> IDENTIFIER
                  * Action: Treat as A * B.
                  * Note that the second operand must not be a number. The result is always an identifier.
                  */
@@ -1108,13 +1138,12 @@ void Evaluator::compile(const Tokens& tokens)
                             syntaxStack.push(a);
                         m_codes.append(Opcode::Mul);
 #ifdef EVALUATOR_DEBUG
-                        dbg << "    Rule for implicit multiplication" << "\n";
+                        dbg << "    Rule #1 for implicit multiplication" << "\n";
 #endif
                     }
 
                 }
 #endif
-
 
                 // Rule for unary operator:  (op1) (op2) X -> (op1) X.
                 // Conditions: op2 is unary, token is not '('.

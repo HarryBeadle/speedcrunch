@@ -31,8 +31,10 @@ Indices and tables
 .. only:: sc_bundled_docs
 
    * :ref:`genindex`
+   * :ref:`sc:functionindex`
 
 .. only:: not sc_bundled_docs
 
    * :ref:`genindex`
+   * :ref:`sc:functionindex`
    * :ref:`search`

@@ -42,12 +42,13 @@ class Tools:
 def build_docs(tools, source_dir, build_dir, lang=None, builder="html",
                tags=[], extra_config={}):
     config = extra_config.copy()
-    if not lang or lang == SOURCE_LANGUAGE:
-        lang = SOURCE_LANGUAGE
-    else:
+    if lang:
+        print("Building docs for '%s'..." % lang)
+        outdir = os.path.join(build_dir, lang)
         config["language"] = lang
-    print("Building docs for '%s'..." % lang)
-    args = [source_dir, os.path.join(build_dir, lang), "-b", builder]
+    else:
+        outdir = build_dir
+    args = [source_dir, outdir, "-b", builder]
     for k, v in config.items():
         args.extend(["-D", "%s=%s" % (k, v)])
     if tags:
@@ -65,7 +66,35 @@ def generate_qrc(f, files, prefix="/"):
     f.write("</RCC>\n")
 
 
+def extract_python_strings(dirname, outfile, domain=None):
+    """Extract translatable strings from all Python files in `dir`.
+
+    Writes a PO template to `outfile`. Recognises `_` and `l_`. Needs babel!
+    """
+    from babel.messages.catalog import Catalog
+    from babel.messages.extract import extract_from_dir
+    from babel.messages.pofile import write_po
+    base_dir = os.path.abspath(os.path.dirname(outfile))
+    msgs = extract_from_dir(dirname, keywords={"_": None, "l_": None},
+                            comment_tags=["l10n:"])
+    cat = Catalog(domain=domain, charset="utf-8")
+    for fname, lineno, message, comments, context in msgs:
+        filepath = os.path.join(dirname, fname)
+        cat.add(message, None, [(os.path.relpath(filepath, base_dir), lineno)],
+                auto_comments=comments, context=context)
+    with open(outfile, "wb") as f:
+        write_po(f, cat)
+
+
 # commands
+def extract_strings(tools, args):
+    build_docs(tools, args.source_dir, args.build_dir, builder="gettext")
+    extract_python_strings(
+        os.path.join(args.source_dir, "extensions"),
+        os.path.join(args.build_dir, "extra-doc-strings.pot"),
+        "extra-doc-strings")
+
+
 def build_standalone_docs(tools, args):
     for lang in LANGUAGES:
         build_docs(tools, args.source_dir, args.build_dir, lang)
@@ -76,7 +105,7 @@ def build_bundled_docs(tools, args):
     for lang in LANGUAGES:
         basename = "manual-%s" % lang
         build_docs(tools, args.source_dir, args.build_dir, lang,
-                   builder="qthelp", tags=["sc_bundled_docs"],
+                   builder="qthelp2", tags=["sc_bundled_docs"],
                    extra_config={"qthelp_basename": basename})
         tools.qcollectiongenerator(os.path.join(args.build_dir, lang,
                                                 "%s.qhcp" % basename))
@@ -97,6 +126,15 @@ def build_argument_parser():
     Tools.add_arguments(parser)
     parser.set_defaults(func=lambda *args: parser.print_help())
     subparsers = parser.add_subparsers()
+
+    # extract-strings
+    parser_extract_strings = subparsers.add_parser(
+        "extract-strings",
+        help="Extract translatable strings into POT files")
+    parser_extract_strings.add_argument(
+        "--build-dir", "-b", default="_build-pot",
+        help="Output directory (default: %(default)s")
+    parser_extract_strings.set_defaults(func=extract_strings)
 
     # build-html-docs
     parser_build_html = subparsers.add_parser(
@@ -123,11 +161,7 @@ def main(argv):
     parser = build_argument_parser()
     args = parser.parse_args(argv[1:])
     tools = Tools(args)
-    try:
-        args.func(tools, args)
-    except Exception as exc:
-        print("Error:", exc, file=sys.stderr)
-        sys.exit(1)
+    args.func(tools, args)
 
 
 if __name__ == "__main__":
