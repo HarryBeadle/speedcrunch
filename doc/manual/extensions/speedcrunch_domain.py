@@ -54,8 +54,10 @@ class SpeedCrunchObject(ObjectDescription):
     """Directive to document a SpeedCrunch object."""
 
     doc_field_types = [
+        # l10n: Label for parameter lists when documenting functions
         GroupedField('parameter', label=l_('Parameters'),
                      names=('param', 'parameter', 'arg', 'argument',)),
+        # l10n: Label for the return value field when documenting functions
         Field('returnvalue', label=l_('Returns'), has_arg=False,
               names=('returns', 'return',)),
     ]
@@ -110,6 +112,7 @@ class SpeedCrunchFunction(SpeedCrunchObject):
     needs_arglist = True
 
     def get_index_text(self, name):
+        # l10n: Index display text for built-in functions
         return _('%s() (function)') % name
 
 
@@ -117,6 +120,7 @@ class SpeedCrunchConstant(SpeedCrunchObject):
     """Documents a SpeedCrunch built-in constant."""
 
     def get_index_text(self, name):
+        # l10n: Index display text for built-in constants
         return _('%s (constant)') % name
 
 
@@ -124,7 +128,9 @@ class FunctionIndex(Index):
     """Generate an index of all SpeedCrunch functions."""
 
     name = 'functionindex'
+    # l10n: Function index long name (title and links)
     localname = l_('Function Index')
+    # l10n: Function index short name (used in the header of some Sphinx themes)
     shortname = l_('functions')
 
     def generate(self, docnames=None):
@@ -147,7 +153,9 @@ class SpeedCrunchDomain(Domain):
     data_version = 1
 
     object_types = {
+        # l10n: Label for built-in SpeedCrunch functions
         'function': ObjType(l_('function'), 'func'),
+        # l10n: Label for built-in SpeedCrunch constants
         'constant': ObjType(l_('constant'), 'const'),
     }
 
