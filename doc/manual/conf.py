@@ -16,10 +16,16 @@
 import sys
 import os
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
+
+try:
+    tags
+except NameError:
+    class _tags:
+        def has(self, t):
+            return False
+    tags = _tags()
+    del _tags
+
 
 # -- General configuration ------------------------------------------------
 
@@ -35,7 +41,7 @@ needs_sphinx = '1.3'
 # ones.
 sys.path.append(os.path.abspath('extensions'))
 
-extensions = ['qtkeyword', 'speedcrunch_domain']
+extensions = ['qtkeyword', 'speedcrunch_domain', 'sc_post_config']
 ignore_qtkeywords = not tags.has('sc_bundled_docs')
 primary_domain = 'sc'
 
@@ -291,3 +297,7 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+
+if 'tags' in locals():
+    del tags
