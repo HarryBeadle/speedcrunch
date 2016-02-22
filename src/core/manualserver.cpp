@@ -40,8 +40,6 @@ ManualServer* ManualServer::s_instance = NULL;
 
 QString ManualServer::deployDocs()
 {
-    Q_INIT_RESOURCE(manual);
-
     QString dest = Settings::getDataPath() + "/manual/";
     QString lang = Settings::instance()->language;
 
@@ -49,8 +47,16 @@ QString ManualServer::deployDocs()
         && QFile(":/manual/" + QCH_NAME(lang)).exists()))
         lang = FALLBACK_LANG;
 
-    COPY_OVERWRITE(":/manual/" + QHC_NAME(lang), dest + QHC_NAME(lang));
-    COPY_OVERWRITE(":/manual/" + QCH_NAME(lang), dest + QCH_NAME(lang));
+    QFile::remove(dest + QHC_NAME(lang));
+    QFile::remove(dest + QCH_NAME(lang));
+
+    QFile::copy(":/manual/" + QHC_NAME(lang), dest + QHC_NAME(lang));
+    QFile::copy(":/manual/" + QCH_NAME(lang), dest + QCH_NAME(lang));
+
+    QFile qhc(dest + QHC_NAME(lang));
+    qhc.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner);
+    QFile qch(dest + QCH_NAME(lang));
+    qch.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner);
 
     m_deployedLanguage = lang;
 
@@ -107,5 +113,6 @@ void ManualServer::ensureCorrectLanguage()
 
 ManualServer::ManualServer()
 {
+    Q_INIT_RESOURCE(manual);
     m_helpEngine = NULL;
 }
