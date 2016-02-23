@@ -23,12 +23,22 @@
 #include <QtCore/QEvent>
 #include <QKeyEvent>
 #include <QtHelp/QHelpEngineCore>
+#include <QDesktopServices>
+#include <QIcon>
 
 
 ManualWindow::ManualWindow(QWidget* parent)
     : QTextBrowser(parent)
 {
+    setWindowIcon(QIcon(":/speedcrunch.png"));
     this->resize(640, 480);
+    QFont font;
+    font.fromString(Settings::instance()->displayFont);
+    this->setFont(font);
+
+    //Disable automatic opening of links. We handle them ourselves.
+    this->setOpenLinks(false);
+    connect(this, SIGNAL(anchorClicked(const QUrl&)), SLOT(handleAnchorClick(const QUrl&)));
 
     m_server = ManualServer::instance();
     retranslateText();
@@ -70,6 +80,19 @@ void ManualWindow::keyPressEvent(QKeyEvent *ev)
         ev->accept();
         this->close();
     }
+    else if(ev->key() == Qt::Key_Back
+            || ev->key() == Qt::Key_Backspace) {
+        ev->accept();
+        this->backward();
+    }
+    else if(ev->key() == Qt::Key_Forward) {
+        ev->accept();
+        this->forward();
+    }
+    else if(ev->key() == Qt::Key_Home) {
+        ev->accept();
+        this->home();
+    }
     else
         QTextBrowser::keyPressEvent(ev);
 }
@@ -78,6 +101,17 @@ void ManualWindow::closeEvent(QCloseEvent* event)
 {
     emit windowClosed();
     QTextBrowser::closeEvent(event);
+}
+
+void ManualWindow::handleAnchorClick(const QUrl &url)
+{
+    if (url.toString().startsWith("qthelp:")) {
+        openPage(url);
+    }
+    else
+    {
+        QDesktopServices::openUrl(url);
+    }
 }
 
 QVariant ManualWindow::loadResource(int type, const QUrl &name)

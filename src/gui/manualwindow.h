@@ -44,6 +44,8 @@ protected:
     virtual void changeEvent(QEvent*);
     virtual void keyPressEvent(QKeyEvent * ev);
 	virtual void closeEvent(QCloseEvent*);
+private slots:
+    void handleAnchorClick(const QUrl&url);
 
 private:
     Q_DISABLE_COPY(ManualWindow)

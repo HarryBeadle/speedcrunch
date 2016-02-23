@@ -1,9 +1,9 @@
 Reference
 =========
 
-Reference of integrated functions etc.
+Here you may find any documentation on functions, constantrs, units, etc. built-in to SpeedCrunch.
 
 .. toctree::
    :maxdepth: 2
 
-   ieee754.rst
+   functions.rst
