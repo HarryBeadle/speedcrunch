@@ -36,7 +36,7 @@ ManualWindow::ManualWindow(QWidget* parent)
     font.fromString(Settings::instance()->displayFont);
     this->setFont(font);
 
-    //Disable automaic opening of links. We handle them ourselves.
+    //Disable automatic opening of links. We handle them ourselves.
     this->setOpenLinks(false);
     connect(this, SIGNAL(anchorClicked(const QUrl&)), SLOT(handleAnchorClick(const QUrl&)));
 
