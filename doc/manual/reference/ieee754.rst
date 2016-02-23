@@ -10,7 +10,7 @@ numbers according to IEEE-754.
 
 An IEEE-754 binary float consists of three parts: a sign bit, the exponent and the significand
 (sometimes called the mantissa). From these parts, the value is then calculated using the
-following formula: ``-1 ^ sign * 2 ^ (exponent - bias)  * 1.significand``.  The standard defines
+following formula: ``-1 ^ sign * 2 ^ (exponent - bias) * 1.significand``.  The standard defines
 multiple binary formats of different sizes that all follow these rules, but differ in
 the number of bits allocated for the exponent and significand. The bias for the default
 formats is defined as ``bias = (2 ^ (exponent_bits - 1)) - 1``.

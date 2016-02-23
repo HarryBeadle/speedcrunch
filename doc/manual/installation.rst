@@ -14,7 +14,7 @@ to launch it. This process requires administrator rights.
 
 Alternatively, you may use the portable version of SpeedCrunch, which is distributed
 as a ``.zip`` archive. This version requires no installation, simply extract it to
-a folder of your choice and run ``speedcrunch.exe``. In addition, this version of
+a folder of your choice and run :program:`speedcrunch.exe`. In addition, this version of
 the software is fully portable: it stores all its settings and user data next to the
 executable so the entire directory can be copied to e.g. another computer and run
 there.

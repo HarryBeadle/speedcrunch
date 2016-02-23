@@ -140,7 +140,7 @@ class FunctionIndex(Index):
             if not name or objtype != 'function':
                 continue
             entries = content.setdefault(name[0].lower(), [])
-            e = (name, 0, docname, 'sc.' + name, '', '', '')
+            e = ('%s()' % name, 0, docname, 'sc.' + name, '', '', '')
             bisect.insort_left(entries, e)
         return sorted(content.items()), False
 
