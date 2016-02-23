@@ -26,6 +26,7 @@ except NameError:
     tags = _tags()
     del _tags
 
+bundled = tags.has('sc_bundled_docs')
 
 # -- General configuration ------------------------------------------------
 
@@ -42,11 +43,12 @@ needs_sphinx = '1.3'
 sys.path.append(os.path.abspath('extensions'))
 
 extensions = ['qtkeyword', 'speedcrunch_domain', 'sc_post_config']
-ignore_qtkeywords = not tags.has('sc_bundled_docs')
+ignore_qtkeywords = not bundled
 primary_domain = 'sc'
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ['_templates_embedded' if bundled else '_templates_standalone']
+
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -123,12 +125,15 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
-html_theme = 'basic' if tags.has('sc_bundled_docs') else 'alabaster'
+html_theme = 'basic' if bundled else 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+if not bundled:
+    pass
+else:
+    html_theme_options = {'nosidebar':True}
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
