@@ -18,15 +18,10 @@ import os
 
 
 try:
-    tags
+    bundled = tags.has('sc_bundled_docs')
 except NameError:
-    class _tags:
-        def has(self, t):
-            return False
-    tags = _tags()
-    del _tags
+    bundled = False
 
-bundled = tags.has('sc_bundled_docs')
 
 # -- General configuration ------------------------------------------------
 
@@ -47,8 +42,7 @@ ignore_qtkeywords = not bundled
 primary_domain = 'sc'
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates_embedded' if bundled else '_templates_standalone']
-
+#templates_path = []
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -108,7 +102,7 @@ exclude_patterns = ['_build']
 #show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+#pygments_style = 'sphinx'
 
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
@@ -125,15 +119,17 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
-html_theme = 'basic' if bundled else 'alabaster'
+import quark_sphinx_theme
+html_theme_path = [quark_sphinx_theme.get_path()]
+html_theme = 'quark' if bundled else 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-if not bundled:
-    pass
-else:
-    html_theme_options = {'nosidebar':True}
+if bundled:
+    html_theme_options = {
+        'headerlink_color': 'transparent',
+    }
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
@@ -304,5 +300,4 @@ texinfo_documents = [
 #texinfo_no_detailmenu = False
 
 
-if 'tags' in locals():
-    del tags
+del bundled
