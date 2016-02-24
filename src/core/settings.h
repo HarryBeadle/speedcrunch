@@ -82,6 +82,7 @@ public:
 
     QByteArray windowState;
     QByteArray windowGeometry;
+    QByteArray manualWindowGeometry;
 
 private:
     Settings();

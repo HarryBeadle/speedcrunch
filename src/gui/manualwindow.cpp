@@ -30,10 +30,7 @@
 ManualWindow::ManualWindow(QWidget* parent)
     : QTextBrowser(parent)
 {
-    setWindowIcon(QIcon(":/speedcrunch.png"));
-    this->resize(640, 480);
     setWindowFlags(Qt::Window);
-
     QFont f("Helvetica");
     f.setStyleHint(QFont::SansSerif);
     f.setPointSize(10);

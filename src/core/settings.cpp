@@ -167,6 +167,7 @@ void Settings::load()
 
     windowState = settings->value(key + QLatin1String("State")).toByteArray();
     windowGeometry = settings->value(key + QLatin1String("WindowGeometry")).toByteArray();
+    manualWindowGeometry = settings->value(key + QLatin1String("ManualWindowGeometry")).toByteArray();
 
     key = KEY + QLatin1String("/Display/");
     displayFont = settings->value(key + QLatin1String("DisplayFont"), QFont().toString()).toString();
@@ -225,6 +226,7 @@ void Settings::save()
     settings->setValue(key + QLatin1String("WindowAlwaysOnTop"), windowAlwaysOnTop);
     settings->setValue(key + QLatin1String("State"), windowState);
     settings->setValue(key + QLatin1String("WindowGeometry"), windowGeometry);
+    settings->setValue(key + QLatin1String("ManualWindowGeometry"), manualWindowGeometry);
     settings->setValue(key + QLatin1String("BitfieldVisible"), bitfieldVisible);
 
     key = KEY + QLatin1String("/Display/");
