@@ -31,6 +31,7 @@ ManualWindow::ManualWindow(QWidget* parent)
     : QTextBrowser(parent)
 {
     setWindowFlags(Qt::Window);
+    setStyleSheet(QStringLiteral("QTextBrowser { background-color: #FFFFFF; }"));
     QFont f("Helvetica");
     f.setStyleHint(QFont::SansSerif);
     f.setPointSize(10);
