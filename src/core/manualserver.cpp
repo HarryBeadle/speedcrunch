@@ -20,6 +20,7 @@
 #include "core/manualserver.h"
 #include "core/settings.h"
 
+#include <QtCore/QDir>
 #include <QFile>
 #include <QtHelp/QHelpEngineCore>
 #include <QString>
@@ -40,7 +41,9 @@ ManualServer* ManualServer::s_instance = NULL;
 
 QString ManualServer::deployDocs()
 {
-    QString dest = Settings::getDataPath() + "/manual/";
+    QString dest = Settings::getCachePath() + "/manual/";
+    QDir qdir;
+    qdir.mkpath(dest);
     QString lang = Settings::instance()->language;
 
     if(!(QFile(":/manual/" + QHC_NAME(lang)).exists()
@@ -70,9 +73,8 @@ void ManualServer::setupHelpEngine()
     m_helpEngine = new QHelpEngineCore(collectionFile, this);
 
     QStringList filters = m_helpEngine->customFilters();
-    if (!filters.isEmpty()) {
+    if (!filters.isEmpty())
         m_helpEngine->setCurrentFilter(filters.first());
-    }
 }
 
 ManualServer *ManualServer::instance()

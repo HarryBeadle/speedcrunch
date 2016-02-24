@@ -31,6 +31,7 @@ class Settings {
 public:
     static Settings* instance();
     static QString getDataPath();
+    static QString getCachePath();
 
     void load();
     void save();
@@ -74,11 +75,6 @@ public:
     QString displayFont;
 
     QString language;
-
-    //QStringList history;
-    //QStringList historyResults;
-    //QStringList variables;
-    //QList<QStringList> userFunctions;
 
     QByteArray windowState;
     QByteArray windowGeometry;

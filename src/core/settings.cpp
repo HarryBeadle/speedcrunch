@@ -73,6 +73,15 @@ QString Settings::getDataPath()
 #endif
 }
 
+QString Settings::getCachePath()
+{
+#ifdef SPEEDCRUNCH_PORTABLE
+    return QApplication::applicationDirPath();
+#else
+    return QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+#endif
+}
+
 static Settings* s_settingsInstance = 0;
 static char s_radixCharacter = 0;
 

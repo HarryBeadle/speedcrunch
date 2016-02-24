@@ -1040,9 +1040,8 @@ void MainWindow::showManualWindow()
     }
 
     m_widgets.manual = new ManualWindow(this);
-    if (!m_widgets.manual->restoreGeometry(m_settings->manualWindowGeometry)) {
+    if (!m_widgets.manual->restoreGeometry(m_settings->manualWindowGeometry))
         m_widgets.manual->resize(640, 480);
-    }
     m_widgets.manual->show();
     connect(m_widgets.manual, SIGNAL(windowClosed()), SLOT(handleManualClosed()));
 }
@@ -1109,7 +1108,8 @@ void MainWindow::checkInitialDigitGrouping()
 void MainWindow::saveSettings()
 {
     m_settings->windowGeometry = m_settings->windowPositionSave ? saveGeometry() : QByteArray();
-    m_settings->manualWindowGeometry = m_settings->windowPositionSave ? m_widgets.manual->saveGeometry() : QByteArray();
+    if (m_widgets.manual)
+        m_settings->manualWindowGeometry = m_settings->windowPositionSave ? m_widgets.manual->saveGeometry() : QByteArray();
     m_settings->windowState = saveState();
     m_settings->displayFont = m_widgets.display->font().toString();
 
