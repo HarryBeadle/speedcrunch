@@ -70,7 +70,9 @@ void ManualServer::setupHelpEngine()
     m_helpEngine = new QHelpEngineCore(collectionFile, this);
 
     QStringList filters = m_helpEngine->customFilters();
-    m_helpEngine->setCurrentFilter(filters.first());
+    if (!filters.isEmpty()) {
+        m_helpEngine->setCurrentFilter(filters.first());
+    }
 }
 
 ManualServer *ManualServer::instance()
@@ -113,6 +115,5 @@ void ManualServer::ensureCorrectLanguage()
 
 ManualServer::ManualServer()
 {
-    Q_INIT_RESOURCE(manual);
     m_helpEngine = NULL;
 }
