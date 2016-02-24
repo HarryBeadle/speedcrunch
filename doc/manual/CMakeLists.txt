@@ -14,14 +14,14 @@ if(NOT ${PYTHONINTERP_FOUND})
 endif()
 
 # get a path for qcollectiongenerator
-find_package(Qt5Core)
-get_target_property(qtcore_DLL Qt5::Core LOCATION)
-get_filename_component(qtcore_LIBDIR ${qtcore_DLL} DIRECTORY)
+find_package(Qt5Help)
+get_target_property(qthelp_LIB Qt5::Help LOCATION)
+get_filename_component(qthelp_LIBDIR ${qthelp_LIB} DIRECTORY)
 
 find_program(
     QCOLLECTIONGENERATOR_EXECUTABLE
     NAMES qcollectiongenerator
-    HINTS ${qtcore_LIBDIR})
+    HINTS ${qthelp_LIBDIR} ${qthelp_LIBDIR}/../bin)
 
 # get a path for sphinx-build
 if(WIN32)
