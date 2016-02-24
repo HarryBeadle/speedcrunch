@@ -32,9 +32,12 @@ ManualWindow::ManualWindow(QWidget* parent)
 {
     setWindowIcon(QIcon(":/speedcrunch.png"));
     this->resize(640, 480);
-    QFont font;
-    font.fromString(Settings::instance()->displayFont);
-    this->setFont(font);
+    setWindowFlags(Qt::Window);
+
+    QFont f("Helvetica");
+    f.setStyleHint(QFont::SansSerif);
+    f.setPointSize(10);
+    setFont(f);
 
     //Disable automatic opening of links. We handle them ourselves.
     this->setOpenLinks(false);

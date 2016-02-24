@@ -1039,7 +1039,7 @@ void MainWindow::showManualWindow()
         return;
     }
 
-    m_widgets.manual = new ManualWindow();
+    m_widgets.manual = new ManualWindow(this);
     m_widgets.manual->show();
     connect(m_widgets.manual, SIGNAL(windowClosed()), SLOT(handleManualClosed()));
 }
