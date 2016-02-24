@@ -21,6 +21,7 @@
 #include "core/settings.h"
 
 #include <QtCore/QDir>
+#include <QtCore/QLocale>
 #include <QFile>
 #include <QtHelp/QHelpEngineCore>
 #include <QString>
@@ -45,6 +46,8 @@ QString ManualServer::deployDocs()
     QDir qdir;
     qdir.mkpath(dest);
     QString lang = Settings::instance()->language;
+    if (lang == "C")
+        lang = QLocale().name();
 
     if(!(QFile(":/manual/" + QHC_NAME(lang)).exists()
         && QFile(":/manual/" + QCH_NAME(lang)).exists()))
