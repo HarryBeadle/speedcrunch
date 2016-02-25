@@ -63,6 +63,7 @@ class MyQtHelpBuilder(QtHelpBuilder):
     """
 
     name = "qthelp2"
+    search = False
 
     def init(self):
         self.keywords_completed = False
