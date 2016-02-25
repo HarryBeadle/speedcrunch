@@ -98,6 +98,20 @@ void ManualWindow::keyPressEvent(QKeyEvent *ev)
         QTextBrowser::keyPressEvent(ev);
 }
 
+void ManualWindow::mouseReleaseEvent(QMouseEvent* ev)
+{
+    if (ev->button() == Qt::BackButton) {
+        ev->accept();
+        backward();
+    }
+    else if (ev->button() == Qt::ForwardButton) {
+        ev->accept();
+        forward();
+    }
+    else
+        QTextBrowser::mouseReleaseEvent(ev);
+}
+
 void ManualWindow::closeEvent(QCloseEvent* event)
 {
     emit windowClosed();

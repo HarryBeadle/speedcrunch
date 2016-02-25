@@ -43,6 +43,7 @@ public slots:
 protected:
     virtual void changeEvent(QEvent*);
     virtual void keyPressEvent(QKeyEvent * ev);
+    virtual void mouseReleaseEvent(QMouseEvent* ev);
 	virtual void closeEvent(QCloseEvent*);
 private slots:
     void handleAnchorClick(const QUrl&url);
