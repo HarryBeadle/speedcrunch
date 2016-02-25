@@ -126,7 +126,6 @@ def build_bundled_docs(tools, args):
         generate_qrc(f, resources, prefix='/manual')
 
 
-
 # CLI
 def build_argument_parser():
     parser = argparse.ArgumentParser()
@@ -134,7 +133,6 @@ def build_argument_parser():
         '--source-dir', '-s', default=DOC_DIR,
         help='Documentation source directory (default: %(default)s)')
     Tools.add_arguments(parser)
-    parser.set_defaults(func=lambda *args: parser.print_help())
     subparsers = parser.add_subparsers()
 
     # extract-strings
@@ -181,7 +179,10 @@ def main(argv):
     parser = build_argument_parser()
     args = parser.parse_args(argv[1:])
     tools = Tools(args)
-    args.func(tools, args)
+    if args.func:
+        args.func(tools, args)
+    else:
+        parser.print_help()
 
 
 if __name__ == '__main__':
