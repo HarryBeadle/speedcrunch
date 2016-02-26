@@ -179,7 +179,7 @@ def main(argv):
     parser = build_argument_parser()
     args = parser.parse_args(argv[1:])
     tools = Tools(args)
-    if args.func:
+    if hasattr(args, 'func') and args.func:
         args.func(tools, args)
     else:
         parser.print_help()
