@@ -22,10 +22,9 @@ if(TARGET Qt5::qcollectiongenerator)
     get_target_property(qcg Qt5::qcollectiongenerator LOCATION)
     get_filename_component(qt_bin_dir ${qcg} DIRECTORY)
 else()
-    # Well, let's guess a bit.
-    get_target_property(qthelp_dll Qt5::Help LOCATION)
-    get_filename_component(qt_lib_dir ${qthelp_dll} DIRECTORY)
-    set(qt_bin_dir ${qt_lib_dir}/../bin)
+    # "Next to qmake" is probably correct.
+    get_target_property(qmake Qt5::qmake LOCATION)
+    get_filename_component(qt_bin_dir ${qmake} DIRECTORY)
 endif()
 
 find_program(
