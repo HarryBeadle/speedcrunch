@@ -15,13 +15,23 @@ endif()
 
 # get a path for qcollectiongenerator
 find_package(Qt5Help)
-get_target_property(qthelp_LIB Qt5::Help LOCATION)
-get_filename_component(qthelp_LIBDIR ${qthelp_LIB} DIRECTORY)
+
+if(TARGET Qt5::qcollectiongenerator)
+    # The Qt5::qcollectiongenerator imported target was added in Qt 5.3, but it tells us exactly where
+    # qcollectiongenerator is.
+    get_target_property(qcg Qt5::qcollectiongenerator LOCATION)
+    get_filename_component(qt_bin_dir ${qcg} DIRECTORY)
+else()
+    # Well, let's guess a bit.
+    get_target_property(qthelp_dll Qt5::Help LOCATION)
+    get_filename_component(qt_lib_dir ${qthelp_dll} DIRECTORY)
+    set(qt_bin_dir ${qt_lib_dir}/../bin)
+endif()
 
 find_program(
     QCOLLECTIONGENERATOR_EXECUTABLE
     NAMES qcollectiongenerator
-    HINTS ${qthelp_LIBDIR} ${qthelp_LIBDIR}/../bin)
+    HINTS ${qt_bin_dir})
 
 # get a path for sphinx-build
 if(WIN32)
