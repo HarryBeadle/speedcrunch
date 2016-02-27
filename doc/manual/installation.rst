@@ -6,9 +6,9 @@ Microsoft Windows
 
 SpeedCrunch for Windows requires Windows Vista or newer (32-bit and 64-bit versions).
 You can use choose either to use either the installer or the portable
-version of SpeedCrunch. Both of these are available from `the SpeedCrunch website`_.
+version of SpeedCrunch. Both of these are available from `the SpeedCrunch website <sc_>`_.
 
-.. _the SpeedCrunch website: http://speedcrunch.org
+.. _sc: http://speedcrunch.org
 
 The installer installs SpeedCrunch on your system and creates an entry in the menu
 to launch it. This process requires administrator rights.
@@ -44,10 +44,10 @@ from the Ubuntu Software Centre or using the command line::
     sudo apt-get install speedcrunch
 
 If you wish to use bleeding-edge development versions of SpeedCrunch on Ubuntu, you can install
-these from the `SpeedCrunch Daily PPA`_. This PPA contains SpeedCrunch packages that
+these from the `SpeedCrunch Daily PPA <ppa_>`_. This PPA contains SpeedCrunch packages that
 are regularly built from the SpeedCrunch development branch.
 
-.. _SpeedCrunch Daily PPA: https://code.launchpad.net/~fkrull/+archive/ubuntu/speedcrunch-daily
+.. _ppa: https://code.launchpad.net/~fkrull/+archive/ubuntu/speedcrunch-daily
 
 .. warning::
 
@@ -76,22 +76,22 @@ The following software is required to compile SpeedCrunch from source:
 
  * a supported C++ compiler, for example:
 
-   - `GCC`_, version 4.8 or later
-   - `Microsoft Visual C++`_ 2013 or later
+   - `GCC <gcc_>`_, version 4.8 or later
+   - `Microsoft Visual C++ <msvc_>`_ 2013 or later
 
- * `Qt`_, version 5.2 or later, and a compatible C++ compiler
- * `CMake`_, version 2.8.12 or later
- * `Python`_, either version 2.7 or version 3.4 or later
- * `Sphinx`_, version 1.3 or later
- * the `Quark Sphinx theme`_
+ * `Qt <qt_>`_, version 5.2 or later, and a compatible C++ compiler
+ * `CMake <cmake_>`_, version 2.8.12 or later
+ * `Python <py_>`_, either version 2.7 or version 3.4 or later
+ * `Sphinx <sphinx_>`_, version 1.3 or later
+ * the `Quark Sphinx theme <quark_>`_, version 0.2 or later
 
-.. _GCC: https://gcc.gnu.org
-.. _Microsoft Visual C++: http://visualstudio.com
-.. _Qt: http://qt.io
-.. _CMake: http://cmake.org
-.. _Python: http://python.org
-.. _Sphinx: http://sphinx-doc.org
-.. _Quark Sphinx theme: https://pypi.python.org/pypi/quark-sphinx-theme
+.. _gcc: https://gcc.gnu.org
+.. _msvc: http://visualstudio.com
+.. _qt: http://qt.io
+.. _cmake: http://cmake.org
+.. _py: http://python.org
+.. _sphinx: http://sphinx-doc.org
+.. _quark: https://pypi.python.org/pypi/quark-sphinx-theme
 
 
 On Ubuntu or Debian, the following set of commands will install these dependencies::
@@ -101,12 +101,12 @@ On Ubuntu or Debian, the following set of commands will install these dependenci
     sudo pip3 install sphinx>=1.3 quark-sphinx-theme
 
 
-.. warning::
+.. warning
    
-   Using Pygments [#f1]_ version 2.1.1 or newer will generate markup that Qt 5.2 doesn't
-   handle properly, which will break the layout of code blocks in the built-in manual.
-   For that reason, it is recommended to stick to Pygments 2.1.0 if you're using Qt 5.2.
-   This can be accomplished with the following pip command: ``pip install pygments<=2.1``.
+..   Using Pygments [#f1]_ version 2.1.1 or newer will generate markup that Qt 5.2 doesn't
+..   handle properly, which will break the layout of code blocks in the built-in manual.
+..   For that reason, it is recommended to stick to Pygments 2.1.0 if you're using Qt 5.2.
+..   This can be accomplished with the following pip command: ``pip install pygments<=2.1``.
 
 
 Building
@@ -188,28 +188,28 @@ Creating Windows Installers
 
 On Windows, an installer can be generated after building by running ``make package``
 from the build directory. This will create a fully self-contained installer program.
-For this to work, `NSIS`_ needs to be installed.
+For this to work, `NSIS <nsis_>`_ needs to be installed.
 
-.. _NSIS: http://nsis.sourceforge.net
+.. _nsis: http://nsis.sourceforge.net
 
 
 Using Qt Creator
 ++++++++++++++++
 
-To build SpeedCrunch with `Qt Creator`_, simply open :file:`src/CMakeLists.txt` in the
+To build SpeedCrunch with `Qt Creator <qtc_>`_, simply open :file:`src/CMakeLists.txt` in the
 IDE. Configuration variables can be specified in the :guilabel:`Run CMake` dialog,
 using the ``-D<VAR>=<VALUE>`` syntax. Since Qt Creator handles the Qt setup for you,
 you don't have to point the build system at a Qt installation and compiler; simply select
 the desired toolchain and Qt version in Qt Creator.
 
-.. _Qt Creator: http://qt.io/ide
+.. _qtc: http://qt.io/ide
 
 
 
 .. rubric:: Footnotes
 
-.. [#f1] `Pygments`_ is the library used by Sphinx to generate syntax-highlighted code blocks.
+.. [#f1] `Pygments <pygments_>`_ is the library used by Sphinx to generate syntax-highlighted code blocks.
 .. [#f2] For example, on Windows this is often a path like ``C:/Qt/<Qt version>/<compiler>``, depending
          on where you installed Qt.
 
-.. _Pygments: http://pygments.org
+.. _pygments: http://pygments.org

@@ -14,9 +14,9 @@ following formula: ``-1 ^ sign * 2 ^ (exponent - bias) * 1.significand``.  The s
 multiple binary formats of different sizes that all follow these rules, but differ in
 the number of bits allocated for the exponent and significand. The bias for the default
 formats is defined as ``bias = (2 ^ (exponent_bits - 1)) - 1``.
-See `this article`_ for a more detailed introduction into the subject.
+See `this article <float_article_>`_ for a more detailed introduction into the subject.
 
-.. _this article: http://chrishecker.com/images/f/fb/Gdmfp.pdf
+.. _float_article: http://chrishecker.com/images/f/fb/Gdmfp.pdf
 
 The following binary float formats are defined by the standard:
 
