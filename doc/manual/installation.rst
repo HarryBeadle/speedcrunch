@@ -98,15 +98,7 @@ On Ubuntu or Debian, the following set of commands will install these dependenci
 
     sudo apt-get install  build-essential cmake python3 python3-pip \
         qtbase5-dev qttools5-dev qttools5-dev-tools
-    sudo pip3 install sphinx>=1.3 quark-sphinx-theme
-
-
-.. warning
-   
-..   Using Pygments [#f1]_ version 2.1.1 or newer will generate markup that Qt 5.2 doesn't
-..   handle properly, which will break the layout of code blocks in the built-in manual.
-..   For that reason, it is recommended to stick to Pygments 2.1.0 if you're using Qt 5.2.
-..   This can be accomplished with the following pip command: ``pip install pygments<=2.1``.
+    sudo pip3 install sphinx>=1.3 quark-sphinx-theme>=0.2
 
 
 Building
@@ -128,7 +120,7 @@ to invoke may be different depending on the compiler; for MSVC, it is ``nmake``.
 When building against a Qt version that is not the system default Qt installation,
 it will be necessary to point CMake towards the
 Qt installation to use. This can be achieved by setting the ``CMAKE_PREFIX_PATH``
-environment variable to the root directory of the Qt installation you want to use. [#f2]_
+environment variable to the root directory of the Qt installation you want to use. [#f1]_
 
 The SpeedCrunch build supports several additional configuration variables. These can
 either be set when invoking CMake using the form ``cmake -D<VAR>=<VALUE>`` or interactively
@@ -208,8 +200,5 @@ the desired toolchain and Qt version in Qt Creator.
 
 .. rubric:: Footnotes
 
-.. [#f1] `Pygments <pygments_>`_ is the library used by Sphinx to generate syntax-highlighted code blocks.
-.. [#f2] For example, on Windows this is often a path like ``C:/Qt/<Qt version>/<compiler>``, depending
+.. [#f1] For example, on Windows this is often a path like ``C:/Qt/<Qt version>/<compiler>``, depending
          on where you installed Qt.
-
-.. _pygments: http://pygments.org
