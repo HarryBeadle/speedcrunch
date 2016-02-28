@@ -1603,8 +1603,8 @@ void MainWindow::exportHtml()
 
 void MainWindow::exportPlainText()
 {
-    QString fname = QFileDialog::getSaveFileName(this, tr("Export session as plain text"),
-        documentsLocation());
+    QString fname = QFileDialog::getSaveFileName(this, tr("Export session as plain text"),                                                 
+                            documentsLocation(), tr("Text file (*.txt);;Any file (*.*)"));
 
     if (fname.isEmpty())
         return;
