@@ -1610,7 +1610,7 @@ inline static QString documentsLocation()
 void MainWindow::exportHtml()
 {
     QString fname = QFileDialog::getSaveFileName(this, tr("Export session as HTML"),
-        documentsLocation());
+        documentsLocation(), tr("HTML file (*.html)"));
 
     if (fname.isEmpty())
         return;
@@ -1623,15 +1623,15 @@ void MainWindow::exportHtml()
 
     QTextStream stream(& file);
     stream.setCodec("UTF-8");
-    stream << m_widgets.display->document()->toHtml("utf-8");
+    stream << m_widgets.display->exportHtml();
 
     file.close();
 }
 
 void MainWindow::exportPlainText()
 {
-    QString fname = QFileDialog::getSaveFileName(this, tr("Export session as plain text"),
-        documentsLocation());
+    QString fname = QFileDialog::getSaveFileName(this, tr("Export session as plain text"),                                                 
+                            documentsLocation(), tr("Text file (*.txt);;Any file (*.*)"));
 
     if (fname.isEmpty())
         return;
