@@ -125,6 +125,7 @@ void MainWindow::createActions()
     m_actions.viewFullScreenMode = new QAction(this);
     m_actions.viewFunctions = new QAction(this);
     m_actions.viewHistory = new QAction(this);
+    m_actions.viewKeypad = new QAction(this);
     m_actions.viewFormulaBook = new QAction(this);
     m_actions.viewStatusBar = new QAction(this);
     m_actions.viewVariables = new QAction(this);
@@ -218,6 +219,7 @@ void MainWindow::createActions()
     m_actions.viewFullScreenMode->setCheckable(true);
     m_actions.viewFunctions->setCheckable(true);
     m_actions.viewHistory->setCheckable(true);
+    m_actions.viewKeypad->setCheckable(true);
     m_actions.viewFormulaBook->setCheckable(true);
     m_actions.viewStatusBar->setCheckable(true);
     m_actions.viewVariables->setCheckable(true);
@@ -302,6 +304,7 @@ void MainWindow::setActionsText()
     m_actions.viewFullScreenMode->setText(MainWindow::tr("F&ull Screen Mode"));
     m_actions.viewFunctions->setText(MainWindow::tr("&Functions"));
     m_actions.viewHistory->setText(MainWindow::tr("&History"));
+    m_actions.viewKeypad->setText(MainWindow::tr("&Keypad"));
     m_actions.viewFormulaBook->setText(MainWindow::tr("Formula &Book"));
     m_actions.viewStatusBar->setText(MainWindow::tr("&Status Bar"));
     m_actions.viewVariables->setText(MainWindow::tr("&Variables"));
@@ -410,6 +413,7 @@ void MainWindow::createActionShortcuts()
     m_actions.viewFullScreenMode->setShortcut(Qt::Key_F11);
     m_actions.viewFunctions->setShortcut(Qt::CTRL + Qt::Key_3);
     m_actions.viewHistory->setShortcut(Qt::CTRL + Qt::Key_7);
+    m_actions.viewKeypad->setShortcut(Qt::CTRL + Qt::Key_K);
     m_actions.viewFormulaBook->setShortcut(Qt::CTRL + Qt::Key_1);
     m_actions.viewStatusBar->setShortcut(Qt::CTRL + Qt::Key_B);
     m_actions.viewVariables->setShortcut(Qt::CTRL + Qt::Key_4);
@@ -453,6 +457,8 @@ void MainWindow::createMenus()
 
     m_menus.view = new QMenu("", this);
     menuBar()->addMenu(m_menus.view);
+    m_menus.view->addAction(m_actions.viewKeypad);
+    m_menus.view->addSeparator();
     m_menus.view->addAction(m_actions.viewFormulaBook);
     m_menus.view->addAction(m_actions.viewConstants);
     m_menus.view->addAction(m_actions.viewFunctions);
@@ -634,6 +640,24 @@ void MainWindow::createBitField() {
     m_widgets.display->scrollToBottom();
     connect(m_widgets.bitField, SIGNAL(bitsChanged(const QString&)), SLOT(handleBitsChanged(const QString&)));
     m_settings->bitfieldVisible = true;
+}
+
+void MainWindow::createKeypad()
+{
+    m_widgets.keypad = new Keypad(m_widgets.root);
+    m_widgets.keypad->setFocusPolicy(Qt::NoFocus);
+
+    connect(m_widgets.keypad, SIGNAL(buttonPressed(Keypad::Button)), SLOT(handleKeypadButtonPress(Keypad::Button)));
+    connect(this, SIGNAL(radixCharacterChanged()), m_widgets.keypad, SLOT(handleRadixCharacterChange()));
+
+    m_layouts.keypad = new QHBoxLayout();
+    m_layouts.keypad->addStretch();
+    m_layouts.keypad->addWidget(m_widgets.keypad);
+    m_layouts.keypad->addStretch();
+    m_layouts.root->addLayout(m_layouts.keypad);
+
+    m_widgets.keypad->show();
+    m_settings->keypadVisible = true;
 }
 
 void MainWindow::createBookDock()
@@ -835,6 +859,7 @@ void MainWindow::createFixedConnections()
     connect(m_actions.viewFullScreenMode, SIGNAL(toggled(bool)), SLOT(setFullScreenEnabled(bool)));
     connect(m_actions.viewFunctions, SIGNAL(toggled(bool)), SLOT(setFunctionsDockVisible(bool)));
     connect(m_actions.viewHistory, SIGNAL(toggled(bool)), SLOT(setHistoryDockVisible(bool)));
+    connect(m_actions.viewKeypad, SIGNAL(toggled(bool)), SLOT(setKeypadVisible(bool)));
     connect(m_actions.viewFormulaBook, SIGNAL(toggled(bool)), SLOT(setFormulaBookDockVisible(bool)));
     connect(m_actions.viewStatusBar, SIGNAL(toggled(bool)), SLOT(setStatusBarVisible(bool)));
     connect(m_actions.viewVariables, SIGNAL(toggled(bool)), SLOT(setVariablesDockVisible(bool)));
@@ -979,6 +1004,8 @@ void MainWindow::applySettings()
         m_actions.settingsRadixCharDot->setChecked(true);
     else if (m_settings->radixCharacter() == ',')
         m_actions.settingsRadixCharComma->setChecked(true);
+
+    m_actions.viewKeypad->setChecked(m_settings->keypadVisible);
 
     if (m_settings->autoAns)
         m_actions.settingsBehaviorAutoAns->setChecked(true);
@@ -1148,7 +1175,7 @@ MainWindow::MainWindow()
 
     m_widgets.trayIcon = 0;
     m_widgets.manual = 0;
-
+    m_widgets.keypad  = 0;
     m_menus.trayIcon = 0;
 
     m_conditions.autoAns = false;
@@ -1613,7 +1640,7 @@ inline static QString documentsLocation()
 void MainWindow::exportHtml()
 {
     QString fname = QFileDialog::getSaveFileName(this, tr("Export session as HTML"),
-        documentsLocation());
+        documentsLocation(), tr("HTML file (*.html)"));
 
     if (fname.isEmpty())
         return;
@@ -1626,15 +1653,15 @@ void MainWindow::exportHtml()
 
     QTextStream stream(& file);
     stream.setCodec("UTF-8");
-    stream << m_widgets.display->document()->toHtml("utf-8");
+    stream << m_widgets.display->exportHtml();
 
     file.close();
 }
 
 void MainWindow::exportPlainText()
 {
-    QString fname = QFileDialog::getSaveFileName(this, tr("Export session as plain text"),
-        documentsLocation());
+    QString fname = QFileDialog::getSaveFileName(this, tr("Export session as plain text"),                                                 
+                            documentsLocation(), tr("Text file (*.txt);;Any file (*.*)"));
 
     if (fname.isEmpty())
         return;
@@ -1753,6 +1780,19 @@ bool MainWindow::eventFilter(QObject* o, QEvent* e)
     }
 
     return QMainWindow::eventFilter(o, e);
+}
+
+void MainWindow::deleteKeypad()
+{
+    disconnect(m_widgets.keypad);
+    m_widgets.keypad->deleteLater();
+    m_widgets.keypad = 0;
+
+    m_layouts.root->removeItem(m_layouts.keypad);
+    m_layouts.keypad->deleteLater();
+    m_layouts.keypad = 0;
+
+    m_settings->keypadVisible = false;
 }
 
 void MainWindow::deleteStatusBar()
@@ -1908,6 +1948,14 @@ void MainWindow::setUserFunctionsDockVisible(bool b)
         deleteUserFunctionsDock();
 }
 
+void MainWindow::setKeypadVisible(bool b)
+{
+    if (b)
+        createKeypad();
+    else
+        deleteKeypad();
+}
+
 void MainWindow::setResultFormatBinary()
 {
     m_actionGroups.digits->setDisabled(true);
@@ -2012,6 +2060,56 @@ void MainWindow::insertFunctionIntoEditor(const QString& f)
     QTextCursor cursor = m_widgets.editor->textCursor();
     cursor.movePosition(QTextCursor::PreviousCharacter);
     m_widgets.editor->setTextCursor(cursor);
+}
+
+void MainWindow::handleKeypadButtonPress(Keypad::Button b)
+{
+    switch (b) {
+    case Keypad::Key0: insertTextIntoEditor("0"); break;
+    case Keypad::Key1: insertTextIntoEditor("1"); break;
+    case Keypad::Key2: insertTextIntoEditor("2"); break;
+    case Keypad::Key3: insertTextIntoEditor("3"); break;
+    case Keypad::Key4: insertTextIntoEditor("4"); break;
+    case Keypad::Key5: insertTextIntoEditor("5"); break;
+    case Keypad::Key6: insertTextIntoEditor("6"); break;
+    case Keypad::Key7: insertTextIntoEditor("7"); break;
+    case Keypad::Key8: insertTextIntoEditor("8"); break;
+    case Keypad::Key9: insertTextIntoEditor("9"); break;
+
+    case Keypad::KeyPlus: insertTextIntoEditor("+"); break;
+    case Keypad::KeyMinus: insertTextIntoEditor("-"); break;
+    case Keypad::KeyTimes: insertTextIntoEditor("*"); break;
+    case Keypad::KeyDivide: insertTextIntoEditor("/"); break;
+
+    case Keypad::KeyEE: insertTextIntoEditor("e"); break;
+    case Keypad::KeyLeftPar: insertTextIntoEditor("("); break;
+    case Keypad::KeyRightPar: insertTextIntoEditor(")"); break;
+    case Keypad::KeyRaise: insertTextIntoEditor("^"); break;
+    case Keypad::KeyPercent: insertTextIntoEditor("%"); break;
+    case Keypad::KeyFactorial: insertTextIntoEditor("!"); break;
+
+    case Keypad::KeyX: insertTextIntoEditor("x"); break;
+    case Keypad::KeyXEquals: insertTextIntoEditor("x="); break;
+    case Keypad::KeyPi: insertTextIntoEditor("pi"); break;
+    case Keypad::KeyAns: insertTextIntoEditor("ans"); break;
+
+    case Keypad::KeySqrt: insertTextIntoEditor("sqrt("); break;
+    case Keypad::KeyLn: insertTextIntoEditor("ln("); break;
+    case Keypad::KeyExp:insertTextIntoEditor("exp("); break;
+    case Keypad::KeySin: insertTextIntoEditor("sin("); break;
+    case Keypad::KeyCos: insertTextIntoEditor("cos("); break;
+    case Keypad::KeyTan: insertTextIntoEditor("tan("); break;
+    case Keypad::KeyAcos: insertTextIntoEditor("arccos("); break;
+    case Keypad::KeyAtan: insertTextIntoEditor("arctan("); break;
+    case Keypad::KeyAsin: insertTextIntoEditor("arcsin("); break;
+
+    case Keypad::KeyRadixChar: insertTextIntoEditor(QString(m_settings->radixCharacter())); break;
+
+    case Keypad::KeyClear: clearEditor(); break;
+    case Keypad::KeyEquals: evaluateEditorExpression(); break;
+
+    default: break;
+    }
 }
 
 void MainWindow::minimizeToSystemTray()

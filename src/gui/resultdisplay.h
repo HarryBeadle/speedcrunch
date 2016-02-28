@@ -38,6 +38,7 @@ public:
     void appendHistory(const QStringList& expressions, const QStringList& results);
     int count() const;
     bool isEmpty() const { return m_count==0; }
+    QString exportHtml() const;
 
 signals:
     void shiftWheelDown();

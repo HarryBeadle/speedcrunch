@@ -66,6 +66,13 @@ int ResultDisplay::count() const
     return m_count;
 }
 
+QString ResultDisplay::exportHtml() const
+{
+    QString str;
+    m_highlighter->asHtml(str);
+    return str;
+}
+
 void ResultDisplay::rehighlight()
 {
     m_highlighter->update();
