@@ -1583,7 +1583,7 @@ inline static QString documentsLocation()
 void MainWindow::exportHtml()
 {
     QString fname = QFileDialog::getSaveFileName(this, tr("Export session as HTML"),
-        documentsLocation());
+        documentsLocation(), tr("HTML file (*.html)"));
 
     if (fname.isEmpty())
         return;

@@ -386,6 +386,8 @@ void SyntaxHighlighter::groupDigits(const QString& text, int pos, int length)
     }
 }
 
+// Code snippet from StackOverflow
+// See http://stackoverflow.com/questions/15280452/how-can-i-get-highlighted-text-from-a-qsyntaxhighlighter-into-an-html-string
 void SyntaxHighlighter::asHtml(QString& html)
 {
     // Create a new document from all the selected text document.
@@ -408,13 +410,13 @@ void SyntaxHighlighter::asHtml(QString& html)
     end = end.next();
     const int selectionStart = cursor.selectionStart();
     const int endOfDocument = tempDocument->characterCount() - 1;
-    for(QTextBlock current = start; current.isValid() and current not_eq end; current = current.next()) {
+    for(QTextBlock current = start; current.isValid() && current != end; current = current.next()) {
         const QTextLayout* layout(current.layout());
 
         foreach(const QTextLayout::FormatRange &range, layout->additionalFormats()) {
             const int start = current.position() + range.start - selectionStart;
             const int end = start + range.length;
-            if(end <= 0 or start >= endOfDocument)
+            if(end <= 0 || start >= endOfDocument)
                 continue;
             tempCursor.setPosition(qMax(start, 0));
             tempCursor.setPosition(qMin(end, endOfDocument), QTextCursor::KeepAnchor);
