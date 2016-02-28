@@ -386,8 +386,12 @@ void SyntaxHighlighter::groupDigits(const QString& text, int pos, int length)
     }
 }
 
-// Code snippet from StackOverflow
-// See http://stackoverflow.com/questions/15280452/how-can-i-get-highlighted-text-from-a-qsyntaxhighlighter-into-an-html-string
+/*
+ * Original code snippet from StackOverflow
+ * http://stackoverflow.com/questions/15280452/how-can-i-get-highlighted-text-from-a-qsyntaxhighlighter-into-an-html-string
+ *
+ * Copyright (c) 2013 Larswad
+ */
 void SyntaxHighlighter::asHtml(QString& html)
 {
     // Create a new document from all the selected text document.
