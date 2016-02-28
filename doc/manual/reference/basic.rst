@@ -271,7 +271,7 @@ Special
         
 .. function:: gamma(x)
 
-    Evaluates the gamma function (frequently denoted by the Greek letter `Γ`). The gamma function is an analytic extension to the factorial operation, defined on real numbers as well. The relation between factorial and gamma function is given by `Γ(n) = (n-1)!`.
+    Evaluates the gamma function (frequently denoted by the Greek letter Γ). The gamma function is an analytic extension to the factorial operation, defined on real numbers as well. The relation between factorial and gamma function is given by Γ(n) = (n - 1)!.
     
     Note that currently only real arguments are allowed. Furthermore, the function only accepts dimensionless arguments.
     
@@ -288,7 +288,7 @@ Various
 
 .. function:: sgn(x)
     
-    Depending on the sign of `x`, returns +1 (if `x`>=0) or -1 (if `x`<0).
+    Depending on the sign of `x`, returns +1 (if `x` >= 0) or -1 (if `x` < 0).
     
 .. function:: radians(x)
 

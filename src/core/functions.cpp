@@ -239,8 +239,8 @@ CNumber function_sqrt(Function* f, const Function::ArgumentList& args)
 
 CNumber function_variance(Function* f, const Function::ArgumentList& args)
 {
-  /* TODO : complex mode switch for this function */
-  ENSURE_POSITIVE_ARGUMENT_COUNT();
+    /* TODO : complex mode switch for this function */
+    ENSURE_POSITIVE_ARGUMENT_COUNT();
 
     CNumber mean = function_average(f, args);
     if (mean.isNan())

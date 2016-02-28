@@ -185,6 +185,6 @@ Integer division
      
         lcm(n1; n2) = n1*n2/gcd(n1; n2)
 
-    Only real, integer arguments are allowed.
+    Only real, integer arguments are allowed by :func:`gcd`.
                 
                 
