@@ -440,7 +440,7 @@ void SyntaxHighlighter::asHtml(QString& html)
     tempCursor.setBlockFormat(blockFormat);
 
     // Finally retreive the syntax higlighted and formatted html.
-    html = tempCursor.selection().toHtml();
+    html = tempCursor.selection().toHtml("UTF-8");
     delete tempDocument;
 
     // Inject CSS, so to avoid a white margin
