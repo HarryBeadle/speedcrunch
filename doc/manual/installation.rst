@@ -79,7 +79,7 @@ The following software is required to compile SpeedCrunch from source:
    - `GCC <gcc_>`_, version 4.8 or later
    - `Microsoft Visual C++ <msvc_>`_ 2013 or later
 
- * `Qt <qt_>`_, version 5.2 or later, and a compatible C++ compiler
+ * `Qt <qt_>`_, version 5.2 or later
  * `CMake <cmake_>`_, version 2.8.12 or later
  * `Python <py_>`_, either version 2.7 or version 3.4 or later
  * `Sphinx <sphinx_>`_, version 1.3 or later
