@@ -41,6 +41,9 @@ extensions = ['qtkeyword', 'speedcrunch_domain', 'sc_post_config']
 ignore_qtkeywords = not bundled
 primary_domain = 'sc'
 
+if bundled:
+    extensions.append('quark_sphinx_theme.ext.html_compat')
+
 # Add any paths that contain templates here, relative to this directory.
 #templates_path = []
 
