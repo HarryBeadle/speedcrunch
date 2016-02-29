@@ -1,6 +1,7 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2007 Ariya Hidayat <ariya@kde.org>
 // Copyright (C) 2007-2009, 2013, 2014 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (c) 2013 Larswad
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -386,12 +387,9 @@ void SyntaxHighlighter::groupDigits(const QString& text, int pos, int length)
     }
 }
 
-/*
- * Original code snippet from StackOverflow
- * http://stackoverflow.com/questions/15280452/how-can-i-get-highlighted-text-from-a-qsyntaxhighlighter-into-an-html-string
- *
- * Copyright (c) 2013 Larswad
- */
+
+// Original code snippet from StackOverflow.
+// http://stackoverflow.com/questions/15280452/how-can-i-get-highlighted-text-from-a-qsyntaxhighlighter-into-an-html-string
 void SyntaxHighlighter::asHtml(QString& html)
 {
     // Create a new document from all the selected text document.
