@@ -1073,15 +1073,14 @@ void MainWindow::showManualWindow()
     connect(m_widgets.manual, SIGNAL(windowClosed()), SLOT(handleManualClosed()));
 }
 
-void MainWindow::showContextHelp() {
+void MainWindow::showContextHelp()
+{
     QString kw = "";
-    if(m_widgets.editor->hasFocus())
-    {
+    if(m_widgets.editor->hasFocus()) {
         kw = m_widgets.editor->getKeyword();
-        if(kw != "") {
+        if (kw != "") {
             QUrl tg;
-            if(m_manualServer->URLforKeyword(kw, tg))
-            {
+            if (m_manualServer->URLforKeyword(kw, tg)) {
                 showManualWindow();
                 m_widgets.manual->openPage(tg);
             }

@@ -122,13 +122,10 @@ void ManualWindow::closeEvent(QCloseEvent* event)
 
 void ManualWindow::handleAnchorClick(const QUrl &url)
 {
-    if (url.toString().startsWith("qthelp:")) {
+    if (url.toString().startsWith("qthelp:"))
         openPage(url);
-    }
     else
-    {
         QDesktopServices::openUrl(url);
-    }
 }
 
 QVariant ManualWindow::loadResource(int type, const QUrl &name)
