@@ -103,7 +103,7 @@ The following software is required to compile SpeedCrunch from source:
 
 On Ubuntu or Debian, the following set of commands will install these dependencies::
 
-    sudo apt-get install  build-essential cmake python3 python3-pip \
+    sudo apt-get install build-essential cmake python3 python3-pip \
         qtbase5-dev qttools5-dev qttools5-dev-tools
     sudo pip3 install sphinx>=1.3 quark-sphinx-theme>=0.2
 
