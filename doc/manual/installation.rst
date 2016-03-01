@@ -31,7 +31,7 @@ Linux
 -----
 
 Since the large number and variety of Linux distributions makes it impossible to
-consider all of them here, this section only describes the SpeedCrunch installation
+consider all of them here, this section only describes the installation
 process for the most popular ones. If you use another distribution, we expect that
 you will know better than us how to get software for your system.
 
@@ -43,23 +43,30 @@ from the Ubuntu Software Centre or using the command line::
 
     sudo apt-get install speedcrunch
 
-If you wish to use bleeding-edge development versions of SpeedCrunch on Ubuntu, you can install
-these from the `SpeedCrunch Daily PPA <ppa_>`_. This PPA contains SpeedCrunch packages that
-are regularly built from the SpeedCrunch development branch.
 
-.. _ppa: https://code.launchpad.net/~fkrull/+archive/ubuntu/speedcrunch-daily
+Development Builds
+------------------
 
 .. warning::
 
    Development builds of SpeedCrunch may not be as stable or well-tested as release version
    and may contain changes that break your session history. Use them at your own risk.
 
+Pre-built development versions of SpeedCrunch are available allow you to use newer features
+and bugfixes before they become available in a release, without having to build SpeedCrunch
+from the development source yourself. Currently, regularly updated
+development builds of SpeedCrunch are available for the following platforms:
+
+* `Windows <dev-win_>`_
+* `Ubuntu <dev-ubuntu_>`_ (14.04 and later)
+
+.. _dev-win: https://github.com/Tey/speedcrunch-nightlies/tree/master/win32
+.. _dev-ubuntu: https://code.launchpad.net/~fkrull/+archive/ubuntu/speedcrunch-daily
+
+
 
 Building from Source
 --------------------
-
-.. Dependencies
-.. ++++++++++++
 
 The SpeedCrunch source code is maintained on `Bitbucket`_ in a Git repository. Clone
 the repository onto your machine by running the following command::
