@@ -43,7 +43,7 @@
 static const char* DefaultColorScheme = "Terminal";
 
 
-QString getDataPath()
+QString Settings::getDataPath()
 {
 #ifdef SPEEDCRUNCH_PORTABLE
     return QApplication::applicationDirPath();
@@ -70,6 +70,15 @@ QString getDataPath()
     // Any non-Windows with Qt < 5.4. Since DataLocation and AppDataLocation are
     // equivalent outside of Windows, that should be fine.
     return QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+#endif
+}
+
+QString Settings::getCachePath()
+{
+#ifdef SPEEDCRUNCH_PORTABLE
+    return QApplication::applicationDirPath();
+#else
+    return QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
 #endif
 }
 
@@ -168,6 +177,7 @@ void Settings::load()
 
     windowState = settings->value(key + QLatin1String("State")).toByteArray();
     windowGeometry = settings->value(key + QLatin1String("WindowGeometry")).toByteArray();
+    manualWindowGeometry = settings->value(key + QLatin1String("ManualWindowGeometry")).toByteArray();
 
     key = KEY + QLatin1String("/Display/");
     displayFont = settings->value(key + QLatin1String("DisplayFont"), QFont().toString()).toString();
@@ -227,6 +237,7 @@ void Settings::save()
     settings->setValue(key + QLatin1String("WindowAlwaysOnTop"), windowAlwaysOnTop);
     settings->setValue(key + QLatin1String("State"), windowState);
     settings->setValue(key + QLatin1String("WindowGeometry"), windowGeometry);
+    settings->setValue(key + QLatin1String("ManualWindowGeometry"), manualWindowGeometry);
     settings->setValue(key + QLatin1String("BitfieldVisible"), bitfieldVisible);
 
     key = KEY + QLatin1String("/Display/");

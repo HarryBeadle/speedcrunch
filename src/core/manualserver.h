@@ -1,5 +1,5 @@
 // This file is part of the SpeedCrunch project
-// Copyright (C) 2014 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (C) 2016 Pol Welter <polwelter@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -16,20 +16,43 @@
 // the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 // Boston, MA 02110-1301, USA.
 
-#ifndef CORE_MANUAL_H
-#define CORE_MANUAL_H
+#ifndef CORE_MANUALSERVER_H
+#define CORE_MANUALSERVER_H
 
-#include "core/pageserver.h"
+#include <QObject>
+#include <QMap>
 
-class Manual : public PageServer {
+class QHelpEngineCore;
+
+class QCloseEvent;
+class QUrl;
+class QString;
+class QByteArray;
+
+class ManualServer : public QObject {
     Q_OBJECT
 
+private:
+    QString deployDocs();
+    void setupHelpEngine();
+
 public:
-    explicit Manual(QObject* parent = 0) : PageServer(parent) { createPages(); }
-    virtual void createPages();
+    static ManualServer* instance();
+    bool URLforKeyword(const QString id, QUrl &result);
+    QByteArray fileData(const QUrl &url);
+
+public slots:
+    void ensureCorrectLanguage();
 
 private:
-    Q_DISABLE_COPY(Manual)
+    ManualServer();
+    Q_DISABLE_COPY(ManualServer)
+
+    void languageChanged();
+
+    QHelpEngineCore *m_helpEngine;
+    static ManualServer* s_instance;
+    QString m_deployedLanguage;
 };
 
-#endif // CORE_MANUAL_H
+#endif // CORE_MANUALSERVER_H

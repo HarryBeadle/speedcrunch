@@ -27,11 +27,11 @@
 #include <QtCore/QStringList>
 #include <QtCore/QList>
 
-QString getDataPath();
-
 class Settings {
 public:
     static Settings* instance();
+    static QString getDataPath();
+    static QString getCachePath();
 
     void load();
     void save();
@@ -77,13 +77,9 @@ public:
 
     QString language;
 
-    //QStringList history;
-    //QStringList historyResults;
-    //QStringList variables;
-    //QList<QStringList> userFunctions;
-
     QByteArray windowState;
     QByteArray windowGeometry;
+    QByteArray manualWindowGeometry;
 
 private:
     Settings();

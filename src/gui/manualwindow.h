@@ -1,5 +1,7 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2014 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (c) 2016 Pol Welter <polwelter@gmail.com
+// Copyright (c) 2016 Felix Krull <f_krull@gmx.de>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -19,19 +21,19 @@
 #ifndef GUI_MANUALWINDOW_H
 #define GUI_MANUALWINDOW_H
 
-#include "core/manual.h"
-
 #include <QTextBrowser>
 
 class QCloseEvent;
 class QEvent;
 class QUrl;
+class ManualServer;
 
 class ManualWindow : public QTextBrowser {
     Q_OBJECT
 
 public:
     ManualWindow(QWidget* parent = 0);
+    void showHelpForKeyword(const QString &id);
 
 signals:
     void windowClosed();
@@ -42,11 +44,17 @@ public slots:
 
 protected:
     virtual void changeEvent(QEvent*);
+    virtual void keyPressEvent(QKeyEvent * ev);
+    virtual void mouseReleaseEvent(QMouseEvent* ev);
 	virtual void closeEvent(QCloseEvent*);
+private slots:
+    void handleAnchorClick(const QUrl&url);
 
 private:
     Q_DISABLE_COPY(ManualWindow)
-    Manual* m_manual;
+
+    QVariant loadResource(int type, const QUrl &name);
+    ManualServer *m_server;
 };
 
 #endif // GUI_MANUALWINDOW_H
