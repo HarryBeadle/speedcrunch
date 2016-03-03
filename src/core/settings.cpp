@@ -1,7 +1,7 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2004, 2005, 2007, 2008 Ariya Hidayat <ariya@kde.org>
 // Copyright (C) 2005-2006 Johan Thelin <e8johan@gmail.com>
-// Copyright (C) 2007-2009 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (C) 2007-2016 Helder Correia <helder.pereira.correia@gmail.com>
 // Copyright (C) 2015 Pol Welter <polwelter@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -165,6 +165,7 @@ void Settings::load()
     key = KEY + QLatin1String("/Layout/");
     windowOnfullScreen = settings->value(key + QLatin1String("WindowOnFullScreen"), false).toBool();
     historyDockVisible = settings->value(key + QLatin1String("HistoryDockVisible"), false).toBool();
+    keypadVisible = settings->value(key + QLatin1String("KeypadVisible"), false).toBool();
     statusBarVisible = settings->value(key + QLatin1String("StatusBarVisible"), false).toBool();
     functionsDockVisible = settings->value(key + QLatin1String("FunctionsDockVisible"), false).toBool();
     variablesDockVisible = settings->value(key + QLatin1String("VariablesDockVisible"), false).toBool();
@@ -229,6 +230,7 @@ void Settings::save()
     settings->setValue(key + QLatin1String("FunctionsDockVisible"), functionsDockVisible);
     settings->setValue(key + QLatin1String("HistoryDockVisible"), historyDockVisible);
     settings->setValue(key + QLatin1String("WindowOnFullScreen"), windowOnfullScreen);
+    settings->setValue(key + QLatin1String("KeypadVisible"), keypadVisible);
     settings->setValue(key + QLatin1String("StatusBarVisible"), statusBarVisible);
     settings->setValue(key + QLatin1String("VariablesDockVisible"), variablesDockVisible);
     settings->setValue(key + QLatin1String("UserFunctionsDockVisible"), userFunctionsDockVisible);

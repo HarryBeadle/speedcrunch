@@ -27,6 +27,7 @@ gui/functionsdock.h
 gui/functionswidget.h
 gui/historydock.h
 gui/historywidget.h
+gui/keypad.h
 gui/mainwindow.h
 gui/manualwindow.h
 gui/resultdisplay.h
@@ -85,6 +86,7 @@ gui/functionsdock.cpp
 gui/functionswidget.cpp
 gui/historydock.cpp
 gui/historywidget.cpp
+gui/keypad.cpp
 gui/mainwindow.cpp
 gui/manualwindow.cpp
 gui/resultdisplay.cpp

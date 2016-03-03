@@ -66,6 +66,7 @@ public:
 
     void update();
     virtual void highlightBlock(const QString&);
+    void asHtml(QString& html);
 
 private:
     Q_DISABLE_COPY(SyntaxHighlighter)

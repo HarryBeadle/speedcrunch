@@ -31,7 +31,7 @@ Linux
 -----
 
 Since the large number and variety of Linux distributions makes it impossible to
-consider all of them here, this section only describes the SpeedCrunch installation
+consider all of them here, this section only describes the installation
 process for the most popular ones. If you use another distribution, we expect that
 you will know better than us how to get software for your system.
 
@@ -43,23 +43,30 @@ from the Ubuntu Software Centre or using the command line::
 
     sudo apt-get install speedcrunch
 
-If you wish to use bleeding-edge development versions of SpeedCrunch on Ubuntu, you can install
-these from the `SpeedCrunch Daily PPA <ppa_>`_. This PPA contains SpeedCrunch packages that
-are regularly built from the SpeedCrunch development branch.
 
-.. _ppa: https://code.launchpad.net/~fkrull/+archive/ubuntu/speedcrunch-daily
+Development Builds
+------------------
 
 .. warning::
 
    Development builds of SpeedCrunch may not be as stable or well-tested as release version
    and may contain changes that break your session history. Use them at your own risk.
 
+Pre-built development versions of SpeedCrunch are available allow you to use newer features
+and bugfixes before they become available in a release, without having to build SpeedCrunch
+from the development source yourself. Currently, regularly updated
+development builds of SpeedCrunch are available for the following platforms:
+
+* `Windows <dev-win_>`_
+* `Ubuntu <dev-ubuntu_>`_ (14.04 and later)
+
+.. _dev-win: https://github.com/Tey/speedcrunch-nightlies/tree/master/win32
+.. _dev-ubuntu: https://code.launchpad.net/~fkrull/+archive/ubuntu/speedcrunch-daily
+
+
 
 Building from Source
 --------------------
-
-.. Dependencies
-.. ++++++++++++
 
 The SpeedCrunch source code is maintained on `Bitbucket`_ in a Git repository. Clone
 the repository onto your machine by running the following command::
@@ -79,7 +86,7 @@ The following software is required to compile SpeedCrunch from source:
    - `GCC <gcc_>`_, version 4.8 or later
    - `Microsoft Visual C++ <msvc_>`_ 2013 or later
 
- * `Qt <qt_>`_, version 5.2 or later, and a compatible C++ compiler
+ * `Qt <qt_>`_, version 5.2 or later
  * `CMake <cmake_>`_, version 2.8.12 or later
  * `Python <py_>`_, either version 2.7 or version 3.4 or later
  * `Sphinx <sphinx_>`_, version 1.3 or later
@@ -96,7 +103,7 @@ The following software is required to compile SpeedCrunch from source:
 
 On Ubuntu or Debian, the following set of commands will install these dependencies::
 
-    sudo apt-get install  build-essential cmake python3 python3-pip \
+    sudo apt-get install build-essential cmake python3 python3-pip \
         qtbase5-dev qttools5-dev qttools5-dev-tools
     sudo pip3 install sphinx>=1.3 quark-sphinx-theme>=0.2
 

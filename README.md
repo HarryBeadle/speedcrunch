@@ -4,6 +4,19 @@ SpeedCrunch is a high-precision scientific calculator. It features a syntax-high
 ![capture.png](https://bitbucket.org/repo/dR7BnG/images/3654665019-capture.png)
 
 ## Building
+To build SpeedCrunch, you need:
+
+- Qt 5.2 or later
+- Python 2.7 or 3.4 or later
+- [Sphinx](http://sphinx-doc.org) 1.3 or later
+- [the Quark theme](https://pypi.python.org/pypi/quark-sphinx-theme) 0.2 or later
+- optionally: CMake 2.8.12 or later
+
+It is recommended to install Python and pip from [the Python website](http://python.org)
+or the package manager of your choice, then run:
+
+    pip install sphinx>=1.3 quark-sphinx-theme>=0.2
+
 To build from source, use either CMake or QMake to build the project:
 
     cd src && cmake . && make
@@ -17,11 +30,13 @@ the executable for portability (e.g. running from a USB drive or a directory
 without requiring installation and special permissions), configure the project
 as below:
 
-    cmake -DCMAKE_CXX_FLAGS:STRING="-DSPEEDCRUNCH_PORTABLE"
+    cmake . -DPORTABLE_SPEEDCRUNCH=on
 
 or
 
     qmake "DEFINES+=SPEEDCRUNCH_PORTABLE" speedcrunch.pro
+
+Consult the manual for more in-depth build instructions.
 
 ## Contributing
 - Report bugs or request features in the [issue tracker](https://bitbucket.org/heldercorreia/speedcrunch/issues).

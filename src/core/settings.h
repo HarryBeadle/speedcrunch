@@ -1,7 +1,7 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2004 Ariya Hidayat <ariya@kde.org>
 // Copyright (C) 2005-2006 Johan Thelin <e8johan@gmail.com>
-// Copyright (C) 2007-2013 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (C) 2007-2016 Helder Correia <helder.pereira.correia@gmail.com>
 // Copyright (C) 2015 Pol Welter <polwelter@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -64,6 +64,7 @@ public:
     bool constantsDockVisible;
     bool functionsDockVisible;
     bool historyDockVisible;
+    bool keypadVisible;
     bool formulaBookDockVisible;
     bool statusBarVisible;
     bool variablesDockVisible;
