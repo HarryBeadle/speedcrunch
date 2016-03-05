@@ -6,11 +6,17 @@ list(APPEND doc_depends
     conf.py
     doc-tool.py)
 
+set(py3_version 3.4)
+
 # find Python
-find_package(PythonInterp 3.4 QUIET)
+find_package(PythonInterp ${py3_version} QUIET)
 if(NOT ${PYTHONINTERP_FOUND})
     # try 2.7 as a fallback
-    find_package(PythonInterp 2.7 EXACT REQUIRED)
+    find_package(PythonInterp 2.7 REQUIRED)
+endif()
+
+if(${PYTHON_VERSION_STRING} VERSION_LESS 2.7 OR (${PYTHON_VERSION_STRING} VERSION_GREATER 3.0 AND ${PYTHON_VERSION_STRING} VERSION_LESS ${py3_version}))
+    message(SEND_ERROR "Need Python 2.7 or ${py3_version}+ (found: ${PYTHON_VERSION_STRING})")
 endif()
 
 # get a path for qcollectiongenerator
