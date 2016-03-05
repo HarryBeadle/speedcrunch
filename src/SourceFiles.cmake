@@ -7,7 +7,7 @@ core/book.h
 core/constants.h
 core/evaluator.h
 core/functions.h
-core/manual.h
+core/manualserver.h
 core/session.h
 core/errors.h
 core/numberformatter.h
@@ -27,6 +27,7 @@ gui/functionsdock.h
 gui/functionswidget.h
 gui/historydock.h
 gui/historywidget.h
+gui/keypad.h
 gui/mainwindow.h
 gui/manualwindow.h
 gui/resultdisplay.h
@@ -66,7 +67,7 @@ core/book.cpp
 core/constants.cpp
 core/evaluator.cpp
 core/functions.cpp
-core/manual.cpp
+core/manualserver.cpp
 core/numberformatter.cpp
 core/pageserver.cpp
 core/settings.cpp
@@ -85,6 +86,7 @@ gui/functionsdock.cpp
 gui/functionswidget.cpp
 gui/historydock.cpp
 gui/historywidget.cpp
+gui/keypad.cpp
 gui/mainwindow.cpp
 gui/manualwindow.cpp
 gui/resultdisplay.cpp

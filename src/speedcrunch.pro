@@ -25,7 +25,7 @@ win32:DEFINES += _USE_MATH_DEFINES
 
 TEMPLATE = app
 TARGET = speedcrunch
-QT += network
+QT += network help
 
 DEPENDPATH += . \
               core \
@@ -59,14 +59,46 @@ macx {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.5
 }
 
+
+# Doc build
+isEmpty(PYTHON_EXECUTABLE) {
+    win32:PYTHON_EXECUTABLE = py
+    else:PYTHON_EXECUTABLE = python
+}
+isEmpty(QCOLLECTIONGENERATOR_EXECUTABLE) {
+    QCOLLECTIONGENERATOR_EXECUTABLE = $$system($$QMAKE_QMAKE -query QT_HOST_BINS)/qcollectiongenerator
+}
+isEmpty(SPHINX_BUILD_EXECUTABLE) {
+    SPHINX_BUILD_EXECUTABLE = sphinx-build
+}
+
+message(PYTHON_EXECUTABLE = $$PYTHON_EXECUTABLE)
+message(QCOLLECTIONGENERATOR_EXECUTABLE = $$QCOLLECTIONGENERATOR_EXECUTABLE)
+message(SPHINX_BUILD_EXECUTABLE = $$SPHINX_BUILD_EXECUTABLE)
+
+manual.target = DUMMY_MANUAL_TARGET
+manual.commands = $$PYTHON_EXECUTABLE "$$PWD/../doc/manual/doc-tool.py" \
+        --qcollectiongenerator-binary="$$QCOLLECTIONGENERATOR_EXECUTABLE" \
+        --sphinx-build-binary="$$SPHINX_BUILD_EXECUTABLE" \
+        --source-dir="$$PWD/../doc/manual" \
+        build-bundled-docs --build-dir="$$OUT_PWD/doc"
+
+manual1.target = $$OUT_PWD/doc/manual.qrc
+manual1.depends = manual
+manual2.target = doc/manual.qrc
+manual2.depends = manual1
+
+QMAKE_EXTRA_TARGETS = manual manual1 manual2
+
+
 HEADERS += core/book.h \
            core/constants.h \
            core/evaluator.h \
            core/functions.h \
-           core/manual.h \
            core/session.h \
            core/errors.h \
            core/numberformatter.h \
+           core/manualserver.h\
            core/pageserver.h \
            core/settings.h \
            core/opcode.h \
@@ -84,6 +116,7 @@ HEADERS += core/book.h \
            gui/functionswidget.h \
            gui/historydock.h \
            gui/historywidget.h \
+           gui/keypad.h \
            gui/tipwidget.h \
            gui/variablesdock.h \
            gui/variablelistwidget.h \
@@ -120,8 +153,8 @@ SOURCES += main.cpp \
            core/constants.cpp \
            core/evaluator.cpp \
            core/functions.cpp \
-           core/manual.cpp \
            core/numberformatter.cpp \
+           core/manualserver.cpp\
            core/pageserver.cpp \
            core/settings.cpp \
            core/session.cpp \
@@ -140,6 +173,7 @@ SOURCES += main.cpp \
            gui/functionswidget.cpp \
            gui/historydock.cpp \
            gui/historywidget.cpp \
+           gui/keypad.cpp \
            gui/syntaxhighlighter.cpp \
            gui/tipwidget.cpp \
            gui/variablesdock.cpp \
@@ -172,7 +206,7 @@ SOURCES += main.cpp \
            math/rational.cpp \
            math/units.cpp
 
-RESOURCES += resources/speedcrunch.qrc
+RESOURCES += resources/speedcrunch.qrc $$OUT_PWD/doc/manual.qrc
 TRANSLATIONS += resources/locale/ar.ts \
                 resources/locale/ca_ES.ts \
                 resources/locale/cs_CZ.ts \

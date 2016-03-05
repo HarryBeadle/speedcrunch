@@ -60,6 +60,8 @@ public:
     void stopAutoCalc();
     void stopAutoComplete();
     QString text() const;
+    QStringList matchFragment(const QString & id) const;
+    QString getKeyword() const;
 
 signals:
     void autoCalcEnabled(const QString&);

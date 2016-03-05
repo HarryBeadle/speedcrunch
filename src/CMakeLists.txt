@@ -10,6 +10,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5Core)
 find_package(Qt5Widgets)
+find_package(Qt5Help)
 
 if(APPLE)
     set(PROGNAME SpeedCrunch)
@@ -46,8 +47,19 @@ else()
     add_definitions(-std=c++0x)
 endif()
 
-qt5_add_RESOURCES( speedcrunch_RESOURCES_SOURCES ${speedcrunch_RESOURCES} )
+option(BUILD_MANUAL "Build the embedded manual" TRUE)
+if(BUILD_MANUAL)
+    add_subdirectory(../doc/manual doc)
+    set_property(SOURCE ${CMAKE_CURRENT_BINARY_DIR}/doc/manual.qrc PROPERTY GENERATED true)
+    qt5_add_RESOURCES(speedcrunch_RESOURCES_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/doc/manual.qrc)
+endif()
+
+qt5_add_RESOURCES(speedcrunch_RESOURCES_SOURCES ${speedcrunch_RESOURCES})
 add_executable(${PROGNAME} WIN32 MACOSX_BUNDLE ${speedcrunch_SOURCES} ${speedcrunch_HEADERS_MOC} ${speedcrunch_RESOURCES_SOURCES} ${speedcrunch_FORMS_HEADERS} ${WIN32_RES_FILE})
+if(TARGET manual)
+    add_dependencies(${PROGNAME} manual)
+endif()
+
 
 if(APPLE)
     set( speedcrunch_RESOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources )
@@ -58,7 +70,7 @@ endif(APPLE)
 
 add_custom_target(confclean COMMAND rm -rf Makefile CMakeFiles/ CMakeCache.txt cmake_install.cmake DartTestfile.txt install_manifest.txt)
 
-set(QT_LIBRARIES Qt5::Widgets)
+set(QT_LIBRARIES Qt5::Widgets Qt5::Help)
 
 find_library(x11 X11)
 if(x11)
@@ -122,7 +134,7 @@ endif(NOT WIN32)
 
 if(WIN32)
     include(../pkg/QtWin32Deploy.cmake)
-    qtwin32_deploy_modules(${BINDIR} qtwin32_Qt5Widgets)
+    qtwin32_deploy_modules(${BINDIR} qtwin32_Qt5Widgets qtwin32_Qt5Help)
     qtwin32_deploy_default_qt_conf(${BINDIR})
     if(${qtwin32_QT_MINOR_VERSION} VERSION_LESS 5.5)
         # Qt 5.4 and below also require ICU.

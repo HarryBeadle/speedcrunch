@@ -1,5 +1,7 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2014 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (c) 2016 Pol Welter <polwelter@gmail.com
+// Copyright (c) 2016 Felix Krull <f_krull@gmx.de>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -17,44 +19,123 @@
 // Boston, MA 02110-1301, USA.
 
 #include "gui/manualwindow.h"
-
-#include "core/manual.h"
+#include "core/settings.h"
+#include "core/manualserver.h"
 
 #include <QtCore/QEvent>
+#include <QKeyEvent>
+#include <QtHelp/QHelpEngineCore>
+#include <QDesktopServices>
+#include <QIcon>
+
 
 ManualWindow::ManualWindow(QWidget* parent)
     : QTextBrowser(parent)
-    , m_manual(new Manual(this))
 {
-    setLineWrapMode(QTextEdit::NoWrap);
+    setWindowFlags(Qt::Window);
+    setStyleSheet(QStringLiteral("QTextBrowser { background-color: #FFFFFF; }"));
+    QFont f("Helvetica");
+    f.setStyleHint(QFont::SansSerif);
+    f.setPointSize(10);
+    setFont(f);
+
+    //Disable automatic opening of links. We handle them ourselves.
+    this->setOpenLinks(false);
+    connect(this, SIGNAL(anchorClicked(const QUrl&)), SLOT(handleAnchorClick(const QUrl&)));
+
+    m_server = ManualServer::instance();
     retranslateText();
-    openPage(QUrl("index"));
+    showHelpForKeyword("home");
+}
+
+void ManualWindow::showHelpForKeyword(const QString &id)
+{
+    QUrl url;
+    if(m_server->URLforKeyword(id, url))
+        openPage(url);
 }
 
 void ManualWindow::openPage(const QUrl& url)
 {
-    QString content = m_manual->getPageContent(url.toString());
-    if (!content.isNull())
-        setHtml(content);
+    setSource(url);
 }
 
 void ManualWindow::retranslateText()
 {
     setWindowTitle(tr("User Manual"));
-    QString content = m_manual->getCurrentPageContent();
-    if (!content.isNull())
-        setHtml(content);
 }
+
+
 void ManualWindow::changeEvent(QEvent* event)
 {
-    if (event->type() == QEvent::LanguageChange)
+    if (event->type() == QEvent::LanguageChange) {
         retranslateText();
+        m_server->ensureCorrectLanguage();
+        this->reload();
+    }
     else
         QTextBrowser::changeEvent(event);
+}
+
+void ManualWindow::keyPressEvent(QKeyEvent *ev)
+{
+    if(ev->key() == Qt::Key_Escape) {
+        ev->accept();
+        this->close();
+    }
+    else if(ev->key() == Qt::Key_Back
+            || ev->key() == Qt::Key_Backspace) {
+        ev->accept();
+        this->backward();
+    }
+    else if(ev->key() == Qt::Key_Forward) {
+        ev->accept();
+        this->forward();
+    }
+    else if(ev->key() == Qt::Key_Home) {
+        ev->accept();
+        this->home();
+    }
+    else
+        QTextBrowser::keyPressEvent(ev);
+}
+
+void ManualWindow::mouseReleaseEvent(QMouseEvent* ev)
+{
+    if (ev->button() == Qt::BackButton) {
+        ev->accept();
+        backward();
+    }
+    else if (ev->button() == Qt::ForwardButton) {
+        ev->accept();
+        forward();
+    }
+    else
+        QTextBrowser::mouseReleaseEvent(ev);
 }
 
 void ManualWindow::closeEvent(QCloseEvent* event)
 {
     emit windowClosed();
     QTextBrowser::closeEvent(event);
+}
+
+void ManualWindow::handleAnchorClick(const QUrl &url)
+{
+    if (url.toString().startsWith("qthelp:"))
+        openPage(url);
+    else
+        QDesktopServices::openUrl(url);
+}
+
+QVariant ManualWindow::loadResource(int type, const QUrl &name)
+{
+    QByteArray ba;
+    if (type < 4 && name.scheme()=="qthelp") {
+        QUrl url(name);
+        if (name.isRelative())
+            url = source().resolved(name);
+        ba = m_server->fileData(url);
+    }
+    return ba;
 }

@@ -21,6 +21,8 @@
 #ifndef GUI_MAINWINDOW_H
 #define GUI_MAINWINDOW_H
 
+#include "gui/keypad.h"
+
 #include <QMainWindow>
 #include <QSystemTrayIcon>
 
@@ -31,18 +33,19 @@ class Constants;
 class ConstantsDock;
 class Editor;
 class Evaluator;
-class Session;
 class HistoryEntry;
-class Variable;
 class UserFunction;
 class FunctionRepo;
 class FunctionsDock;
 class HistoryDock;
 class ManualWindow;
+class ManualServer;
 class ResultDisplay;
+class Session;
 class Settings;
-class VariablesDock;
 class UserFunctionsDock;
+class Variable;
+class VariablesDock;
 
 class QActionGroup;
 class QHBoxLayout;
@@ -90,6 +93,7 @@ private slots:
     void exportPlainText();
     void handleCopyAvailable(bool copyAvailable);
     void handleBitsChanged(const QString&str);
+    void handleKeypadButtonPress(Keypad::Button);
     void handleEditorTextChange();
     void handleDisplaySelectionChange();
     void handleEditorSelectionChange();
@@ -123,6 +127,7 @@ private slots:
     void setFunctionsDockVisible(bool);
     void setHistoryDockVisible(bool);
     void setSessionSaveEnabled(bool);
+    void setKeypadVisible(bool);
     void setLeaveLastExpressionEnabled(bool);
     void setRadixCharacterAutomatic();
     void setRadixCharacter(char);
@@ -160,6 +165,7 @@ private slots:
     void showFontDialog();
     void showLanguageChooserDialog();
     void showManualWindow();
+    void showContextHelp();
     void showReadyMessage();
     void showResultFormatContextMenu(const QPoint&);
     void showSessionImportDialog();
@@ -184,6 +190,7 @@ private:
     void createMenus();
     void createStatusBar();
     void createFixedWidgets();
+    void createKeypad();
     void createBitField();
     void createBookDock();
     void createConstantsDock();
@@ -198,6 +205,7 @@ private:
     void checkInitialLanguage();
     void checkInitialDigitGrouping();
     void restoreSession();
+    void deleteKeypad();
     void deleteStatusBar();
     void deleteBitField();
     void deleteBookDock();
@@ -232,6 +240,7 @@ private:
         QAction* editDeleteUserFunction;
         QAction* editClearExpression;
         QAction* editClearHistory;
+        QAction* viewKeypad;
         QAction* viewFormulaBook;
         QAction* viewConstants;
         QAction* viewFunctions;
@@ -287,6 +296,7 @@ private:
         QAction* helpCommunity;
         QAction* helpNews;
         QAction* helpAbout;
+        QAction* contextHelp;
     } m_actions;
 
     struct {
@@ -319,12 +329,14 @@ private:
 
     struct {
         QVBoxLayout* root;
+        QHBoxLayout* keypad;
     } m_layouts;
 
     struct {
         QLabel* state;
         ResultDisplay* display;
         Editor* editor;
+        Keypad* keypad;
         QWidget* root;
         QSystemTrayIcon* trayIcon;
         ManualWindow* manual;
@@ -357,6 +369,7 @@ private:
     Session* m_session;
     QTranslator* m_translator;
     QPlainTextEdit* m_copyWidget;
+    ManualServer* m_manualServer;
 };
 
 #endif // GUI_MAINWINDOW_H

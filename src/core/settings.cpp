@@ -1,7 +1,7 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2004, 2005, 2007, 2008 Ariya Hidayat <ariya@kde.org>
 // Copyright (C) 2005-2006 Johan Thelin <e8johan@gmail.com>
-// Copyright (C) 2007-2009 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (C) 2007-2016 Helder Correia <helder.pereira.correia@gmail.com>
 // Copyright (C) 2015 Pol Welter <polwelter@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -35,15 +35,15 @@
 # ifndef NOMINMAX
 #  define NOMINMAX
 # endif
-# include <Windows.h>
-# include <ShlObj.h>
+# include <windows.h>
+# include <shlobj.h>
 #endif
 
 
 static const char* DefaultColorScheme = "Terminal";
 
 
-QString getDataPath()
+QString Settings::getDataPath()
 {
 #ifdef SPEEDCRUNCH_PORTABLE
     return QApplication::applicationDirPath();
@@ -70,6 +70,15 @@ QString getDataPath()
     // Any non-Windows with Qt < 5.4. Since DataLocation and AppDataLocation are
     // equivalent outside of Windows, that should be fine.
     return QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+#endif
+}
+
+QString Settings::getCachePath()
+{
+#ifdef SPEEDCRUNCH_PORTABLE
+    return QApplication::applicationDirPath();
+#else
+    return QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
 #endif
 }
 
@@ -156,6 +165,7 @@ void Settings::load()
     key = KEY + QLatin1String("/Layout/");
     windowOnfullScreen = settings->value(key + QLatin1String("WindowOnFullScreen"), false).toBool();
     historyDockVisible = settings->value(key + QLatin1String("HistoryDockVisible"), false).toBool();
+    keypadVisible = settings->value(key + QLatin1String("KeypadVisible"), false).toBool();
     statusBarVisible = settings->value(key + QLatin1String("StatusBarVisible"), false).toBool();
     functionsDockVisible = settings->value(key + QLatin1String("FunctionsDockVisible"), false).toBool();
     variablesDockVisible = settings->value(key + QLatin1String("VariablesDockVisible"), false).toBool();
@@ -167,6 +177,7 @@ void Settings::load()
 
     windowState = settings->value(key + QLatin1String("State")).toByteArray();
     windowGeometry = settings->value(key + QLatin1String("WindowGeometry")).toByteArray();
+    manualWindowGeometry = settings->value(key + QLatin1String("ManualWindowGeometry")).toByteArray();
 
     key = KEY + QLatin1String("/Display/");
     displayFont = settings->value(key + QLatin1String("DisplayFont"), QFont().toString()).toString();
@@ -219,12 +230,14 @@ void Settings::save()
     settings->setValue(key + QLatin1String("FunctionsDockVisible"), functionsDockVisible);
     settings->setValue(key + QLatin1String("HistoryDockVisible"), historyDockVisible);
     settings->setValue(key + QLatin1String("WindowOnFullScreen"), windowOnfullScreen);
+    settings->setValue(key + QLatin1String("KeypadVisible"), keypadVisible);
     settings->setValue(key + QLatin1String("StatusBarVisible"), statusBarVisible);
     settings->setValue(key + QLatin1String("VariablesDockVisible"), variablesDockVisible);
     settings->setValue(key + QLatin1String("UserFunctionsDockVisible"), userFunctionsDockVisible);
     settings->setValue(key + QLatin1String("WindowAlwaysOnTop"), windowAlwaysOnTop);
     settings->setValue(key + QLatin1String("State"), windowState);
     settings->setValue(key + QLatin1String("WindowGeometry"), windowGeometry);
+    settings->setValue(key + QLatin1String("ManualWindowGeometry"), manualWindowGeometry);
     settings->setValue(key + QLatin1String("BitfieldVisible"), bitfieldVisible);
 
     key = KEY + QLatin1String("/Display/");
