@@ -15,7 +15,7 @@ To build SpeedCrunch, you need:
 It is recommended to install Python and pip from [the Python website](http://python.org)
 or the package manager of your choice, then run:
 
-    pip install sphinx>=1.3 quark-sphinx-theme>=0.2
+    pip install "sphinx>=1.3" "quark-sphinx-theme>=0.2"
 
 To build from source, use either CMake or QMake to build the project:
 
