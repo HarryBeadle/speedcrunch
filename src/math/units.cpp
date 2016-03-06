@@ -28,6 +28,8 @@
 
 void Units::findUnit(CNumber & number)
 {
+    return;
+#if 0
     QString unit_name = "";
     CNumber unit(number);
     unit.clearDimension();
@@ -119,8 +121,9 @@ void Units::findUnit(CNumber & number)
         }
         number.setDisplayUnit(unit, unit_name.trimmed());
     }
+#endif
 }
-
+#if 0
 const CNumber Units::meter()
 {
     CNumber meter(1);
@@ -284,3 +287,4 @@ const CNumber Units::cbmeter()
 {
     return sqmeter()*meter();
 }
+#endif

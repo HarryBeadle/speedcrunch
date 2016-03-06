@@ -36,8 +36,8 @@
  * Creates a new complex number.
  */
 CNumber::CNumber() :
-  real(0),
-  imag(0)
+    real(0),
+    imag(0)
 {}
 
 
@@ -45,10 +45,9 @@ CNumber::CNumber() :
  * Creates a new complex number from one real number
  */
 CNumber::CNumber( const HNumber& hn) :
-  real(hn),
-  imag(0)
+    real(hn),
+    imag(0)
 {
-  imag.setDimension(hn);
 }
 
 
@@ -56,8 +55,8 @@ CNumber::CNumber( const HNumber& hn) :
  * Creates a new complex number from the real and imaginary parts
  */
 CNumber::CNumber( const HNumber& x, const HNumber& y) :
-  real(x),
-  imag(y)
+    real(x),
+    imag(y)
 {}
 
 
@@ -65,8 +64,8 @@ CNumber::CNumber( const HNumber& x, const HNumber& y) :
  * Copies from another complex number.
  */
 CNumber::CNumber(const CNumber& cn) :
-  real(cn.real),
-  imag(cn.imag)
+    real(cn.real),
+    imag(cn.imag)
 {}
 
 
@@ -74,8 +73,8 @@ CNumber::CNumber(const CNumber& cn) :
  * Creates a new number from an integer value.
  */
 CNumber::CNumber(int i) :
-  real(i),
-  imag(0)
+    real(i),
+    imag(0)
 {}
 
 
@@ -83,8 +82,8 @@ CNumber::CNumber(int i) :
  * Creates a new number from a string.
  */
 CNumber::CNumber(const char* str) {
-  CNumberParser parser(str);
-  parser.parse(this);  /* FIXME ! Exception management ! */
+    CNumberParser parser(str);
+    parser.parse(this);  /* FIXME ! Exception management ! */
 }
 
 
@@ -99,7 +98,7 @@ CNumber::CNumber(const QJsonObject &json)
  */
 bool CNumber::isNan() const
 {
-  return real.isNan() || imag.isNan();
+    return real.isNan() || imag.isNan();
 }
 
 
@@ -108,7 +107,7 @@ bool CNumber::isNan() const
  */
 bool CNumber::isZero() const
 {
-  return real.isZero() && imag.isZero();
+    return real.isZero() && imag.isZero();
 }
 
 
@@ -117,7 +116,7 @@ bool CNumber::isZero() const
  */
 bool CNumber::isPositive() const
 {
-  return real.isPositive() && imag.isZero();
+    return real.isPositive() && imag.isZero();
 }
 
 
@@ -126,7 +125,7 @@ bool CNumber::isPositive() const
  */
 bool CNumber::isNegative() const
 {
-  return real.isNegative() && imag.isZero();
+    return real.isNegative() && imag.isZero();
 }
 
 
@@ -135,7 +134,7 @@ bool CNumber::isNegative() const
  */
 bool CNumber::isInteger() const
 {
-  return real.isInteger() && imag.isZero();
+    return real.isInteger() && imag.isZero();
 }
 
 
@@ -144,7 +143,7 @@ bool CNumber::isInteger() const
  */
 bool CNumber::isGaussian() const
 {
-  return real.isInteger() && imag.isInteger();
+    return real.isInteger() && imag.isInteger();
 }
 
 
@@ -153,7 +152,7 @@ bool CNumber::isGaussian() const
  */
 bool CNumber::isReal() const
 {
-  return imag.isZero();
+    return imag.isZero();
 }
 
 
@@ -162,7 +161,7 @@ bool CNumber::isReal() const
  */
 bool CNumber::isNearReal() const
 {
-  return imag.isNearZero();
+    return imag.isNearZero();
 }
 
 
@@ -171,8 +170,8 @@ bool CNumber::isNearReal() const
  */
 char CNumber::format() const
 {
-  /* real and imag have always the same format */
-  return real.format();
+    /* real and imag have always the same format */
+    return real.format();
 }
 
 
@@ -181,47 +180,10 @@ char CNumber::format() const
  */
 CNumber& CNumber::setFormat(char c)
 {
-  /* We must always ensure that both numbers have the same preferred format */
-  real.setFormat(c);
-  imag.setFormat(c);
-  return *this;
-}
-
-
-/**
- * Sets the display unit
- */
-CNumber& CNumber::setDisplayUnit(const CNumber unit, const QString &name)
-{
-  /* FIXME : This doesn't checks that real and imag part have the same unit */
-  /* after the execution.                                                   */
-  real.setDisplayUnit(unit.real, name);
-  imag.setDisplayUnit(unit.real, name);
-  return *this;
-}
-
-
-void CNumber::stripUnits() {
-  real.stripUnits();
-  imag.stripUnits();
-}
-
-
-void CNumber::modifyDimension(const QString &key, const Rational &exponent) {
-  real.modifyDimension(key, exponent);
-  imag.modifyDimension(key, exponent);
-}
-
-
-void CNumber::clearDimension(){
-  real.clearDimension();
-  imag.clearDimension();
-}
-
-
-void CNumber::cleanDimension(){
-  real.cleanDimension();
-  imag.cleanDimension();
+    /* We must always ensure that both numbers have the same preferred format */
+    real.setFormat(c);
+    imag.setFormat(c);
+    return *this;
 }
 
 
@@ -231,21 +193,6 @@ void CNumber::serialize(QJsonObject &json) const
     const char f = format();
     json["format"] = (f=='\0') ? "NULL" : QString(f);
     json["value"] = QString(CMath::format(*this, f, DECPRECISION));
-    if(hasUnit()) {
-        json["unit"] = QString(CMath::format(getUnit(), 'e', DECPRECISION));
-        json["unit_name"] = getUnitName();
-    }
-    if(hasDimension()) {
-        QJsonObject dim_json;
-        QMap<QString, Rational>::const_iterator i = real.getDimension().constBegin();
-        while (i !=  real.getDimension().constEnd()) {
-            const Rational & exp = i.value();
-            const QString & name = i.key();
-            dim_json[name] = exp.toString();
-            ++i;
-        }
-        json["dimension"] = dim_json;
-    }
 }
 
 
@@ -258,19 +205,6 @@ CNumber CNumber::deSerialize(const QJsonObject &json)
     QString f = json["format"].toString();
     result.setFormat( (f=="NULL") ? '\0': f.at(0).toLatin1());
 
-    if(json.contains("unit")) {
-        str = json["unit"].toString();
-        result.setDisplayUnit(CNumber(str.toLatin1().constData()), json["unit_name"].toString());
-    }
-    if(json.contains("dimension")) {
-        QJsonObject dim_json = json["dimension"].toObject();
-        for(int i=0; i<dim_json.count(); ++i) {
-            QString key = dim_json.keys()[i];
-            Rational val(dim_json[key].toString());
-            result.modifyDimension(key, val);
-        }
-    }
-
     return result;
 }
 
@@ -281,11 +215,11 @@ CNumber CNumber::deSerialize(const QJsonObject &json)
  */
 CNumber CMath::nan(Error error)
 {
-  /* We must always ensure that both numbers have the same NaN error */
-  CNumber result;
-  result.real = HMath::nan(error);
-  result.imag = HMath::nan(error);
-  return result;
+    /* We must always ensure that both numbers have the same NaN error */
+    CNumber result;
+    result.real = HMath::nan(error);
+    result.imag = HMath::nan(error);
+    return result;
 }
 
 
@@ -294,8 +228,8 @@ CNumber CMath::nan(Error error)
  */
 Error CNumber::error() const
 {
-  /* real and imag have always the same NaN error */
-  return real.error();
+    /* real and imag have always the same NaN error */
+    return real.error();
 }
 
 
@@ -304,9 +238,9 @@ Error CNumber::error() const
  */
 CNumber& CNumber::operator=( const CNumber & cn )
 {
-  real = cn.real;
-  imag = cn.imag;
-  return *this;
+    real = cn.real;
+    imag = cn.imag;
+    return *this;
 }
 
 
@@ -315,12 +249,10 @@ CNumber& CNumber::operator=( const CNumber & cn )
  */
 CNumber CNumber::operator+( const CNumber & num ) const
 {
-  if(!sameDimension(num))
-    return HMath::nan(DimensionMismatch);
-  CNumber result;
-  result.real = real + num.real;
-  result.imag = imag + num.imag;
-  return result;
+    CNumber result;
+    result.real = real + num.real;
+    result.imag = imag + num.imag;
+    return result;
 }
 
 
@@ -329,7 +261,7 @@ CNumber CNumber::operator+( const CNumber & num ) const
  */
 CNumber& CNumber::operator+=( const CNumber & num )
 {
-  return operator=( *this + num );
+    return operator=( *this + num );
 }
 
 
@@ -338,12 +270,10 @@ CNumber& CNumber::operator+=( const CNumber & num )
  */
 CNumber operator-( const CNumber & n1, const CNumber & n2 )
 {
-  if(!n1.sameDimension(n2))
-    return HMath::nan(DimensionMismatch);
-  CNumber result;
-  result.real = n1.real - n2.real;
-  result.imag = n1.imag - n2.imag;
-  return result;
+    CNumber result;
+    result.real = n1.real - n2.real;
+    result.imag = n1.imag - n2.imag;
+    return result;
 }
 
 
@@ -352,7 +282,7 @@ CNumber operator-( const CNumber & n1, const CNumber & n2 )
  */
 CNumber& CNumber::operator-=( const CNumber & num )
 {
-  return operator=( *this - num );
+    return operator=( *this - num );
 }
 
 
@@ -361,10 +291,10 @@ CNumber& CNumber::operator-=( const CNumber & num )
  */
 CNumber CNumber::operator*( const CNumber & num ) const
 {
-  CNumber result;
-  result.real = real*num.real - imag*num.imag;
-  result.imag = imag*num.real + real*num.imag;
-  return result;
+    CNumber result;
+    result.real = real*num.real - imag*num.imag;
+    result.imag = imag*num.real + real*num.imag;
+    return result;
 }
 
 
@@ -373,10 +303,10 @@ CNumber CNumber::operator*( const CNumber & num ) const
  */
 CNumber CNumber::operator*( const HNumber & num ) const
 {
-  CNumber result;
-  result.real = real*num;
-  result.imag = imag*num;
-  return result;
+    CNumber result;
+    result.real = real*num;
+    result.imag = imag*num;
+    return result;
 }
 
 
@@ -385,7 +315,7 @@ CNumber CNumber::operator*( const HNumber & num ) const
  */
 CNumber& CNumber::operator*=( const CNumber & num )
 {
-  return operator=( *this * num );
+    return operator=( *this * num );
 }
 
 
@@ -394,15 +324,15 @@ CNumber& CNumber::operator*=( const CNumber & num )
  */
 CNumber CNumber::operator/( const CNumber & num ) const
 {
-  if (num.isZero())
-    return CMath::nan(ZeroDivide);
-  else {
-    CNumber result;
-    HNumber divider = num.real*num.real + num.imag*num.imag;
-    result.real = (real*num.real + imag*num.imag) / divider;
-    result.imag = (imag*num.real - real*num.imag) / divider;
-    return result;
-  }
+    if (num.isZero())
+        return CMath::nan(ZeroDivide);
+    else {
+        CNumber result;
+        HNumber divider = num.real*num.real + num.imag*num.imag;
+        result.real = (real*num.real + imag*num.imag) / divider;
+        result.imag = (imag*num.real - real*num.imag) / divider;
+        return result;
+    }
 }
 
 
@@ -411,11 +341,11 @@ CNumber CNumber::operator/( const CNumber & num ) const
  */
 CNumber CNumber::operator/( const HNumber & num ) const
 {
-  if (num.isZero())
-    return CMath::nan(ZeroDivide);
-  else {
-    return CNumber(real / num, imag / num)  ;
-  }
+    if (num.isZero())
+        return CMath::nan(ZeroDivide);
+    else {
+        return CNumber(real / num, imag / num)  ;
+    }
 }
 
 
@@ -424,7 +354,7 @@ CNumber CNumber::operator/( const HNumber & num ) const
  */
 CNumber& CNumber::operator/=( const CNumber & num )
 {
-  return operator=( *this / num );
+    return operator=( *this / num );
 }
 
 
@@ -434,11 +364,11 @@ CNumber& CNumber::operator/=( const CNumber & num )
  */
 int CNumber::compare( const CNumber & other ) const
 {
-  if (isReal() && other.isReal())
-    return real.compare(other.real);
-  else
-    /* Not supported on complex numbers */
-    return false;      /* FIXME ! Return something better */
+    if (isReal() && other.isReal())
+        return real.compare(other.real);
+    else
+        /* Not supported on complex numbers */
+        return false;      /* FIXME ! Return something better */
 }
 
 /**
@@ -446,7 +376,7 @@ int CNumber::compare( const CNumber & other ) const
  */
 bool operator>( const CNumber& l, const CNumber& r )
 {
-  return l.compare( r ) > 0;
+    return l.compare( r ) > 0;
 }
 
 /**
@@ -454,7 +384,7 @@ bool operator>( const CNumber& l, const CNumber& r )
  */
 bool operator<( const CNumber& l, const CNumber& r )
 {
-  return l.compare( r ) < 0;
+    return l.compare( r ) < 0;
 }
 
 /**
@@ -462,7 +392,7 @@ bool operator<( const CNumber& l, const CNumber& r )
  */
 bool operator>=( const CNumber& l, const CNumber& r )
 {
-  return l.compare( r ) >= 0;
+    return l.compare( r ) >= 0;
 }
 
 /**
@@ -470,7 +400,7 @@ bool operator>=( const CNumber& l, const CNumber& r )
  */
 bool operator<=( const CNumber& l, const CNumber& r )
 {
-  return l.compare( r ) <= 0;
+    return l.compare( r ) <= 0;
 }
 
 /**
@@ -478,7 +408,7 @@ bool operator<=( const CNumber& l, const CNumber& r )
  */
 bool operator==( const CNumber& l, const CNumber& r )
 {
-  return l.compare( r ) == 0;
+    return l.compare( r ) == 0;
 }
 
 /**
@@ -486,7 +416,7 @@ bool operator==( const CNumber& l, const CNumber& r )
  */
 bool operator!=( const CNumber& l, const CNumber& r )
 {
-  return l.compare( r ) != 0;
+    return l.compare( r ) != 0;
 }
 
 
@@ -495,7 +425,7 @@ bool operator!=( const CNumber& l, const CNumber& r )
  */
 CNumber operator-( const CNumber & x )
 {
-  return CNumber(-x.real, -x.imag);
+    return CNumber(-x.real, -x.imag);
 }
 
 
@@ -513,7 +443,7 @@ CNumber CMath::e()
  */
 CNumber CMath::pi()
 {
-  return CNumber(HMath::pi());
+    return CNumber(HMath::pi());
 }
 
 
@@ -531,7 +461,7 @@ CNumber CMath::phi()
  */
 CNumber CMath::i()
 {
-  return CNumber(0, 1);
+    return CNumber(0, 1);
 }
 
 
@@ -563,59 +493,58 @@ CNumber CMath::i()
  */
 char* CMath::format( const CNumber& cn, char format, int prec )
 {
-  /* If number is NaN */
-  if (cn.isNan())
-    return strdup("NaN");
+    /* If number is NaN */
+    if (cn.isNan())
+        return strdup("NaN");
 
-  /* If number is real */
-  else if (cn.imag.isNearZero())
+    /* If number is real */
+    else if (cn.imag.isNearZero())
 
-    /* Reverts to normal formatting */
-    return HMath::format(cn.real, format, prec);
+        /* Reverts to normal formatting */
+        return HMath::format(cn.real, format, prec);
 
-  /* If number is complex */
-  else {
-
-    /* Use complex number formatting */
-
-    /* Format real part */
-    const char * real_part = cn.real.isZero()? strdup("") : HMath::format(cn.real, format, prec);
-
-    /* Format imaginary part */
-    const char * imag_part = "";
-    const char * separator = "";
-    const char * prefix    = "";   /* TODO : Insert two modes, one for a+jb and one for a+bj */
-    const char * postfix   = "j";  /* TODO : Insert two modes, one for a+bi and one for a+bj */
-
-    /* If imaginary part is positive */
-    if (cn.imag.isPositive()) {
-      separator = cn.real.isZero() ? "": "+";
-      imag_part = HMath::format(cn.imag,  format, prec);
-    }
-    /* If imaginary part is negative */
+    /* If number is complex */
     else {
-      separator = "-";
-      imag_part = HMath::format(-cn.imag, format, prec);
+
+        /* Use complex number formatting */
+
+        /* Format real part */
+        const char * real_part = cn.real.isZero()? strdup("") : HMath::format(cn.real, format, prec);
+
+        /* Format imaginary part */
+        const char * imag_part = "";
+        const char * separator = "";
+        const char * prefix    = "";   /* TODO : Insert two modes, one for a+jb and one for a+bj */
+        const char * postfix   = "j";  /* TODO : Insert two modes, one for a+bi and one for a+bj */
+
+        /* If imaginary part is positive */
+        if (cn.imag.isPositive()) {
+            separator = cn.real.isZero() ? "": "+";
+            imag_part = HMath::format(cn.imag,  format, prec);
+        }
+        /* If imaginary part is negative */
+        else {
+            separator = "-";
+            imag_part = HMath::format(-cn.imag, format, prec);
+        }
+
+        /* Allocate string for the result */
+        int l1 = strlen(real_part) + strlen(separator) + strlen(prefix) + strlen(imag_part) + strlen(postfix);
+        char * result = (char *) malloc(l1+1);
+
+        /* Concatenate parts of the result */
+        strcpy(result, real_part);
+        strcat(result, separator);
+        strcat(result, prefix);
+        strcat(result, imag_part);
+        strcat(result, postfix);
+
+        /* Free old strings */
+        free((void *) real_part);
+        free((void *) imag_part);
+
+        return result;
     }
-
-    /* Allocate string for the result */
-    int l1 = strlen(real_part) + strlen(separator) + strlen(prefix) + strlen(imag_part) + strlen(postfix);
-    char * result = (char *) malloc(l1+1);
-
-    /* Concatenate parts of the result */
-    strcpy(result, real_part);
-    strcat(result, separator);
-    strcat(result, prefix);
-    strcat(result, imag_part);
-    strcat(result, postfix);
-
-    /* Free old strings */
-    free((void *) real_part);
-    free((void *) imag_part);
-
-    return result;
-
-  }
 }
 
 
@@ -624,7 +553,7 @@ char* CMath::format( const CNumber& cn, char format, int prec )
  */
 CNumber CMath::abs( const CNumber & n )
 {
-  return HMath::sqrt(n.real*n.real + n.imag*n.imag);
+    return HMath::sqrt(n.real*n.real + n.imag*n.imag);
 }
 
 
@@ -633,20 +562,20 @@ CNumber CMath::abs( const CNumber & n )
  */
 CNumber CMath::sqrt( const CNumber & n )
 {
-  CNumber result;
+    CNumber result;
 
-  /* s = 1 if imaginary part positive or null, -1 otherwise */
-  HNumber s;
-  if (n.imag.isPositive() || n.imag.isZero())
+    /* s = 1 if imaginary part positive or null, -1 otherwise */
+    HNumber s;
+    if (n.imag.isPositive() || n.imag.isZero())
     s = 1;
-  else
+    else
     s = -1;
 
-  /* cf https://en.wikipedia.org/wiki/Square_root#Square_roots_of_negative_and_complex_numbers */
-  result.real =     HMath::sqrt((abs(n).real + n.real) / 2);
-  result.imag = s * HMath::sqrt((abs(n).real - n.real) / 2);
+    /* cf https://en.wikipedia.org/wiki/Square_root#Square_roots_of_negative_and_complex_numbers */
+    result.real =     HMath::sqrt((abs(n).real + n.real) / 2);
+    result.imag = s * HMath::sqrt((abs(n).real - n.real) / 2);
 
-  return result;
+    return result;
 }
 
 
@@ -655,7 +584,7 @@ CNumber CMath::sqrt( const CNumber & n )
  */
 CNumber CMath::raise( const CNumber & n1, int n )
 {
-  return CMath::exp(CMath::ln(n1) * n);
+    return CMath::exp(CMath::ln(n1) * n);
 }
 
 
@@ -664,19 +593,7 @@ CNumber CMath::raise( const CNumber & n1, int n )
  */
 CNumber CMath::raise( const CNumber & n1, const CNumber & n2  )
 {
-    if(!n2.isDimensionless()
-            || (!n1.isDimensionless() && !n2.isReal()))
-        return CMath::nan(InvalidDimension);
-
-
-    if(n1.isDimensionless())
-        return CMath::exp(CMath::ln(n1) * n2);
-
-    // we can now assume that n1 has a dimension, but n2 is real
-    CNumber nominal_value = n1;
-    nominal_value.clearDimension();
-    HNumber unit = n1.real/nominal_value.real;
-    return CNumber(HMath::raise(unit, n2.real)) * CMath::raise(nominal_value, n2);
+    return CMath::exp(CMath::ln(n1) * n2);
 }
 
 
@@ -685,9 +602,9 @@ CNumber CMath::raise( const CNumber & n1, const CNumber & n2  )
  */
 CNumber CMath::exp( const CNumber & x )
 {
-  HNumber abs = HMath::exp(x.real);
+    HNumber abs = HMath::exp(x.real);
 
-  return CNumber(abs*HMath::cos(x.imag), abs*HMath::sin(x.imag));
+    return CNumber(abs*HMath::cos(x.imag), abs*HMath::sin(x.imag));
 }
 
 
@@ -696,19 +613,19 @@ CNumber CMath::exp( const CNumber & x )
  */
 CNumber CMath::ln( const CNumber & x )
 {
-  HNumber abs = CMath::abs(x).real;
+    HNumber abs = CMath::abs(x).real;
 
-  CNumber result;
-  result.real = HMath::ln(abs);
+    CNumber result;
+    result.real = HMath::ln(abs);
 
-  // Principal Value logarithm
-  // https://en.wikipedia.org/wiki/Complex_logarithm#Definition_of_principal_value
-  if (x.imag.isPositive() || x.imag.isZero())
-    result.imag =  HMath::arccos(x.real / abs);
-  else
-    result.imag = -HMath::arccos(x.real / abs);
+    // Principal Value logarithm
+    // https://en.wikipedia.org/wiki/Complex_logarithm#Definition_of_principal_value
+    if (x.imag.isPositive() || x.imag.isZero())
+        result.imag =  HMath::arccos(x.real / abs);
+    else
+        result.imag = -HMath::arccos(x.real / abs);
 
-  return result;
+    return result;
 }
 
 
@@ -717,7 +634,7 @@ CNumber CMath::ln( const CNumber & x )
  */
 CNumber CMath::lg( const CNumber & x )
 {
-  return CMath::ln(x) / HMath::ln(10);
+    return CMath::ln(x) / HMath::ln(10);
 }
 
 
@@ -726,7 +643,7 @@ CNumber CMath::lg( const CNumber & x )
  */
 CNumber CMath::lb( const CNumber & x )
 {
-  return CMath::ln(x) / HMath::ln(2);
+    return CMath::ln(x) / HMath::ln(2);
 }
 
 
@@ -736,7 +653,7 @@ CNumber CMath::lb( const CNumber & x )
  */
 CNumber CMath::log( const CNumber & base, const CNumber & x )
 {
-  return CMath::ln(x) / CMath::ln(base);
+    return CMath::ln(x) / CMath::ln(base);
 }
 
 
@@ -745,8 +662,8 @@ CNumber CMath::log( const CNumber & base, const CNumber & x )
  */
 CNumber CMath::sin( const CNumber & x )
 {
-  /* cf. https://en.wikipedia.org/wiki/Sine#Sine_with_a_complex_argument */
-  return CNumber(HMath::sin(x.real)*HMath::cosh(x.imag), HMath::cos(x.real)*HMath::sinh(x.imag));
+    /* cf. https://en.wikipedia.org/wiki/Sine#Sine_with_a_complex_argument */
+    return CNumber(HMath::sin(x.real)*HMath::cosh(x.imag), HMath::cos(x.real)*HMath::sinh(x.imag));
 }
 
 
@@ -755,8 +672,8 @@ CNumber CMath::sin( const CNumber & x )
  */
 CNumber CMath::cos( const CNumber & x )
 {
-  /* Expanded using Wolfram Mathematica 9.0 */
-  return CNumber(HMath::cos(x.real)*HMath::cosh(x.imag), -HMath::sin(x.real)*HMath::sinh(x.imag));
+    /* Expanded using Wolfram Mathematica 9.0 */
+    return CNumber(HMath::cos(x.real)*HMath::cosh(x.imag), -HMath::sin(x.real)*HMath::sinh(x.imag));
 }
 
 
@@ -765,7 +682,7 @@ CNumber CMath::cos( const CNumber & x )
  */
 CNumber CMath::tan( const CNumber & x )
 {
-  return CMath::sin(x) / CMath::cos(x);
+    return CMath::sin(x) / CMath::cos(x);
 }
 
 
@@ -774,7 +691,7 @@ CNumber CMath::tan( const CNumber & x )
  */
 CNumber CMath::sinh( const CNumber & x )
 {
-  return (exp(x) - exp(-x)) / HNumber(2);
+    return (exp(x) - exp(-x)) / HNumber(2);
 }
 
 
@@ -783,7 +700,7 @@ CNumber CMath::sinh( const CNumber & x )
  */
 CNumber CMath::cosh( const CNumber & x )
 {
-  return (exp(x) + exp(-x)) / HNumber(2);
+    return (exp(x) + exp(-x)) / HNumber(2);
 }
 
 
@@ -792,7 +709,7 @@ CNumber CMath::cosh( const CNumber & x )
  */
 CNumber CMath::tanh( const CNumber & x )
 {
-  return sinh(x) / cosh(x);
+    return sinh(x) / cosh(x);
 }
 
 
@@ -801,7 +718,7 @@ CNumber CMath::tanh( const CNumber & x )
  */
 CNumber CMath::cot( const CNumber & x )
 {
-  return cos(x) / sin(x);
+    return cos(x) / sin(x);
 }
 
 
@@ -810,7 +727,7 @@ CNumber CMath::cot( const CNumber & x )
  */
 CNumber CMath::sec( const CNumber & x )
 {
-  return CNumber(1) / cos(x);
+    return CNumber(1) / cos(x);
 }
 
 
@@ -819,7 +736,7 @@ CNumber CMath::sec( const CNumber & x )
  */
 CNumber CMath::csc( const CNumber & x )
 {
-  return CNumber(1) / sin(x);
+    return CNumber(1) / sin(x);
 }
 
 
@@ -828,7 +745,7 @@ CNumber CMath::csc( const CNumber & x )
  */
 CNumber CMath::arsinh( const CNumber & x )
 {
-  return CMath::ln( x + CMath::sqrt( x*x + CNumber( 1 ) ) );
+    return CMath::ln( x + CMath::sqrt( x*x + CNumber( 1 ) ) );
 }
 
 
@@ -837,7 +754,7 @@ CNumber CMath::arsinh( const CNumber & x )
  */
 CNumber CMath::arcosh( const CNumber & x )
 {
-  return CMath::ln( x + CMath::sqrt( x + CNumber( 1 ) ) * CMath::sqrt( x - CNumber( 1 ) ));
+    return CMath::ln( x + CMath::sqrt( x + CNumber( 1 ) ) * CMath::sqrt( x - CNumber( 1 ) ));
 }
 
 
@@ -846,7 +763,7 @@ CNumber CMath::arcosh( const CNumber & x )
  */
 CNumber CMath::artanh( const CNumber & x )
 {
-  return ( CNumber( "0.5" ) * CMath::ln( CNumber( 1 ) + x ) ) - ( CNumber( "0.5" ) * CMath::ln( CNumber( 1 ) - x ) );
+    return ( CNumber( "0.5" ) * CMath::ln( CNumber( 1 ) + x ) ) - ( CNumber( "0.5" ) * CMath::ln( CNumber( 1 ) - x ) );
 }
 
 
@@ -855,7 +772,7 @@ CNumber CMath::artanh( const CNumber & x )
  */
 CNumber CMath::arctan( const CNumber & x )
 {
-  return CMath::i() * ( CMath::ln( CNumber( 1 ) - CMath::i() * x ) - CMath::ln( CNumber( 1 ) + CMath::i() * x )  ) / 2;
+    return CMath::i() * ( CMath::ln( CNumber( 1 ) - CMath::i() * x ) - CMath::ln( CNumber( 1 ) + CMath::i() * x )  ) / 2;
 }
 
 
@@ -864,7 +781,7 @@ CNumber CMath::arctan( const CNumber & x )
  */
 CNumber CMath::arcsin( const CNumber & x )
 {
-  return -CMath::i() * CMath::ln( CMath::i()*x + sqrt( CNumber(1) - x*x  ) );
+    return -CMath::i() * CMath::ln( CMath::i()*x + sqrt( CNumber(1) - x*x  ) );
 }
 
 
@@ -883,81 +800,81 @@ CNumber CMath::arccos( const CNumber & x )
 
 /* NaN is treated like real numbers for the purposes of wrappers */
 #define ENSURE_REAL(number, error)		\
-  if( (number).isNan() || !(number).isNearReal() )	\
-    return CMath::nan( error );
+    if( (number).isNan() || !(number).isNearReal() )	\
+        return CMath::nan( error );
 
 #define REAL_WRAPPER_CNUMBER_1(fct, error)	\
-  CNumber CNumber::fct( ) const {		\
-    ENSURE_REAL(*this, error);			\
-    return CNumber( this->real.fct( ) );	\
-  }
+    CNumber CNumber::fct( ) const {		\
+        ENSURE_REAL(*this, error);			\
+        return CNumber( this->real.fct( ) );	\
+    }
 
 #define REAL_WRAPPER_CNUMBER_2(fct, error)		\
-  CNumber CNumber::fct( const CNumber& x ) const {	\
-    ENSURE_REAL(*this, error);				\
-    ENSURE_REAL(x, error);				\
-    return CNumber( this->real.fct( x.real ) );		\
-  }
+    CNumber CNumber::fct( const CNumber& x ) const {	\
+        ENSURE_REAL(*this, error);				\
+        ENSURE_REAL(x, error);				\
+        return CNumber( this->real.fct( x.real ) );		\
+    }
 
 #define REAL_WRAPPER_CNUMBER_3(fct, error)		\
-  CNumber& CNumber::fct( const CNumber& x ) {		\
-    if( !this->isReal() ) {				\
-      *this = CMath::nan( error );			\
-      return *this;					\
-    }							\
-    if( !x.isReal() ) {					\
-      *this = CMath::nan( error );			\
-      return *this;					\
-    }							\
-    this->real.fct( x.real );				\
-    return *this;					\
-  }
+    CNumber& CNumber::fct( const CNumber& x ) {		\
+        if( !this->isReal() ) {				\
+            *this = CMath::nan( error );			\
+            return *this;					\
+        }							\
+        if( !x.isReal() ) {					\
+            *this = CMath::nan( error );			\
+            return *this;					\
+        }							\
+        this->real.fct( x.real );				\
+        return *this;					\
+    }
 
 #define REAL_WRAPPER_CNUMBER_4(fct, error)	\
-  int CNumber::fct() const {			\
-    if( !this->isNearReal() )			\
-      return 0; /* FIXME ! Better fail value */ \
-    return this->real.fct();			\
-  }
+    int CNumber::fct() const {			\
+        if( !this->isNearReal() )			\
+            return 0; /* FIXME ! Better fail value */ \
+        return this->real.fct();			\
+    }
 
 #define REAL_WRAPPER_CMATH_NUM(fct, error)	\
-  CNumber CMath::fct( const CNumber& x ) {	\
-    ENSURE_REAL(x, error);			\
-    return CNumber( HMath::fct( x.real ) );	\
-  }
+    CNumber CMath::fct( const CNumber& x ) {	\
+        ENSURE_REAL(x, error);			\
+        return CNumber( HMath::fct( x.real ) );	\
+    }
 
 #define REAL_WRAPPER_CMATH_NUM_NUM(fct, error)		\
-  CNumber CMath::fct( const CNumber& x1, const CNumber& x2) {	\
-    ENSURE_REAL(x1, error);				        \
-    ENSURE_REAL(x2, error);					\
-    return CNumber( HMath::fct( x1.real, x2.real ) );		\
-  }
+    CNumber CMath::fct( const CNumber& x1, const CNumber& x2) {	\
+        ENSURE_REAL(x1, error);				        \
+        ENSURE_REAL(x2, error);					\
+        return CNumber( HMath::fct( x1.real, x2.real ) );		\
+    }
 
 #define REAL_WRAPPER_CMATH_NUM_INT(fct, error)	\
-  CNumber CMath::fct( const CNumber& x1, int n) {	\
-    ENSURE_REAL(x1, error);				\
-    return CNumber( HMath::fct( x1.real, n ) );		\
-  }
+    CNumber CMath::fct( const CNumber& x1, int n) {	\
+        ENSURE_REAL(x1, error);				\
+        return CNumber( HMath::fct( x1.real, n ) );		\
+    }
 
 #define REAL_WRAPPER_CMATH_NUM_NUM_NUM(fct, error)		\
-  CNumber CMath::fct( const CNumber& x1, const CNumber& x2,	\
-		      const CNumber& x3) {                      \
-    ENSURE_REAL(x1, error);						\
-    ENSURE_REAL(x2, error);						\
-    ENSURE_REAL(x3, error);						\
-    return CNumber( HMath::fct( x1.real, x2.real, x3.real ) );	\
-  }
+    CNumber CMath::fct( const CNumber& x1, const CNumber& x2,	\
+              const CNumber& x3) {                      \
+        ENSURE_REAL(x1, error);						\
+        ENSURE_REAL(x2, error);						\
+        ENSURE_REAL(x3, error);						\
+        return CNumber( HMath::fct( x1.real, x2.real, x3.real ) );	\
+    }
 
 #define REAL_WRAPPER_CMATH_NUM_NUM_NUM_NUM(fct, error)	\
-  CNumber CMath::fct( const CNumber& x1, const CNumber& x2,	\
-		      const CNumber& x3, const CNumber& x4) {	\
-    ENSURE_REAL(x1, error);					\
-    ENSURE_REAL(x2, error);					\
-    ENSURE_REAL(x3, error);					\
-    ENSURE_REAL(x4, error);					\
-    return CNumber( HMath::fct( x1.real, x2.real,		\
-				x3.real, x4.real ) );		\
-  }
+    CNumber CMath::fct( const CNumber& x1, const CNumber& x2,	\
+              const CNumber& x3, const CNumber& x4) {	\
+        ENSURE_REAL(x1, error);					\
+        ENSURE_REAL(x2, error);					\
+        ENSURE_REAL(x3, error);					\
+        ENSURE_REAL(x4, error);					\
+        return CNumber( HMath::fct( x1.real, x2.real,		\
+                    x3.real, x4.real ) );		\
+    }
 
 // CNumber
 REAL_WRAPPER_CNUMBER_4( toInt, OutOfDomain )

@@ -430,7 +430,7 @@ void Evaluator::initializeBuiltInVariables()
         unsetVariable("j", true);
     }
 
-
+#if 0
     setVariable(QString::fromUtf8("meter"), Units::meter(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("second"), Units::second(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("kilogram"), Units::kilogram(), Variable::BuiltIn);
@@ -453,6 +453,7 @@ void Evaluator::initializeBuiltInVariables()
     setVariable(QString::fromUtf8("weber"), Units::weber(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("henry"), Units::henry(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("siemens"), Units::siemens(), Variable::BuiltIn);
+#endif
 }
 
 void Evaluator::setExpression(const QString& expr)
@@ -1504,11 +1505,11 @@ CNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<CNumber>& 
                     m_error = tr("unit must not be zero");
                     return HMath::nan();
                 }
-                if(!val1.sameDimension(val2)) {
+                /*if(!val1.sameDimension(val2)) {
                     m_error = tr("Conversion failed - dimension mismatch");
                     return HMath::nan();
                 }
-                val2.setDisplayUnit(val1, opcode.text);
+                val2.setDisplayUnit(val1, opcode.text);*/
                 stack.push(val2);
                 break;
 

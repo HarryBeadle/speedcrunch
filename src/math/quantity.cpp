@@ -182,8 +182,7 @@ Quantity &Quantity::setDisplayUnit(const CNumber unit, const QString &name)
 {
     if(unit.isNan())
         *this = DMath::nan(InvalidDimension);
-    else
-    {
+    else {
         stripUnits();
         m_unit = new CNumber(unit);
         m_unitName = name;
@@ -274,8 +273,7 @@ void Quantity::serialize(QJsonObject &json) const
         json["dimension"] = dim_json;
     }
 
-    if(hasUnit())
-    {
+    if(hasUnit()) {
         QJsonObject unit_json;
         m_unit->serialize(unit_json);
         json["unit"] = unit_json;
@@ -314,8 +312,7 @@ Quantity &Quantity::operator=(const Quantity &other)
     m_numericValue = other.m_numericValue;
     m_dimension = other.m_dimension;
     stripUnits();
-    if(other.hasUnit())
-    {
+    if(other.hasUnit()) {
         m_unit = new CNumber(*other.m_unit);
         m_unitName = other.m_unitName;
     }

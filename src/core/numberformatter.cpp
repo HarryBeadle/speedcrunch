@@ -28,7 +28,7 @@ QString NumberFormatter::format(CNumber number)
 {
     Settings* settings = Settings::instance();
 
-
+#if 0
     //handle units
     QString unit_name = "";
     CNumber unit(1);
@@ -39,13 +39,16 @@ QString NumberFormatter::format(CNumber number)
     unit_name = ' ' + number.getUnitName();
     unit = number.getUnit();
     number.stripUnits();
-
+#endif
     const char format = number.format() != 0 ? number.format() : settings->resultFormat;
+#if 0
     number /= unit;
+#endif
     char* str = CMath::format(number, format, settings->resultPrecision);
     QString result = QString::fromLatin1(str);
     free(str);
 
+#if 0
     if(!number.real.isZero() && !number.imag.isZero() && unit_name != " ")
         result = "(" + result + ")";
     if(unit_name != " ") {
@@ -53,5 +56,6 @@ QString NumberFormatter::format(CNumber number)
     }
     if (settings->radixCharacter() != '.')
         result.replace('.', settings->radixCharacter());
+#endif
     return result;
 }

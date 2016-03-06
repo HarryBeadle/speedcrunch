@@ -59,10 +59,10 @@
     }
 
 #define ENSURE_SAME_DIMENSION() \
-    for(int i=0; i<args.count()-1; ++i) { \
+    /*for(int i=0; i<args.count()-1; ++i) { \
         if(!args.at(i).sameDimension(args.at((i)+1))) \
             return CMath::nan(InvalidDimension);\
-    }
+    }*/
 
 #define ENSURE_REAL_ARGUMENT(i) \
     if (!args[i].isReal()) { \
@@ -549,7 +549,6 @@ CNumber function_geomean(Function* f, const Function::ArgumentList& args)
         return CMath::sqrt(result);
 
     CNumber nominal = result;
-    nominal.clearDimension();
     result = CMath::raise(result/nominal, CNumber(1)/CNumber(args.count()));
     return CMath::exp(CMath::ln(nominal) / CNumber(args.count()))*result;
 }
