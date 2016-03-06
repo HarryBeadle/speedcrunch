@@ -1623,8 +1623,7 @@ CNumber Evaluator::execUserFunction(const UserFunction* function, QVector<CNumbe
     }
 
 
-    if (m_functionsInUse.contains(function->name()))
-    {
+    if (m_functionsInUse.contains(function->name())) {
            m_error = "<b>" + function->name() + "</b>: " + tr("recursion not supported");
            return CMath::nan();
     }
