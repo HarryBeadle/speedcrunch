@@ -23,6 +23,7 @@
 #include "core/functions.h"
 #include "math/hmath.h"
 #include "math/cmath.h"
+#include "math/value.h"
 
 #include <QHash>
 #include <QObject>

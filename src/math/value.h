@@ -4,19 +4,26 @@
 #include "math/quantity.h"
 
 class QString;
+class QJsonObject;
 
 
 class Value
 {
 public:
     Value();
-    enum Type {TQuantity};
+    Value(const Quantity & q);
+    enum Type {Invalid, TQuantity};
 
-    Quantity ToQuantity();
-    QString ToString();
+    Quantity ToQuantity() const;
+    QString ToString() const;
+    void setFormat(const QString & f);
+
+    void serialize(QJsonObject & json) const;
+    void deSerialize(const QJsonObject & json);
 
 private:
     QString m_format;
+    Type m_type;
     union {
         Quantity m_quantity;
       };

@@ -108,7 +108,7 @@ public:
 
 
 private:
-    CNumber m_nominalValue;
+    CNumber m_numericValue;
     QMap<QString, Rational> m_dimension;
     CNumber * m_unit;
     QString m_unitName;
@@ -202,7 +202,5 @@ class DMath
     static Quantity encodeIeee754( const Quantity & val, const Quantity & exp_bits,
                                   const Quantity & significand_bits, const Quantity & exp_bias );
 };
-
-std::ostream & operator<<( std::ostream &, const CNumber & );
 
 #endif // QUANTITY_H
