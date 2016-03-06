@@ -145,8 +145,11 @@ HEADERS += core/book.h \
            math/floattrig.h \
            math/hmath.h \
            math/number.h \
+           math/quantity.h \
            math/rational.h \
-           math/units.h
+           math/units.h \
+           math/value.h
+
 
 SOURCES += main.cpp \
            core/book.cpp \
@@ -203,8 +206,10 @@ SOURCES += main.cpp \
            math/number.c \
 	   math/cmath.cpp \
 	   math/cnumberparser.cpp \
+           math/quantity.cpp \
            math/rational.cpp \
-           math/units.cpp
+           math/units.cpp \
+           math/value.cpp
 
 RESOURCES += resources/speedcrunch.qrc $$OUT_PWD/doc/manual.qrc
 TRANSLATIONS += resources/locale/ar.ts \

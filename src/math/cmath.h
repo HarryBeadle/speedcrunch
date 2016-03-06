@@ -31,7 +31,8 @@
 
 class CMath;
 
-class CNumber {
+class CNumber
+{
   friend class CMath;
   friend CNumber operator-( const CNumber & );
   friend CNumber operator-( const CNumber &, const CNumber& );
@@ -50,7 +51,7 @@ class CNumber {
     CNumber( int i );
     CNumber( const char* );
     CNumber( const QJsonObject & json );
-    ~CNumber(){};
+    ~CNumber(){}
 
     bool isNan() const;
     bool isZero() const;
@@ -146,8 +147,6 @@ class CMath
     // GENERAL MATH
     static CNumber rad2deg( const CNumber & angle );
     static CNumber deg2rad( const CNumber & angle );
-    static CNumber max( const HNumber & n1, const HNumber & n2 );
-    static CNumber min( const HNumber & n1, const HNumber & n2 );
     static CNumber abs( const CNumber & n );
     static CNumber integer( const CNumber & n );
     static CNumber frac( const CNumber & n );
