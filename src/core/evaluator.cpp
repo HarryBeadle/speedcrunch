@@ -1615,11 +1615,6 @@ CNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<CNumber>& 
 
 CNumber Evaluator::execUserFunction(const UserFunction* function, QVector<CNumber>& arguments) {
     /* TODO:
-     *   OK ignore missing variables or user functions when declaring a user function.
-     *   OK prohibit user function recursion
-     *   OK when an error happens in a user function, tell the user which one it is.
-     *   OK save user functions when the app closes, and restore them at startup.
-     *   OK show a list of user functions and allow the user to delete them.
      *   - replace user variables by user functions (with no argument) ?
      */
     if (arguments.count() != function->arguments().count()) {
@@ -1628,7 +1623,7 @@ CNumber Evaluator::execUserFunction(const UserFunction* function, QVector<CNumbe
     }
 
 
-    if(m_functionsInUse.contains(function->name()))
+    if (m_functionsInUse.contains(function->name()))
     {
            m_error = "<b>" + function->name() + "</b>: " + tr("recursion not supported");
            return CMath::nan();
@@ -1659,7 +1654,7 @@ CNumber Evaluator::execUserFunction(const UserFunction* function, QVector<CNumbe
 
     CNumber result = exec(newOpcodes, newConstants, function->identifiers);
     if (!m_error.isEmpty()) {
-        // Tell the user where the error happened, but avoid spamming them when the stack overflowed
+        // Tell the user where the error happened
         m_error = "<b>" + function->name() + "</b>: " + m_error;
     }
 
