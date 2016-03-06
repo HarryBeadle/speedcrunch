@@ -32,7 +32,6 @@
 #include <QStack>
 
 //#define EVALUATOR_DEBUG
-#define MAX_STACK_DEPTH 100
 #define ALLOW_IMPLICIT_MULT
 
 
@@ -493,7 +492,7 @@ void Evaluator::reset()
     m_assignFunc = false;
     m_assignArg.clear();
     m_session = NULL;
-    m_stack_depth=0;
+    m_functionsInUse.clear();
 
     initializeBuiltInVariables();
 }
@@ -1616,11 +1615,6 @@ CNumber Evaluator::exec(const QVector<Opcode>& opcodes, const QVector<CNumber>& 
 
 CNumber Evaluator::execUserFunction(const UserFunction* function, QVector<CNumber>& arguments) {
     /* TODO:
-     *   OK ignore missing variables or user functions when declaring a user function.
-     *   OK prohibit user function recursion by using a flag in UserFunction.
-     *   OK when an error happens in a user function, tell the user which one it is.
-     *   OK save user functions when the app closes, and restore them at startup.
-     *   OK show a list of user functions and allow the user to delete them.
      *   - replace user variables by user functions (with no argument) ?
      */
     if (arguments.count() != function->arguments().count()) {
@@ -1629,13 +1623,12 @@ CNumber Evaluator::execUserFunction(const UserFunction* function, QVector<CNumbe
     }
 
 
-
-    ++m_stack_depth;
-    if(m_stack_depth>MAX_STACK_DEPTH) {
-        m_error = "<b>" + function->name() + "</b>: " + tr("Maximum recursion depth exceeded");
-        --m_stack_depth;
-        return CMath::nan();
+    if (m_functionsInUse.contains(function->name())) {
+           m_error = "<b>" + function->name() + "</b>: " + tr("recursion not supported");
+           return CMath::nan();
     }
+    m_functionsInUse.insert(function->name());
+
 
     QVector<Opcode> newOpcodes;
     QVector<CNumber> newConstants = function->constants; // Copy
@@ -1659,11 +1652,12 @@ CNumber Evaluator::execUserFunction(const UserFunction* function, QVector<CNumbe
     }
 
     CNumber result = exec(newOpcodes, newConstants, function->identifiers);
-    if (!m_error.isEmpty() && !m_error.contains(tr("Maximum recursion depth exceeded"))) {
-        // Tell the user where the error happened, but avoid spamming them when the stack overflowed
+    if (!m_error.isEmpty()) {
+        // Tell the user where the error happened
         m_error = "<b>" + function->name() + "</b>: " + m_error;
     }
-    --m_stack_depth;
+
+    m_functionsInUse.remove(function->name());
     return result;
 }
 

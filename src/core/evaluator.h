@@ -142,7 +142,7 @@ private:
     QVector<CNumber> m_constants;
     QStringList m_identifiers;
     Session * m_session;
-    unsigned int m_stack_depth;
+    QSet<QString> m_functionsInUse;
 
     const CNumber& checkOperatorResult(const CNumber&);
     static QString stringFromFunctionError(Function*);
