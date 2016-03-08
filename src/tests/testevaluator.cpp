@@ -702,6 +702,9 @@ void test_implicit_multiplication()
 
     CHECK_EVAL("2 (2 + 1)", "6");
     CHECK_EVAL("2 (a)", "10");
+
+    /* Tests issue 598 */
+    CHECK_EVAL("2(a)^3", "250");
 }
 
 void test_units()

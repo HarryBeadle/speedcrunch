@@ -931,36 +931,6 @@ void Evaluator::compile(const Tokens& tokens)
 #endif
                 }
 
-#ifdef ALLOW_IMPLICIT_MULT
-                /* Rule #2 for implicit multiplication with parentheses: NUMBER ( NUMBER )     -> IDENTIFIER
-                 *                                                       NUMBER ( IDENTIFIER ) -> IDENTIFIER
-                 * Action: Treat as A * B.
-                 * Note that this rule must be before parenthesis rule.
-                 */
-                if(!ruleFound && syntaxStack.itemCount() >= 4) {
-                    Token par2 = syntaxStack.top();
-                    Token b    = syntaxStack.top(1);
-                    Token par1 = syntaxStack.top(2);
-                    Token a = syntaxStack.top(3);
-
-                    if((b.isNumber() || b.isIdentifier()) && a.isNumber()
-                            && par1.asOperator() == Token::LeftPar
-                            && par2.asOperator() == Token::RightPar)
-                    {
-                        ruleFound = true;
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.push(Token::stxIdentifier);
-                        m_codes.append(Opcode::Mul);
-#ifdef EVALUATOR_DEBUG
-                        dbg << "    Rule #2 for implicit multiplication" << "\n";
-#endif
-                    }
-                }
-#endif
-
                 // Rule for parenthesis: (Y) -> Y.
                 if (!ruleFound && syntaxStack.itemCount() >= 3) {
                     Token right = syntaxStack.top();
@@ -973,7 +943,7 @@ void Evaluator::compile(const Tokens& tokens)
                         syntaxStack.pop();
                         syntaxStack.pop();
                         syntaxStack.pop();
-                        syntaxStack.push(y);
+                        syntaxStack.push(Token::stxIdentifier);
 #ifdef EVALUATOR_DEBUG
                         dbg << "    Rule for (Y) -> Y" << "\n";
 #endif
