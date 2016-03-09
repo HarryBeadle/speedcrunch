@@ -31,7 +31,7 @@
 #include <QCoreApplication>
 #include <QStack>
 
-#define EVALUATOR_DEBUG
+//#define EVALUATOR_DEBUG
 #define ALLOW_IMPLICIT_MULT
 
 
