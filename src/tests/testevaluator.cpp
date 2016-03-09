@@ -168,8 +168,6 @@ void test_unary()
     CHECK_EVAL("-1!", "-1");
     CHECK_EVAL("-2!", "-2");
     CHECK_EVAL("-3!", "-6");
-
-    CHECK_EVAL("a=10", "10");
 }
 
 void test_binary()
@@ -685,11 +683,16 @@ void test_implicit_multiplication()
     CHECK_EVAL("5.0a", "25");
     CHECK_EVAL("5e2a", "2500");
     CHECK_EVAL_FAIL("a5");
-    CHECK_EVAL_FAIL("a 5");
+    CHECK_EVAL("a 5", "25");
     CHECK_EVAL("2a^3", "250");
     CHECK_EVAL("b=2", "2");
     CHECK_EVAL_FAIL("ab");
     CHECK_EVAL("a b", "10");
+    CHECK_EVAL("eps = 10", "10");
+    CHECK_EVAL_FAIL("5 eps");
+    CHECK_EVAL("f() = 123", "123");
+    CHECK_EVAL("2f()", "246");
+    CHECK_EVAL("5   5", "55");
 
     CHECK_EVAL("a sin(pi/2)", "5");
     CHECK_EVAL("a sqrt(4)",   "10");
