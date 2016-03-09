@@ -1094,7 +1094,7 @@ void Evaluator::compile(const Tokens& tokens)
                     Token b = syntaxStack.top();
                     Token a = syntaxStack.top(1);
 
-                    if((a.isOperand()) && (b.isOperand())
+                    if(a.isOperand() && b.isOperand()
                             && token.asOperator() != Token::LeftPar
                             && ((token.isOperator()
                                  && opPrecedence(Token::Asterisk) >= opPrecedence(token.asOperator())) // token is normal operator
