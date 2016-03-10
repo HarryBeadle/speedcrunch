@@ -445,9 +445,7 @@ void Evaluator::initializeBuiltInVariables()
     setVariable(QString::fromUtf8("coulomb"), Units::coulomb(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("volt"), Units::volt(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("ohm"), Units::ohm(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("watt"), Units::watt(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("farad"), Units::farad(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("watt"), Units::watt(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("tesla"), Units::tesla(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("weber"), Units::weber(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("henry"), Units::henry(), Variable::BuiltIn);
