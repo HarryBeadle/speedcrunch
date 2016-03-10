@@ -974,7 +974,6 @@ void Evaluator::compile(const Tokens& tokens)
                         m_codes.append(Opcode(Opcode::Function, 1));
                         syntaxStack.pop();
                         syntaxStack.pop();
-                        syntaxStack.pop();
                         syntaxStack.push(Token::stxAbstract);
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for simplified function syntax; function " << id.text() << "\n";
@@ -992,7 +991,6 @@ void Evaluator::compile(const Tokens& tokens)
                          && (op.asOperator() == Token::Plus || op.asOperator() == Token::Minus))
                     {
                         ruleFound = true;
-                        syntaxStack.pop();
                         syntaxStack.pop();
                         syntaxStack.pop();
                         syntaxStack.push(Token::stxAbstract);
