@@ -47,7 +47,7 @@ public:
 
     static const Token null;
 
-    Token(Type type = stxUnknown, const QString& text = QString::null, int pos = -1);
+    Token(Type type = stxUnknown, const QString& text = QString::null, int pos = -1, int size = -1);
     Token(const Token&);
 
     CNumber asNumber() const;
@@ -58,14 +58,24 @@ public:
     bool isIdentifier() const { return m_type == stxIdentifier; }
     bool isOperand() const {return m_type == stxNumber || m_type == stxIdentifier || m_type == stxAbstract;}
     int pos() const { return m_pos; }
+    void setPos(int pos) { m_pos = pos; }
+    int size() const { return m_size; }
+    void setSize(int size) { m_size = size; }
     QString text() const { return m_text; }
-    void addUnit(QString t) { m_text = "->" + t;} // Needed for support of alphanumeric unit conversion operator "in"
     Type type() const { return m_type; }
+    int minPrecedence() const { return m_minPrecedence; }
+    void setMinPrecedence(int minPrecedence) { m_minPrecedence = minPrecedence; }
 
     Token& operator=(const Token&);
 
 protected:
+    /** Start position of the text that token represents in the expression (might include extra space characters). */
     int m_pos;
+    /** Size of text that token represents in the expression (might include extra space characters). */
+    int m_size;
+    /** Precedence of the operator with the lowest precedence contained in this token. */
+    int m_minPrecedence;
+    /** Normalized version of that token text (only valid when the token represents a single token). */
     QString m_text;
     Type m_type;
 };
@@ -126,7 +136,7 @@ public:
     bool hasUserFunction(const QString&) const;
 
 protected:
-    void compile(const Tokens&);
+    void compile(const Tokens&, const QString& expression = QString::Null());
 
 
 private:
