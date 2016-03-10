@@ -28,6 +28,8 @@ QString NumberFormatter::format(CNumber number)
 {
     Settings* settings = Settings::instance();
 
+    if(number.isZero())
+        return "0";
 
     //handle units
     QString unit_name = "";
