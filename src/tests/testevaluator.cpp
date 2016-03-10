@@ -78,7 +78,7 @@ static void checkEval(const char*, int line, const char* msg, const QString& exp
     if (!eval->error().isEmpty()) {
         if (!shouldFail) {
             ++eval_failed_tests;
-            cerr << "[Line " << line << "]\t" << msg << "Error: " << qPrintable(eval->error());
+            cerr << "[Line " << line << "]\t" << msg << "\tError: " << qPrintable(eval->error());
             if (issue)
                 cerr << "\t[ISSUE " << issue << "]";
             else {
