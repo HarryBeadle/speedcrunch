@@ -12,15 +12,15 @@ Bitwise operations
 
 .. function:: and(x1; x2; ...)
 
-    Performs a bitwise logical AND on the submitted parameters (one or more). All parameters  have to be real integers from the range --2\ :sup:`255` to +2\ :sup:`255`--1 (signed or unsigned 256 bit integers), non integer arguments are rounded towards zero. The result ranges from --2\ :sup:`255` to +2\ :sup:`255`--1 (signed integer). Note that ``and(x)`` is not the identity, because the unsigned +2\ :sup:`255` is mapped to the signed --2\ :sup:`255` for example. An error is returned if the parameters are not in the valid range.
+    Performs a bitwise logical AND on the submitted parameters (one or more). All parameters  have to be real integers from the range --2\ :sup:`255` to +2\ :sup:`255`--1 (signed or unsigned 256 bit integers), non integer arguments are rounded toward zero. The result ranges from --2\ :sup:`255` to +2\ :sup:`255`--1 (signed integer). Note that ``and(x)`` is not the identity, because the unsigned +2\ :sup:`255` is mapped to the signed --2\ :sup:`255` for example. An error is returned if the parameters are not in the valid range.
     
 .. function:: or(x1; x2; ...)
 
-    Performs a bitwise logical OR on the submitted parameters (one or more). All parameters have to be integers from the range --2\ :sup:`255` to +2\ :sup:`255`--1 (signed integer), non integer arguments are rounded towards zero. Note that ``or(x)`` is not the identity, because the unsigned 2\ :sup:`255`     is mapped to the signed --2\ :sup:`255`, for example.
+    Performs a bitwise logical OR on the submitted parameters (one or more). All parameters have to be integers from the range --2\ :sup:`255` to +2\ :sup:`255`--1 (signed integer), non integer arguments are rounded toward zero. Note that ``or(x)`` is not the identity, because the unsigned 2\ :sup:`255`     is mapped to the signed --2\ :sup:`255`, for example.
     
 .. function:: xor(x1; x2; ...)
 
-    Performs a bitwise logical XOR on the submitted parameters (one or more). All parameters have to be integers from the range --2\ :sup:`255` to +2\ :sup:`255`--1  (signed integer), non integer arguments are rounded towards zero. Note that ``xor(x)`` is not the identity, because the unsigned 2\ :sup:`255` is mapped to the signed --2\ :sup:`255`, for example.
+    Performs a bitwise logical XOR on the submitted parameters (one or more). All parameters have to be integers from the range --2\ :sup:`255` to +2\ :sup:`255`--1  (signed integer), non integer arguments are rounded toward zero. Note that ``xor(x)`` is not the identity, because the unsigned 2\ :sup:`255` is mapped to the signed --2\ :sup:`255`, for example.
 
 .. function:: not(n)
 
@@ -35,7 +35,7 @@ Bitwise operations
     :param x: The number (bit pattern) to shift, --2\ :sup:`255` <= `x` <= +2\ :sup:`256`-1.
     :param n: Number of bits to shift, --255 <= `n` <= 255. Must be integer.
     
-    Note that `n` < 0 results in a right shift. The result ranges from --2\ :sup:`255` to +2\ :sup:`255`-1 (signed integer). `x` is rounded towards zero before shifting.  If `n` = 0, `x` is returned without rounding.
+    Note that `n` < 0 results in a right shift. The result ranges from --2\ :sup:`255` to +2\ :sup:`255`-1 (signed integer). `x` is rounded toward zero before shifting.  If `n` = 0, `x` is returned without rounding.
     
     Shifted out bits are always dropped. During a right shift, the most significant bit (bit 255) is copied. During a left shift, zero bits are shifted in.
     
@@ -47,13 +47,13 @@ Bitwise operations
     :param x: The number (bit pattern) to shift, --2\ :sup:`255` <= `x` <= +2\ :sup:`256`-1.
     :param n: Number of bits to shift, --255 <= `n` <= 255. Must be integer.
     
-    Note that `n` < 0 results in a left shift. The result ranges from --2\ :sup:`255` to +2\ :sup:`255`-1 (signed integer). `x` is rounded towards zero before shifting.  If `n` = 0, `x` is returned without rounding.
+    Note that `n` < 0 results in a left shift. The result ranges from --2\ :sup:`255` to +2\ :sup:`255`-1 (signed integer). `x` is rounded toward zero before shifting.  If `n` = 0, `x` is returned without rounding.
     
     Shifted out bits are always dropped. During a right shift, the most significant bit (bit 255) is copied. During a left shift, zero bits are shifted in.
                 
 .. function:: mask(x; n)
     
-    Returns the lowest `n` bits from `x`. For this, `x` must be in the range --2\ :sup:`255` <= `x` <= +2\ :sup:`256`-1, and `n` must be an integer, 1 <= `n` <= 255. `x` is rounded towards zero.
+    Returns the lowest `n` bits from `x`. For this, `x` must be in the range --2\ :sup:`255` <= `x` <= +2\ :sup:`256`-1, and `n` must be an integer, 1 <= `n` <= 255. `x` is rounded toward zero.
     
     The result is always unsigned.
     
@@ -67,7 +67,7 @@ Bitwise operations
     
     Takes the lower `n` bits from `x` and sign-extends them to full 256 bit. This means that bit at position `n` - 1 is copied to all upper bits.
     
-    `x` must be in the range --2\ :sup:`255` <= `x` <= +2\ :sup:`256`-1, and `n` must be an integer, 1 <= `n` <= 255. `x` is rounded towards zero.
+    `x` must be in the range --2\ :sup:`255` <= `x` <= +2\ :sup:`256`-1, and `n` must be an integer, 1 <= `n` <= 255. `x` is rounded toward zero.
     
     .. admonition:: Example
     
@@ -143,13 +143,13 @@ Beware of rounding errors! Although SpeedCrunch performs all computations intern
     
 .. function:: round(x\[; n\])
     
-    Rounds `x` to the nearest `n`-digit number. `n` may be ommited, in which case `x` is rounded to the closest integer.
+    Rounds `x` to the nearest `n`-digit number. `n` may be omitted, in which case `x` is rounded to the closest integer.
         
     Only real, dimensionless arguments are allowed.
     
 .. function:: trunc(x\[; n\])
     
-    Truncates (rounds towards zero) `x` to the next `n`-digit number. `n` may be ommited, in which case `x` is rounded to integer.
+    Truncates (rounds toward zero) `x` to the next `n`-digit number. `n` may be omitted, in which case `x` is rounded to integer.
     
     Only real, dimensionless arguments are allowed.
     
@@ -163,9 +163,9 @@ Integer division
 
 .. function:: idiv(a; b)
     
-    Computes the integer part of the division `a/b`. The result of :func:`idiv` is guaranteed to be exact. While ``int(a/b)`` covers a larger range of arguments, the result is computed via floating point arithmetics, and may be subject to rouding errors. :func:`idiv` will instead yield and error if the parameters exceed the safe bounds.
+    Computes the integer part of the division `a/b`. The result of :func:`idiv` is guaranteed to be exact. While ``int(a/b)`` covers a larger range of arguments, the result is computed via floating point arithmetics, and may be subject to rounding errors. :func:`idiv` will instead yield and error if the parameters exceed the safe bounds.
     
-    It is possible to apply the idiv function to non-integers as well, but be aware that rounding errors might be lead to off-by-one erros. If idiv detects, that a result depends on the validity of the guard digits, it returns a NaN as a warning.
+    It is possible to apply the idiv function to non-integers as well, but be aware that rounding errors might be lead to off-by-one errors. If idiv detects, that a result depends on the validity of the guard digits, it returns a NaN as a warning.
     
     Only real, dimensionless arguments are allowed.
     
@@ -173,9 +173,9 @@ Integer division
 
     Computes the remainder of the integer division `a/n`. The divisor `n` must be non-zero, and the result takes the sign of `a`.
     
-    This function always returns an exact result, provided that the paramters are exact.
+    This function always returns an exact result, provided that the parameters are exact.
     
-    You can use this function with non-integers as well, but rounding errors might lead to off-by-one errros. Evaluating :func:`mod` can potentially be computationally expensive, so the function is internally restricted to 250 division loops.
+    You can use this function with non-integers as well, but rounding errors might lead to off-by-one errors. Evaluating :func:`mod` can potentially be computationally expensive, so the function is internally restricted to 250 division loops.
     
     Only real, dimensionless arguments are allowed.
 
@@ -185,6 +185,6 @@ Integer division
      
         lcm(n1; n2) = n1*n2/gcd(n1; n2)
 
-    Only real, integer arguments are allowed.
+    Only real, integer arguments are allowed by :func:`gcd`.
                 
                 

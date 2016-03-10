@@ -24,7 +24,7 @@ The following binary float formats are defined by the standard:
 Name           Also known as       Exponent bits  Significand bits
 =============  ==================  =============  ================
 ``binary16``   Half precision      5              10
-``binary32``   Single precisision  8              23
+``binary32``   Single precision    8              23
 ``binary64``   Double precision    11             52
 ``binary128``  Quad precision      15             112
 =============  ==================  =============  ================
@@ -38,8 +38,8 @@ and ``binary64`` is available as ``double``.
    Encode a floating point number into a IEEE-754 binary representation.
 
    :param x: The floating point value to encode.
-   :param exponent_bits: The lenth of the exponent part, in bits.
-   :param significand_bits: The length of the signficand part, in bits.
+   :param exponent_bits: The length of the exponent part, in bits.
+   :param significand_bits: The length of the significand part, in bits.
    :param exponent_bias: The exponent bias to use. Derived from the length of the
                          exponent if not specified.
 
@@ -48,8 +48,8 @@ and ``binary64`` is available as ``double``.
    Calculate the value of an IEEE-754 binary float.
 
    :param x: The binary float to decode.
-   :param exponent_bits: The lenth of the exponent part, in bits.
-   :param significand_bits: The length of the signficand part, in bits.
+   :param exponent_bits: The length of the exponent part, in bits.
+   :param significand_bits: The length of the significand part, in bits.
    :param exponent_bias: The exponent bias to use. Derived from the length of the
                          exponent if not specified.
 

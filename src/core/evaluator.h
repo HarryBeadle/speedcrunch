@@ -43,7 +43,8 @@ public:
               Super0, Super1, Super2, Super3, Super4, Super5, Super6, Super7, Super8, Super9,
               LeftPar, RightPar, Semicolon, Exclamation, Equal, Modulo,
               LeftShift, RightShift, Ampersand, Pipe, RightArrow };
-    enum Type { stxUnknown, stxNumber, stxIdentifier, stxOperator, stxOpenPar, stxClosePar, stxSep };
+    enum Type { stxUnknown, stxNumber, stxIdentifier, stxAbstract, stxOperator, stxOpenPar, stxClosePar, stxSep};
+    //                     |<-------------isOperand------------->|<----------------isOperator----------------->|
 
     static const Token null;
 
@@ -56,6 +57,7 @@ public:
     bool isNumber() const { return m_type == stxNumber; }
     bool isOperator() const { return m_type >= stxOperator; }
     bool isIdentifier() const { return m_type == stxIdentifier; }
+    bool isOperand() const {return m_type == stxNumber || m_type == stxIdentifier || m_type == stxAbstract;}
     int pos() const { return m_pos; }
     QString text() const { return m_text; }
     void addUnit(QString t) { m_text = "->" + t;} // Needed for support of alphanumeric unit conversion operator "in"
@@ -143,7 +145,7 @@ private:
     QVector<CNumber> m_constants;
     QStringList m_identifiers;
     Session * m_session;
-    unsigned int m_stack_depth;
+    QSet<QString> m_functionsInUse;
 
     const CNumber& checkOperatorResult(const CNumber&);
     static QString stringFromFunctionError(Function*);
