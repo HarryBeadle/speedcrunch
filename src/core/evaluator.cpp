@@ -538,6 +538,8 @@ Tokens Evaluator::scan(const QString& expr) const
     int tokenStart = 0;
     Token::Type type;
     bool numberFrac = false;
+    int expStart;     // index of the exponent part in the expression
+    QString expText;  // start of the exponent text matching /E[\+\-]*/
 
     // Force a terminator.
     ex.append(QChar());
@@ -551,6 +553,8 @@ Tokens Evaluator::scan(const QString& expr) const
             tokenStart = i;
             // State variables reset
             numberFrac = false;
+            expStart = -1;
+            expText = "";
 
             // Skip any whitespaces.
             if (ch.isSpace())
@@ -643,7 +647,8 @@ Tokens Evaluator::scan(const QString& expr) const
                 state = InDecimal;
             }
             else if (ch.toUpper() == 'E') { // Exponent?
-                tokenText.append('E');
+                expText = "E";
+                expStart = i;
                 ++i;
                 state = InExpIndicator;
             } else if (ch.toUpper() == 'X' && tokenText == "0") { // Normal hexadecimal notation.
@@ -722,7 +727,8 @@ Tokens Evaluator::scan(const QString& expr) const
             if (ch.isDigit()) // Consume as long as it's a digit.
                 tokenText.append(ex.at(i++));
             else if (ch.toUpper() == 'E') { // Exponent?
-                tokenText.append('E');
+                expText = "E";
+                expStart = i;
                 ++i;
                 state = InExpIndicator;
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
@@ -736,13 +742,17 @@ Tokens Evaluator::scan(const QString& expr) const
 
         case InExpIndicator:
             if (ch == '+' || ch == '-') // Possible + or - right after E.
-                tokenText.append(ex.at(i++));
-            else if (ch.isDigit()) // Consume as long as it's a digit.
+                expText.append(ex.at(i++));
+            else if (ch.isDigit()) {// Parse the exponent absolute value
                 state = InExponent;
-            else if (isSeparatorChar(ch)) // Ignore thousand separators
-                ++i;
-            else // Invalid thing here.
-                state = Bad;
+                tokenText.append(expText);
+            } else {// Invalid thing here.
+                // Rollback: might be an identifier used in implicit multiplication
+                i = expStart;
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
+                tokenText = "";
+                state = Start;
+            }
             break;
 
         case InExponent:
