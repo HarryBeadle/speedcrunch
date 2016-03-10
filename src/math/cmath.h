@@ -50,7 +50,7 @@ class CNumber {
     CNumber( int i );
     CNumber( const char* );
     CNumber( const QJsonObject & json );
-    ~CNumber(){};
+    ~CNumber(){}
 
     bool isNan() const;
     bool isZero() const;
