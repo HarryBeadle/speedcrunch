@@ -554,6 +554,16 @@ void test_function_discrete()
     CHECK_EVAL("ncr(4;5)", "0");
 }
 
+void test_function_simplified()
+{
+    CHECK_EVAL("abs 123", "123");
+    CHECK_EVAL("abs -123", "123");
+    CHECK_EVAL("10 + abs 123", "133");
+    CHECK_EVAL_KNOWN_ISSUE("10 + abs -123", "133", 600);
+    CHECK_EVAL("abs 123 + 10", "133");
+    CHECK_EVAL("abs -123 + 10", "133");
+}
+
 void test_auto_fix_parentheses()
 {
     CHECK_AUTOFIX("sin(1)", "sin(1)");
@@ -760,6 +770,7 @@ int main(int argc, char* argv[])
     test_function_stat();
     test_function_logic();
     test_function_discrete();
+    test_function_simplified();
 
     test_auto_fix_parentheses();
     test_auto_fix_ans();
