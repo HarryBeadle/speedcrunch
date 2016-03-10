@@ -744,7 +744,9 @@ Tokens Evaluator::scan(const QString& expr) const
             else if (ch.isDigit()) {// Parse the exponent absolute value
                 state = InExponent;
                 tokenText.append(expText);
-            } else {// Invalid thing here.
+            } else if (isSeparatorChar(ch)) // Ignore thousand separators
+                ++i;
+            else {// Invalid thing here.
                 // Rollback: might be an identifier used in implicit multiplication
                 i = expStart;
                 tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
