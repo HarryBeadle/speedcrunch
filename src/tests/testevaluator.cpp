@@ -36,6 +36,7 @@ static int eval_new_failed_tests = 0;
 #define CHECK_DIV_BY_ZERO(s) checkDivisionByZero(__FILE__,__LINE__,#s,s)
 #define CHECK_EVAL(x,y) checkEval(__FILE__,__LINE__,#x,x,y)
 #define CHECK_EVAL_KNOWN_ISSUE(x,y,n) checkEval(__FILE__,__LINE__,#x,x,y,n)
+#define CHECK_KNOWN_ISSUE(x,n) checkEval(__FILE__,__LINE__,#x,x,"",n,false)
 #define CHECK_EVAL_PRECISE(x,y) checkEvalPrecise(__FILE__,__LINE__,#x,x,y)
 #define CHECK_EVAL_FAIL(x) checkEval(__FILE__,__LINE__,#x,x,"",0,true)
 #define CHECK_USERFUNC_SET(x) checkEval(__FILE__,__LINE__,#x,x,"NaN")
@@ -78,7 +79,10 @@ static void checkEval(const char*, int line, const char* msg, const QString& exp
     if (!eval->error().isEmpty()) {
         if (!shouldFail) {
             ++eval_failed_tests;
-            cerr << "[Line " << line << "]\t:" << msg << "  Error: " << qPrintable(eval->error()) << endl;
+            cerr << "[Line " << line << "]\t:" << msg << "  Error: " << qPrintable(eval->error());
+            if (issue)
+                cerr << "\t[ISSUE " << issue << "]";
+            cerr << endl;
         }
     } else {
         char* result = CMath::format(rn, 'f');
@@ -168,8 +172,6 @@ void test_unary()
     CHECK_EVAL("-1!", "-1");
     CHECK_EVAL("-2!", "-2");
     CHECK_EVAL("-3!", "-6");
-
-    CHECK_EVAL("a=10", "10");
 }
 
 void test_binary()
@@ -685,11 +687,17 @@ void test_implicit_multiplication()
     CHECK_EVAL("5.0a", "25");
     CHECK_EVAL("5e2a", "2500");
     CHECK_EVAL_FAIL("a5");
-    CHECK_EVAL_FAIL("a 5");
+    CHECK_EVAL("a 5", "25");
     CHECK_EVAL("2a^3", "250");
     CHECK_EVAL("b=2", "2");
     CHECK_EVAL_FAIL("ab");
     CHECK_EVAL("a b", "10");
+    CHECK_EVAL("eps = 10", "10");
+    CHECK_KNOWN_ISSUE("5 eps", 599);
+    CHECK_EVAL("f() = 123", "123");
+    CHECK_EVAL("2f()", "246");
+    CHECK_EVAL("5   5", "55");
+    CHECK_EVAL("10.   0.2", "2");
 
     CHECK_EVAL("a sin(pi/2)", "5");
     CHECK_EVAL("a sqrt(4)",   "10");
@@ -702,6 +710,9 @@ void test_implicit_multiplication()
 
     CHECK_EVAL("2 (2 + 1)", "6");
     CHECK_EVAL("2 (a)", "10");
+
+    /* Tests issue 598 */
+    CHECK_EVAL("2(a)^3", "250");
 }
 
 void test_units()
