@@ -51,7 +51,6 @@ public:
     Quantity();
     Quantity(const Quantity& other);
     Quantity( int i );
-    Quantity( const char* );
     Quantity( const QJsonObject & json);
     Quantity(const HNumber &h);
     Quantity(const CNumber &c);
@@ -66,10 +65,12 @@ public:
     bool isInteger() const;
 
     bool hasUnit() const ;
-    CNumber getUnit() const;
-    QString getUnitName() const;
-    CNumber getNumericValue() const;
+    CNumber unit() const;
+    QString unitName() const;
+    CNumber numericValue() const;
+    char format() const;
     Quantity& setDisplayUnit(const CNumber unit, const QString &name);
+    Quantity& setFormat(char c);
     void stripUnits();
     bool hasDimension() const;
     bool isDimensionless() const;
@@ -92,6 +93,7 @@ public:
     Quantity operator*( const Quantity& ) const;
     Quantity operator*( const CNumber& ) const;
     Quantity operator*( const HNumber& ) const;
+    Quantity &operator*=( const Quantity& );
     Quantity operator/( const Quantity& ) const;
     Quantity operator/( const HNumber& ) const;
     Quantity operator/( const CNumber& ) const;
@@ -113,6 +115,7 @@ private:
     QMap<QString, Rational> m_dimension;
     CNumber * m_unit;
     QString m_unitName;
+    char m_format;
 };
 
 
@@ -124,7 +127,7 @@ class DMath
   public:
     static bool complexMode;
 
-    static QString format(const Quantity q, char format, int prec=10);
+    static QString format(const Quantity q, char format=0, int prec=-1);
 
     static Quantity real(const Quantity& x);
     static Quantity imag(const Quantity& x);
@@ -175,6 +178,7 @@ class DMath
     static Quantity arccos( const Quantity & x );
     static Quantity arctan( const Quantity & x );
     // HIGHER MATH FUNCTIONS
+    static Quantity factorial( const Quantity & x, const Quantity & base = CNumber(1) );
     static Quantity gamma( const Quantity & x);
     static Quantity lnGamma( const Quantity & x);
     static Quantity erf( const Quantity & x );

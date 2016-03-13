@@ -24,13 +24,11 @@
 
 
 #define MATCH_UNIT(val, name)   if(q.sameDimension(val)) { \
-                                    q.setDisplayUnit((val).getNumericValue(), (name));\
+                                    q.setDisplayUnit((val).numericValue(), (name));\
                                 }
 
 void Units::findUnit(Quantity & q)
 {
-    return;
-
     QString unit_name = "";
     CNumber unit(1);
     q.cleanDimension();

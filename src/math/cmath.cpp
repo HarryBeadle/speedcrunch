@@ -199,11 +199,16 @@ void CNumber::serialize(QJsonObject &json) const
 /* FIXME !! (Almost) code duplicate of HNumber::deSerialize !! */
 CNumber CNumber::deSerialize(const QJsonObject &json)
 {
-    QString str = json["value"].toString();
-    str.replace(",", ".");
-    CNumber result(str.toLatin1().constData());
-    QString f = json["format"].toString();
-    result.setFormat( (f=="NULL") ? '\0': f.at(0).toLatin1());
+    CNumber result;
+    if (json.contains("value")) {
+        QString str = json["value"].toString();
+        str.replace(",", ".");
+        result = CNumber(str.toLatin1().constData());
+    }
+    if (json.contains("format")) {
+        QString f = json["format"].toString();
+        result.setFormat( (f=="NULL") ? '\0': f.at(0).toLatin1());
+    }
 
     return result;
 }

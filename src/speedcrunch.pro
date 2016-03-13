@@ -17,6 +17,10 @@ equals(QT_MAJOR_VERSION, 4) {
     }
 }
 
+contains(CONFIG, debug) {
+    DEFINES += EVALUATOR_DEBUG
+}
+
 win32-g++:QMAKE_LFLAGS += -static
 
 DEFINES += SPEEDCRUNCH_VERSION=\\\"master\\\"
@@ -147,7 +151,7 @@ HEADERS += core/book.h \
            math/number.h \
            math/quantity.h \
            math/rational.h \
-           math/units.h \
+           math/units.h
 
 
 SOURCES += main.cpp \
@@ -207,7 +211,7 @@ SOURCES += main.cpp \
 	   math/cnumberparser.cpp \
            math/quantity.cpp \
            math/rational.cpp \
-           math/units.cpp \
+           math/units.cpp
 
 RESOURCES += resources/speedcrunch.qrc $$OUT_PWD/doc/manual.qrc
 TRANSLATIONS += resources/locale/ar.ts \

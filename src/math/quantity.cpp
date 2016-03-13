@@ -98,22 +98,29 @@ bool operator!=(const Quantity &l, const Quantity &r)
 }
 
 Quantity::Quantity()
-    : m_numericValue(0), m_unit(NULL), m_unitName("")
+    : m_numericValue(0), m_unit(NULL), m_unitName(""), m_format(0)
 {
 }
 
 Quantity::Quantity(const Quantity & other)
     : m_numericValue(other.m_numericValue),
       m_dimension(other.m_dimension),
-      m_unitName(other.m_unitName)
+      m_unit(NULL),
+      m_unitName(other.m_unitName),
+      m_format(other.m_format)
 {
     if(other.hasUnit())
-        this->m_unit = new CNumber(other.getUnit());
+        this->m_unit = new CNumber(other.unit());
     cleanDimension();
 }
 
 Quantity::Quantity(int i) : Quantity(CNumber(i))
 {
+}
+
+Quantity::Quantity(const QJsonObject &json) : Quantity()
+{
+    *this = deSerialize(json);
 }
 
 Quantity::Quantity(const HNumber & h): Quantity(CNumber(h))
@@ -165,23 +172,28 @@ bool Quantity::hasUnit() const
     return this->m_unit != NULL;
 }
 
-CNumber Quantity::getUnit() const
+CNumber Quantity::unit() const
 {
     if(this->hasUnit())
         return CNumber(*(this->m_unit));
     return CNumber(1);
 }
 
-QString Quantity::getUnitName() const
+QString Quantity::unitName() const
 {
     if(this->hasUnit())
         return m_unitName;
     return "";
 }
 
-CNumber Quantity::getNumericValue() const
+CNumber Quantity::numericValue() const
 {
     return m_numericValue;
+}
+
+char Quantity::format() const
+{
+    return m_format;
 }
 
 Quantity &Quantity::setDisplayUnit(const CNumber unit, const QString &name)
@@ -193,6 +205,12 @@ Quantity &Quantity::setDisplayUnit(const CNumber unit, const QString &name)
         m_unit = new CNumber(unit);
         m_unitName = name;
     }
+    return *this;
+}
+
+Quantity& Quantity::setFormat(char c)
+{
+    m_format = c;
     return *this;
 }
 
@@ -215,7 +233,7 @@ bool Quantity::isDimensionless() const
 {
     Quantity temp(*this);
     temp.cleanDimension();
-    return temp.hasDimension();
+    return m_dimension.empty();
 }
 
 QMap<QString, Rational> Quantity::getDimension() const
@@ -255,9 +273,10 @@ void Quantity::cleanDimension()
 {
     QMap<QString, Rational>::iterator i = m_dimension.begin();
     while (i != m_dimension.end()) {
-        if(!i.value().isZero())
-            m_dimension.erase(i);
-        ++i;
+        if(i.value().isZero())
+            i = m_dimension.erase(i);
+        else
+            ++i;
     }
 }
 
@@ -265,9 +284,9 @@ void Quantity::serialize(QJsonObject &json) const
 {
     QJsonObject nom_json;
     m_numericValue.serialize(nom_json);
-    json["nominal value"] = nom_json;
+    json["numeric_value"] = nom_json;
 
-    if(hasDimension()) {
+    if (hasDimension()) {
         QJsonObject dim_json;
         QMap<QString, Rational>::const_iterator i = m_dimension.constBegin();
         while (i != m_dimension.constEnd()) {
@@ -279,31 +298,45 @@ void Quantity::serialize(QJsonObject &json) const
         json["dimension"] = dim_json;
     }
 
-    if(hasUnit()) {
+    if (hasUnit()) {
         QJsonObject unit_json;
         m_unit->serialize(unit_json);
         json["unit"] = unit_json;
+        json["unit_name"] = m_unitName;
     }
+    if (m_format)
+        json["format"] = (m_format == '\0') ? QString(m_format) : NULL;
 }
 
 Quantity Quantity::deSerialize(const QJsonObject &json)
 {
     Quantity result;
-    QJsonObject nom_json = json["numeric value"].toObject();
-    result.m_numericValue.deSerialize(nom_json);
-
-    if(json.contains("unit")) {
-        QJsonObject unit_json = json["unit"].toObject();
-        result.m_unit->deSerialize(unit_json);
+    if (json.contains("numeric_value")) {
+        QJsonObject num_json = json["numeric_value"].toObject();
+        result.m_numericValue = CNumber(num_json);
     }
 
-    if(json.contains("dimension")) {
+    result.stripUnits();
+    if (json.contains("unit")) {
+        QJsonObject unit_json = json["unit"].toObject();
+        result.m_unit =  new CNumber(unit_json);
+    }
+    if (json.contains("unit_name")) {
+        result.m_unitName = json["unit_name"].toString();
+    }
+
+    if (json.contains("dimension")) {
         QJsonObject dim_json = json["dimension"].toObject();
         for(int i=0; i<dim_json.count(); ++i) {
             QString key = dim_json.keys()[i];
             Rational val(dim_json[key].toString());
             result.modifyDimension(key, val);
         }
+    }
+    if (json.contains("format")) {
+        QString f = json["format"].toString();
+        result.m_format = (f == "NULL" || f.isEmpty()) ? '\0' : f.at(0).toLatin1();
+
     }
     return result;
 }
@@ -376,6 +409,11 @@ Quantity Quantity::operator*(const CNumber & other) const
 Quantity Quantity::operator*(const HNumber & other) const
 {
     return operator*(CNumber(other));
+}
+
+Quantity &Quantity::operator*=(const Quantity & other)
+{
+    return operator=(*this * other);
 }
 
 Quantity Quantity::operator/(const Quantity & other) const
@@ -526,7 +564,7 @@ bool DMath::complexMode = true;
     Quantity DMath::fct(const Quantity &arg1)                   \
     {                                                           \
         ENSURE_DIMENSIONLESS(arg1);                             \
-        return Quantity(COMPLEX_WRAP_1(fct, arg1.m_numericValue));       \
+        return Quantity(COMPLEX_WRAP_1(fct, arg1.m_numericValue));\
     }
 
 // two arguments
@@ -594,6 +632,7 @@ WRAPPER_DMATH_1(ceil)
 WRAPPER_DMATH_1(exp)
 WRAPPER_DMATH_1(ln)
 WRAPPER_DMATH_1(lg)
+WRAPPER_DMATH_1(lb)
 WRAPPER_DMATH_2(log)
 WRAPPER_DMATH_1(sinh)
 WRAPPER_DMATH_1(cosh)
@@ -604,12 +643,14 @@ WRAPPER_DMATH_1(artanh)
 WRAPPER_DMATH_1(sin)
 WRAPPER_DMATH_1(cos)
 WRAPPER_DMATH_1(tan)
+WRAPPER_DMATH_1(cot)
 WRAPPER_DMATH_1(sec)
 WRAPPER_DMATH_1(csc)
 WRAPPER_DMATH_1(arcsin)
 WRAPPER_DMATH_1(arccos)
 WRAPPER_DMATH_1(arctan)
 
+WRAPPER_DMATH_2(factorial)
 WRAPPER_DMATH_1(gamma)
 WRAPPER_DMATH_1(lnGamma)
 WRAPPER_DMATH_1(erf)
@@ -617,6 +658,22 @@ WRAPPER_DMATH_1(erfc)
 
 WRAPPER_DMATH_2(gcd)
 WRAPPER_DMATH_2(idiv)
+
+Quantity DMath::round(const Quantity &n, int prec)
+{
+    ENSURE_DIMENSIONLESS(n);
+    return DMath::complexMode ?
+        CMath::round(n.numericValue(), prec) :
+        CNumber(HMath::round(n.numericValue().real, prec));
+}
+
+Quantity DMath::trunc(const Quantity &n, int prec)
+{
+    ENSURE_DIMENSIONLESS(n);
+    return DMath::complexMode ?
+        CMath::trunc(n.numericValue(), prec) :
+        CNumber(HMath::trunc(n.numericValue().real, prec));
+}
 
 WRAPPER_DMATH_2(nCr)
 WRAPPER_DMATH_2(nPr)
@@ -634,6 +691,7 @@ WRAPPER_DMATH_1(poissonMean)
 WRAPPER_DMATH_1(poissonVariance)
 
 WRAPPER_DMATH_2(mask)
+WRAPPER_DMATH_2(sgnext)
 WRAPPER_DMATH_2(ashr)
 
 WRAPPER_DMATH_3(decodeIeee754)
@@ -644,13 +702,16 @@ WRAPPER_DMATH_4(encodeIeee754)
 
 QString DMath::format(Quantity q, char format, int prec)
 {
+    if (format == 0)
+        format = q.format();
+
     //handle units
     if(!q.hasUnit() && !q.isDimensionless()) {
         q.cleanDimension();
         Units::findUnit(q);
     }
-    QString unit_name = ' ' + q.getUnitName();
-    CNumber unit = q.getUnit();
+    QString unit_name = ' ' + q.unitName();
+    CNumber unit = q.unit();
     CNumber number = q.m_numericValue;
 
     number /= unit;
@@ -753,7 +814,7 @@ Quantity DMath::raise(const Quantity &n1, const Quantity &n2)
     Rational exponent(n2.m_numericValue.real);
     if(abs(exponent.toHNumber() - n2.m_numericValue.real) >= RATIONAL_TOL
        || (n1.isNegative() && exponent.denominator()%2 == 0))
-        return CMath::nan(OutOfDomain);
+        return DMath::nan(OutOfDomain);
 
     // Compute new dimension
     QMap<QString, Rational>::const_iterator i = n1.m_dimension.constBegin();

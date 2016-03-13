@@ -361,11 +361,16 @@ void HNumber::serialize(QJsonObject &json) const
 
 HNumber HNumber::deSerialize(const QJsonObject &json)
 {
-    QString str = json["value"].toString();
-    str.replace(",", ".");
-    HNumber result(str.toLatin1().constData());
-    QString f = json["format"].toString();
-    result.setFormat( (f=="NULL") ? '\0': f.at(0).toLatin1());
+    HNumber result;
+    if (json.contains("value")) {
+        QString str = json["value"].toString();
+        str.replace(",", ".");
+        result = HNumber(str.toLatin1().constData());
+    }
+    if (json.contains("format")) {
+        QString f = json["format"].toString();
+        result.setFormat( (f=="NULL") ? '\0': f.at(0).toLatin1());
+    }
 
     return result;
 }

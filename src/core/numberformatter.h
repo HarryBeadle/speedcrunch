@@ -20,13 +20,14 @@
 #ifndef CORE_NUMBERFORMATTER_H
 #define CORE_NUMBERFORMATTER_H
 
-#include "cmath.h"
+#include "quantity.h"
 
 #include <QtCore/QString>
 
 struct NumberFormatter {
-    static QString format(HNumber &num) { return format(CNumber(num)); }
-	static QString format(CNumber);
+    static QString format(HNumber &num) { return format(Quantity(num)); }
+    static QString format(CNumber &num) { return format(Quantity(num)); }
+    static QString format(Quantity);
 };
 
 #endif

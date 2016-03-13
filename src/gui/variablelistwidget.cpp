@@ -34,7 +34,7 @@
 #include <QTreeWidget>
 #include <QVBoxLayout>
 
-static QString formatValue(const CNumber& value);
+static QString formatValue(const Quantity &value);
 
 VariableListWidget::VariableListWidget(QWidget* parent)
     : QWidget(parent)
@@ -211,7 +211,7 @@ void VariableListWidget::keyPressEvent(QKeyEvent* event)
     QWidget::keyPressEvent(event);
 }
 
-static QString formatValue(const CNumber& value)
+static QString formatValue(const Quantity& value)
 {
     return NumberFormatter::format(value);
 }

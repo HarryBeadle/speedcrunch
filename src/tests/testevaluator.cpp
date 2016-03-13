@@ -61,7 +61,7 @@ static void checkDivisionByZero(const char*, int line, const char* msg, const QS
     ++eval_total_tests;
 
     eval->setExpression(expr);
-    CNumber rn = eval->evalUpdateAns();
+    Quantity rn = eval->evalUpdateAns();
 
     if (eval->error().isEmpty()) {
         ++eval_failed_tests;
@@ -74,7 +74,7 @@ static void checkEval(const char*, int line, const char* msg, const QString& exp
     ++eval_total_tests;
 
     eval->setExpression(expr);
-    CNumber rn = eval->evalUpdateAns();
+    Quantity rn = eval->evalUpdateAns();
 
     if (!eval->error().isEmpty()) {
         if (!shouldFail) {
@@ -85,10 +85,10 @@ static void checkEval(const char*, int line, const char* msg, const QString& exp
             cerr << endl;
         }
     } else {
-        char* result = CMath::format(rn, 'f');
-        if (shouldFail || strcmp(result, expected)) {
+        QString result = DMath::format(rn, 'f');
+        if (shouldFail || result != expected) {
             ++eval_failed_tests;
-            cerr << "[Line " << line << "]\t" << msg << "\tResult: " << result;
+            cerr << "[Line " << line << "]\t" << msg << "\tResult: " << result.toLatin1().constData();
             cerr << "\tExpected: " << (shouldFail ? "should fail" : expected);
             if (issue)
                 cerr << "\t[ISSUE " << issue << "]";
@@ -98,7 +98,6 @@ static void checkEval(const char*, int line, const char* msg, const QString& exp
             }
             cerr << endl;
         }
-        free(result);
     }
 }
 
@@ -107,16 +106,15 @@ static void checkEvalPrecise(const char*, int line, const char* msg, const QStri
     ++eval_total_tests;
 
     eval->setExpression(expr);
-    CNumber rn = eval->evalUpdateAns();
+    Quantity rn = eval->evalUpdateAns();
 
     // We compare up to 50 decimals, not exact number because it's often difficult
     // to represent the result as an irrational number, e.g. PI.
-    char* result = CMath::format(rn, 'f', 50);
-    if (strcmp(result, expected)) {
+    QString result = DMath::format(rn, 'f', 50);
+    if (result != expected) {
         ++eval_failed_tests;
-        cerr << "[Line" << line <<"]:\t" << msg << "  Result: " << result << ", "<< "Expected: " << expected << endl;
+        cerr << "[Line" << line <<"]:\t" << msg << "  Result: " << result.toLatin1().constData() << ", "<< "Expected: " << expected << endl;
     }
-    free(result);
 }
 
 void test_constants()
@@ -446,9 +444,9 @@ void test_function_stat()
     CHECK_EVAL("AVERAGE(2.25;4.75)", "3.5");
     CHECK_EVAL("AVERAGE(1/3;2/3)", "0.5");
 
-    CHECK_EVAL("GEOMEAN(0)", "NaN");
-    CHECK_EVAL("GEOMEAN(-1)", "NaN");
-    CHECK_EVAL("GEOMEAN(-1e20)", "NaN");
+    CHECK_EVAL_FAIL("GEOMEAN(0)");
+    CHECK_EVAL_FAIL("GEOMEAN(-1)");
+    CHECK_EVAL_FAIL("GEOMEAN(-1e20)");
     CHECK_EVAL("GEOMEAN(1)", "1");
     CHECK_EVAL("GEOMEAN(2)", "2");
     CHECK_EVAL("GEOMEAN(3)", "3");
@@ -461,7 +459,7 @@ void test_function_stat()
     CHECK_EVAL("GEOMEAN(3;4;18)", "6");
     CHECK_EVAL("GEOMEAN(1;1;1)", "1");
     CHECK_EVAL("GEOMEAN(1;1;1;1)", "1");
-    CHECK_EVAL("GEOMEAN(1;1;1;-1)", "NaN");
+    CHECK_EVAL_FAIL("GEOMEAN(1;1;1;-1)");
 }
 
 void test_function_logic()
@@ -677,6 +675,8 @@ void test_complex()
     // Check for basic complex number evaluation
     CHECK_EVAL("(1+1j)*(1-1j)", "2");
     CHECK_EVAL("(1+1j)*(1+1j)", "2j");           // TODO : Smarter formatting
+
+    // TODO: verify that arcsin, etc. work correctly in both complex/real mode *independently* of the angle setting
 }
 
 void test_implicit_multiplication()
@@ -732,6 +732,7 @@ int main(int argc, char* argv[])
     settings->parseAllRadixChar = true;
     settings->strictDigitGrouping = true;
     settings->complexNumbers = false;
+    DMath::complexMode = false;
 
     eval = Evaluator::instance();
 
@@ -769,6 +770,7 @@ int main(int argc, char* argv[])
     //test_units();
 
     settings->complexNumbers = true;
+    DMath::complexMode = true;
     eval->initializeBuiltInVariables();
     test_complex();
 

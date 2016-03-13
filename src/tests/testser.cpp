@@ -19,6 +19,7 @@
 #include "math/hmath.h"
 #include "math/cmath.h"
 #include "math/units.h"
+#include "math/quantity.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -156,11 +157,11 @@ int main(int, char**)
     /* Serialization tests */
     CHECK_SER(HNumber("3"), "{\"format\":\"NULL\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"}");
 
-    CNumber a("3");
+    Quantity a(CNumber("3"));
     a.setFormat('b');
     a *= Units::meter();
-    a.setDisplayUnit(CNumber("0.3")*Units::meter(), "foot");
-    CHECK_SER(a,"{\"dimension\":{\"length\":\"1\"},\"format\":\"NULL\",\"unit\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000e-1\",\"unit_name\":\"foot\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"}");
+    a.setDisplayUnit(CNumber("0.3"), QString("foot"));
+    CHECK_SER(a,"{\"dimension\":{\"length\":\"1\"},\"format\":\"\",\"numeric_value\":{\"format\":\"NULL\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"unit\":{\"format\":\"NULL\",\"value\":\"0.300000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"unit_name\":\"foot\"}");
 
     CHECK_SER(CNumber("3"), "{\"format\":\"NULL\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"}");
     CHECK_SER(CNumber("3+1j"), "{\"format\":\"NULL\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000+1.000000000000000000000000000000000000000000000000000000000000000000000000000000j\"}");
