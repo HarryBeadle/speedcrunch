@@ -68,6 +68,7 @@ public:
     bool hasUnit() const ;
     CNumber getUnit() const;
     QString getUnitName() const;
+    CNumber getNumericValue() const;
     Quantity& setDisplayUnit(const CNumber unit, const QString &name);
     void stripUnits();
     bool hasDimension() const;
@@ -121,6 +122,13 @@ private:
 class DMath
 {
   public:
+    static bool complexMode;
+
+    static QString format(const Quantity q, char format, int prec=10);
+
+    static Quantity real(const Quantity& x);
+    static Quantity imag(const Quantity& x);
+
     // CONSTANTS
     static Quantity e();
     static Quantity phi();
@@ -130,8 +138,6 @@ class DMath
     // GENERAL MATH
     static Quantity rad2deg( const Quantity & angle );
     static Quantity deg2rad( const Quantity & angle );
-    static Quantity max( const Quantity & n1, const Quantity & n2 );
-    static Quantity min( const Quantity & n1, const Quantity & n2 );
     static Quantity abs( const Quantity & n );
     static Quantity integer( const Quantity & n );
     static Quantity frac( const Quantity & n );

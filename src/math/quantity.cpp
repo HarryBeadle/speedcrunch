@@ -22,6 +22,7 @@
 
 #include "math/quantity.h"
 #include "math/rational.h"
+#include "math/units.h"
 
 #include <QStringList>
 
@@ -178,6 +179,11 @@ QString Quantity::getUnitName() const
     return "";
 }
 
+CNumber Quantity::getNumericValue() const
+{
+    return m_numericValue;
+}
+
 Quantity &Quantity::setDisplayUnit(const CNumber unit, const QString &name)
 {
     if(unit.isNan())
@@ -237,7 +243,7 @@ void Quantity::clearDimension()
 
 
 /*
- * Note: does not clean the dimension vector first.
+ * Note: does NOT clean the dimension vector first.
  * The calling function must do so on its own.
  */
 bool Quantity::sameDimension(const Quantity &other) const
@@ -489,6 +495,19 @@ Quantity Quantity::operator<<(const Quantity &other) const
  *    DMath
  * --------------------------------------------------------------------
  */
+bool DMath::complexMode = true;
+
+#define COMPLEX_WRAP_1(fct, arg)\
+    (DMath::complexMode ? CMath::fct(arg) : CNumber(HMath::fct(arg.real)))
+
+#define COMPLEX_WRAP_2(fct, arg1, arg2)\
+    (DMath::complexMode ? CMath::fct(arg1, arg2) : CNumber(HMath::fct(arg1.real, arg2.real)))
+
+#define COMPLEX_WRAP_3(fct, arg1, arg2, arg3)\
+    (DMath::complexMode ? CMath::fct(arg1, arg2, arg3) : CNumber(HMath::fct(arg1.real, arg2.real, arg3.real)))
+
+#define COMPLEX_WRAP_4(fct, arg1, arg2, arg3, arg4)\
+    (DMath::complexMode ? CMath::fct(arg1, arg2, arg3, arg4) : CNumber(HMath::fct(arg1.real, arg2.real, arg3.real, arg4.real)))
 
 
 /*
@@ -496,33 +515,34 @@ Quantity Quantity::operator<<(const Quantity &other) const
  */
 
 // no argument
-#define COMPLEX_WRAPPER_DMATH_0(fct)        \
+#define WRAPPER_DMATH_0(fct)                \
     Quantity DMath::fct()                   \
     {                                       \
         return Quantity(CMath::fct());      \
     }                                       \
 
 // one argument
-#define COMPLEX_WRAPPER_DMATH_1(fct)                            \
+#define WRAPPER_DMATH_1(fct)                                    \
     Quantity DMath::fct(const Quantity &arg1)                   \
     {                                                           \
         ENSURE_DIMENSIONLESS(arg1);                             \
-        return Quantity(CMath::fct(arg1.m_numericValue));       \
+        return Quantity(COMPLEX_WRAP_1(fct, arg1.m_numericValue));       \
     }
 
 // two arguments
-#define COMPLEX_WRAPPER_DMATH_2(fct)                            \
+#define WRAPPER_DMATH_2(fct)                                    \
     Quantity DMath::fct(const Quantity &arg1,                   \
                         const Quantity &arg2)                   \
     {                                                           \
         ENSURE_DIMENSIONLESS(arg1);                             \
         ENSURE_DIMENSIONLESS(arg2);                             \
-        return Quantity(CMath::fct(arg1.m_numericValue,         \
-                                   arg2.m_numericValue));       \
+        return Quantity(COMPLEX_WRAP_2(fct,                     \
+                                       arg1.m_numericValue,     \
+                                       arg2.m_numericValue));   \
     }
 
 // three arguments
-#define COMPLEX_WRAPPER_DMATH_3(fct)                            \
+#define WRAPPER_DMATH_3(fct)                                    \
     Quantity DMath::fct(const Quantity &arg1,                   \
                         const Quantity &arg2,                   \
                         const Quantity &arg3)                   \
@@ -530,13 +550,14 @@ Quantity Quantity::operator<<(const Quantity &other) const
         ENSURE_DIMENSIONLESS(arg1);                             \
         ENSURE_DIMENSIONLESS(arg2);                             \
         ENSURE_DIMENSIONLESS(arg3);                             \
-        return Quantity(CMath::fct(arg1.m_numericValue,         \
+        return Quantity(COMPLEX_WRAP_3(fct,                     \
+                                   arg1.m_numericValue,         \
                                    arg2.m_numericValue,         \
                                    arg3.m_numericValue));       \
     }
 
 // four arguments
-#define COMPLEX_WRAPPER_DMATH_4(fct)                            \
+#define WRAPPER_DMATH_4(fct)                                    \
     Quantity DMath::fct(const Quantity &arg1,                   \
                         const Quantity &arg2,                   \
                         const Quantity &arg3,                   \
@@ -546,109 +567,132 @@ Quantity Quantity::operator<<(const Quantity &other) const
         ENSURE_DIMENSIONLESS(arg2);                             \
         ENSURE_DIMENSIONLESS(arg3);                             \
         ENSURE_DIMENSIONLESS(arg4);                             \
-        return Quantity(CMath::fct(arg1.m_numericValue,         \
-                                   arg2.m_numericValue,         \
-                                   arg3.m_numericValue,         \
-                                   arg4.m_numericValue));       \
+        return Quantity(COMPLEX_WRAP_4(fct,                     \
+                                       arg1.m_numericValue,     \
+                                       arg2.m_numericValue,     \
+                                       arg3.m_numericValue,     \
+                                       arg4.m_numericValue));   \
     }
 
 
-COMPLEX_WRAPPER_DMATH_0(e)
-COMPLEX_WRAPPER_DMATH_0(pi)
-COMPLEX_WRAPPER_DMATH_0(phi)
-COMPLEX_WRAPPER_DMATH_0(i)
+WRAPPER_DMATH_0(e)
+WRAPPER_DMATH_0(pi)
+WRAPPER_DMATH_0(phi)
+WRAPPER_DMATH_0(i)
 
 Quantity DMath::nan(Error error)
 {
     return Quantity(CMath::nan(error));
 }
 
-COMPLEX_WRAPPER_DMATH_1(rad2deg)
-COMPLEX_WRAPPER_DMATH_1(deg2rad)
-COMPLEX_WRAPPER_DMATH_1(integer)
-COMPLEX_WRAPPER_DMATH_1(frac)
-COMPLEX_WRAPPER_DMATH_1(floor)
-COMPLEX_WRAPPER_DMATH_1(ceil)
-COMPLEX_WRAPPER_DMATH_1(exp)
-COMPLEX_WRAPPER_DMATH_1(ln)
-COMPLEX_WRAPPER_DMATH_1(lg)
-COMPLEX_WRAPPER_DMATH_2(log)
-COMPLEX_WRAPPER_DMATH_1(sinh)
-COMPLEX_WRAPPER_DMATH_1(cosh)
-COMPLEX_WRAPPER_DMATH_1(tanh)
-COMPLEX_WRAPPER_DMATH_1(arsinh)
-COMPLEX_WRAPPER_DMATH_1(arcosh)
-COMPLEX_WRAPPER_DMATH_1(artanh)
-COMPLEX_WRAPPER_DMATH_1(sin)
-COMPLEX_WRAPPER_DMATH_1(cos)
-COMPLEX_WRAPPER_DMATH_1(tan)
-COMPLEX_WRAPPER_DMATH_1(sec)
-COMPLEX_WRAPPER_DMATH_1(csc)
-COMPLEX_WRAPPER_DMATH_1(arcsin)
-COMPLEX_WRAPPER_DMATH_1(arccos)
-COMPLEX_WRAPPER_DMATH_1(arctan)
+WRAPPER_DMATH_1(rad2deg)
+WRAPPER_DMATH_1(deg2rad)
+WRAPPER_DMATH_1(integer)
+WRAPPER_DMATH_1(frac)
+WRAPPER_DMATH_1(floor)
+WRAPPER_DMATH_1(ceil)
+WRAPPER_DMATH_1(exp)
+WRAPPER_DMATH_1(ln)
+WRAPPER_DMATH_1(lg)
+WRAPPER_DMATH_2(log)
+WRAPPER_DMATH_1(sinh)
+WRAPPER_DMATH_1(cosh)
+WRAPPER_DMATH_1(tanh)
+WRAPPER_DMATH_1(arsinh)
+WRAPPER_DMATH_1(arcosh)
+WRAPPER_DMATH_1(artanh)
+WRAPPER_DMATH_1(sin)
+WRAPPER_DMATH_1(cos)
+WRAPPER_DMATH_1(tan)
+WRAPPER_DMATH_1(sec)
+WRAPPER_DMATH_1(csc)
+WRAPPER_DMATH_1(arcsin)
+WRAPPER_DMATH_1(arccos)
+WRAPPER_DMATH_1(arctan)
 
-COMPLEX_WRAPPER_DMATH_1(gamma)
-COMPLEX_WRAPPER_DMATH_1(lnGamma)
-COMPLEX_WRAPPER_DMATH_1(erf)
-COMPLEX_WRAPPER_DMATH_1(erfc)
+WRAPPER_DMATH_1(gamma)
+WRAPPER_DMATH_1(lnGamma)
+WRAPPER_DMATH_1(erf)
+WRAPPER_DMATH_1(erfc)
 
-COMPLEX_WRAPPER_DMATH_2(gcd)
-COMPLEX_WRAPPER_DMATH_2(idiv)
+WRAPPER_DMATH_2(gcd)
+WRAPPER_DMATH_2(idiv)
 
-COMPLEX_WRAPPER_DMATH_2(nCr)
-COMPLEX_WRAPPER_DMATH_2(nPr)
-COMPLEX_WRAPPER_DMATH_3(binomialPmf)
-COMPLEX_WRAPPER_DMATH_3(binomialCdf)
-COMPLEX_WRAPPER_DMATH_2(binomialMean)
-COMPLEX_WRAPPER_DMATH_2(binomialVariance)
-COMPLEX_WRAPPER_DMATH_4(hypergeometricPmf)
-COMPLEX_WRAPPER_DMATH_4(hypergeometricCdf)
-COMPLEX_WRAPPER_DMATH_3(hypergeometricMean)
-COMPLEX_WRAPPER_DMATH_3(hypergeometricVariance)
-COMPLEX_WRAPPER_DMATH_2(poissonPmf)
-COMPLEX_WRAPPER_DMATH_2(poissonCdf)
-COMPLEX_WRAPPER_DMATH_1(poissonMean)
-COMPLEX_WRAPPER_DMATH_1(poissonVariance)
+WRAPPER_DMATH_2(nCr)
+WRAPPER_DMATH_2(nPr)
+WRAPPER_DMATH_3(binomialPmf)
+WRAPPER_DMATH_3(binomialCdf)
+WRAPPER_DMATH_2(binomialMean)
+WRAPPER_DMATH_2(binomialVariance)
+WRAPPER_DMATH_4(hypergeometricPmf)
+WRAPPER_DMATH_4(hypergeometricCdf)
+WRAPPER_DMATH_3(hypergeometricMean)
+WRAPPER_DMATH_3(hypergeometricVariance)
+WRAPPER_DMATH_2(poissonPmf)
+WRAPPER_DMATH_2(poissonCdf)
+WRAPPER_DMATH_1(poissonMean)
+WRAPPER_DMATH_1(poissonVariance)
 
-COMPLEX_WRAPPER_DMATH_2(mask)
-COMPLEX_WRAPPER_DMATH_2(ashr)
+WRAPPER_DMATH_2(mask)
+WRAPPER_DMATH_2(ashr)
 
-COMPLEX_WRAPPER_DMATH_3(decodeIeee754)
-COMPLEX_WRAPPER_DMATH_4(decodeIeee754)
-COMPLEX_WRAPPER_DMATH_3(encodeIeee754)
-COMPLEX_WRAPPER_DMATH_4(encodeIeee754)
+WRAPPER_DMATH_3(decodeIeee754)
+WRAPPER_DMATH_4(decodeIeee754)
+WRAPPER_DMATH_3(encodeIeee754)
+WRAPPER_DMATH_4(encodeIeee754)
 
 
-#if 0 // min and max are not defined in CMath
-Quantity DMath::max(const Quantity &n1, const Quantity &n2)
+QString DMath::format(Quantity q, char format, int prec)
 {
-    ENSURE_SAME_DIMENSION(n1, n2);
-    Quantity result(n1);
-    result.m_numericValue = CMath::max(n1.m_numericValue, n2.m_numericValue);
+    //handle units
+    if(!q.hasUnit() && !q.isDimensionless()) {
+        q.cleanDimension();
+        Units::findUnit(q);
+    }
+    QString unit_name = ' ' + q.getUnitName();
+    CNumber unit = q.getUnit();
+    CNumber number = q.m_numericValue;
+
+    number /= unit;
+
+    char* str = CMath::format(number, format, prec);
+    QString result = QString::fromLatin1(str);
+    free(str);
+
+
+    if(!number.real.isZero() && !number.imag.isZero() && unit_name != " ")
+        result = "(" + result + ")";
+    if(unit_name != " ") {
+        result.append(unit_name);
+    }
+
     return result;
 }
 
-Quantity DMath::min(const Quantity &n1, const Quantity &n2)
+Quantity DMath::real(const Quantity& x)
 {
-    ENSURE_SAME_DIMENSION(n1, n2);
-    Quantity result(n1);
-    result.m_numericValue = CMath::min(n1.m_numericValue, n2.m_numericValue);
+    Quantity result(x);
+    result.m_numericValue = result.m_numericValue.real;
     return result;
 }
-#endif
+
+Quantity DMath::imag(const Quantity& x)
+{
+    Quantity result(x);
+    result.m_numericValue = result.m_numericValue.imag;
+    return result;
+}
 
 Quantity DMath::abs(const Quantity &n)
 {
     Quantity result(n);
-    result.m_numericValue = CMath::abs(n.m_numericValue);
+    result.m_numericValue = COMPLEX_WRAP_1(abs, n.m_numericValue);
     return result;
 }
 
 Quantity DMath::sqrt(const Quantity &n)
 {
-    Quantity result(n);
-    result.m_numericValue = CMath::sqrt(n.m_numericValue);
+    Quantity result(COMPLEX_WRAP_1(sqrt, n.m_numericValue));
     QMap<QString, Rational>::const_iterator i = result.m_dimension.constBegin();
     while (i != result.m_dimension.constEnd()) {
         const Rational & exp = i.value();
@@ -661,8 +705,7 @@ Quantity DMath::sqrt(const Quantity &n)
 
 Quantity DMath::cbrt(const Quantity &n)
 {
-    Quantity result(n);
-    result.m_numericValue = CMath::sqrt(n.m_numericValue);
+    Quantity result(COMPLEX_WRAP_1(cbrt, n.m_numericValue));
     QMap<QString, Rational>::const_iterator i = result.m_dimension.constBegin();
     while (i != result.m_dimension.constEnd()) {
         const Rational & exp = i.value();
@@ -675,8 +718,10 @@ Quantity DMath::cbrt(const Quantity &n)
 
 Quantity DMath::raise(const Quantity &n1, int n)
 {
-    Quantity result(n1);
-    result.m_numericValue = CMath::sqrt(n1.m_numericValue);
+    Quantity result;
+    result.m_numericValue = complexMode ?
+                            CMath::raise(n1.m_numericValue, n) :
+                            CNumber(HMath::raise(n1.m_numericValue.real, n));
     QMap<QString, Rational>::const_iterator i = result.m_dimension.constBegin();
     while (i != result.m_dimension.constEnd()) {
         const Rational & exp = i.value();
@@ -690,12 +735,12 @@ Quantity DMath::raise(const Quantity &n1, int n)
 Quantity DMath::raise(const Quantity &n1, const Quantity &n2)
 {
     if(!n2.isDimensionless()
-            || (!n1.isDimensionless() && !n2.isReal()))
+            || (!n1.isDimensionless() && !n2.isReal() && complexMode))
         return DMath::nan(InvalidDimension);
 
 
     // First get the new numeric value.
-    Quantity result(CMath::raise(n1.m_numericValue, n2.m_numericValue));
+    Quantity result(COMPLEX_WRAP_2(raise, n1.m_numericValue, n2.m_numericValue));
 
     if(n1.isDimensionless())
         return result;
@@ -708,7 +753,7 @@ Quantity DMath::raise(const Quantity &n1, const Quantity &n2)
     Rational exponent(n2.m_numericValue.real);
     if(abs(exponent.toHNumber() - n2.m_numericValue.real) >= RATIONAL_TOL
        || (n1.isNegative() && exponent.denominator()%2 == 0))
-        return HMath::nan(OutOfDomain);
+        return CMath::nan(OutOfDomain);
 
     // Compute new dimension
     QMap<QString, Rational>::const_iterator i = n1.m_dimension.constBegin();
@@ -724,7 +769,3 @@ Quantity DMath::sgn(const Quantity &x)
 {
     return Quantity(CMath::sgn(x.m_numericValue));
 }
-
-
-
-
