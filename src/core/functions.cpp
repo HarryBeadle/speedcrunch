@@ -233,8 +233,8 @@ Quantity function_sqrt(Function* f, const Function::ArgumentList& args)
 
 Quantity function_variance(Function* f, const Function::ArgumentList& args)
 {
-    /* TODO : complex mode switch for this function */
-    ENSURE_POSITIVE_ARGUMENT_COUNT();
+    ENSURE_REAL_ARGUMENTS()
+    ENSURE_POSITIVE_ARGUMENT_COUNT()
 
     Quantity mean = function_average(f, args);
     if (mean.isNan())
