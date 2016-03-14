@@ -675,8 +675,21 @@ void test_complex()
     // Check for basic complex number evaluation
     CHECK_EVAL("(1+1j)*(1-1j)", "2");
     CHECK_EVAL("(1+1j)*(1+1j)", "2j");           // TODO : Smarter formatting
+}
 
-    // TODO: verify that arcsin, etc. work correctly in both complex/real mode *independently* of the angle setting
+void test_angle_mode(Settings* settings)
+{
+    settings->angleUnit = 'r';
+    CHECK_EVAL("sin(pi)", "0");
+    CHECK_EVAL("arcsin(-1)", "-1.57079632679489661923");
+    CHECK_EVAL("sin(1j)", "1.17520119364380145688j");
+    CHECK_EVAL("arcsin(-2)", "-1.57079632679489661923+1.31695789692481670863j");
+
+    settings->angleUnit = 'd';
+    CHECK_EVAL("sin(180)", "0");
+    CHECK_EVAL("arcsin(-1)", "-90");
+    CHECK_EVAL_FAIL("sin(1j)");
+    CHECK_EVAL_FAIL("arcsin(-2)");
 }
 
 void test_implicit_multiplication()
@@ -714,12 +727,6 @@ void test_implicit_multiplication()
     /* Tests issue 598 */
     CHECK_EVAL("2(a)^3", "250");
 }
-
-void test_units()
-{
-    CHECK_EVAL("1 meter + 5 meter", "6 meter");
-}
-
 
 
 int main(int argc, char* argv[])
@@ -767,12 +774,12 @@ int main(int argc, char* argv[])
 
     test_implicit_multiplication();
 
-    //test_units();
-
     settings->complexNumbers = true;
     DMath::complexMode = true;
     eval->initializeBuiltInVariables();
     test_complex();
+
+    test_angle_mode(settings);
 
     cerr << eval_total_tests  << " total, " << eval_failed_tests << " failed";
     if (eval_failed_tests)

@@ -217,6 +217,7 @@ Quantity& Quantity::setFormat(char c)
 void Quantity::stripUnits()
 {
     delete m_unit;
+    m_unit = NULL;
     m_unitName = "";
 }
 
@@ -350,6 +351,7 @@ Quantity &Quantity::operator=(const Quantity &other)
 {
     m_numericValue = other.m_numericValue;
     m_dimension = other.m_dimension;
+    m_format = other.m_format;
     stripUnits();
     if(other.hasUnit()) {
         m_unit = new CNumber(*other.m_unit);
@@ -754,11 +756,11 @@ Quantity DMath::abs(const Quantity &n)
 Quantity DMath::sqrt(const Quantity &n)
 {
     Quantity result(COMPLEX_WRAP_1(sqrt, n.m_numericValue));
-    QMap<QString, Rational>::const_iterator i = result.m_dimension.constBegin();
-    while (i != result.m_dimension.constEnd()) {
+    QMap<QString, Rational>::const_iterator i = n.m_dimension.constBegin();
+    while (i != n.m_dimension.constEnd()) {
         const Rational & exp = i.value();
         const QString & name = i.key();
-        result.modifyDimension(name, exp/2);
+        result.modifyDimension(name, exp*Rational(1,2));
         ++i;
     }
     return result;
@@ -767,11 +769,11 @@ Quantity DMath::sqrt(const Quantity &n)
 Quantity DMath::cbrt(const Quantity &n)
 {
     Quantity result(COMPLEX_WRAP_1(cbrt, n.m_numericValue));
-    QMap<QString, Rational>::const_iterator i = result.m_dimension.constBegin();
-    while (i != result.m_dimension.constEnd()) {
+    QMap<QString, Rational>::const_iterator i = n.m_dimension.constBegin();
+    while (i != n.m_dimension.constEnd()) {
         const Rational & exp = i.value();
         const QString & name = i.key();
-        result.modifyDimension(name, exp/3);
+        result.modifyDimension(name, exp*Rational(1,3));
         ++i;
     }
     return result;
@@ -783,8 +785,8 @@ Quantity DMath::raise(const Quantity &n1, int n)
     result.m_numericValue = complexMode ?
                             CMath::raise(n1.m_numericValue, n) :
                             CNumber(HMath::raise(n1.m_numericValue.real, n));
-    QMap<QString, Rational>::const_iterator i = result.m_dimension.constBegin();
-    while (i != result.m_dimension.constEnd()) {
+    QMap<QString, Rational>::const_iterator i = n1.m_dimension.constBegin();
+    while (i != n1.m_dimension.constEnd()) {
         const Rational & exp = i.value();
         const QString & name = i.key();
         result.modifyDimension(name, exp*n);

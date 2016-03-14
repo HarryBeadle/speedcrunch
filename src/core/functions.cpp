@@ -515,13 +515,11 @@ Quantity function_geomean(Function* f, const Function::ArgumentList& args)
     if (result <= Quantity(0))
         return DMath::nan(OutOfDomain);
 
-    /*
     if (args.count() == 1)
         return result;
 
     if (args.count() == 2)
-        return CMath::sqrt(result);
-    */
+        return DMath::sqrt(result);
 
     return  DMath::raise(result, Quantity(1)/Quantity(args.count()));
 }
