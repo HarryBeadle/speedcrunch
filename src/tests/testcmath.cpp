@@ -38,14 +38,13 @@ static int cmath_new_failed_tests = 0;
 
 static CNumber PI;
 
-static void check_value(const char*, int line, const char* msg, const CNumber& n, const char* expected, int issue = 0)
+static void check_value(const char* file, int line, const char* msg, const CNumber& n, const char* expected, int issue = 0)
 {
     ++cmath_total_tests;
     char* result = CMath::format(n, 'f');
     if (strcmp(result, expected)) {
         ++cmath_failed_tests;
-        cerr << "[Line " << line << "]\t" << msg << "\tResult: " << result;
-        cerr << "\tExpected: " << expected;
+        cerr << file << "[" << line << "]\t" << msg;
         if (issue)
             cerr << "\t[ISSUE " << issue << "]";
         else {
@@ -53,6 +52,8 @@ static void check_value(const char*, int line, const char* msg, const CNumber& n
             ++cmath_new_failed_tests;
         }
         cerr << endl;
+        cerr << "\tResult   : " << result << endl
+             << "\tExpected : " << expected << endl;
     }
     free(result);
 }
@@ -64,8 +65,8 @@ static void check_format(const char* file, int line, const char* msg, const CNum
     if (strcmp(result, expected)) {
         ++cmath_failed_tests;
         cerr << file << "[" << line << "]: " << msg << endl
-             << "  Result  : " << result
-             << endl << "  Expected: " << expected << endl << endl;
+             << "\tResult   : " << result << endl
+             << "\tExpected : " << expected << endl;
     }
     free(result);
 }
@@ -77,8 +78,8 @@ static void check_precise(const char* file, int line, const char* msg, const CNu
     if (strcmp(result, expected)) {
         ++cmath_failed_tests;
         cerr << file << "[" << line << "]: " << msg << endl
-             << "  Result  : " << result << endl
-             << "  Expected: " << expected << endl << endl;
+             << "\tResult  : " << result << endl
+             << "\tExpected: " << expected << endl;
     }
     free(result);
 }
@@ -280,7 +281,7 @@ void test_functions()
     CHECK(CMath::ceil("2.6041980"), "3");
     CHECK(CMath::ceil("0.000001"), "1");
     CHECK(CMath::ceil("-0.000001"), "0");
-    CHECK_KNOWN_ISSUE(CMath::ceil(CMath::log(2, 128)), "7", 532);
+    CHECK_KNOWN_ISSUE(CMath::ceil(CMath::log(2, 128)), "7", 532); // suddenly passing?!?!
 
     CHECK(CMath::gcd("NaN", "NaN"), "NaN");
     CHECK(CMath::gcd("NaN", "5"), "NaN");
@@ -1030,10 +1031,9 @@ int main(int, char**)
     test_functions();
     test_branches();
 
-    if (cmath_failed_tests)
-        cerr << cmath_total_tests  << " total, "
-             << cmath_failed_tests << " failed, "
-             << cmath_new_failed_tests << " new" << endl;
+    cout << cmath_total_tests  << " total, "
+         << cmath_failed_tests << " failed, "
+         << cmath_new_failed_tests << " new" << endl;
 
   return cmath_failed_tests;
 }

@@ -1362,7 +1362,9 @@ HNumber HMath::lnGamma( const HNumber & x )
  */
 HNumber HMath::sgn( const HNumber & x )
 {
-  return float_getsign(&x.d->fnum);
+    if (x.isNan())
+      return HMath::nan(checkNaNParam(*x.d));
+    return float_getsign(&x.d->fnum);
 }
 
 /**

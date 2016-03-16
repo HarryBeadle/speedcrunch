@@ -50,13 +50,12 @@ static void checkAutoFix(const char* file, int line, const char* msg, const QStr
     if (r != fixed) {
         eval_failed_tests++;
         cerr << file << "[" << line << "]: " << msg << endl
-             << "    Result: \"" << qPrintable(r) << "\"" << endl
-             << "  Expected: \"" << qPrintable(fixed) << "\"" << endl
-             << endl;
+             << "\tResult   : " << qPrintable(r) << endl
+             << "\tExpected : " << qPrintable(fixed) << endl;
     }
 }
 
-static void checkDivisionByZero(const char*, int line, const char* msg, const QString& expr)
+static void checkDivisionByZero(const char* file, int line, const char* msg, const QString& expr)
 {
     ++eval_total_tests;
 
@@ -65,11 +64,12 @@ static void checkDivisionByZero(const char*, int line, const char* msg, const QS
 
     if (eval->error().isEmpty()) {
         ++eval_failed_tests;
-        cerr << "[" << line << "]:\t" << msg << "  Error: " << "division by zero not caught" << endl;
+        cerr << file << "[" << line << "]\t" << msg << endl
+             << "\tError: " << "division by zero not caught" << endl;
     }
 }
 
-static void checkEval(const char*, int line, const char* msg, const QString& expr, const char* expected, int issue = 0, bool shouldFail = false)
+static void checkEval(const char* file, int line, const char* msg, const QString& expr, const char* expected, int issue = 0, bool shouldFail = false)
 {
     ++eval_total_tests;
 
@@ -79,17 +79,17 @@ static void checkEval(const char*, int line, const char* msg, const QString& exp
     if (!eval->error().isEmpty()) {
         if (!shouldFail) {
             ++eval_failed_tests;
-            cerr << "[Line " << line << "]\t:" << msg << "  Error: " << qPrintable(eval->error());
+            cerr << file << "[" << line << "]\t" << msg;
             if (issue)
                 cerr << "\t[ISSUE " << issue << "]";
             cerr << endl;
+            cerr << "\tError: " << qPrintable(eval->error()) << endl;
         }
     } else {
         QString result = DMath::format(rn, 'f');
         if (shouldFail || result != expected) {
             ++eval_failed_tests;
-            cerr << "[Line " << line << "]\t" << msg << "\tResult: " << result.toLatin1().constData();
-            cerr << "\tExpected: " << (shouldFail ? "should fail" : expected);
+            cerr << file << "[" << line << "]\t" << msg;
             if (issue)
                 cerr << "\t[ISSUE " << issue << "]";
             else {
@@ -97,11 +97,13 @@ static void checkEval(const char*, int line, const char* msg, const QString& exp
                 ++eval_new_failed_tests;
             }
             cerr << endl;
+            cerr << "\tResult   : " << result.toLatin1().constData() << endl
+                 << "\tExpected : " << (shouldFail ? "should fail" : expected) << endl;
         }
     }
 }
 
-static void checkEvalPrecise(const char*, int line, const char* msg, const QString& expr, const char* expected)
+static void checkEvalPrecise(const char* file, int line, const char* msg, const QString& expr, const char* expected)
 {
     ++eval_total_tests;
 
@@ -113,7 +115,9 @@ static void checkEvalPrecise(const char*, int line, const char* msg, const QStri
     QString result = DMath::format(rn, 'f', 50);
     if (result != expected) {
         ++eval_failed_tests;
-        cerr << "[Line" << line <<"]:\t" << msg << "  Result: " << result.toLatin1().constData() << ", "<< "Expected: " << expected << endl;
+        cerr << file << "[" << line <<"]\t" << msg << endl
+             << "\tResult   : " << result.toLatin1().constData() << endl
+             << "\tExpected : " << expected << endl;
     }
 }
 
@@ -781,9 +785,9 @@ int main(int argc, char* argv[])
 
     test_angle_mode(settings);
 
-    cerr << eval_total_tests  << " total, " << eval_failed_tests << " failed";
+    cout << eval_total_tests  << " total, " << eval_failed_tests << " failed";
     if (eval_failed_tests)
-        cerr << ", " << eval_new_failed_tests << " new";
-    cerr << endl;
+        cout << ", " << eval_new_failed_tests << " new";
+    cout << endl;
     return 0;
 }

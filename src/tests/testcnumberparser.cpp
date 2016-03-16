@@ -119,10 +119,9 @@ int main(int, char**)
 
     test_create();
 
-    if (cmath_failed_tests)
-        cerr << cmath_total_tests  << " total, "
-             << cmath_failed_tests << " failed, "
-             << cmath_new_failed_tests << " new" << endl;
+    cout << cmath_total_tests  << " total, "
+         << cmath_failed_tests << " failed, "
+         << cmath_new_failed_tests << " new" << endl;
 
   return cmath_failed_tests;
 }

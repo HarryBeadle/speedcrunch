@@ -39,14 +39,13 @@ static int hmath_new_failed_tests = 0;
 
 static HNumber PI;
 
-static void check_value(const char*, int line, const char* msg, const HNumber& n, const char* expected, int issue = 0)
+static void check_value(const char*file, int line, const char* msg, const HNumber& n, const char* expected, int issue = 0)
 {
     ++hmath_total_tests;
     char* result = HMath::format(n, 'f');
     if (strcmp(result, expected)) {
         ++hmath_failed_tests;
-        cerr << "[Line " << line << "]\t" << msg << "\tResult: " << result;
-        cerr << "\tExpected: " << expected;
+        cerr << file << "[" << line << "]\t" << msg;
         if (issue)
             cerr << "\t[ISSUE " << issue << "]";
         else {
@@ -54,6 +53,8 @@ static void check_value(const char*, int line, const char* msg, const HNumber& n
             ++hmath_new_failed_tests;
         }
         cerr << endl;
+        cerr << "\tResult   : " << result << endl;
+        cerr << "\tExpected : " << expected << endl;
     }
     free(result);
 }
@@ -65,8 +66,8 @@ static void check_format(const char* file, int line, const char* msg, const HNum
     if (strcmp(result, expected)) {
         ++hmath_failed_tests;
         cerr << file << "[" << line << "]: " << msg << endl
-             << "  Result  : " << result
-             << endl << "  Expected: " << expected << endl << endl;
+             << "\tResult   : " << result << endl
+             << "\tExpected : " << expected << endl;
     }
     free(result);
 }
@@ -78,8 +79,8 @@ static void check_precise(const char* file, int line, const char* msg, const HNu
     if (strcmp(result, expected)) {
         ++hmath_failed_tests;
         cerr << file << "[" << line << "]: " << msg << endl
-             << "  Result  : " << result << endl
-             << "  Expected: " << expected << endl << endl;
+             << "\tResult  : " << result << endl
+             << "\tExpected: " << expected << endl;
     }
     free(result);
 }
@@ -1000,10 +1001,9 @@ int main(int argc, char* argv[])
     test_op();
     test_functions();
 
-    if (hmath_failed_tests)
-        cerr << hmath_total_tests  << " total, "
-             << hmath_failed_tests << " failed, "
-             << hmath_new_failed_tests << " new" << endl;
+    cout << hmath_total_tests  << " total, "
+         << hmath_failed_tests << " failed, "
+         << hmath_new_failed_tests << " new" << endl;
 
   return hmath_failed_tests;
 }
