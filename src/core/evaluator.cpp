@@ -334,7 +334,7 @@ Token TokenStack::pop()
     if (topIndex > 0)
         return Token(at(--topIndex));
 
-    m_error = Evaluator::tr("token stack is empty (BUG)");
+    m_error = "token stack is empty (BUG)";
     return Token();
 }
 
