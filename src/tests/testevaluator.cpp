@@ -36,7 +36,6 @@ static int eval_new_failed_tests = 0;
 #define CHECK_DIV_BY_ZERO(s) checkDivisionByZero(__FILE__,__LINE__,#s,s)
 #define CHECK_EVAL(x,y) checkEval(__FILE__,__LINE__,#x,x,y)
 #define CHECK_EVAL_KNOWN_ISSUE(x,y,n) checkEval(__FILE__,__LINE__,#x,x,y,n)
-#define CHECK_KNOWN_ISSUE(x,n) checkEval(__FILE__,__LINE__,#x,x,"",n,false)
 #define CHECK_EVAL_PRECISE(x,y) checkEvalPrecise(__FILE__,__LINE__,#x,x,y)
 #define CHECK_EVAL_FAIL(x) checkEval(__FILE__,__LINE__,#x,x,"",0,true)
 #define CHECK_USERFUNC_SET(x) checkEval(__FILE__,__LINE__,#x,x,"NaN")
@@ -79,9 +78,13 @@ static void checkEval(const char*, int line, const char* msg, const QString& exp
     if (!eval->error().isEmpty()) {
         if (!shouldFail) {
             ++eval_failed_tests;
-            cerr << "[Line " << line << "]\t:" << msg << "  Error: " << qPrintable(eval->error());
+            cerr << "[Line " << line << "]\t" << msg << "\tError: " << qPrintable(eval->error());
             if (issue)
                 cerr << "\t[ISSUE " << issue << "]";
+            else {
+                cerr << "\t[NEW]";
+                ++eval_new_failed_tests;
+            }
             cerr << endl;
         }
     } else {
@@ -551,6 +554,16 @@ void test_function_discrete()
     CHECK_EVAL("ncr(4;5)", "0");
 }
 
+void test_function_simplified()
+{
+    CHECK_EVAL("abs 123", "123");
+    CHECK_EVAL("abs -123", "123");
+    CHECK_EVAL("10 + abs 123", "133");
+    CHECK_EVAL_KNOWN_ISSUE("10 + abs -123", "133", 600);
+    CHECK_EVAL("abs 123 + 10", "133");
+    CHECK_EVAL("abs -123 + 10", "133");
+}
+
 void test_auto_fix_parentheses()
 {
     CHECK_AUTOFIX("sin(1)", "sin(1)");
@@ -693,7 +706,10 @@ void test_implicit_multiplication()
     CHECK_EVAL_FAIL("ab");
     CHECK_EVAL("a b", "10");
     CHECK_EVAL("eps = 10", "10");
-    CHECK_KNOWN_ISSUE("5 eps", 599);
+    CHECK_EVAL("5 eps", "50");
+    CHECK_EVAL("Eren = 1001", "1001");
+    CHECK_EVAL("7 Eren", "7007");
+    CHECK_EVAL("Eren 5", "5005");
     CHECK_EVAL("f() = 123", "123");
     CHECK_EVAL("2f()", "246");
     CHECK_EVAL("5   5", "55");
@@ -754,6 +770,7 @@ int main(int argc, char* argv[])
     test_function_stat();
     test_function_logic();
     test_function_discrete();
+    test_function_simplified();
 
     test_auto_fix_parentheses();
     test_auto_fix_ans();
