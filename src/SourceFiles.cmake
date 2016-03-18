@@ -58,6 +58,7 @@ math/floattrig.h
 math/hmath.h
 math/number.h
 math/rational.h
+math/quantity.h
 math/units.h
 )
 
@@ -118,6 +119,7 @@ math/number.c
 math/cmath.cpp
 math/cnumberparser.cpp
 math/rational.cpp
+math/quantity.cpp
 math/units.cpp
 )
 
@@ -143,6 +145,7 @@ math/floattrig.c
 math/hmath.cpp
 math/number.c
 math/rational.cpp
+math/quantity.cpp
 math/cmath.cpp
 math/units.cpp
 math/cnumberparser.cpp
@@ -184,6 +187,7 @@ math/number.c
 math/cmath.cpp
 math/cnumberparser.cpp
 math/rational.cpp
+math/quantity.cpp
 math/units.cpp
 tests/testevaluator.cpp
 )
@@ -233,6 +237,7 @@ math/number.c
 math/cmath.cpp
 math/cnumberparser.cpp
 math/rational.cpp
+math/quantity.cpp
 math/units.cpp
 tests/testcmath.cpp
 )
@@ -261,6 +266,7 @@ math/number.c
 math/cmath.cpp
 math/cnumberparser.cpp
 math/rational.cpp
+math/quantity.cpp
 math/units.cpp
 tests/testcnumberparser.cpp
 )
@@ -289,6 +295,7 @@ math/number.c
 math/cmath.cpp
 math/cnumberparser.cpp
 math/rational.cpp
+math/quantity.cpp
 math/units.cpp
 tests/testser.cpp
 )
