@@ -163,10 +163,13 @@ public:
     void push(const Token& token);
     const Token& top();
     const Token& top(unsigned index);
+    bool hasError() const { return !m_error.isEmpty(); }
+    QString error() const { return m_error; }
 
 private:
     void ensureSpace();
     int topIndex;
+    QString m_error;
 };
 
 const Token Token::null;
@@ -303,6 +306,7 @@ QString Token::description() const
 TokenStack::TokenStack() : QVector<Token>()
 {
     topIndex = 0;
+    m_error = "";
     ensureSpace();
 }
 
@@ -324,7 +328,11 @@ void TokenStack::push(const Token& token)
 
 Token TokenStack::pop()
 {
-    return topIndex > 0 ? Token(at(--topIndex)) : Token();
+    if (topIndex > 0)
+        return Token(at(--topIndex));
+
+    m_error = "token stack is empty (BUG)";
+    return Token();
 }
 
 const Token& TokenStack::top()
@@ -441,9 +449,7 @@ void Evaluator::initializeBuiltInVariables()
     setVariable(QString::fromUtf8("coulomb"), Units::coulomb(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("volt"), Units::volt(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("ohm"), Units::ohm(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("watt"), Units::watt(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("farad"), Units::farad(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("watt"), Units::watt(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("tesla"), Units::tesla(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("weber"), Units::weber(), Variable::BuiltIn);
     setVariable(QString::fromUtf8("henry"), Units::henry(), Variable::BuiltIn);
@@ -534,6 +540,8 @@ Tokens Evaluator::scan(const QString& expr) const
     int tokenStart = 0;
     Token::Type type;
     bool numberFrac = false;
+    int expStart;     // index of the exponent part in the expression
+    QString expText;  // start of the exponent text matching /E[\+\-]*/
 
     // Force a terminator.
     ex.append(QChar());
@@ -547,6 +555,8 @@ Tokens Evaluator::scan(const QString& expr) const
             tokenStart = i;
             // State variables reset
             numberFrac = false;
+            expStart = -1;
+            expText = "";
 
             // Skip any whitespaces.
             if (ch.isSpace())
@@ -639,7 +649,8 @@ Tokens Evaluator::scan(const QString& expr) const
                 state = InDecimal;
             }
             else if (ch.toUpper() == 'E') { // Exponent?
-                tokenText.append('E');
+                expText = "E";
+                expStart = i;
                 ++i;
                 state = InExpIndicator;
             } else if (ch.toUpper() == 'X' && tokenText == "0") { // Normal hexadecimal notation.
@@ -718,7 +729,8 @@ Tokens Evaluator::scan(const QString& expr) const
             if (ch.isDigit()) // Consume as long as it's a digit.
                 tokenText.append(ex.at(i++));
             else if (ch.toUpper() == 'E') { // Exponent?
-                tokenText.append('E');
+                expText = "E";
+                expStart = i;
                 ++i;
                 state = InExpIndicator;
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
@@ -732,13 +744,19 @@ Tokens Evaluator::scan(const QString& expr) const
 
         case InExpIndicator:
             if (ch == '+' || ch == '-') // Possible + or - right after E.
-                tokenText.append(ex.at(i++));
-            else if (ch.isDigit()) // Consume as long as it's a digit.
+                expText.append(ex.at(i++));
+            else if (ch.isDigit()) {// Parse the exponent absolute value
                 state = InExponent;
-            else if (isSeparatorChar(ch)) // Ignore thousand separators
+                tokenText.append(expText);
+            } else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
-            else // Invalid thing here.
-                state = Bad;
+            else {// Invalid thing here.
+                // Rollback: might be an identifier used in implicit multiplication
+                i = expStart;
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
+                tokenText = "";
+                state = Start;
+            }
             break;
 
         case InExponent:
@@ -838,7 +856,7 @@ void Evaluator::compile(const Tokens& tokens)
     QStack<int> argStack;
     unsigned argCount = 1;
 
-    for (int i = 0; i <= tokens.count(); ++i) {
+    for (int i = 0; i <= tokens.count() && !syntaxStack.hasError(); ++i) {
         // Helper token: InvalidOp is end-of-expression.
         Token token = (i < tokens.count()) ? tokens.at(i) : Token(Token::stxOperator);
         Token::Type tokenType = token.type();
@@ -855,13 +873,12 @@ void Evaluator::compile(const Tokens& tokens)
             break;
 
         // Try to apply all parsing rules.
-        if (1) { // TODO: Remove this
 #ifdef EVALUATOR_DEBUG
             dbg << "\tChecking rules..." << "\n";
 #endif
             // Repeat until no more rule applies.
             bool argHandled = false;
-            while (true) {
+        while (!syntaxStack.hasError()) {
                 bool ruleFound = false;
 
                 // Rule for function last argument: id (arg) -> arg.
@@ -1184,11 +1201,12 @@ void Evaluator::compile(const Tokens& tokens)
 #endif
             }
         }
-    }
 
-    // syntaxStack must left only one operand and end-of-expression (i.e. InvalidOp).
     m_valid = false;
-    if (syntaxStack.itemCount() == 2 && syntaxStack.top().isOperator()
+    if (syntaxStack.hasError())
+        m_error = syntaxStack.error();
+    // syntaxStack must left only one operand and end-of-expression (i.e. InvalidOp).
+    else if (syntaxStack.itemCount() == 2 && syntaxStack.top().isOperator()
          && syntaxStack.top().asOperator() == Token::InvalidOp
          && !syntaxStack.top(1).isOperator())
     {
@@ -1271,6 +1289,11 @@ Quantity Evaluator::evalNoAssign()
         }
 
         compile(tokens);
+        if (!m_valid) {
+            if (m_error.isEmpty())
+                m_error = tr("compile error");
+            return CNumber(0);
+        }
     }
 
     result = exec(m_codes, m_constants, m_identifiers);
