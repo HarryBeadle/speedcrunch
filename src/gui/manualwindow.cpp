@@ -33,6 +33,7 @@ ManualWindow::ManualWindow(QWidget* parent)
     : QTextBrowser(parent)
 {
     setWindowFlags(Qt::Window);
+    setWindowIcon(QPixmap(":/speedcrunch.png"));
     setStyleSheet(QStringLiteral("QTextBrowser { background-color: #FFFFFF; }"));
     QFont f("Helvetica");
     f.setStyleHint(QFont::SansSerif);
