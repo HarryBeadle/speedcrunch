@@ -43,6 +43,7 @@ ManualWindow::ManualWindow(QWidget* parent)
     //Disable automatic opening of links. We handle them ourselves.
     this->setOpenLinks(false);
     connect(this, SIGNAL(anchorClicked(const QUrl&)), SLOT(handleAnchorClick(const QUrl&)));
+    connect(this, SIGNAL(sourceChanged(const QUrl&)), SLOT(handleSourceChanged(const QUrl&)));
 
     m_server = ManualServer::instance();
     showHelpForKeyword("home");
@@ -59,7 +60,6 @@ void ManualWindow::showHelpForKeyword(const QString &id)
 void ManualWindow::openPage(const QUrl& url)
 {
     setSource(url);
-    retranslateText();
 }
 
 void ManualWindow::retranslateText()
@@ -132,6 +132,12 @@ void ManualWindow::handleAnchorClick(const QUrl &url)
         openPage(url);
     else
         QDesktopServices::openUrl(url);
+}
+
+void ManualWindow::handleSourceChanged(const QUrl& url)
+{
+    // This updates the window title with the new document title.
+    retranslateText();
 }
 
 QVariant ManualWindow::loadResource(int type, const QUrl &name)
