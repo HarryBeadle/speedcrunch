@@ -44,8 +44,8 @@ ManualWindow::ManualWindow(QWidget* parent)
     connect(this, SIGNAL(anchorClicked(const QUrl&)), SLOT(handleAnchorClick(const QUrl&)));
 
     m_server = ManualServer::instance();
-    retranslateText();
     showHelpForKeyword("home");
+    retranslateText();
 }
 
 void ManualWindow::showHelpForKeyword(const QString &id)
@@ -58,20 +58,25 @@ void ManualWindow::showHelpForKeyword(const QString &id)
 void ManualWindow::openPage(const QUrl& url)
 {
     setSource(url);
+    retranslateText();
 }
 
 void ManualWindow::retranslateText()
 {
-    setWindowTitle(tr("User Manual"));
+    QString docTitle = documentTitle();
+    if (docTitle.isEmpty())
+        setWindowTitle(tr("SpeedCrunch Manual"));
+    else
+        setWindowTitle(tr("%1 - SpeedCrunch Manual").arg(docTitle));
 }
 
 
 void ManualWindow::changeEvent(QEvent* event)
 {
     if (event->type() == QEvent::LanguageChange) {
-        retranslateText();
         m_server->ensureCorrectLanguage();
         this->reload();
+        retranslateText();
     }
     else
         QTextBrowser::changeEvent(event);
