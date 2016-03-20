@@ -262,7 +262,7 @@ CNumber CNumber::deSerialize(const QJsonObject &json)
     str.replace(",", ".");
     CNumber result(str.toLatin1().constData());
     QString f = json["format"].toString();
-    result.setFormat( (f=="NULL") ? '\0': f.at(0).toLatin1());
+    result.setFormat((f.isEmpty() || f == QStringLiteral("NULL")) ? '\0': f.at(0).toLatin1());
 
     if(json.contains("unit")) {
         str = json["unit"].toString();
