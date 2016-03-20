@@ -221,7 +221,7 @@ class SpeedCrunchDomain(Domain):
         try:
             docname, objtype = self.data['objects'][target]
         except KeyError:
-            return None
+            return []
         return [('sc:' + self.role_for_objtype(objtype),
                  make_refnode(builder, fromdocname, docname, 'sc.' + target,
                               contnode, target))]
