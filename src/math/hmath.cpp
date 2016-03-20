@@ -369,7 +369,7 @@ HNumber HNumber::deSerialize(const QJsonObject &json)
     }
     if (json.contains("format")) {
         QString f = json["format"].toString();
-        result.setFormat( (f=="NULL") ? '\0': f.at(0).toLatin1());
+        result.setFormat((f.isEmpty() || f == QStringLiteral("NULL")) ? '\0': f.at(0).toLatin1());
     }
 
     return result;
