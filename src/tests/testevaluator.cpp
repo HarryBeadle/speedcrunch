@@ -19,10 +19,11 @@
 
 #include "core/evaluator.h"
 #include "core/settings.h"
+#include "tests/testcommon.h"
 
 #include <QtCore/QCoreApplication>
 
-#include <cstring>
+#include <string>
 #include <iostream>
 
 using namespace std;
@@ -41,17 +42,12 @@ static int eval_new_failed_tests = 0;
 #define CHECK_USERFUNC_SET(x) checkEval(__FILE__,__LINE__,#x,x,"NaN")
 #define CHECK_USERFUNC_SET_FAIL(x) checkEval(__FILE__,__LINE__,#x,x,"",0,true)
 
-static void checkAutoFix(const char* file, int line, const char* msg, const QString& expr, const QString& fixed)
+static void checkAutoFix(const char* file, int line, const char* msg, const char* expr, const char* fixed)
 {
     ++eval_total_tests;
 
-    QString r = eval->autoFix(expr);
-    if (r != fixed) {
-        eval_failed_tests++;
-        cerr << file << "[" << line << "]: " << msg << endl
-             << "\tResult   : " << qPrintable(r) << endl
-             << "\tExpected : " << qPrintable(fixed) << endl;
-    }
+    string r = eval->autoFix(QString(expr)).toStdString();
+    DisplayErrorOnMismatch(file, line, msg, r, fixed, eval_failed_tests, eval_new_failed_tests);
 }
 
 static void checkDivisionByZero(const char* file, int line, const char* msg, const QString& expr)
@@ -115,13 +111,8 @@ static void checkEvalPrecise(const char* file, int line, const char* msg, const 
 
     // We compare up to 50 decimals, not exact number because it's often difficult
     // to represent the result as an irrational number, e.g. PI.
-    QString result = DMath::format(rn, 'f', 50);
-    if (result != expected) {
-        ++eval_failed_tests;
-        cerr << file << "[" << line <<"]\t" << msg << endl
-             << "\tResult   : " << result.toLatin1().constData() << endl
-             << "\tExpected : " << expected << endl;
-    }
+    string result = DMath::format(rn, 'f', 50).toStdString();
+    DisplayErrorOnMismatch(file, line, msg, result, expected, eval_failed_tests, eval_new_failed_tests, 0);
 }
 
 void test_constants()

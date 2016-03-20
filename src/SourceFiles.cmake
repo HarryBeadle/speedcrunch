@@ -124,8 +124,6 @@ math/units.cpp
 )
 
 set(testhmath_SOURCES
-core/numberformatter.cpp
-core/settings.cpp
 math/floatcommon.c
 math/floatconst.c
 math/floatconvert.c
@@ -214,8 +212,6 @@ tests/testfloatnum.c
 )
 
 set(testcmath_SOURCES
-core/numberformatter.cpp
-core/settings.cpp
 math/floatcommon.c
 math/floatconst.c
 math/floatconvert.c
@@ -242,9 +238,7 @@ math/units.cpp
 tests/testcmath.cpp
 )
 
-set(testcnumberparser_SOURCES
-core/numberformatter.cpp
-core/settings.cpp
+set(testdmath_SOURCES
 math/floatcommon.c
 math/floatconst.c
 math/floatconvert.c
@@ -268,7 +262,7 @@ math/cnumberparser.cpp
 math/rational.cpp
 math/quantity.cpp
 math/units.cpp
-tests/testcnumberparser.cpp
+tests/testdmath.cpp
 )
 
 set(testser_SOURCES

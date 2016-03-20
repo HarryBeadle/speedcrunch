@@ -19,12 +19,13 @@
 
 #include "math/hmath.h"
 #include "math/floatconst.h"
+#include "tests/testcommon.h"
 
 #include <QtCore/QCoreApplication>
 
 #include <cstdlib>
-#include <cstring>
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -42,47 +43,22 @@ static HNumber PI;
 static void check_value(const char*file, int line, const char* msg, const HNumber& n, const char* expected, int issue = 0)
 {
     ++hmath_total_tests;
-    char* result = HMath::format(n, 'f');
-    if (strcmp(result, expected)) {
-        ++hmath_failed_tests;
-        cerr << file << "[" << line << "]\t" << msg;
-        if (issue)
-            cerr << "\t[ISSUE " << issue << "]";
-        else {
-            cerr << "\t[NEW]";
-            ++hmath_new_failed_tests;
-        }
-        cerr << endl;
-        cerr << "\tResult   : " << result << endl;
-        cerr << "\tExpected : " << expected << endl;
-    }
-    free(result);
+    string result = HMath::format(n, 'f').toStdString();
+    DisplayErrorOnMismatch(file, line, msg, result, expected, hmath_failed_tests, hmath_new_failed_tests, issue);
 }
 
 static void check_format(const char* file, int line, const char* msg, const HNumber& n, char format, int prec, const char* expected)
 {
     ++hmath_total_tests;
-    char* result = HMath::format(n, format, prec);
-    if (strcmp(result, expected)) {
-        ++hmath_failed_tests;
-        cerr << file << "[" << line << "]: " << msg << endl
-             << "\tResult   : " << result << endl
-             << "\tExpected : " << expected << endl;
-    }
-    free(result);
+    string result = HMath::format(n, format, prec).toStdString();
+    DisplayErrorOnMismatch(file, line, msg, result, expected, hmath_failed_tests, hmath_new_failed_tests);
 }
 
 static void check_precise(const char* file, int line, const char* msg, const HNumber& n, const char* expected)
 {
     ++hmath_total_tests;
-    char* result = HMath::format(n, 'f', 50);
-    if (strcmp(result, expected)) {
-        ++hmath_failed_tests;
-        cerr << file << "[" << line << "]: " << msg << endl
-             << "\tResult  : " << result << endl
-             << "\tExpected: " << expected << endl;
-    }
-    free(result);
+    string result = HMath::format(n, 'f', 50).toStdString();
+    DisplayErrorOnMismatch(file, line, msg, result, expected, hmath_failed_tests, hmath_new_failed_tests);
 }
 
 void test_create()

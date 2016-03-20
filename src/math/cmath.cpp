@@ -192,7 +192,7 @@ void CNumber::serialize(QJsonObject &json) const
 {
     const char f = format();
     json["format"] = (f=='\0') ? "NULL" : QString(f);
-    json["value"] = QString(CMath::format(*this, f, DECPRECISION));
+    json["value"] = CMath::format(*this, f, DECPRECISION);
 }
 
 
@@ -496,11 +496,11 @@ CNumber CMath::i()
  * Formats the given number as string, in engineering notation.
  * Note that the returned string must be freed.
  */
-char* CMath::format( const CNumber& cn, char format, int prec )
+QString CMath::format( const CNumber& cn, char format, int prec )
 {
   /* If number is NaN */
   if (cn.isNan())
-    return strdup("NaN");
+    return "NaN";
 
   /* If number is real */
   else if (cn.imag.isNearZero())
@@ -514,13 +514,13 @@ char* CMath::format( const CNumber& cn, char format, int prec )
     /* Use complex number formatting */
 
     /* Format real part */
-    const char * real_part = cn.real.isZero()? strdup("") : HMath::format(cn.real, format, prec);
+    QString real_part = cn.real.isZero()? "" : HMath::format(cn.real, format, prec);
 
     /* Format imaginary part */
-    const char * imag_part = "";
-    const char * separator = "";
-    const char * prefix    = "";   /* TODO : Insert two modes, one for a+jb and one for a+bj */
-    const char * postfix   = "j";  /* TODO : Insert two modes, one for a+bi and one for a+bj */
+    QString imag_part = "";
+    QString separator = "";
+    QString prefix    = "";   /* TODO : Insert two modes, one for a+jb and one for a+bj */
+    QString postfix   = "j";  /* TODO : Insert two modes, one for a+bi and one for a+bj */
 
     /* If imaginary part is positive */
     if (cn.imag.isPositive()) {
@@ -533,22 +533,7 @@ char* CMath::format( const CNumber& cn, char format, int prec )
       imag_part = HMath::format(-cn.imag, format, prec);
     }
 
-    /* Allocate string for the result */
-    int l1 = strlen(real_part) + strlen(separator) + strlen(prefix) + strlen(imag_part) + strlen(postfix);
-    char * result = (char *) malloc(l1+1);
-
-    /* Concatenate parts of the result */
-    strcpy(result, real_part);
-    strcat(result, separator);
-    strcat(result, prefix);
-    strcat(result, imag_part);
-    strcat(result, postfix);
-
-    /* Free old strings */
-    free((void *) real_part);
-    free((void *) imag_part);
-
-    return result;
+    return real_part + separator + prefix + imag_part + postfix;
   }
 }
 

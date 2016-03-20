@@ -18,12 +18,13 @@
 
 #include "math/quantity.h"
 #include "math/units.h"
+#include "tests/testcommon.h"
 
 #include <QtCore/QCoreApplication>
 #include <QString>
 
 #include <cstdlib>
-#include <cstring>
+#include <string>
 #include <iostream>
 
 using namespace std;
@@ -37,47 +38,25 @@ static int dmath_total_tests  = 0;
 static int dmath_failed_tests = 0;
 static int dmath_new_failed_tests = 0;
 
-static void check_value(const char* file, int line, const char* msg, const Quantity& q, const QString& expected, int issue = 0)
+static void check_value(const char* file, int line, const char* msg, const Quantity& q, const char* expected, int issue = 0)
 {
     ++dmath_total_tests;
-    QString result = DMath::format(q, 'f');
-    if (result != expected) {
-        ++dmath_failed_tests;
-        cerr << file << "[" << line << "]\t" << msg;
-        if (issue)
-            cerr << "\t[ISSUE " << issue << "]";
-        else {
-            cerr << "\t[NEW]";
-            ++dmath_new_failed_tests;
-        }
-        cerr << endl;
-        cerr << "\tResult   : " << result.toLatin1().constData() << endl
-             << "\tExpected : " << expected.toLatin1().constData() << endl;
-    }
+    string result = DMath::format(q, 'f').toStdString();
+    DisplayErrorOnMismatch(file, line, msg, result, expected, dmath_failed_tests, dmath_new_failed_tests, issue);
 }
 
-static void check_format(const char* file, int line, const char* msg, const Quantity& q, char format, int prec, const QString& expected)
+static void check_format(const char* file, int line, const char* msg, const Quantity& q, char format, int prec, const char* expected)
 {
     ++dmath_total_tests;
-    QString result = DMath::format(q, format, prec);
-    if (result != expected) {
-        ++dmath_failed_tests;
-        cerr << file << "[" << line << "]\t" << msg << endl;
-        cerr << "\tResult   : " << result.toLatin1().constData() << endl
-             << "\tExpected : " << expected.toLatin1().constData() << endl;
-    }
+    string result = DMath::format(q, format, prec).toStdString();
+    DisplayErrorOnMismatch(file, line, msg, result, expected, dmath_failed_tests, dmath_new_failed_tests, 0);
 }
 
-static void check_precise(const char* file, int line, const char* msg, const Quantity& q, const QString& expected)
+static void check_precise(const char* file, int line, const char* msg, const Quantity& q, const char* expected)
 {
     ++dmath_total_tests;
-    QString result = DMath::format(q, 'f', 50);
-    if (result != expected) {
-        ++dmath_failed_tests;
-        cerr << file << "[" << line << "]: " << msg << endl
-             << "\tResult  : " << result.toLatin1().constData() << endl
-             << "\tExpected: " << expected.toLatin1().constData() << endl << endl;
-    }
+    string result = DMath::format(q, 'f', 50).toStdString();
+    DisplayErrorOnMismatch(file, line, msg, result, expected, dmath_failed_tests, dmath_new_failed_tests, 0);
 }
 
 void test_create()

@@ -110,7 +110,7 @@ class HMath
 {
 public:
     // FORMAT
-    static char * format( const HNumber & n, char format = 'g', int prec = -1 );
+    static QString format( const HNumber & n, char format = 'g', int prec = -1 );
     // PARSING
     static HNumber parse_str (const char * str_in, const char ** str_out);
     // CONSTANTS

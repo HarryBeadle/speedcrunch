@@ -718,9 +718,7 @@ QString DMath::format(Quantity q, char format, int prec)
 
     number /= unit;
 
-    char* str = CMath::format(number, format, prec);
-    QString result = QString::fromLatin1(str);
-    free(str);
+    QString result = CMath::format(number, format, prec);
 
 
     if(!number.real.isZero() && !number.imag.isZero() && unit_name != " ")

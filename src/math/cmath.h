@@ -122,7 +122,7 @@ class CMath
 {
 public:
     // FORMAT
-    static char * format( const CNumber & n, char format = 'g', int prec = -1 );
+    static QString format( const CNumber & n, char format = 'g', int prec = -1 );
     // CONSTANTS
     static CNumber e();
     static CNumber phi();

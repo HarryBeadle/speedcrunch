@@ -21,8 +21,10 @@
 #include "math/cmath.h"
 #include "math/floatconst.h"
 
+#include "tests/testcommon.h"
+
 #include <cstdlib>
-#include <cstring>
+#include <string>
 #include <iostream>
 
 using namespace std;
@@ -41,54 +43,42 @@ static CNumber PI;
 static void check_value(const char* file, int line, const char* msg, const CNumber& n, const char* expected, int issue = 0)
 {
     ++cmath_total_tests;
-    char* result = CMath::format(n, 'f');
-    if (strcmp(result, expected)) {
-        ++cmath_failed_tests;
-        cerr << file << "[" << line << "]\t" << msg;
-        if (issue)
-            cerr << "\t[ISSUE " << issue << "]";
-        else {
-            cerr << "\t[NEW]";
-            ++cmath_new_failed_tests;
-        }
-        cerr << endl;
-        cerr << "\tResult   : " << result << endl
-             << "\tExpected : " << expected << endl;
-    }
-    free(result);
+    string result = CMath::format(n, 'f').toStdString();
+    DisplayErrorOnMismatch(file, line, msg, result, expected, cmath_failed_tests, cmath_new_failed_tests, issue);
 }
 
 static void check_format(const char* file, int line, const char* msg, const CNumber& n, char format, int prec, const char* expected)
 {
     ++cmath_total_tests;
-    char* result = CMath::format(n, format, prec);
-    if (strcmp(result, expected)) {
-        ++cmath_failed_tests;
-        cerr << file << "[" << line << "]: " << msg << endl
-             << "\tResult   : " << result << endl
-             << "\tExpected : " << expected << endl;
-    }
-    free(result);
+    string result = CMath::format(n, format, prec).toStdString();
+    DisplayErrorOnMismatch(file, line, msg, result, expected, cmath_failed_tests, cmath_new_failed_tests, 0);
 }
 
 static void check_precise(const char* file, int line, const char* msg, const CNumber& n, const char* expected)
 {
     ++cmath_total_tests;
-    char* result = CMath::format(n, 'f', 50);
-    if (strcmp(result, expected)) {
-        ++cmath_failed_tests;
-        cerr << file << "[" << line << "]: " << msg << endl
-             << "\tResult  : " << result << endl
-             << "\tExpected: " << expected << endl;
-    }
-    free(result);
+    string result = CMath::format(n, 'f', 50).toStdString();
+    DisplayErrorOnMismatch(file, line, msg, result, expected, cmath_failed_tests, cmath_new_failed_tests, 0);
 }
 
 void test_create()
 {
-    CHECK(CNumber("1.0"), "1");
-    CHECK(CNumber("2.0"), "2");
-    CHECK(CNumber("1e-3"), "0.001");
+    // Real numbers
+    CHECK(CNumber("1"),      "1");
+    CHECK(CNumber("2"),      "2");
+    CHECK(CNumber("1.0"),    "1");
+    CHECK(CNumber("1e-3"),   "0.001");
+    CHECK(CNumber("1.0e-3"), "0.001");
+
+    // Complex number
+    CHECK(CNumber("0+1j"),           "1j");
+    CHECK(CNumber("1+1j"),           "1+1j");
+    CHECK(CNumber("2+2j"),           "2+2j");
+    CHECK(CNumber("0+1.0j"),         "1j");
+    CHECK(CNumber("0.0+1.0j"),       "1j");
+    CHECK(CNumber("1.0+1.0j"),       "1+1j");
+    CHECK(CNumber("1e-3+1e-3j"),     "0.001+0.001j");
+    CHECK(CNumber("1.0e-3+1.0e-3j"), "0.001+0.001j");
 
     // Too large or too small.
     CHECK(CNumber("1e1000000000"), "NaN");
@@ -97,6 +87,9 @@ void test_create()
     CHECK_FORMAT('e', 2, CNumber("1e-1000000000"), "NaN");
 
     CHECK(CMath::i()*CMath::i(), "-1");
+
+    // Long numbers, like in session history
+    CHECK(CNumber("0+1.000000000000000000000000000000000000000000000000000000000000000000000000000000j"), "1j");
 }
 
 void test_format()

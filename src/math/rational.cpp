@@ -247,19 +247,3 @@ double Rational::toDouble() const
 {
     return double(m_num)/m_denom;
 }
-
-void Rational::test()
-{
-    QString str;
-    str = NumberFormatter::format(Rational(123,456).toHNumber());
-
-    Rational r1;
-    r1 = Rational(22./7);
-    r1 = Rational(-12345./96457);
-
-    r1 = Rational(HNumber("-1234")/HNumber("7895"));
-    r1 = Rational(HNumber("-1235000")/HNumber("78950000"));
-
-    return;
-
-}

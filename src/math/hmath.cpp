@@ -356,7 +356,7 @@ void HNumber::serialize(QJsonObject &json) const
 {
     const char f = format();
     json["format"] = (f=='\0') ? "NULL" : QString(f);
-    json["value"] = QString(HMath::format(*this, f, DECPRECISION));
+    json["value"] = HMath::format(*this, f, DECPRECISION);
 }
 
 HNumber HNumber::deSerialize(const QJsonObject &json)
@@ -785,7 +785,7 @@ char* formathexfp( cfloatnum x, char base,
  * Formats the given number as string, using specified decimal digits.
  * Note that the returned string must be freed.
  */
-char* HMath::format( const HNumber& hn, char format, int prec )
+QString HMath::format( const HNumber& hn, char format, int prec )
 {
     char* rs = 0;
 
@@ -800,7 +800,9 @@ char* HMath::format( const HNumber& hn, char format, int prec )
     case 'g': default: rs = formatGeneral(&hn.d->fnum, prec );
     }
 
-    return rs;
+    QString result(rs);
+    free(rs);
+    return result;
 }
 
 /**
@@ -1975,9 +1977,8 @@ HNumber HMath::encodeIeee754( const HNumber & val, const HNumber & exp_bits,
 
 std::ostream& operator<<( std::ostream& s, const HNumber& n )
 {
-    char* str = HMath::format( n, 'f' );
-    s << str;
-    free(str);
+    QString str = HMath::format( n, 'f' );
+    s << str.toLatin1().constData();
     return s;
 }
 
