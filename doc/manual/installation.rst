@@ -133,7 +133,8 @@ The SpeedCrunch build supports several additional configuration variables. These
 either be set when invoking CMake using the form ``cmake -D<VAR>=<VALUE>`` or interactively
 via the CMake GUI tool.
 
-.. index:: CMake variable; PORTABLE_SPEEDCRUNCH
+.. index::
+   pair: PORTABLE_SPEEDCRUNCH; CMake variable
 
 .. describe:: PORTABLE_SPEEDCRUNCH
 
@@ -141,7 +142,8 @@ via the CMake GUI tool.
    stored in the same directory as the executable.
 
 
-.. index:: CMake variable; PYTHON_EXECUTABLE
+.. index::
+   pair: PYTHON_EXECUTABLE; CMake variable
 
 .. describe:: PYTHON_EXECUTABLE
 
@@ -149,7 +151,8 @@ via the CMake GUI tool.
    this is determined automatically and doesn't need to be changed.
 
 
-.. index:: CMake variable; QCOLLECTIONGENERATOR_EXECUTABLE
+.. index::
+   pair: QCOLLECTIONGENERATOR_EXECUTABLE; CMake variable
 
 .. describe:: QCOLLECTIONGENERATOR_EXECUTABLE
 
@@ -158,7 +161,8 @@ via the CMake GUI tool.
    binary included with Qt and doesn't need to be changed.
 
 
-.. index:: CMake variable; SPHINX_EXECUTABLE
+.. index::
+   pair: SPHINX_EXECUTABLE; CMake variable
 
 .. describe:: SPHINX_EXECUTABLE
 
@@ -175,7 +179,8 @@ build directory. Note that this step may require administrator/root privileges.
 To customize the installation directory, set the following CMake variable at configuration
 time:
 
-.. index:: CMake variable; CMAKE_INSTALL_PREFIX
+.. index::
+   pair: CMAKE_INSTALL_PREFIX; CMake variable
 
 .. describe:: CMAKE_INSTALL_PREFIX
 
