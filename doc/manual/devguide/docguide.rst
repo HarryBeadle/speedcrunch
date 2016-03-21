@@ -169,14 +169,14 @@ update the HTML documents whenever you modify the sources.
 .. _sphinx-autobuild: https://github.com/GaretJax/sphinx-autobuild
 
 To generate the documentation as it would be for the integrated manual, you need to
-pass the ``sc_bundled_docs`` tag to :program:`sphinx-build` using the |sphinx-build-t|_.
+pass the ``sc_bundled_docs`` tag to :program:`sphinx-build` using the command-line flag |sphinx-build-t|_.
 Most notably, this switches the theme to the one used for the bundled documentation. In general,
 you shouldn't need to write documentation that's different between the integrated manual
 and stand-alone documentation. Still, if you need to distinguish between these, you
 can check for the presence of the ``sc_bundled_docs`` tag. See the
 `Sphinx documentation on tags <tags_>`_ for more information on how to use these.
 
-.. |sphinx-build-t| replace:: ``-t`` flag
+.. |sphinx-build-t| replace:: ``-t``
 .. _sphinx-build-t: http://sphinx-doc.org/en/stable/invocation.html#cmdoption-sphinx-build-t
 .. _tags: http://sphinx-doc.org/en/stable/markup/misc.html#tags
 
