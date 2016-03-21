@@ -24,6 +24,7 @@ Table of Contents
 
    userguide/index
    reference/index
+   devguide/index
 
 
 Indices and tables
