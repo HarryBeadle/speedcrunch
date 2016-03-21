@@ -783,7 +783,6 @@ char* formathexfp( cfloatnum x, char base,
 
 /**
  * Formats the given number as string, using specified decimal digits.
- * Note that the returned string must be freed.
  */
 QString HMath::format( const HNumber& hn, char format, int prec )
 {

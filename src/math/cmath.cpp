@@ -493,8 +493,7 @@ CNumber CMath::i()
 
 
 /**
- * Formats the given number as string, in engineering notation.
- * Note that the returned string must be freed.
+ * Formats the given number as string.
  */
 QString CMath::format( const CNumber& cn, char format, int prec )
 {
