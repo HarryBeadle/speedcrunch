@@ -74,6 +74,14 @@ Style Guide
   things with simple markup elements. So for instance, when referring to an executable
   program, use the ``program`` role (``:program:`speedcrunch```).
 
+* Headings should be title-cased. That means in a heading, you should capitalize
+
+  - The first word.
+  - All nouns, verbs, adjectives, adverbs, and pronouns.
+  - All words that are four letters or longer.
+
+  [title-case]_
+
 * Don't write the manual as if just for one specific version of SpeedCrunch. Instead, document when
   a feature was introduced or what changed between SpeedCrunch versions. This keeps the latest
   version of the documentation relevant even for older SpeedCrunch versions and helps avoid
@@ -202,3 +210,8 @@ run ``doc-tool --help``.
 .. [#f2] Or ``./make html`` in Windows PowerShell.
 
 .. _domains: http://sphinx-doc.org/en/stable/domains.html
+
+
+.. rubric:: Citations
+
+.. [title-case] http://blog.apastyle.org/apastyle/2012/03/title-case-and-sentence-case-capitalization-in-apa-style.html
