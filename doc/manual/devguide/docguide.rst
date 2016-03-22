@@ -65,6 +65,11 @@ Style Guide
   final document is only determined by the order of the footnote bodies at the end of the
   source document.
 
+* When using ``replace`` substitutions (`documentation <replace_>`_), the replacement text is not
+  translatable. Accordingly, only use these substitutions when the substituted text doesn't have to be translated.
+
+  .. _replace: http://docutils.sourceforge.net/docs/ref/rst/directives.html#replacement-text
+
 * Always use appropriate semantic markup, where available, rather than just styling
   things with simple markup elements. So for instance, when referring to an executable
   program, use the ``program`` role (``:program:`speedcrunch```).
@@ -76,12 +81,12 @@ Style Guide
   |deprecated|_ directives with the SpeedCrunch version to mark the differences between
   versions.
 
-.. |versionadded| replace:: ``versionadded``
-.. |versionchanged| replace:: ``versionchanged``
-.. |deprecated| replace:: ``deprecated``
-.. _versionadded: http://www.sphinx-doc.org/en/stable/markup/para.html#directive-versionadded
-.. _versionchanged: http://www.sphinx-doc.org/en/stable/markup/para.html#directive-versionchanged
-.. _deprecated: http://www.sphinx-doc.org/en/stable/markup/para.html#directive-deprecated
+  .. |versionadded| replace:: ``versionadded``
+  .. |versionchanged| replace:: ``versionchanged``
+  .. |deprecated| replace:: ``deprecated``
+  .. _versionadded: http://www.sphinx-doc.org/en/stable/markup/para.html#directive-versionadded
+  .. _versionchanged: http://www.sphinx-doc.org/en/stable/markup/para.html#directive-versionchanged
+  .. _deprecated: http://www.sphinx-doc.org/en/stable/markup/para.html#directive-deprecated
 
 
 
