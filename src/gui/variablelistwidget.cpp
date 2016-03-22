@@ -203,8 +203,7 @@ void VariableListWidget::changeEvent(QEvent* event)
 void VariableListWidget::keyPressEvent(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_Delete) {
-        Evaluator::instance()->unsetVariable(currentItem()->text(0));
-        fillTable();
+        deleteItem();
         event->accept();
         return;
     }
