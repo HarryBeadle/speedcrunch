@@ -246,7 +246,7 @@ The Poisson distribution is characterized by only a single parameter, named `mu`
     
     .. admonition:: Example
         
-        An insurance company expects 10 claims over the period of one year. What is the probability that more than 12 claims will be filed?::
+        An insurance company expects 10 claims over the period of one year. What is the probability that more than 12 claims will be filed? ::
             
             1 - poicdf(12; 10)
             = 0.208

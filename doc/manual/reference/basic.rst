@@ -12,7 +12,7 @@ General
 
     .. admonition:: Example
 
-        .. code-block:: python
+       ::
 
             abs(-3 meter)     = 3 meter
             abs(4 + 3j)       = 5
