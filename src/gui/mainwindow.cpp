@@ -1066,7 +1066,7 @@ void MainWindow::showManualWindow()
         return;
     }
 
-    m_widgets.manual = new ManualWindow(this);
+    m_widgets.manual = new ManualWindow();
     if (!m_widgets.manual->restoreGeometry(m_settings->manualWindowGeometry))
         m_widgets.manual->resize(640, 480);
     m_widgets.manual->show();
@@ -2349,6 +2349,9 @@ void MainWindow::setRadixCharacterComma()
 
 void MainWindow::closeEvent(QCloseEvent* e)
 {
+    if (m_widgets.manual) {
+        m_widgets.manual->close();
+    }
     saveSettings();
     if(m_settings->sessionSave) {
         QString data_path = Settings::getDataPath();

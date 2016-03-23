@@ -1,4 +1,4 @@
-Basic math functions
+Basic Math Functions
 ====================
 
 General
@@ -6,13 +6,13 @@ General
 
 .. function:: abs(x)
 
-    Returns the absolute value of ``x``, commonly written as \|x\|. In real mode, it flips the sign of negative number, thus enforcing it to be positive. When given a complex number as argument, it returns the modulus of the number.
+    Returns the absolute value of ``x``, commonly written as \|x\|. In real mode, it flips the sign of a negative number, thus enforcing it to be positive. When given a complex number as argument, it returns the modulus of the number.
 
     The argument can have a dimension.
 
     .. admonition:: Example
 
-        .. code-block:: python
+       ::
 
             abs(-3 meter)     = 3 meter
             abs(4 + 3j)       = 5
@@ -63,7 +63,7 @@ General
     Computes the logarithm of base *n* . In **complex mode** the same rules apply as for :func:`ln`.
      
 
-Trigonometric & inverse trigonometric
+Trigonometric & Inverse Trigonometric
 -------------------------------------
 
 .. function:: sin(x)
@@ -207,7 +207,7 @@ Trigonometric & inverse trigonometric
     The inverse function is :func:`tan`.
     
 
-Hyperbolic & inverse hyperbolic
+Hyperbolic & Inverse Hyperbolic
 -------------------------------
 
 .. function:: sinh(x)

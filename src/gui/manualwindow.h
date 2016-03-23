@@ -49,6 +49,7 @@ protected:
 	virtual void closeEvent(QCloseEvent*);
 private slots:
     void handleAnchorClick(const QUrl&url);
+    void handleSourceChanged(const QUrl& url);
 
 private:
     Q_DISABLE_COPY(ManualWindow)

@@ -1,5 +1,5 @@
-Integer & bitwise arithmetics
-=============================
+Integer & Bitwise Arithmetic Functions
+======================================
 
 SpeedCrunch stores integers with a precision of up to 256 bits. For this reason, when working with common length integers (e.g. 32 bit), negative numbers will *not* be given by the two's complement of the respective number. Instead, the sign can be thought of being stored as a separate property. Thus, while usually the signed 16-bit integers *0xFFFF* and *-1* are identical, they are distinct in SpeedCrunch. See :func:`mask` and :func:`unmask` for how to convert a negative number into the two's complement form.
 
@@ -7,7 +7,7 @@ Any integer larger than the above limit will be silently converted into a floati
 
 To specify large integers, prefer the use of the shift operators (``1 << n``) to exponentiation (``2^n``). The latter will be performed as floating point, and will be prone to rounding errors. In particular, the result might not be integer.
 
-Bitwise operations
+Bitwise Operations
 ------------------
 
 .. function:: and(x1; x2; ...)
@@ -78,7 +78,7 @@ Bitwise operations
         
     
 
-Radix change
+Radix Change
 ------------
 
 .. function:: bin(n)
@@ -158,7 +158,7 @@ Beware of rounding errors! Although SpeedCrunch performs all computations intern
     * :func:`frac`
           
 
-Integer division
+Integer Division
 ----------------
 
 .. function:: idiv(a; b)
