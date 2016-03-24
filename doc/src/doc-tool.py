@@ -54,6 +54,7 @@ class Tools:
     def __getattr__(self, name):
         return lambda *args: self.run_tool(name, *args)
 
+    # Let the user specify the path to the tool's binary via CLI argument
     @classmethod
     def add_arguments(cls, parser):
         for tool in cls.TOOLS:
