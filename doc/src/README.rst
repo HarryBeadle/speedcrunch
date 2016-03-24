@@ -21,7 +21,7 @@ When working with localization, you may additionally require:
 .. _quark: https://pypi.python.org/pypi/quark-sphinx-theme
 
 While writing the documentation, you can use the usual Sphinx tools to preview your
-progress. From the manual directory, run ``make html`` [#f2]_ to generate the HTML
+progress. From the manual directory, run ``make html`` (or ``./make html`` in Windows PowerShell) to generate the HTML
 documentation in the :file:`_build/html` directory. This will use a different theme
 than the integrated manual, but it's still useful for checking your markup. If you
 need more control, you can also invoke :program:`sphinx-build` directly; see the
@@ -52,7 +52,7 @@ supported target language with a single command. In addition, :program:`doc-tool
 has shortcuts for certain maintainer tasks. To get an overview of supported options and commands,
 run ``doc-tool --help``.
 
-* To generate ``.pot`` files for translation, run ``doc-tool.py extract-strings``. This will use :program:`sphinx`' ``gettext`` builder to crawl any reST files for translatable strings. Custom extensions to :prog:`sphinx` will also be serached for translatable strings.
+* To generate ``.pot`` files for translation, run ``doc-tool.py extract-strings``. This will use :program:`sphinx`' ``gettext`` builder to crawl any reST files for translatable strings. Custom extensions to :program:`sphinx` will also be serached for translatable strings.
 * To update the ``.po`` files (synchronize them with the ``.pot``), run ``doc-tool.py update-translations``. Not used since this will be handled by Transifex (?).
 * To actually build the docs, run either ``doc-tool.py build-standalone-docs`` or ``doc-tool.py build-bundled-docs``.
 

@@ -177,7 +177,6 @@ Tooling
 .. rubric:: Footnotes
 
 .. [#f1] See the Sphinx documentation `for more information on domains <domains_>`_.
-.. [#f2] Or ``./make html`` in Windows PowerShell.
 
 .. _domains: http://sphinx-doc.org/en/stable/domains.html
 
