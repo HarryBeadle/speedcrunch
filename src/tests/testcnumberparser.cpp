@@ -68,6 +68,7 @@ static void check_format(const char* file, int line, const char* msg, const CNum
     free(result);
 }
 
+/* Comment out to eliminate compilation warning.
 static void check_precise(const char* file, int line, const char* msg, const CNumber& n, const char* expected)
 {
     ++cmath_total_tests;
@@ -80,6 +81,7 @@ static void check_precise(const char* file, int line, const char* msg, const CNu
     }
     free(result);
 }
+*/
 
 void test_create()
 {
