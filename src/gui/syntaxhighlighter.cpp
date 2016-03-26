@@ -295,29 +295,29 @@ void SyntaxHighlighter::groupDigits(const QString& text, int pos, int length)
     static const int DEC_CHAR = (1 << 2);
     static const int HEX_CHAR = (1 << 3);
 
-    if (charType['0'] == 0) { // Initialize the table on first call (not thread-safe!).
-        charType['0'] = HEX_CHAR | DEC_CHAR | OCT_CHAR | BIN_CHAR;
-        charType['1'] = HEX_CHAR | DEC_CHAR | OCT_CHAR | BIN_CHAR;
-        charType['2'] = HEX_CHAR | DEC_CHAR | OCT_CHAR;
-        charType['3'] = HEX_CHAR | DEC_CHAR | OCT_CHAR;
-        charType['4'] = HEX_CHAR | DEC_CHAR | OCT_CHAR;
-        charType['5'] = HEX_CHAR | DEC_CHAR | OCT_CHAR;
-        charType['6'] = HEX_CHAR | DEC_CHAR | OCT_CHAR;
-        charType['7'] = HEX_CHAR | DEC_CHAR | OCT_CHAR;
-        charType['8'] = HEX_CHAR | DEC_CHAR;
-        charType['9'] = HEX_CHAR | DEC_CHAR;
-        charType['a'] = HEX_CHAR;
-        charType['b'] = HEX_CHAR;
-        charType['c'] = HEX_CHAR;
-        charType['d'] = HEX_CHAR;
-        charType['e'] = HEX_CHAR;
-        charType['f'] = HEX_CHAR;
-        charType['A'] = HEX_CHAR;
-        charType['B'] = HEX_CHAR;
-        charType['C'] = HEX_CHAR;
-        charType['D'] = HEX_CHAR;
-        charType['E'] = HEX_CHAR;
-        charType['F'] = HEX_CHAR;
+    if (charType[int('0')] == 0) { // Initialize the table on first call (not thread-safe!).
+        charType[int('0')] = HEX_CHAR | DEC_CHAR | OCT_CHAR | BIN_CHAR;
+        charType[int('1')] = HEX_CHAR | DEC_CHAR | OCT_CHAR | BIN_CHAR;
+        charType[int('2')] = HEX_CHAR | DEC_CHAR | OCT_CHAR;
+        charType[int('3')] = HEX_CHAR | DEC_CHAR | OCT_CHAR;
+        charType[int('4')] = HEX_CHAR | DEC_CHAR | OCT_CHAR;
+        charType[int('5')] = HEX_CHAR | DEC_CHAR | OCT_CHAR;
+        charType[int('6')] = HEX_CHAR | DEC_CHAR | OCT_CHAR;
+        charType[int('7')] = HEX_CHAR | DEC_CHAR | OCT_CHAR;
+        charType[int('8')] = HEX_CHAR | DEC_CHAR;
+        charType[int('9')] = HEX_CHAR | DEC_CHAR;
+        charType[int('a')] = HEX_CHAR;
+        charType[int('b')] = HEX_CHAR;
+        charType[int('c')] = HEX_CHAR;
+        charType[int('d')] = HEX_CHAR;
+        charType[int('e')] = HEX_CHAR;
+        charType[int('f')] = HEX_CHAR;
+        charType[int('A')] = HEX_CHAR;
+        charType[int('B')] = HEX_CHAR;
+        charType[int('C')] = HEX_CHAR;
+        charType[int('D')] = HEX_CHAR;
+        charType[int('E')] = HEX_CHAR;
+        charType[int('F')] = HEX_CHAR;
     }
 
     int s = -1; // Index of the first digit (most significant).

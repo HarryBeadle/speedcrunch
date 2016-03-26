@@ -52,7 +52,7 @@ General
 
 .. _binomial-distribution:
     
-Binomial distribution
+Binomial Distribution
 ---------------------
 
 The binomial distribution is described by the parameters `N` and `p`. It gives the probability distribution of the number of successful trials, when the total number of trials is given by `N`, and each test is successful with probability `p`. Not that unlike the :ref:`hypergeometric-distribution`, the probability `p` remains the same for all draws. The binomial distribution can be thought of drawing *with* replacement, while the hypergeometric distribution describes drawing *without* replacement.
@@ -118,7 +118,7 @@ The binomial distribution is described by the parameters `N` and `p`. It gives t
 
 .. _hypergeometric-distribution:
 
-Hypergeometric distribution
+Hypergeometric Distribution
 ---------------------------
 
 The hypergeometric distribution is described by the three parameters `N`, `K` and  `n`. It describes the probability distribution of the number of successes when drawing `n` samples from a finite population of size `N`, containing exactly `K` successes. Unlike the :ref:`binomial-distribution`, the hypergeometric distribution describes drawing *without* replacement.
@@ -240,7 +240,7 @@ The Poisson distribution is characterized by only a single parameter, named `mu`
     
     .. admonition:: Example
         
-        An insurance company expects 10 claims over the period of one year. What is the probability that more than 12 claims will be filed?::
+        An insurance company expects 10 claims over the period of one year. What is the probability that more than 12 claims will be filed? ::
             
             1 - poicdf(12; 10)
             = 0.208

@@ -1,9 +1,29 @@
 Reference
 =========
 
-Here you may find any documentation on functions, constants, units, etc. built-in to SpeedCrunch.
+SpeedCrunch includes a large number of built-in math functions and constants. They
+are documented in this reference, organized by categories. For an alphabetical list,
+consult the :ref:`genindex` and the :ref:`sc:functionindex`.
+
+
+.. rubric:: Built-in Functions
+
 
 .. toctree::
    :maxdepth: 2
 
-   functions.rst
+   basic
+   integer
+   statistical
+   ieee754
+
+
+.. rubric:: Constants
+
+.. toctree::
+   :maxdepth: 2
+
+   constants
+
+
+.. TODO: What else needs to be documented? Units, I guess?

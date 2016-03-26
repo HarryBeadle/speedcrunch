@@ -44,7 +44,7 @@ if(USING_MSVC)
     add_definitions(-D_USE_MATH_DEFINES)
 else()
     add_definitions(-Wall)
-    add_definitions(-std=c++0x)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 endif()
 
 option(BUILD_MANUAL "Build the embedded manual" TRUE)

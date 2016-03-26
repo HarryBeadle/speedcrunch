@@ -96,7 +96,7 @@ Rational::Rational(const HNumber &num) :
 Rational::Rational(const double &num):
     m_num(1), m_denom(1), m_valid(1)
 {
-    if (abs(num)>INT_MAX || abs(1./num)>INT_MAX) {
+    if (std::abs(num)>INT_MAX || std::abs(1./num)>INT_MAX) {
            m_valid = false;
            return;
     }
