@@ -1,5 +1,6 @@
 SET(speedcrunch_RESOURCES
 resources/speedcrunch.qrc
+../doc/build_html_embedded/manual.qrc
 )
 
 set(speedcrunch_HEADERS

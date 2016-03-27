@@ -60,37 +60,6 @@ macx {
 }
 
 
-# Doc build
-isEmpty(PYTHON_EXECUTABLE) {
-    win32:PYTHON_EXECUTABLE = py
-    else:PYTHON_EXECUTABLE = python
-}
-isEmpty(QCOLLECTIONGENERATOR_EXECUTABLE) {
-    QCOLLECTIONGENERATOR_EXECUTABLE = $$system($$QMAKE_QMAKE -query QT_HOST_BINS)/qcollectiongenerator
-}
-isEmpty(SPHINX_BUILD_EXECUTABLE) {
-    SPHINX_BUILD_EXECUTABLE = sphinx-build
-}
-
-message(PYTHON_EXECUTABLE = $$PYTHON_EXECUTABLE)
-message(QCOLLECTIONGENERATOR_EXECUTABLE = $$QCOLLECTIONGENERATOR_EXECUTABLE)
-message(SPHINX_BUILD_EXECUTABLE = $$SPHINX_BUILD_EXECUTABLE)
-
-manual.target = DUMMY_MANUAL_TARGET
-manual.commands = $$PYTHON_EXECUTABLE "$$PWD/../doc/manual/doc-tool.py" \
-        --qcollectiongenerator-binary="$$QCOLLECTIONGENERATOR_EXECUTABLE" \
-        --sphinx-build-binary="$$SPHINX_BUILD_EXECUTABLE" \
-        --source-dir="$$PWD/../doc/manual" \
-        build-bundled-docs --build-dir="$$OUT_PWD/doc"
-
-manual1.target = $$OUT_PWD/doc/manual.qrc
-manual1.depends = manual
-manual2.target = doc/manual.qrc
-manual2.depends = manual1
-
-QMAKE_EXTRA_TARGETS = manual manual1 manual2
-
-
 HEADERS += core/book.h \
            core/constants.h \
            core/evaluator.h \
@@ -206,7 +175,7 @@ SOURCES += main.cpp \
            math/rational.cpp \
            math/units.cpp
 
-RESOURCES += resources/speedcrunch.qrc $$OUT_PWD/doc/manual.qrc
+RESOURCES += resources/speedcrunch.qrc ../doc/build_html_embedded/manual.qrc
 TRANSLATIONS += resources/locale/ar.ts \
                 resources/locale/ca_ES.ts \
                 resources/locale/cs_CZ.ts \
