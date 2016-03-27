@@ -38,12 +38,6 @@ General
     
         This function computes the *population variance*, which assumes that all possible realizations are all given as arguments. A function to estimate the variance from a sample (*sample variance*) is not included with SpeedCrunch.
         
-    .. warning:: 
-    
-        The function currently accepts complex arguments as well. The results will however be incorrect. See `issue 595`_.
-        
-        .. _issue 595: https://bitbucket.org/heldercorreia/speedcrunch/issues/595/variance-of-complex-numbers
-        
 .. function:: stddev(x1; x2; ...)
 
     Computes the standard deviation of the given arguments. It is simply obtained by taking the square root of :func:`variance`.

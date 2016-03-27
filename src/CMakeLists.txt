@@ -87,9 +87,9 @@ add_executable(testcmath ${testcmath_SOURCES})
 target_link_libraries(testcmath ${QT_LIBRARIES})
 add_test(testcmath testcmath)
 
-add_executable(testcnumberparser ${testcnumberparser_SOURCES})
-target_link_libraries(testcnumberparser ${QT_LIBRARIES})
-add_test(testcnumberparser testcnumberparser)
+add_executable(testdmath ${testdmath_SOURCES})
+target_link_libraries(testdmath ${QT_LIBRARIES})
+add_test(testdmath testdmath)
 
 add_executable(testser ${testser_SOURCES})
 target_link_libraries(testser ${QT_LIBRARIES})

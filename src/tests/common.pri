@@ -1,6 +1,6 @@
-DEFINES += SPEEDCRUNCH_VERSION="\"\\\"pw\\\"\""
+DEFINES += SPEEDCRUNCH_VERSION=\\\"master\\\"
 
-QT += widgets
+QT += widgets help
 CONFIG += c++11
 
 DEPENDPATH += . \
@@ -17,7 +17,7 @@ HEADERS += ../core/book.h \
            ../core/constants.h \
            ../core/evaluator.h \
            ../core/functions.h \
-           ../core/manual.h \
+           ../core/manualserver.h \
            ../core/session.h \
            ../core/errors.h \
            ../core/numberformatter.h \
@@ -47,6 +47,7 @@ HEADERS += ../core/book.h \
            ../math/floattrig.h \
            ../math/hmath.h \
            ../math/number.h \
+           ../math/quantity.cpp \
            ../math/rational.h \
            ../math/units.h
 
@@ -54,7 +55,7 @@ SOURCES += ../core/book.cpp \
            ../core/constants.cpp \
            ../core/evaluator.cpp \
            ../core/functions.cpp \
-           ../core/manual.cpp \
+           ../core/manualserver.cpp \
            ../core/numberformatter.cpp \
            ../core/pageserver.cpp \
            ../core/settings.cpp \
@@ -82,8 +83,9 @@ SOURCES += ../core/book.cpp \
            ../math/floatincgamma.c \
            ../math/hmath.cpp \
            ../math/number.c \
-	   ../math/cmath.cpp \
-	   ../math/cnumberparser.cpp \
+           ../math/cmath.cpp \
+           ../math/cnumberparser.cpp \
+           ../math/quantity.cpp \
            ../math/rational.cpp \
            ../math/units.cpp
 
