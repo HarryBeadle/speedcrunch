@@ -127,8 +127,6 @@ void Constants::Private::populate()
     // Boltzmann constant in Hz/K                                  2.083 6612 e10           0.000 0012 e10           Hz K^-1
     // Boltzmann constant in inverse meters per kelvin             69.503 457               0.000 040                m^-1 K^-1
     // classical electron radius                                   2.817 940 3227 e-15      0.000 000 0019 e-15      m
-    // Compton wavelength                                          2.426 310 2367 e-12      0.000 000 0011 e-12      m
-    // Compton wavelength over 2 pi                                386.159 267 64 e-15      0.000 000 18 e-15        m
     // Cu x unit                                                   1.002 076 97 e-13        0.000 000 28 e-13        m
     // deuteron-electron mag. mom. ratio                           -4.664 345 535 e-4       0.000 000 026 e-4        
     // deuteron-electron mass ratio                                3670.482 967 85          0.000 000 13             
@@ -155,10 +153,10 @@ void Constants::Private::populate()
     // electron mag. mom.                                          -928.476 4620 e-26       0.000 0057 e-26          J T^-1
     // electron mag. mom. anomaly                                  1.159 652 180 91 e-3     0.000 000 000 26 e-3     
     // electron mag. mom. to Bohr magneton ratio                   -1.001 159 652 180 91    0.000 000 000 000 26     
-    // electron mag. mom. to nuclear magneton ratio                -1838.281 972 34         0.000 000 17             
-    // electron mass                                               9.109 383 56 e-31        0.000 000 11 e-31        kg
+    // electron mag. mom. to nuclear magneton ratio                -1838.281 972 34         0.000 000 17
+
     // electron mass energy equivalent                             8.187 105 65 e-14        0.000 000 10 e-14        J
-    // electron mass energy equivalent in MeV                      0.510 998 9461           0.000 000 0031           MeV
+
     // electron mass in u                                          5.485 799 090 70 e-4     0.000 000 000 16 e-4     u
     // electron molar mass                                         5.485 799 090 70 e-7     0.000 000 000 16 e-7     kg mol^-1
     // electron-muon mag. mom. ratio                               206.766 9880             0.000 0046               
@@ -172,7 +170,6 @@ void Constants::Private::populate()
     // electron to shielded helion mag. mom. ratio                 864.058 257              0.000 010                
     // electron to shielded proton mag. mom. ratio                 -658.227 5971            0.000 0072               
     // electron-triton mass ratio                                  1.819 200 062 203 e-4    0.000 000 000 084 e-4    
-    // electron volt                                               1.602 176 6208 e-19      0.000 000 0098 e-19      J
     // electron volt-atomic mass unit relationship                 1.073 544 1105 e-9       0.000 000 0066 e-9       u
     // electron volt-hartree relationship                          3.674 932 248 e-2        0.000 000 023 e-2        E_h
     // electron volt-hertz relationship                            2.417 989 262 e14        0.000 000 015 e14        Hz
@@ -251,9 +248,7 @@ void Constants::Private::populate()
     // muon mag. mom. anomaly                                      1.165 920 89 e-3         0.000 000 63 e-3         
     // muon mag. mom. to Bohr magneton ratio                       -4.841 970 48 e-3        0.000 000 11 e-3         
     // muon mag. mom. to nuclear magneton ratio                    -8.890 597 05            0.000 000 20             
-    // muon mass                                                   1.883 531 594 e-28       0.000 000 048 e-28       kg
     // muon mass energy equivalent                                 1.692 833 774 e-11       0.000 000 043 e-11       J
-    // muon mass energy equivalent in MeV                          105.658 3745             0.000 0024               MeV
     // muon mass in u                                              0.113 428 9257           0.000 000 0025           u
     // muon molar mass                                             0.113 428 9257 e-3       0.000 000 0025 e-3       kg mol^-1
     // muon-neutron mass ratio                                     0.112 454 5167           0.000 000 0025           
@@ -280,7 +275,6 @@ void Constants::Private::populate()
     // neutron mag. mom.                                           -0.966 236 50 e-26       0.000 000 23 e-26        J T^-1
     // neutron mag. mom. to Bohr magneton ratio                    -1.041 875 63 e-3        0.000 000 25 e-3         
     // neutron mag. mom. to nuclear magneton ratio                 -1.913 042 73            0.000 000 45             
-    // neutron mass                                                1.674 927 471 e-27       0.000 000 021 e-27       kg
     // neutron mass energy equivalent                              1.505 349 739 e-10       0.000 000 019 e-10       J
     // neutron mass energy equivalent in MeV                       939.565 4133             0.000 0058               MeV
     // neutron mass in u                                           1.008 664 915 88         0.000 000 000 49         u
@@ -318,7 +312,6 @@ void Constants::Private::populate()
     // proton mag. mom. to Bohr magneton ratio                     1.521 032 2053 e-3       0.000 000 0046 e-3       
     // proton mag. mom. to nuclear magneton ratio                  2.792 847 3508           0.000 000 0085           
     // proton mag. shielding correction                            25.691 e-6               0.011 e-6                
-    // proton mass                                                 1.672 621 898 e-27       0.000 000 021 e-27       kg
     // proton mass energy equivalent                               1.503 277 593 e-10       0.000 000 018 e-10       J
     // proton mass energy equivalent in MeV                        938.272 0813             0.000 0058               MeV
     // proton mass in u                                            1.007 276 466 879        0.000 000 000 091        u
@@ -349,10 +342,8 @@ void Constants::Private::populate()
     // standard-state pressure                                     100 000                  (exact)                  Pa
     // tau Compton wavelength                                      0.697 787 e-15           0.000 063 e-15           m
     // tau Compton wavelength over 2 pi                            0.111 056 e-15           0.000 010 e-15           m
-    // tau-electron mass ratio                                     3477.15                  0.31                     
-    // tau mass                                                    3.167 47 e-27            0.000 29 e-27            kg
+    // tau-electron mass ratio                                     3477.15                  0.31
     // tau mass energy equivalent                                  2.846 78 e-10            0.000 26 e-10            J
-    // tau mass energy equivalent in MeV                           1776.82                  0.16                     MeV
     // tau mass in u                                               1.907 49                 0.000 17                 u
     // tau molar mass                                              1.907 49 e-3             0.000 17 e-3             kg mol^-1
     // tau-muon mass ratio                                         16.8167                  0.0015                   
@@ -417,6 +408,9 @@ void Constants::Private::populate()
     PUSH_CONSTANT_CODATA("Atomic Mass Unit",                               "1.660539040e-27",  "kg",         "0.000000020e-27",  "2016-03-28");  // CODATA name: atomic mass constant
     PUSH_CONSTANT_CODATA("Avogadro's Number",                              "6.022140857e23",   "1/mol",      "0.000000074e23",   "2016-03-28");  // CODATA name: Avogadro constant
     PUSH_CONSTANT_CODATA("Boltzmann Constant",                             "1.38064852e-23",   "J/K",        "0.00000079e-23",   "2016-03-28");
+    PUSH_CONSTANT_CODATA("Compton wavelength",                             "2.4263102367e-12", "m",          "0.0000000011e-12", "2016-03-28");
+    PUSH_CONSTANT_CODATA("Compton wavelength over 2 pi",                   "386.15926764e-15", "m",          "0.00000018e-15",   "2016-03-28");
+    PUSH_CONSTANT_CODATA("Electron-volt",                                  "1.6021766208e-19", "J",          "0.0000000098e-19", "2016-03-28");
     PUSH_CONSTANT_CODATA("Faraday Constant",                               "96485.33289",      "C/mol",      "0.00059",          "2016-03-28");
     // PUSH_CONSTANT_CODATA("Faraday constant for conventional electric current", "96 485.3251", "C_90_mol^-1", "0.0012", "2016-03-28");       // TODO: Handle C_90_mol
     PUSH_CONSTANT_CODATA("First Radiation Constant",                       "3.741771790e-16",  "W·m²",       "0.000000046e-16",  "2016-03-28");
@@ -530,9 +524,9 @@ void Constants::Private::populate()
 
     // Particle Masses
     // Leptons
-    PUSH_CONSTANT("Electron Mass", "0.510998928", "MeV/c²");
-    PUSH_CONSTANT("Muon Mass",     "105.6583715", "MeV/c²");
-    PUSH_CONSTANT("Tau Mass",      "1776.82",     "MeV/c²");
+    PUSH_CONSTANT_CODATA("Electron Mass", "0.5109989461", "MeV/c²", "0.0000000031", "2016-03-28");
+    PUSH_CONSTANT_CODATA("Muon Mass",     "105.6583745",  "MeV/c²", "0.0000024",    "2016-03-28");
+    PUSH_CONSTANT_CODATA("Tau Mass",      "1776.82",      "MeV/c²", "0.16",         "2016-03-28");
 
     // Quarks
     PUSH_CONSTANT("Up-Quark Mass",      "2.3",    "MeV/c²");
@@ -548,13 +542,13 @@ void Constants::Private::populate()
     PUSH_CONSTANT("Higgs-Boson Mass", "125.7",   "GeV/c²");
 
     // Hadrons
-    PUSH_CONSTANT("Proton Mass",  "938.272046", "MeV/c²");
-    PUSH_CONSTANT("Neutron Mass", "939.565379", "MeV/c²");
+    PUSH_CONSTANT_CODATA("Proton Mass",  "938.2720813", "MeV/c²", "0.0000058", "2016-03-28");
+    PUSH_CONSTANT_CODATA("Neutron Mass", "939.5654133", "MeV/c²", "0.0000058", "2016-03-28");
 
     // SI-Units
-    PUSH_CONSTANT("Electron Mass (SI)", "9.10938291e-31",  "kg");
-    PUSH_CONSTANT("Proton Mass (SI)",   "1.672621777e-27", "kg");
-    PUSH_CONSTANT("Neutron Mass (SI)",  "1.674927351e-27", "kg");
+    PUSH_CONSTANT_CODATA("Electron Mass (SI)", "9.10938356e-31",  "kg", "0.00000011e-31",  "2016-03-28");
+    PUSH_CONSTANT_CODATA("Proton Mass (SI)",   "1.672621898e-27", "kg", "0.000000021e-27", "2016-03-28");
+    PUSH_CONSTANT_CODATA("Neutron Mass (SI)",  "1.674927471e-27", "kg", "0.000000021e-27", "2016-03-28");
 }
 
 void Constants::Private::retranslateText()
@@ -617,6 +611,9 @@ void Constants::Private::retranslateText()
     I18N_CONSTANT(Constants::tr("Atomic Mass Unit"));
     I18N_CONSTANT(Constants::tr("Avogadro's Number"));
     I18N_CONSTANT(Constants::tr("Boltzmann Constant"));
+    I18N_CONSTANT(Constants::tr("Compton wavelength"));
+    I18N_CONSTANT(Constants::tr("Compton wavelength over 2 pi"));
+    I18N_CONSTANT(Constants::tr("Electron volt"));
     I18N_CONSTANT(Constants::tr("Faraday Constant"));
     I18N_CONSTANT(Constants::tr("First Radiation Constant"));
     I18N_CONSTANT(Constants::tr("First Radiation Constant for Spectral Radiance"));
@@ -738,25 +735,26 @@ void Constants::Private::retranslateText()
 
     // K.A. Olive et al. (Particle Data Group), Chin. Phys. C, 38, 090001 (2014).
     // http://pdg.lbl.gov/index.html
+    // CODATA constants
     cat = Constants::tr("Particle Masses");
 
-    I18N_CONSTANT(Constants::tr("Electron Mass"));
-    I18N_CONSTANT(Constants::tr("Muon Mass"));
-    I18N_CONSTANT(Constants::tr("Tau Mass"));
-    I18N_CONSTANT(Constants::tr("Up-Quark Mass"));
-    I18N_CONSTANT(Constants::tr("Down-Quark Mass"));
-    I18N_CONSTANT(Constants::tr("Charm-Quark Mass"));
-    I18N_CONSTANT(Constants::tr("Strange-Quark Mass"));
-    I18N_CONSTANT(Constants::tr("Top-Quark Mass"));
-    I18N_CONSTANT(Constants::tr("Bottom-Quark Mass"));
-    I18N_CONSTANT(Constants::tr("W-Boson Mass"));
-    I18N_CONSTANT(Constants::tr("Z-Boson Mass"));
-    I18N_CONSTANT(Constants::tr("Higgs-Boson Mass"));
-    I18N_CONSTANT(Constants::tr("Proton Mass"));
-    I18N_CONSTANT(Constants::tr("Neutron Mass"));
-    I18N_CONSTANT(Constants::tr("Electron Mass (SI)"));
-    I18N_CONSTANT(Constants::tr("Proton Mass (SI)"));
-    I18N_CONSTANT(Constants::tr("Neutron Mass (SI)"));
+    I18N_CONSTANT(Constants::tr("Electron Mass"));      // CODATA, 2016-03-28
+    I18N_CONSTANT(Constants::tr("Muon Mass"));          // CODATA, 2016-03-28
+    I18N_CONSTANT(Constants::tr("Tau Mass"));           // CODATA, 2016-03-28
+    I18N_CONSTANT(Constants::tr("Up-Quark Mass"));      // Particle Data Group
+    I18N_CONSTANT(Constants::tr("Down-Quark Mass"));    // Particle Data Group
+    I18N_CONSTANT(Constants::tr("Charm-Quark Mass"));   // Particle Data Group
+    I18N_CONSTANT(Constants::tr("Strange-Quark Mass")); // Particle Data Group
+    I18N_CONSTANT(Constants::tr("Top-Quark Mass"));     // Particle Data Group
+    I18N_CONSTANT(Constants::tr("Bottom-Quark Mass"));  // Particle Data Group
+    I18N_CONSTANT(Constants::tr("W-Boson Mass"));       // Particle Data Group
+    I18N_CONSTANT(Constants::tr("Z-Boson Mass"));       // Particle Data Group
+    I18N_CONSTANT(Constants::tr("Higgs-Boson Mass"));   // Particle Data Group
+    I18N_CONSTANT(Constants::tr("Proton Mass"));        // CODATA, 2016-03-28
+    I18N_CONSTANT(Constants::tr("Neutron Mass"));       // CODATA, 2016-03-28
+    I18N_CONSTANT(Constants::tr("Electron Mass (SI)")); // CODATA, 2016-03-28
+    I18N_CONSTANT(Constants::tr("Proton Mass (SI)"));   // CODATA, 2016-03-28
+    I18N_CONSTANT(Constants::tr("Neutron Mass (SI)"));  // CODATA, 2016-03-28
 
     categories.clear();
     for (int k = 0; k < list.count(); ++k)
