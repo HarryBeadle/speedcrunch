@@ -52,11 +52,11 @@ struct Constants::Private
 
 #define PUSH_CONSTANT(NAME,VALUE,UNIT) \
     c.value = QLatin1String(VALUE);    \
-    c.unit = QString::fromUtf8(UNIT);  \
+    c.unit = UNIT;  \
     list << c;
 
 #define PUSH_CONSTANT_NO_UNIT(NAME,VALUE) \
-    c.value = QLatin1String(VALUE);       \
+    c.value = VALUE;       \
     list << c;
 
 #define I18N_CONSTANT(NAME) \
@@ -428,6 +428,7 @@ void Constants::Private::populate()
     PUSH_CONSTANT_CODATA("Molar Planck Constant",                          "3.9903127110e-10", "J·s/mol",    "0.0000000018e-10", "2016-03-28");
     PUSH_CONSTANT_CODATA("Second Radiation Constant",                      "1.43877736e-2",    "m·K",        "0.00000083e-2",    "2016-03-28");
     PUSH_CONSTANT_CODATA("Stefan-Boltzmann Constant",                      "5.670367e-8",      "W/(m²·K⁴)",   "0.000013e-8",      "2016-03-28");
+    PUSH_CONSTANT_CODATA("{220} Lattice Spacing of Silicon",               "192.0155714e-12",  "kg",         "0.0000032e-12",    "2016-03-28");
 
     // Astronomy.
     PUSH_CONSTANT("Astronomical Unit", QLatin1String("149597870691"), QLatin1String("m"));
@@ -555,10 +556,6 @@ void Constants::Private::populate()
     PUSH_CONSTANT("Electron Mass (SI)", QLatin1String("9.10938291e-31") , QLatin1String("kg"));
     PUSH_CONSTANT("Proton Mass (SI)"  , QLatin1String("1.672621777e-27"), QLatin1String("kg"));
     PUSH_CONSTANT("Neutron Mass (SI)" , QLatin1String("1.674927351e-27"), QLatin1String("kg"));
-
-    // Misc CODATA constants
-    // Checked on 2016-03-28
-    PUSH_CONSTANT("{220} Lattice Spacing of Silicon", QLatin1String("192.0155714e-12"), QLatin1String("kg"));  // Uncertainty 0.0000032 e-12
 }
 
 void Constants::Private::retranslateText()
@@ -598,22 +595,24 @@ void Constants::Private::retranslateText()
     I18N_CONSTANT(Constants::tr("Magnetic Flux Quantum"));
     I18N_CONSTANT(Constants::tr("Nuclear Magneton"));
     I18N_CONSTANT(Constants::tr("Resistance Quantum"));
+    I18N_CONSTANT(Constants::tr("Conventional value of von Klitzing Constant"));
     I18N_CONSTANT(Constants::tr("von Klitzing Constant"));
 
-    // http://en.wikipedia.org/wiki/Physical_constant#Table_of_atomic_and_nuclear_constants
+    // CODATA
     cat = Constants::tr("Atomic & Nuclear");
 
     I18N_CONSTANT(Constants::tr("Bohr Radius"));
     I18N_CONSTANT(Constants::tr("Fermi Coupling Constant"));
     I18N_CONSTANT(Constants::tr("Fine-structure Constant"));
     I18N_CONSTANT(Constants::tr("Hartree Energy"));
+    I18N_CONSTANT(Constants::tr("Hartree Energy in eV"));
     I18N_CONSTANT(Constants::tr("Quantum of Circulation"));
     I18N_CONSTANT(Constants::tr("Quantum of Circulation times 2"));
     I18N_CONSTANT(Constants::tr("Rydberg Constant"));
     I18N_CONSTANT(Constants::tr("Thomson Cross Section"));
     I18N_CONSTANT(Constants::tr("Weak Mixing Angle"));
 
-    // http://en.wikipedia.org/wiki/Physical_constant#Table_of_physico-chemical_constants
+    // CODATA
     cat = Constants::tr("Physico-chemical");
 
     I18N_CONSTANT(Constants::tr("Atomic Mass Unit"));
@@ -621,11 +620,14 @@ void Constants::Private::retranslateText()
     I18N_CONSTANT(Constants::tr("Boltzmann Constant"));
     I18N_CONSTANT(Constants::tr("Faraday Constant"));
     I18N_CONSTANT(Constants::tr("First Radiation Constant"));
+    I18N_CONSTANT(Constants::tr("First Radiation Constant for Spectral Radiance"));
     I18N_CONSTANT(Constants::tr("Gas Constant"));
-    I18N_CONSTANT(Constants::tr("Loschmidt Constant"));
+    I18N_CONSTANT(Constants::tr("Loschmidt constant (273.15 K, 100 kPa)"));
+    I18N_CONSTANT(Constants::tr("Loschmidt constant (273.15 K, 101.325 kPa)"));
     I18N_CONSTANT(Constants::tr("Molar Planck Constant"));
     I18N_CONSTANT(Constants::tr("Second Radiation Constant"));
     I18N_CONSTANT(Constants::tr("Stefan-Boltzmann Constant"));
+    I18N_CONSTANT(Constants::tr("{220} Lattice Spacing of Silicon"));
 
     // http://www.astronomynotes.com/tables/tablesa.htm
     cat = Constants::tr("Astronomy");
