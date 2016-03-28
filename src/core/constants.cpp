@@ -47,16 +47,16 @@ struct Constants::Private
 // UNCERTAINTY  and CHECKEC reserved for future use
 #define PUSH_CONSTANT_CODATA(NAME,VALUE,UNIT,UNCERTAINTY,CHECKED)      \
     c.value = QLatin1String(VALUE);    \
-    c.unit = QString::fromUtf8(UNIT);  \
+    c.unit  = QString::fromUtf8(UNIT);  \
     list << c;
 
 #define PUSH_CONSTANT(NAME,VALUE,UNIT) \
     c.value = QLatin1String(VALUE);    \
-    c.unit = UNIT;  \
+    c.unit  = QString::fromUtf8(UNIT); \
     list << c;
 
 #define PUSH_CONSTANT_NO_UNIT(NAME,VALUE) \
-    c.value = VALUE;       \
+    c.value = QLatin1String(VALUE);       \
     list << c;
 
 #define I18N_CONSTANT(NAME) \
@@ -79,7 +79,6 @@ void Constants::Private::populate()
     
     //   Quantity                                                       Value                 Uncertainty           Unit
     // -----------------------------------------------------------------------------------------------------------------------------
-    // {220} lattice spacing of silicon                            192.015 5714 e-12        0.000 0032 e-12          m
     // alpha particle-electron mass ratio                          7294.299 541 36          0.000 000 24             
     // alpha particle mass                                         6.644 657 230 e-27       0.000 000 082 e-27       kg
     // alpha particle mass energy equivalent                       5.971 920 097 e-10       0.000 000 073 e-10       J
@@ -431,131 +430,131 @@ void Constants::Private::populate()
     PUSH_CONSTANT_CODATA("{220} Lattice Spacing of Silicon",               "192.0155714e-12",  "kg",         "0.0000032e-12",    "2016-03-28");
 
     // Astronomy.
-    PUSH_CONSTANT("Astronomical Unit", QLatin1String("149597870691"), QLatin1String("m"));
-    PUSH_CONSTANT("Light Year", QLatin1String("9.4607304725808e15"), QLatin1String("m"));
-    PUSH_CONSTANT("Parsec", QLatin1String("3.08567802e16"), QLatin1String("m"));
-    PUSH_CONSTANT_NO_UNIT("Gregorian Year", QLatin1String("365.2425"));
-    PUSH_CONSTANT_NO_UNIT("Julian Year", QLatin1String("365.25"));
-    PUSH_CONSTANT_NO_UNIT("Sidereal Year", QLatin1String("365.2564"));
-    PUSH_CONSTANT_NO_UNIT("Tropical Year", QLatin1String("365.2422"));
-    PUSH_CONSTANT("Earth Mass", QLatin1String("5.9736e24"), QLatin1String("kg"));
-    PUSH_CONSTANT("Mean Earth Radius", QLatin1String("6371000"), QLatin1String("m"));
-    PUSH_CONSTANT("Sun Mass", QLatin1String("1.9891e30"), QLatin1String("kg"));
-    PUSH_CONSTANT("Sun Radius", QLatin1String("6.96265e8"), QLatin1String("m"));
-    PUSH_CONSTANT("Sun Luminosity", QLatin1String("3.827e26"), QLatin1String("W"));
+    PUSH_CONSTANT("Astronomical Unit",      "149597870691",       "m");
+    PUSH_CONSTANT("Light Year",             "9.4607304725808e15", "m");
+    PUSH_CONSTANT("Parsec",                 "3.08567802e16",      "m");
+    PUSH_CONSTANT_NO_UNIT("Gregorian Year", "365.2425");
+    PUSH_CONSTANT_NO_UNIT("Julian Year",    "365.25");
+    PUSH_CONSTANT_NO_UNIT("Sidereal Year",  "365.2564");
+    PUSH_CONSTANT_NO_UNIT("Tropical Year",  "365.2422");
+    PUSH_CONSTANT("Earth Mass",             "5.9736e24", "kg");
+    PUSH_CONSTANT("Mean Earth Radius",      "6371000",   "m");
+    PUSH_CONSTANT("Sun Mass",               "1.9891e30", "kg");
+    PUSH_CONSTANT("Sun Radius",             "6.96265e8", "m");
+    PUSH_CONSTANT("Sun Luminosity",         "3.827e26",  "W");
 
     // Molar Masses
-    PUSH_CONSTANT("Aluminium", QLatin1String("26.9815386"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Antimony", QLatin1String("121.760"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Argon", QLatin1String("39.948"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Arsenic", QLatin1String("74.92160"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Barium", QLatin1String("137.327"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Beryllium", QLatin1String("9.012182"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Bismuth", QLatin1String("208.98040"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Boron", QLatin1String("10.811"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Bromine", QLatin1String("79.904"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Cadmium", QLatin1String("112.411"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Caesium", QLatin1String("132.9054519"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Calcium", QLatin1String("40.078"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Carbon", QLatin1String("12.0107"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Cerium", QLatin1String("140.116"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Chlorine", QLatin1String("35.453"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Chromium", QLatin1String("51.9961"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Cobalt", QLatin1String("58.933195"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Copper", QLatin1String("63.546"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Dysprosium", QLatin1String("162.500"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Erbium", QLatin1String("167.259"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Europium", QLatin1String("151.964"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Fluorine", QLatin1String("18.9984032"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Gadolinium", QLatin1String("157.25"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Gallium", QLatin1String("69.723"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Germanium", QLatin1String("72.64"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Gold", QLatin1String("196.966569"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Hafnium", QLatin1String("178.49"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Helium", QLatin1String("4.002602"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Holmium", QLatin1String("164.93032"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Hydrogen", QLatin1String("1.00794"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Indium", QLatin1String("114.818"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Iodine", QLatin1String("126.90447"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Iridium", QLatin1String("192.217"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Iron", QLatin1String("55.845"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Krypton", QLatin1String("83.798"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Lanthanum", QLatin1String("138.90547"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Lead", QLatin1String("207.2"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Lithium", QLatin1String("6.941"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Lutetium", QLatin1String("174.9668"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Magnesium", QLatin1String("24.3050"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Manganese", QLatin1String("54.938045"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Mercury", QLatin1String("200.59"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Molybdenum", QLatin1String("95.96"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Neodymium", QLatin1String("144.242"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Neon", QLatin1String("20.1797"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Nickel", QLatin1String("58.6934"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Niobium", QLatin1String("92.90638"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Nitrogen", QLatin1String("14.0067"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Osmium", QLatin1String("190.23"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Oxygen", QLatin1String("15.9994"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Palladium", QLatin1String("106.42"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Phosphorus", QLatin1String("30.973762"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Platinum", QLatin1String("192.084"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Potassium", QLatin1String("39.0983"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Praseodymium", QLatin1String("140.90765"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Protactinium", QLatin1String("231.03588"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Rhenium", QLatin1String("186.207"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Rubidium", QLatin1String("85.4678"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Ruthenium", QLatin1String("101.07"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Samarium", QLatin1String("150.36"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Scandium", QLatin1String("44.955912"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Selenium", QLatin1String("78.96"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Silicon", QLatin1String("28.0855"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Silver", QLatin1String("107.8682"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Sodium", QLatin1String("22.98976928"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Strontium", QLatin1String("87.62"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Sulfur", QLatin1String("32.065"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Tantalum", QLatin1String("180.94788"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Tellurium", QLatin1String("127.60"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Terbium", QLatin1String("158.92535"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Thallium", QLatin1String("204.3833"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Thorium", QLatin1String("232.03806"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Thulium", QLatin1String("168.93421"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Tin", QLatin1String("118.710"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Titanium", QLatin1String("47.867"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Tungsten", QLatin1String("183.84"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Uranium", QLatin1String("238.02891"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Vanadium", QLatin1String("51.9961"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Xenon", QLatin1String("131.293"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Ytterbium", QLatin1String("173.054"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Yttrium", QLatin1String("88.90585"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Zinc", QLatin1String("65.38"), QLatin1String("g/mol"));
-    PUSH_CONSTANT("Zirconium", QLatin1String("91.224"), QLatin1String("g/mol"));
+    PUSH_CONSTANT("Aluminium",    "26.9815386",  "g/mol");
+    PUSH_CONSTANT("Antimony",     "121.760",     "g/mol");
+    PUSH_CONSTANT("Argon",        "39.948",      "g/mol");
+    PUSH_CONSTANT("Arsenic",      "74.92160",    "g/mol");
+    PUSH_CONSTANT("Barium",       "137.327",     "g/mol");
+    PUSH_CONSTANT("Beryllium",    "9.012182",    "g/mol");
+    PUSH_CONSTANT("Bismuth",      "208.98040",   "g/mol");
+    PUSH_CONSTANT("Boron",        "10.811",      "g/mol");
+    PUSH_CONSTANT("Bromine",      "79.904",      "g/mol");
+    PUSH_CONSTANT("Cadmium",      "112.411",     "g/mol");
+    PUSH_CONSTANT("Caesium",      "132.9054519", "g/mol");
+    PUSH_CONSTANT("Calcium",      "40.078",      "g/mol");
+    PUSH_CONSTANT("Carbon",       "12.0107",     "g/mol");
+    PUSH_CONSTANT("Cerium",       "140.116",     "g/mol");
+    PUSH_CONSTANT("Chlorine",     "35.453",      "g/mol");
+    PUSH_CONSTANT("Chromium",     "51.9961",     "g/mol");
+    PUSH_CONSTANT("Cobalt",       "58.933195",   "g/mol");
+    PUSH_CONSTANT("Copper",       "63.546",      "g/mol");
+    PUSH_CONSTANT("Dysprosium",   "162.500",     "g/mol");
+    PUSH_CONSTANT("Erbium",       "167.259",     "g/mol");
+    PUSH_CONSTANT("Europium",     "151.964",     "g/mol");
+    PUSH_CONSTANT("Fluorine",     "18.9984032",  "g/mol");
+    PUSH_CONSTANT("Gadolinium",   "157.25",      "g/mol");
+    PUSH_CONSTANT("Gallium",      "69.723",      "g/mol");
+    PUSH_CONSTANT("Germanium",    "72.64",       "g/mol");
+    PUSH_CONSTANT("Gold",         "196.966569",  "g/mol");
+    PUSH_CONSTANT("Hafnium",      "178.49",      "g/mol");
+    PUSH_CONSTANT("Helium",       "4.002602",    "g/mol");
+    PUSH_CONSTANT("Holmium",      "164.93032",   "g/mol");
+    PUSH_CONSTANT("Hydrogen",     "1.00794",     "g/mol");
+    PUSH_CONSTANT("Indium",       "114.818",     "g/mol");
+    PUSH_CONSTANT("Iodine",       "126.90447",   "g/mol");
+    PUSH_CONSTANT("Iridium",      "192.217",     "g/mol");
+    PUSH_CONSTANT("Iron",         "55.845",      "g/mol");
+    PUSH_CONSTANT("Krypton",      "83.798",      "g/mol");
+    PUSH_CONSTANT("Lanthanum",    "138.90547",   "g/mol");
+    PUSH_CONSTANT("Lead",         "207.2",       "g/mol");
+    PUSH_CONSTANT("Lithium",      "6.941",       "g/mol");
+    PUSH_CONSTANT("Lutetium",     "174.9668",    "g/mol");
+    PUSH_CONSTANT("Magnesium",    "24.3050",     "g/mol");
+    PUSH_CONSTANT("Manganese",    "54.938045",   "g/mol");
+    PUSH_CONSTANT("Mercury",      "200.59",      "g/mol");
+    PUSH_CONSTANT("Molybdenum",   "95.96",       "g/mol");
+    PUSH_CONSTANT("Neodymium",    "144.242",     "g/mol");
+    PUSH_CONSTANT("Neon",         "20.1797",     "g/mol");
+    PUSH_CONSTANT("Nickel",       "58.6934",     "g/mol");
+    PUSH_CONSTANT("Niobium",      "92.90638",    "g/mol");
+    PUSH_CONSTANT("Nitrogen",     "14.0067",     "g/mol");
+    PUSH_CONSTANT("Osmium",       "190.23",      "g/mol");
+    PUSH_CONSTANT("Oxygen",       "15.9994",     "g/mol");
+    PUSH_CONSTANT("Palladium",    "106.42",      "g/mol");
+    PUSH_CONSTANT("Phosphorus",   "30.973762",   "g/mol");
+    PUSH_CONSTANT("Platinum",     "192.084",     "g/mol");
+    PUSH_CONSTANT("Potassium",    "39.0983",     "g/mol");
+    PUSH_CONSTANT("Praseodymium", "140.90765",   "g/mol");
+    PUSH_CONSTANT("Protactinium", "231.03588",   "g/mol");
+    PUSH_CONSTANT("Rhenium",      "186.207",     "g/mol");
+    PUSH_CONSTANT("Rubidium",     "85.4678",     "g/mol");
+    PUSH_CONSTANT("Ruthenium",    "101.07",      "g/mol");
+    PUSH_CONSTANT("Samarium",     "150.36",      "g/mol");
+    PUSH_CONSTANT("Scandium",     "44.955912",   "g/mol");
+    PUSH_CONSTANT("Selenium",     "78.96",       "g/mol");
+    PUSH_CONSTANT("Silicon",      "28.0855",     "g/mol");
+    PUSH_CONSTANT("Silver",       "107.8682",    "g/mol");
+    PUSH_CONSTANT("Sodium",       "22.98976928", "g/mol");
+    PUSH_CONSTANT("Strontium",    "87.62",       "g/mol");
+    PUSH_CONSTANT("Sulfur",       "32.065",      "g/mol");
+    PUSH_CONSTANT("Tantalum",     "180.94788",   "g/mol");
+    PUSH_CONSTANT("Tellurium",    "127.60",      "g/mol");
+    PUSH_CONSTANT("Terbium",      "158.92535",   "g/mol");
+    PUSH_CONSTANT("Thallium",     "204.3833",    "g/mol");
+    PUSH_CONSTANT("Thorium",      "232.03806",   "g/mol");
+    PUSH_CONSTANT("Thulium",      "168.93421",   "g/mol");
+    PUSH_CONSTANT("Tin",          "118.710",     "g/mol");
+    PUSH_CONSTANT("Titanium",     "47.867",      "g/mol");
+    PUSH_CONSTANT("Tungsten",     "183.84",      "g/mol");
+    PUSH_CONSTANT("Uranium",      "238.02891",   "g/mol");
+    PUSH_CONSTANT("Vanadium",     "51.9961",     "g/mol");
+    PUSH_CONSTANT("Xenon",        "131.293",     "g/mol");
+    PUSH_CONSTANT("Ytterbium",    "173.054",     "g/mol");
+    PUSH_CONSTANT("Yttrium",      "88.90585",    "g/mol");
+    PUSH_CONSTANT("Zinc",         "65.38",       "g/mol");
+    PUSH_CONSTANT("Zirconium",    "91.224",      "g/mol");
 
     // Particle Masses
     // Leptons
-    PUSH_CONSTANT("Electron Mass", QLatin1String("0.510998928"), QString::fromUtf8("MeV/c²"));
-    PUSH_CONSTANT("Muon Mass"    , QLatin1String("105.6583715"), QString::fromUtf8("MeV/c²"));
-    PUSH_CONSTANT("Tau Mass"     , QLatin1String("1776.82")    , QString::fromUtf8("MeV/c²"));
+    PUSH_CONSTANT("Electron Mass", "0.510998928", "MeV/c²");
+    PUSH_CONSTANT("Muon Mass",     "105.6583715", "MeV/c²");
+    PUSH_CONSTANT("Tau Mass",      "1776.82",     "MeV/c²");
 
     // Quarks
-    PUSH_CONSTANT("Up-Quark Mass"     , QLatin1String("2.3")   , QString::fromUtf8("MeV/c²"));
-    PUSH_CONSTANT("Down-Quark Mass"   , QLatin1String("4.8")   , QString::fromUtf8("MeV/c²"));
-    PUSH_CONSTANT("Charm-Quark Mass"  , QLatin1String("1.275") , QString::fromUtf8("GeV/c²"));
-    PUSH_CONSTANT("Strange-Quark Mass", QLatin1String("95")    , QString::fromUtf8("MeV/c²"));
-    PUSH_CONSTANT("Top-Quark Mass"    , QLatin1String("173.21"), QString::fromUtf8("GeV/c²"));
-    PUSH_CONSTANT("Bottom-Quark Mass" , QLatin1String("4.18")  , QString::fromUtf8("GeV/c²"));
+    PUSH_CONSTANT("Up-Quark Mass",      "2.3",    "MeV/c²");
+    PUSH_CONSTANT("Down-Quark Mass",    "4.8",    "MeV/c²");
+    PUSH_CONSTANT("Charm-Quark Mass",   "1.275",  "GeV/c²");
+    PUSH_CONSTANT("Strange-Quark Mass", "95",     "MeV/c²");
+    PUSH_CONSTANT("Top-Quark Mass",     "173.21", "GeV/c²");
+    PUSH_CONSTANT("Bottom-Quark Mass",  "4.18",   "GeV/c²");
 
     // Bosons
-    PUSH_CONSTANT("W-Boson Mass"    , QLatin1String("80.385") , QString::fromUtf8("GeV/c²"));
-    PUSH_CONSTANT("Z-Boson Mass"    , QLatin1String("91.1876"), QString::fromUtf8("GeV/c²"));
-    PUSH_CONSTANT("Higgs-Boson Mass", QLatin1String("125.7")  , QString::fromUtf8("GeV/c²"));
+    PUSH_CONSTANT("W-Boson Mass",     "80.385" , "GeV/c²");
+    PUSH_CONSTANT("Z-Boson Mass",     "91.1876", "GeV/c²");
+    PUSH_CONSTANT("Higgs-Boson Mass", "125.7",   "GeV/c²");
 
     // Hadrons
-    PUSH_CONSTANT("Proton Mass"      , QLatin1String("938.272046"), QString::fromUtf8("MeV/c²"));
-    PUSH_CONSTANT("Neutron Mass"     , QLatin1String("939.565379"), QString::fromUtf8("MeV/c²"));
+    PUSH_CONSTANT("Proton Mass",  "938.272046", "MeV/c²");
+    PUSH_CONSTANT("Neutron Mass", "939.565379", "MeV/c²");
 
     // SI-Units
-    PUSH_CONSTANT("Electron Mass (SI)", QLatin1String("9.10938291e-31") , QLatin1String("kg"));
-    PUSH_CONSTANT("Proton Mass (SI)"  , QLatin1String("1.672621777e-27"), QLatin1String("kg"));
-    PUSH_CONSTANT("Neutron Mass (SI)" , QLatin1String("1.674927351e-27"), QLatin1String("kg"));
+    PUSH_CONSTANT("Electron Mass (SI)", "9.10938291e-31",  "kg");
+    PUSH_CONSTANT("Proton Mass (SI)",   "1.672621777e-27", "kg");
+    PUSH_CONSTANT("Neutron Mass (SI)",  "1.674927351e-27", "kg");
 }
 
 void Constants::Private::retranslateText()
