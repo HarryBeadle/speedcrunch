@@ -559,9 +559,12 @@ void test_function_simplified()
     CHECK_EVAL("abs 123", "123");
     CHECK_EVAL("abs -123", "123");
     CHECK_EVAL("10 + abs 123", "133");
-    CHECK_EVAL_KNOWN_ISSUE("10 + abs -123", "133", 600);
+    CHECK_EVAL("10 + abs -123", "133");
     CHECK_EVAL("abs 123 + 10", "133");
     CHECK_EVAL("abs -123 + 10", "133");
+    CHECK_EVAL("3 * sin 3", "0.4233600241796016663");
+    CHECK_EVAL("3 + sin 3", "3.1411200080598672221");
+    CHECK_EVAL("3 + sin -3", "2.8588799919401327779");
 }
 
 void test_auto_fix_parentheses()

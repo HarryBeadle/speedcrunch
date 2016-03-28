@@ -1061,6 +1061,8 @@ void Evaluator::compile(const Tokens& tokens)
             // Action: push (op) to result e.g. "A * B" becomes "A" if token is operator "+".
             // Exception: for caret (power operator), if op is another caret
             // then the rule doesn't apply, e.g. "2^3^2" is evaluated as "2^(3^2)".
+	    // Exception: doesn't apply if B is a function name (to manage shift/reduce conflict
+	    // with simplified function syntax (resolves issue 600).
             if (!ruleFound && syntaxStack.itemCount() >= 3) {
                 Token b = syntaxStack.top();
                 Token op = syntaxStack.top(1);
@@ -1070,7 +1072,8 @@ void Evaluator::compile(const Tokens& tokens)
                           && token.asOperator() != Token::LeftPar
                           && token.asOperator() != Token::Caret)    // token is normal operator
                          || (token.isOperand()                      // token may represent implicit multiplication
-                             && opPrecedence(op.asOperator()) >= opPrecedence(Token::Asterisk))))
+                             && opPrecedence(op.asOperator()) >= opPrecedence(Token::Asterisk)))
+		     && !(b.isIdentifier() && FunctionRepo::instance()->find(b.text())))
                 {
                     ruleFound = true;
                     syntaxStack.pop();
@@ -1104,6 +1107,8 @@ void Evaluator::compile(const Tokens& tokens)
 #ifdef ALLOW_IMPLICIT_MULT
             /* Rule for implicit multiplication
              * Action: Treat as A * B.
+	     * Exception: doesn't apply if B is a function name (to manage shift/reduce conflict
+	     * with simplified function syntax (resolves issue 600).
              */
             if(!ruleFound && syntaxStack.itemCount() >= 2) {
                 Token b = syntaxStack.top();
@@ -1113,7 +1118,8 @@ void Evaluator::compile(const Tokens& tokens)
                         && token.asOperator() != Token::LeftPar
                         && ((token.isOperator()
                              && opPrecedence(Token::Asterisk) >= opPrecedence(token.asOperator())) // token is normal operator
-                            || token.isOperand())) // token represents implicit multiplication
+                            || token.isOperand()) // token represents implicit multiplication
+                        && !(b.isIdentifier() && FunctionRepo::instance()->find(b.text())))
                 {
                     ruleFound = true;
                     syntaxStack.pop();
