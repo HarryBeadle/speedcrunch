@@ -63,7 +63,7 @@ class Tools:
 
 
 def build_docs(tools, source_dir, build_dir, lang=None, builder='html',
-               tags=[], extra_config={}):
+               tags=[], extra_config={}, auto_doctree_dir=True):
     config = extra_config.copy()
     if lang:
         print('Building docs for %s...' % lang)
@@ -77,6 +77,8 @@ def build_docs(tools, source_dir, build_dir, lang=None, builder='html',
     if tags:
         for tag in tags:
             args.extend(['-t', tag])
+    if auto_doctree_dir:
+        args.extend(['-d', os.path.join(build_dir, '_doctrees')])
     return tools.sphinx_build(*args)
 
 
