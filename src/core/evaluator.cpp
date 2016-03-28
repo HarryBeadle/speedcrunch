@@ -974,8 +974,7 @@ void Evaluator::compile(const Tokens& tokens)
             if (!ruleFound && syntaxStack.itemCount() >= 2) {
                 Token arg = syntaxStack.top();
                 Token id = syntaxStack.top(1);
-                if (arg.isOperand() && id.isIdentifier()
-                     && FunctionRepo::instance()->find(id.text()))
+                if (arg.isOperand() && isFunction(id))
                 {
                     ruleFound = true;
                     m_codes.append(Opcode(Opcode::Function, 1));
@@ -993,8 +992,8 @@ void Evaluator::compile(const Tokens& tokens)
                 Token x = syntaxStack.top();
                 Token op = syntaxStack.top(1);
                 Token id = syntaxStack.top(2);
-                if (x.isOperand() && id.isIdentifier()
-                     && FunctionRepo::instance()->find(id.text())
+                if (x.isOperand()
+                     && isFunction(id)
                      && (op.asOperator() == Token::Plus || op.asOperator() == Token::Minus))
                 {
                     ruleFound = true;
@@ -1061,8 +1060,8 @@ void Evaluator::compile(const Tokens& tokens)
             // Action: push (op) to result e.g. "A * B" becomes "A" if token is operator "+".
             // Exception: for caret (power operator), if op is another caret
             // then the rule doesn't apply, e.g. "2^3^2" is evaluated as "2^(3^2)".
-	    // Exception: doesn't apply if B is a function name (to manage shift/reduce conflict
-	    // with simplified function syntax (resolves issue 600).
+            // Exception: doesn't apply if B is a function name (to manage shift/reduce conflict
+            // with simplified function syntax (resolves issue 600).
             if (!ruleFound && syntaxStack.itemCount() >= 3) {
                 Token b = syntaxStack.top();
                 Token op = syntaxStack.top(1);
@@ -1073,7 +1072,7 @@ void Evaluator::compile(const Tokens& tokens)
                           && token.asOperator() != Token::Caret)    // token is normal operator
                          || (token.isOperand()                      // token may represent implicit multiplication
                              && opPrecedence(op.asOperator()) >= opPrecedence(Token::Asterisk)))
-		     && !(b.isIdentifier() && FunctionRepo::instance()->find(b.text())))
+                     && !(isFunction(b)))
                 {
                     ruleFound = true;
                     syntaxStack.pop();
@@ -1107,8 +1106,8 @@ void Evaluator::compile(const Tokens& tokens)
 #ifdef ALLOW_IMPLICIT_MULT
             /* Rule for implicit multiplication
              * Action: Treat as A * B.
-	     * Exception: doesn't apply if B is a function name (to manage shift/reduce conflict
-	     * with simplified function syntax (resolves issue 600).
+             * Exception: doesn't apply if B is a function name (to manage shift/reduce conflict
+             * with simplified function syntax (resolves issue 600).
              */
             if(!ruleFound && syntaxStack.itemCount() >= 2) {
                 Token b = syntaxStack.top();
@@ -1119,7 +1118,7 @@ void Evaluator::compile(const Tokens& tokens)
                         && ((token.isOperator()
                              && opPrecedence(Token::Asterisk) >= opPrecedence(token.asOperator())) // token is normal operator
                             || token.isOperand()) // token represents implicit multiplication
-                        && !(b.isIdentifier() && FunctionRepo::instance()->find(b.text())))
+                        && !(isFunction(b)))
                 {
                     ruleFound = true;
                     syntaxStack.pop();

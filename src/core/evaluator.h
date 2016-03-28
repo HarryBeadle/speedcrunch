@@ -152,6 +152,8 @@ private:
                  const QStringList& identifiers);
     CNumber execUserFunction(const UserFunction* function, QVector<CNumber>& arguments);
     const UserFunction * getUserFunction(const QString&) const;
+
+    bool isFunction(Token token) { return token.isIdentifier() && (FunctionRepo::instance()->find(token.text()) || hasUserFunction(token.text())); };
 };
 
 #endif
