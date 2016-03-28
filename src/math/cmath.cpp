@@ -191,7 +191,7 @@ CNumber& CNumber::setFormat(char c)
 void CNumber::serialize(QJsonObject &json) const
 {
     const char f = format();
-    json["format"] = (f=='\0') ? "NULL" : QString(f);
+    json["format"] = (f=='\0') ? QString("NULL") : QString(QChar(f));
     json["value"] = CMath::format(*this, f, DECPRECISION);
 }
 

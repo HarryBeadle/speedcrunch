@@ -355,7 +355,7 @@ HNumber& HNumber::setFormat(char c)
 void HNumber::serialize(QJsonObject &json) const
 {
     const char f = format();
-    json["format"] = (f=='\0') ? "NULL" : QString(f);
+    json["format"] = (f=='\0') ? QString("NULL") : QString(QChar(f));
     json["value"] = HMath::format(*this, f, DECPRECISION);
 }
 

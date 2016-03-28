@@ -132,6 +132,9 @@ int main(int, char**)
     CHECK_SER_DESER_HNUMBER(HNumber("3"), "3.00000000000000000000000000000000000000000000000000");
     CHECK_SER_DESER_CNUMBER(CNumber("3"), "3.00000000000000000000000000000000000000000000000000");
     CHECK_SER_DESER_CNUMBER(CNumber("3+1j"), "3.00000000000000000000000000000000000000000000000000+1.00000000000000000000000000000000000000000000000000j");
+
+
+    /* Output test satistics */
     cout << ser_total_tests  << " total, "
          << ser_failed_tests << " failed, "
          << ser_new_failed_tests << " new" << endl;

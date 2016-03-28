@@ -17,6 +17,7 @@
 // Boston, MA 02110-1301, USA.
 
 #include "math/quantity.h"
+#include "math/rational.h"
 #include "math/units.h"
 #include "tests/testcommon.h"
 
@@ -33,6 +34,7 @@ using namespace std;
 #define CHECK_FORMAT(f,p,x,y) check_format(__FILE__,__LINE__,#x,x,f,p,y)
 #define CHECK_PRECISE(x,y) check_precise(__FILE__,__LINE__,#x,x,y)
 #define CHECK_KNOWN_ISSUE(x,y,n) check_value(__FILE__,__LINE__,#x,x,y,n)
+#define CHECK_STRING(x,y) {++dmath_total_tests; DisplayErrorOnMismatch(__FILE__,__LINE__,#x,x,y,dmath_failed_tests,dmath_new_failed_tests);}
 
 static int dmath_total_tests  = 0;
 static int dmath_failed_tests = 0;
@@ -57,6 +59,15 @@ static void check_precise(const char* file, int line, const char* msg, const Qua
     ++dmath_total_tests;
     string result = DMath::format(q, 'f', 50).toStdString();
     DisplayErrorOnMismatch(file, line, msg, result, expected, dmath_failed_tests, dmath_new_failed_tests, 0);
+}
+
+void test_rational()
+{
+    CHECK_STRING(HMath::format(Rational(123,456).toHNumber()).toStdString(), "0.26973684210526315789");
+    CHECK_STRING(Rational(22./7).toString().toStdString(), "22/7");
+    CHECK_STRING(Rational(-12345./96457).toString().toStdString(), "-12345/96457");
+    CHECK_STRING(Rational(HNumber("-1234")/HNumber("7895")).toString().toStdString(), "-1234/7895");
+    CHECK_STRING(Rational(HNumber("-1235000")/HNumber("78950000")).toString().toStdString(), "-247/15790");
 }
 
 void test_create()
@@ -129,14 +140,17 @@ int main(int argc, char* argv[])
     dmath_total_tests  = 0;
     dmath_failed_tests = 0;
 
+    test_rational();
+
     test_create();
     test_basic();
     test_functions();
     test_format();
 
+    cerr.flush();
     cout << dmath_total_tests  << " total, "
          << dmath_failed_tests << " failed, "
          << dmath_new_failed_tests << " new" << endl;
 
-  return dmath_failed_tests;
+    return dmath_failed_tests;
 }
