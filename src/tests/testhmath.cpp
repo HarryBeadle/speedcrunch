@@ -256,7 +256,7 @@ void test_functions()
     CHECK(HMath::ceil("2.6041980"), "3");
     CHECK(HMath::ceil("0.000001"), "1");
     CHECK(HMath::ceil("-0.000001"), "0");
-    CHECK_KNOWN_ISSUE(HMath::ceil(HMath::log(2, 128)), "7", 532);
+    CHECK(HMath::ceil(HMath::log(2, 128)), "7");
 
     CHECK(HMath::gcd("NaN", "NaN"), "NaN");
     CHECK(HMath::gcd("NaN", "5"), "NaN");
