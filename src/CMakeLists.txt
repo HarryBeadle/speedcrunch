@@ -47,18 +47,9 @@ else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 endif()
 
-option(BUILD_MANUAL "Build the embedded manual" TRUE)
-if(BUILD_MANUAL)
-    add_subdirectory(../doc/manual doc)
-    set_property(SOURCE ${CMAKE_CURRENT_BINARY_DIR}/doc/manual.qrc PROPERTY GENERATED true)
-    qt5_add_RESOURCES(speedcrunch_RESOURCES_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/doc/manual.qrc)
-endif()
 
 qt5_add_RESOURCES(speedcrunch_RESOURCES_SOURCES ${speedcrunch_RESOURCES})
 add_executable(${PROGNAME} WIN32 MACOSX_BUNDLE ${speedcrunch_SOURCES} ${speedcrunch_HEADERS_MOC} ${speedcrunch_RESOURCES_SOURCES} ${speedcrunch_FORMS_HEADERS} ${WIN32_RES_FILE})
-if(TARGET manual)
-    add_dependencies(${PROGNAME} manual)
-endif()
 
 
 if(APPLE)
