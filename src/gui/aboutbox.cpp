@@ -20,12 +20,11 @@
 
 #include "gui/aboutbox.h"
 
-#include <QHBoxLayout>
+#include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QSpacerItem>
 #include <QTextEdit>
-#include <QVBoxLayout>
 
 #define THANKS(name) #name"<br>"
 
@@ -137,8 +136,14 @@ AboutBox::AboutBox(QWidget* parent, Qt::WindowFlags f)
     textEdit->setReadOnly(true);
     textEdit->setText(msg);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
-    mainLayout->addWidget(textEdit);
+    QPushButton* closeButton = new QPushButton(this);
+    closeButton->setText(tr("Close"));
+    connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
+
+    QGridLayout* mainLayout = new QGridLayout(this);
+    mainLayout->addWidget(textEdit, 0, 0, 1, 2);
+    mainLayout->addWidget(closeButton, 1, 1, 1, 1);
+    mainLayout->setColumnStretch(0, 1);
 
     setWindowTitle(tr("About SpeedCrunch"));
 }
