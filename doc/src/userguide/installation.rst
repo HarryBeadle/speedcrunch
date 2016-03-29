@@ -1,3 +1,5 @@
+.. highlight:: none
+
 Installation
 ============
 
@@ -88,24 +90,16 @@ The following software is required to compile SpeedCrunch from source:
 
  * `Qt <qt_>`_, version 5.2 or later
  * `CMake <cmake_>`_, version 2.8.12 or later
- * `Python <py_>`_, either version 2.7 or version 3.4 or later
- * `Sphinx <sphinx_>`_, version 1.3 or later
- * the `Quark Sphinx theme <quark_>`_, version 0.2 or later
-
+ 
 .. _gcc: https://gcc.gnu.org
 .. _msvc: http://visualstudio.com
 .. _qt: http://qt.io
 .. _cmake: http://cmake.org
-.. _py: http://python.org
-.. _sphinx: http://sphinx-doc.org
-.. _quark: https://pypi.python.org/pypi/quark-sphinx-theme
 
 
-On Ubuntu or Debian, the following set of commands will install these dependencies::
+On Ubuntu or Debian, the following command will install these dependencies::
 
-    sudo apt-get install build-essential cmake python3 python3-pip \
-        qtbase5-dev qttools5-dev qttools5-dev-tools
-    sudo pip3 install sphinx>=1.3 quark-sphinx-theme>=0.2
+    sudo apt-get install build-essential cmake qtbase5-dev qttools5-dev qttools5-dev-tools
 
 
 Building
@@ -118,11 +112,19 @@ At a high level, the build process consists of these steps::
     make
 
 The build directory can be any empty directory. While it is possible to build SpeedCrunch
-inside the source tree, it is discouraged.
+inside the source tree, it is discouraged. On Windows, it will usually be necessary
+to run these commands from a command prompt that is set up for the compiler you're using.
 
-On Windows, it will usually be necessary to run these commands from a command prompt
-that is set up for the compiler you're using. In addition, the final ``make`` command
-to invoke may be different depending on the compiler; for MSVC, it is ``nmake``.
+In addition, the final ``make`` command to invoke may differ depending on the platform
+and the CMake generator used; for example, the command for MSVC with the
+``NMake Makefiles`` generator is ``nmake``. Other
+generators may require yet other commands while some generators targetting IDEs like
+Visual Studio may not even have a command-line interface in this fashion. Consult the
+`CMake documentation <cmake_doc_generators_>`_ for more information on available generators
+and how to use them. From here on, consider any command like ``make <target-name>``, substitute
+the appropriate command or other method to build a certain target for your toolchain.
+
+.. _cmake_doc_generators: https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html
 
 When building against a Qt version that is not the system default Qt installation,
 it will be necessary to point CMake towards the
@@ -140,6 +142,55 @@ via the CMake GUI tool.
 
    When set to ``on``, SpeedCrunch is built in portable mode: all settings will be
    stored in the same directory as the executable.
+
+
+Installing
+++++++++++
+
+To install SpeedCrunch after building, run ``make install`` in the
+build directory. Note that this step may require administrator/root privileges.
+
+To customize the installation directory, set the following CMake variable at configuration
+time:
+
+.. index::
+   pair: CMAKE_INSTALL_PREFIX; CMake variable
+
+.. describe:: CMAKE_INSTALL_PREFIX
+
+   Set the installation prefix for the ``install`` target.
+
+
+Building the Documentation
+++++++++++++++++++++++++++
+
+By default, building SpeedCrunch does not actually rebuild the embedded manual; instead,
+a prebuilt copy of the HTML files that is bundled with the sources is included in the application. This keeps
+the number of dependencies required to build SpeedCrunch to a minimum. If you
+want to rebuild the manual, the following additional dependencies are required:
+
+ * `Python <py_>`_, version 3.4 or later
+ * `Sphinx <sphinx_>`_, version 1.3 or later
+ * the `Quark Sphinx theme <quark_>`_, version 0.2 or later
+
+.. _py: http://python.org
+.. _sphinx: http://sphinx-doc.org
+.. _quark: https://pypi.python.org/pypi/quark-sphinx-theme
+
+
+The following variables can be used to control the manual build behavior:
+
+.. _var_rebuild_manual:
+
+.. index::
+   pair: REBUILD_MANUAL; CMake variable
+
+.. describe:: REBUILD_MANUAL
+
+   Set this to true to automatically rebuild the manual as part of the SpeedCrunch build.
+   Otherwise the bundled prebuilt copy is used instead. Note that this setting does not update
+   the prebuilt manual; see :ref:`the documentation guide <update_prebuilt_manual>` on how
+   to do that.
 
 
 .. index::
@@ -166,25 +217,8 @@ via the CMake GUI tool.
 
 .. describe:: SPHINX_EXECUTABLE
 
-   The path to the :program:`sphinx-build` executable. This can often be determined
+   The path to the :program:`sphinx-build` executable. This is often determined
    automatically, but it may be necessary to override it in some cases.
-
-
-Installing
-++++++++++
-
-To install SpeedCrunch after building, run ``make install`` (or equivalent) in the
-build directory. Note that this step may require administrator/root privileges.
-
-To customize the installation directory, set the following CMake variable at configuration
-time:
-
-.. index::
-   pair: CMAKE_INSTALL_PREFIX; CMake variable
-
-.. describe:: CMAKE_INSTALL_PREFIX
-
-   Set the installation prefix for the ``install`` target.
 
 
 Creating Windows Installers
