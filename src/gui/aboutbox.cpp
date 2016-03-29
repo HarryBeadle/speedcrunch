@@ -20,7 +20,7 @@
 
 #include "gui/aboutbox.h"
 
-#include <QtWidgets/QGridLayout>
+#include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QSpacerItem>
