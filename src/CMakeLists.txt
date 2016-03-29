@@ -47,10 +47,23 @@ else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 endif()
 
+# Embedded manual
+option(REBUILD_MANUAL "Rebuild the manual rather than using the bundled copy" FALSE)
+add_subdirectory(../doc/src doc)
+if(REBUILD_MANUAL)
+    # set here so CMake knows about this file in this CMakeLists
+    set_property(SOURCE ${CMAKE_CURRENT_BINARY_DIR}/doc/manual.qrc PROPERTY GENERATED true)
+    set(speedcrunch_RESOURCES ${speedcrunch_RESOURCES} ${CMAKE_CURRENT_BINARY_DIR}/doc/manual.qrc)
+else()
+    set(speedcrunch_RESOURCES ${speedcrunch_RESOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/../doc/build_html_embedded/manual.qrc)
+endif()
 
 qt5_add_RESOURCES(speedcrunch_RESOURCES_SOURCES ${speedcrunch_RESOURCES})
 add_executable(${PROGNAME} WIN32 MACOSX_BUNDLE ${speedcrunch_SOURCES} ${speedcrunch_HEADERS_MOC} ${speedcrunch_RESOURCES_SOURCES} ${speedcrunch_FORMS_HEADERS} ${WIN32_RES_FILE})
 
+if(REBUILD_MANUAL)
+    add_dependencies(${PROGNAME} manual)
+endif()
 
 if(APPLE)
     set( speedcrunch_RESOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources )
