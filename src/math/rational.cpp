@@ -96,9 +96,13 @@ Rational::Rational(const HNumber &num) :
 Rational::Rational(const double &num):
     m_num(1), m_denom(1), m_valid(1)
 {
+    if (num==0) {
+       m_num = 0;
+       return;
+    }
     if (std::abs(num)>INT_MAX || std::abs(1./num)>INT_MAX) {
-           m_valid = false;
-           return;
+        m_valid = false;
+        return;
     }
     const long long MAXD = INT_MAX/2; // maximal denominator
     long long p0=0, q0=1, p1=1, q1=0;
