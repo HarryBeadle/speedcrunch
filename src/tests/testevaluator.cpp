@@ -575,6 +575,9 @@ void test_function_simplified()
     CHECK_EVAL("func2 -123 + 10", "133");
     CHECK_EVAL("10 * func2 123", "1230");
     CHECK_EVAL("func2 123 * 10", "1230");
+    /* Tests for priority management */
+    CHECK_EVAL("lg 10^2", "2");
+    CHECK_EVAL("frac 3!",  "0");
 }
 
 void test_auto_fix_parentheses()
