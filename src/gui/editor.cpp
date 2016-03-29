@@ -750,6 +750,9 @@ void Editor::keyPressEvent(QKeyEvent* event)
     case Qt::Key_End:
         checkMatching();
         checkAutoCalc();
+        QPlainTextEdit::keyPressEvent(event);
+        event->accept();
+        return;
 
     case Qt::Key_Space:
         if (event->modifiers() == Qt::ControlModifier && !m_constantCompletion) {
