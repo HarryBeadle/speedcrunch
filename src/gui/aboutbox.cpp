@@ -43,17 +43,25 @@ AboutBox::AboutBox(QWidget* parent, Qt::WindowFlags f)
 #endif
     msg += "</b><br>(Qt " + QLatin1String(QT_VERSION_STR) + ")<br>";
 
-    const QString authors = "<p><b>%2</b><br>%1";
-    msg += authors.arg(tr("Maintainer, core developer, designer, translator")).arg("Helder Correia");
+    const QString authors = "<p><b>%1</b><br>%2";
+    msg += authors.arg(tr("Maintainer")).arg("Helder Correia");
+
+    msg += "<p>" + QString("<b>%1</b><br>").arg(tr("Core developers"));
+    msg +=
+        THANKS(Felix Krull)
+        THANKS(Hadrien Theveneau)
+        THANKS(Pol Welter)
+        THANKS(Tey)
+        ;
+
     msg += authors.arg(tr("Original author")).arg("Ariya Hidayat");
     msg += authors.arg(tr("Math engine")).arg("Wolf Lammen");
-    msg += authors.arg(tr("Packager")).arg("Alessandro Portale");
-    msg += authors.arg(tr("Former maintainer")).arg("Johan Thelin");
 
     msg += "<p>" + QString("<b>%1</b><br>").arg(tr("Thanks"));
     msg +=
         THANKS(Alan Davies)
         THANKS(Alejandro Villarreal)
+        THANKS(Alessandro Portale)
         THANKS(Alexey Kouznetsov)
         THANKS(Anders Lund)
         THANKS(Andreas Scherer)
@@ -67,7 +75,6 @@ AboutBox::AboutBox(QWidget* parent, Qt::WindowFlags f)
         THANKS(Derek O&#39;Connor)
         THANKS(Enrico R&oacute;s)
         THANKS(Eugeniu Plamadeala)
-        THANKS(Felix Krull)
         THANKS(F Chris Carrera)
         THANKS(Francesco di Cugno)
         THANKS(Gary Cramblitt)
@@ -76,6 +83,7 @@ AboutBox::AboutBox(QWidget* parent, Qt::WindowFlags f)
         THANKS(James Yuzwalk)
         THANKS(Jean-Remy Falleri)
         THANKS(Johannes Lange)
+        THANKS(Johan Thelin)
         THANKS(Jonathan Avraham)
         THANKS(Jonathan Riddell)
         THANKS(Lars Ivar Igesund)
@@ -95,7 +103,6 @@ AboutBox::AboutBox(QWidget* parent, Qt::WindowFlags f)
         THANKS(S&eacute;bastien Szymanski)
         THANKS(Stephan Binner)
         THANKS(Steven Honeyman)
-        THANKS(Tey)
         THANKS(Thomas Luebking)
         THANKS(Thomas Nagy)
         THANKS(Vibet Alexis)
