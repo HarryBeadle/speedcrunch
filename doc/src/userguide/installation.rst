@@ -116,7 +116,8 @@ inside the source tree, it is discouraged. On Windows, it will usually be necess
 to run these commands from a command prompt that is set up for the compiler you're using.
 
 In addition, the final ``make`` command to invoke may differ depending on the platform
-and the CMake generator used; for example, the command for MSVC is ``nmake``. Other
+and the CMake generator used; for example, the command for MSVC with the
+``NMake Makefiles`` generator is ``nmake``. Other
 generators may require yet other commands while some generators targetting IDEs like
 Visual Studio may not even have a command-line interface in this fashion. Consult the
 `CMake documentation <cmake_doc_generators_>`_ for more information on available generators
