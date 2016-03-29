@@ -549,12 +549,28 @@ void test_function_discrete()
 
 void test_function_simplified()
 {
+    /* Tests for standard functions */
     CHECK_EVAL("abs 123", "123");
     CHECK_EVAL("abs -123", "123");
     CHECK_EVAL("10 + abs 123", "133");
-    CHECK_EVAL_KNOWN_ISSUE("10 + abs -123", "133", 600);
+    CHECK_EVAL("10 + abs -123", "133");
     CHECK_EVAL("abs 123 + 10", "133");
     CHECK_EVAL("abs -123 + 10", "133");
+    CHECK_EVAL("10 * abs 123", "1230");
+    CHECK_EVAL("abs 123 * 10", "1230");
+    /* Tests for user functions */
+    CHECK_USERFUNC_SET("func2(x) = abs(x)");
+    CHECK_EVAL("func2 123", "123");
+    CHECK_EVAL("func2 -123", "123");
+    CHECK_EVAL("10 + func2 123", "133");
+    CHECK_EVAL("10 + func2 -123", "133");
+    CHECK_EVAL("func2 123 + 10", "133");
+    CHECK_EVAL("func2 -123 + 10", "133");
+    CHECK_EVAL("10 * func2 123", "1230");
+    CHECK_EVAL("func2 123 * 10", "1230");
+    /* Tests for priority management */
+    CHECK_EVAL("lg 10^2", "2");
+    CHECK_EVAL("frac 3!",  "0");
 }
 
 void test_auto_fix_parentheses()

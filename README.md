@@ -29,19 +29,21 @@ or
     qmake "DEFINES+=SPEEDCRUNCH_PORTABLE" speedcrunch.pro
 
 ### Documentation
-To build the documentation (in a way such that it is automatically picked up whencompiling SpeedCrunch itself), navigate to `/doc/src/`, and run
-```
-doc-tool.py build-bundled-docs --build-dir ../build_html_embedded
-```
-If you just intend to compile SC for your own use (rather than for development work) this step should not be necessary, as the repository already comes with a compiled version of the documentation.
+By default, building the application does not rebuild the manual that's included
+with it; instead, a prebuilt copy is used to minimize dependencies. If you wish
+to also rebuild the manual, you will need the following additional dependencies:
 
-Requirements for building the docs:
-
-- Python 2.7 or 3.4 or later
+- Python 3.4 or later
 - [Sphinx](http://sphinx-doc.org) 1.3 or later
 - [the Quark theme](https://pypi.python.org/pypi/quark-sphinx-theme) 0.2 or later
-    
-Consult the manual for more in-depth build instructions.
+
+Then, build using CMake and configure the project with the `REBUILD_MANUAL`
+option:
+
+    cmake . -DREBUILD_MANUAL=on
+
+For more in-depth information on building SpeedCrunch, consult the
+"Installation" chapter of the manual.
 
 ## Contributing
 - Report bugs or request features in the [issue tracker](https://bitbucket.org/heldercorreia/speedcrunch/issues).

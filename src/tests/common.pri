@@ -17,9 +17,9 @@ HEADERS += ../core/book.h \
            ../core/constants.h \
            ../core/evaluator.h \
            ../core/functions.h \
-           ../core/manualserver.h \
            ../core/session.h \
            ../core/errors.h \
+           ../core/manualserver.h \
            ../core/numberformatter.h \
            ../core/pageserver.h \
            ../core/settings.h \
@@ -49,7 +49,8 @@ HEADERS += ../core/book.h \
            ../math/number.h \
            ../math/quantity.cpp \
            ../math/rational.h \
-           ../math/units.h
+           ../math/units.h \
+           ../gui/manualwindow.h
 
 SOURCES += ../core/book.cpp \
            ../core/constants.cpp \
@@ -87,5 +88,6 @@ SOURCES += ../core/book.cpp \
            ../math/cnumberparser.cpp \
            ../math/quantity.cpp \
            ../math/rational.cpp \
-           ../math/units.cpp
+           ../math/units.cpp \
+           ../gui/manualwindow.cpp
 

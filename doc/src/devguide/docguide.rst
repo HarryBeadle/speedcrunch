@@ -1,3 +1,5 @@
+.. highlight:: none
+
 Documentation Guide
 ===================
 
@@ -227,7 +229,15 @@ run ``doc-tool --help``.
 * To update the ``.po`` files (synchronize them with the ``.pot``), run ``doc-tool.py update-translations``. Not used since this will be handled by Transifex (?).
 * To actually build the docs, run either ``doc-tool.py build-standalone-docs`` or ``doc-tool.py build-bundled-docs``.
 
-The build processes of the documentation and SpeedCrunch itself have been separated. Indeed, when building SpeedCrunch itself, the documentation will be fetched from :file:`doc/build_html_embedded/`. Note that this is not the default output directory of :program:`doc-tool`!
+.. _update_prebuilt_manual:
+
+By default, building SpeedCrunch does *not* rebuild the documentation; set the :ref:`REBUILD_MANUAL <var_rebuild_manual>`
+CMake variable to do so. To update the bundled prebuilt copy of the manual that's included
+with the source tree, build the ``update-prebuilt-manual`` target::
+
+    make update-prebuilt-manual
+
+(Or equivalent for your CMake generator.)
 
 
 

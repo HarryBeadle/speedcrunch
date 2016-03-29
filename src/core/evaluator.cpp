@@ -228,6 +228,8 @@ static int opPrecedence(Token::Op op)
     switch(op) {
     case Token::Exclamation: prec = 800; break;
     case Token::Caret: prec = 700; break;
+    /* Not really an operator but needed for managing shift/reduce conflicts */
+    case Token::Function: prec = 600; break;
     case Token::Asterisk:
     case Token::Slash: prec = 500; break;
     case Token::Modulo:
@@ -967,17 +969,20 @@ void Evaluator::compile(const Tokens& tokens)
 
                 // Rule for simplified syntax for function e.g. "sin pi" or "cos 1.2"
                 // i.e no need for parentheses like "sin(pi)" or "cos(1.2)".
+                // Conditions: precedence of function reduction >= precedence of next token.
+                //             or next token is not an operator
                 if (!ruleFound && syntaxStack.itemCount() >= 2) {
-                    Token arg = syntaxStack.top();
-                    Token id = syntaxStack.top(1);
-                    if (arg.isOperand() && id.isIdentifier()
-                         && FunctionRepo::instance()->find(id.text()))
+                  Token arg = syntaxStack.top();
+                  Token id = syntaxStack.top(1);
+                  if (arg.isOperand() && isFunction(id)
+                      && (!token.isOperator() ||
+                          opPrecedence(Token::Function) >= opPrecedence(token.asOperator())))
                     {
-                        ruleFound = true;
-                        m_codes.append(Opcode(Opcode::Function, 1));
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.push(Token::stxAbstract);
+                      ruleFound = true;
+                      m_codes.append(Opcode(Opcode::Function, 1));
+                      syntaxStack.pop();
+                      syntaxStack.pop();
+                      syntaxStack.push(Token::stxAbstract);
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for simplified function syntax; function " << id.text() << "\n";
 #endif
@@ -986,19 +991,19 @@ void Evaluator::compile(const Tokens& tokens)
 
                 // Rule for unary operator in simplified function syntax. This handles case like "sin -90".
                 if (!ruleFound && syntaxStack.itemCount() >= 3) {
-                    Token x = syntaxStack.top();
-                    Token op = syntaxStack.top(1);
-                    Token id = syntaxStack.top(2);
-                    if (x.isOperand() && id.isIdentifier()
-                         && FunctionRepo::instance()->find(id.text())
-                         && (op.asOperator() == Token::Plus || op.asOperator() == Token::Minus))
+                  Token x = syntaxStack.top();
+                  Token op = syntaxStack.top(1);
+                  Token id = syntaxStack.top(2);
+                  if (x.isOperand()
+                      && isFunction(id)
+                      && (op.asOperator() == Token::Plus || op.asOperator() == Token::Minus))
                     {
-                        ruleFound = true;
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.push(Token::stxAbstract);
-                        if (op.asOperator() == Token::Minus)
-                            m_codes.append(Opcode(Opcode::Neg));
+                      ruleFound = true;
+                      syntaxStack.pop();
+                      syntaxStack.pop();
+                      syntaxStack.push(Token::stxAbstract);
+                      if (op.asOperator() == Token::Minus)
+                        m_codes.append(Opcode(Opcode::Neg));
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for unary operator in simplified function syntax; function " << id.text() << "\n";
 #endif
@@ -1057,40 +1062,43 @@ void Evaluator::compile(const Tokens& tokens)
                 // Action: push (op) to result e.g. "A * B" becomes "A" if token is operator "+".
                 // Exception: for caret (power operator), if op is another caret
                 // then the rule doesn't apply, e.g. "2^3^2" is evaluated as "2^(3^2)".
+                // Exception: doesn't apply if B is a function name (to manage shift/reduce conflict
+                // with simplified function syntax (resolves issue 600).
                 if (!ruleFound && syntaxStack.itemCount() >= 3) {
-                    Token b = syntaxStack.top();
-                    Token op = syntaxStack.top(1);
-                    Token a = syntaxStack.top(2);
-                    if (a.isOperand() && b.isOperand() && op.isOperator()
-                         && ((token.isOperator() && opPrecedence(op.asOperator()) >= opPrecedence(token.asOperator())
-                              && token.asOperator() != Token::LeftPar
-                              && token.asOperator() != Token::Caret)    // token is normal operator
-                             || (token.isOperand()                      // token may represent implicit multiplication
-                                 && opPrecedence(op.asOperator()) >= opPrecedence(Token::Asterisk))))
+                  Token b = syntaxStack.top();
+                  Token op = syntaxStack.top(1);
+                  Token a = syntaxStack.top(2);
+                  if (a.isOperand() && b.isOperand() && op.isOperator()
+                      && ((token.isOperator() && opPrecedence(op.asOperator()) >= opPrecedence(token.asOperator())
+                           && token.asOperator() != Token::LeftPar
+                           && token.asOperator() != Token::Caret)    // token is normal operator
+                          || (token.isOperand()                      // token may represent implicit multiplication
+                              && opPrecedence(op.asOperator()) >= opPrecedence(Token::Asterisk)))
+                      && !(isFunction(b)))
                     {
-                        ruleFound = true;
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.push(Token::stxAbstract);
+                      ruleFound = true;
+                      syntaxStack.pop();
+                      syntaxStack.pop();
+                      syntaxStack.pop();
+                      syntaxStack.push(Token::stxAbstract);
 
-                        switch (op.asOperator()) {
-                            // Simple binary operations.
-                            case Token::Plus:      m_codes.append(Opcode::Add); break;
-                            case Token::Minus:     m_codes.append(Opcode::Sub); break;
-                            case Token::Asterisk:  m_codes.append(Opcode::Mul); break;
-                            case Token::Slash:     m_codes.append(Opcode::Div); break;
-                            case Token::Caret:     m_codes.append(Opcode::Pow); break;
-                            case Token::Modulo:    m_codes.append(Opcode::Modulo); break;
-                            case Token::Backslash: m_codes.append(Opcode::IntDiv); break;
-                            case Token::LeftShift: m_codes.append(Opcode::LSh); break;
-                            case Token::RightShift: m_codes.append(Opcode::RSh); break;
-                            case Token::Ampersand: m_codes.append(Opcode::BAnd); break;
-                            case Token::Pipe:      m_codes.append(Opcode::BOr); break;
-                            case Token::RightArrow:
-                                m_codes.append(Opcode(Opcode::Conv, op.text().mid(2))); break;
-                            default: break;
-                        };
+                      switch (op.asOperator()) {
+                        // Simple binary operations.
+                      case Token::Plus:      m_codes.append(Opcode::Add); break;
+                      case Token::Minus:     m_codes.append(Opcode::Sub); break;
+                      case Token::Asterisk:  m_codes.append(Opcode::Mul); break;
+                      case Token::Slash:     m_codes.append(Opcode::Div); break;
+                      case Token::Caret:     m_codes.append(Opcode::Pow); break;
+                      case Token::Modulo:    m_codes.append(Opcode::Modulo); break;
+                      case Token::Backslash: m_codes.append(Opcode::IntDiv); break;
+                      case Token::LeftShift: m_codes.append(Opcode::LSh); break;
+                      case Token::RightShift: m_codes.append(Opcode::RSh); break;
+                      case Token::Ampersand: m_codes.append(Opcode::BAnd); break;
+                      case Token::Pipe:      m_codes.append(Opcode::BOr); break;
+                      case Token::RightArrow:
+                        m_codes.append(Opcode(Opcode::Conv, op.text().mid(2))); break;
+                      default: break;
+                      };
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for binary operator" << "\n";
 #endif
@@ -1100,22 +1108,25 @@ void Evaluator::compile(const Tokens& tokens)
 #ifdef ALLOW_IMPLICIT_MULT
                 /* Rule for implicit multiplication
                  * Action: Treat as A * B.
+                 * Exception: doesn't apply if B is a function name (to manage shift/reduce conflict
+                 * with simplified function syntax (resolves issue 600).
                  */
                 if(!ruleFound && syntaxStack.itemCount() >= 2) {
-                    Token b = syntaxStack.top();
-                    Token a = syntaxStack.top(1);
+                  Token b = syntaxStack.top();
+                  Token a = syntaxStack.top(1);
 
-                    if(a.isOperand() && b.isOperand()
-                            && token.asOperator() != Token::LeftPar
-                            && ((token.isOperator()
-                                 && opPrecedence(Token::Asterisk) >= opPrecedence(token.asOperator())) // token is normal operator
-                                || token.isOperand())) // token represents implicit multiplication
+                  if(a.isOperand() && b.isOperand()
+                     && token.asOperator() != Token::LeftPar
+                     && ((token.isOperator()
+                          && opPrecedence(Token::Asterisk) >= opPrecedence(token.asOperator())) // token is normal operator
+                         || token.isOperand()) // token represents implicit multiplication
+                     && !(isFunction(b)))
                     {
-                        ruleFound = true;
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.push(Token::stxAbstract);
-                        m_codes.append(Opcode::Mul);
+                      ruleFound = true;
+                      syntaxStack.pop();
+                      syntaxStack.pop();
+                      syntaxStack.push(Token::stxAbstract);
+                      m_codes.append(Opcode::Mul);
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for implicit multiplication" << "\n";
 #endif
