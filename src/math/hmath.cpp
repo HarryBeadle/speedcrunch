@@ -966,16 +966,27 @@ HNumber HMath::frac( const HNumber & n )
     return result;
 }
 
+#define CHECK_NAN                           \
+  if (n.isNan())                            \
+    return HMath::nan(checkNaNParam(*n.d));
+
+#define RETURN_IF_NEAR_INT                                                   \
+  HNumber nearest_int(n);                                                    \
+  float_roundtoint(&nearest_int.d->fnum, TONEAREST);                         \
+  if (!float_relcmp(&n.d->fnum, &nearest_int.d->fnum, HMATH_WORKING_PREC-1)) \
+      return nearest_int;
+
 /**
  * Returns the floor of n.
  */
 HNumber HMath::floor( const HNumber & n )
 {
-    if (n.isNan())
-        return HMath::nan(checkNaNParam(*n.d));
-    HNumber r(n);
-    float_roundtoint(&r.d->fnum, TOMINUSINFINITY);
-    return r;
+  CHECK_NAN;
+  RETURN_IF_NEAR_INT;
+  /* Actual rounding, if needed */
+  HNumber r(n);
+  float_roundtoint(&r.d->fnum, TOMINUSINFINITY);
+  return r;
 }
 
 /**
@@ -983,11 +994,12 @@ HNumber HMath::floor( const HNumber & n )
  */
 HNumber HMath::ceil( const HNumber & n )
 {
-    if (n.isNan())
-        return HMath::nan(checkNaNParam(*n.d));
-    HNumber r(n);
-    float_roundtoint(&r.d->fnum, TOPLUSINFINITY);
-    return r;
+  CHECK_NAN;
+  RETURN_IF_NEAR_INT;
+  /* Actual rounding, if needed */
+  HNumber r(n);
+  float_roundtoint(&r.d->fnum, TOPLUSINFINITY);
+  return r;
 }
 
 /**
