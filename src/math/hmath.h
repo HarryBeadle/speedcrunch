@@ -36,19 +36,19 @@ class Rational;
 
 class HNumber
 {
-  friend class HMath;
-  friend class CNumber;
-  friend class CMath;
-  friend HNumber operator-( const HNumber & );
-  friend HNumber operator-( const HNumber &, const HNumber& );
-  friend bool operator>( const HNumber& l, const HNumber& r );
-  friend bool operator<( const HNumber& l, const HNumber& r );
-  friend bool operator>=( const HNumber& l, const HNumber& r );
-  friend bool operator<=( const HNumber& l, const HNumber& r );
-  friend bool operator==( const HNumber& l, const HNumber& r );
-  friend bool operator!=( const HNumber& l, const HNumber& r );
+    friend class HMath;
+    friend class CNumber;
+    friend class CMath;
+    friend HNumber operator-( const HNumber & );
+    friend HNumber operator-( const HNumber &, const HNumber& );
+    friend bool operator>( const HNumber& l, const HNumber& r );
+    friend bool operator<( const HNumber& l, const HNumber& r );
+    friend bool operator>=( const HNumber& l, const HNumber& r );
+    friend bool operator<=( const HNumber& l, const HNumber& r );
+    friend bool operator==( const HNumber& l, const HNumber& r );
+    friend bool operator!=( const HNumber& l, const HNumber& r );
 
-  public:
+public:
     HNumber();
     HNumber( const HNumber& );
     HNumber( int i );
@@ -74,21 +74,6 @@ class HNumber
     // 'b': binary
     char format() const;
     HNumber& setFormat( char c = 0 );
-
-
-    bool hasUnit() const ;
-    HNumber getUnit() const;
-    QString getUnitName() const;
-    HNumber& setDisplayUnit(const HNumber , const QString &name);
-    void stripUnits();
-    bool hasDimension() const;
-    bool isDimensionless() const;
-    QMap<QString, Rational> getDimension() const;
-    void modifyDimension(const QString & key, const Rational & exponent);
-    void clearDimension();
-    bool sameDimension(const HNumber & other) const;
-    void cleanDimension();
-    void setDimension(const HNumber&);
 
     void serialize(QJsonObject & json) const;
     static HNumber deSerialize(const QJsonObject & json);
@@ -123,9 +108,9 @@ class HNumber
 
 class HMath
 {
-  public:
+public:
     // FORMAT
-    static char * format( const HNumber & n, char format = 'g', int prec = -1 );
+    static QString format( const HNumber & n, char format = 'g', int prec = -1 );
     // PARSING
     static HNumber parse_str (const char * str_in, const char ** str_out);
     // CONSTANTS

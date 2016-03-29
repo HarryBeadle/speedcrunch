@@ -525,7 +525,7 @@ void Editor::autoCalc()
 
     // Same reason as above, do not update "ans".
     m_evaluator->setExpression(str);
-    const CNumber num = m_evaluator->evalNoAssign();
+    const Quantity num = m_evaluator->evalNoAssign();
 
     if (m_evaluator->error().isEmpty()) {
         if (num.isNan() && m_evaluator->isUserFunctionAssign()) {
@@ -582,7 +582,7 @@ void Editor::autoCalcSelection()
 
     // Same reason as above, do not update "ans".
     m_evaluator->setExpression(str);
-    const CNumber num = m_evaluator->evalNoAssign();
+    const Quantity num = m_evaluator->evalNoAssign();
 
     if (m_evaluator->error().isEmpty()) {
         if (num.isNan() && m_evaluator->isUserFunctionAssign()) {

@@ -19,10 +19,11 @@
 #include "math/hmath.h"
 #include "math/cmath.h"
 #include "math/units.h"
+#include "math/quantity.h"
+#include "tests/testcommon.h"
 
-#include <cstdio>
 #include <cstdlib>
-#include <cstring>
+#include <string>
 #include <iostream>
 #include <QJsonDocument>
 
@@ -31,6 +32,7 @@ using namespace std;
 #define CHECK_SER(x,y) check_ser(__FILE__, __LINE__, #x, x, y)
 #define CHECK_DESER_HNUMBER(x,y) check_deser_hnumber(__FILE__, __LINE__, #x, x, y)
 #define CHECK_DESER_CNUMBER(x,y) check_deser_cnumber(__FILE__, __LINE__, #x, x, y)
+#define CHECK_DESER_QUANTITY(x,y) check_deser_quantity(__FILE__, __LINE__, #x, x, y)
 #define CHECK_SER_DESER_HNUMBER(x,y) check_ser_deser_hnumber(__FILE__, __LINE__, #x, x, y)
 #define CHECK_SER_DESER_CNUMBER(x,y) check_ser_deser_cnumber(__FILE__, __LINE__, #x, x, y)
 
@@ -39,116 +41,66 @@ static int ser_failed_tests = 0;
 static int ser_new_failed_tests = 0;
 
 template <class T>
-void check_ser(const char*, int line, const char* msg, const T& num, const char* expected, int issue = 0) {
+void check_ser(const char* file, int line, const char* msg, const T& num, const char* expected, int issue = 0) {
     /* Serialization */
     QJsonObject obj;
     num.serialize(obj);
     QJsonDocument doc(obj);
-    QString result = doc.toJson(QJsonDocument::Compact);
+    string result = doc.toJson(QJsonDocument::Compact).toStdString();
     /* Test result and display info */
     ++ser_total_tests;
-    if (result != expected) {
-        ++ser_failed_tests;
-        cerr << "[Line " << line << "]" << msg << "\nResult: " << result.toStdString();
-        cerr << "\nExpected: " << expected;
-        if (issue)
-            cerr << "\t[ISSUE " << issue << "]";
-        else {
-            cerr << "\t[NEW]";
-            ++ser_new_failed_tests;
-        }
-        cerr << endl;
-    }
+    DisplayErrorOnMismatch(file, line, msg, result, expected, ser_failed_tests, ser_new_failed_tests, issue);
 }
 
-void check_deser_cnumber(const char*, int line, const char* msg, const char* str,  const char* expected, int issue = 0) {
-    /* Deserialization */
-    QJsonDocument doc = QJsonDocument::fromJson(str);
-    CNumber num(doc.object());
-    /* Test result and display info */
-    char* result = CMath::format(num, 'f');
-    if (strcmp(result, expected)) {
-        ++ser_failed_tests;
-        cerr << "[Line " << line << "]\t" << msg << "\tResult: " << result;
-        cerr << "\tExpected: " << expected;
-	if (issue)
-            cerr << "\t[ISSUE " << issue << "]";
-        else {
-            cerr << "\t[NEW]";
-            ++ser_new_failed_tests;
-        }
-        cerr << endl;
-    }
-    /* Cleanup */
-    free(result);
-}
-
-void check_deser_hnumber(const char*, int line, const char* msg, const char* str,  const char* expected, int issue = 0) {
+void check_deser_hnumber(const char* file, int line, const char* msg, const char* str,  const char* expected, int issue = 0) {
     /* Deserialization */
     QJsonDocument doc = QJsonDocument::fromJson(str);
     HNumber num(doc.object());
     /* Test result and display info */
-    char* result = HMath::format(num, 'f');
-    if (strcmp(result, expected)) {
-        ++ser_failed_tests;
-	cerr << "[Line " << line << "]\t" << msg << "\tResult: " << result;
-        cerr << "\tExpected: " << expected;
-	if (issue)
-            cerr << "\t[ISSUE " << issue << "]";
-        else {
-            cerr << "\t[NEW]";
-            ++ser_new_failed_tests;
-        }
-        cerr << endl;
-    }
-    /* Cleanup */
-    free(result);
+    ++ser_total_tests;
+    string result = HMath::format(num, 'f').toStdString();
+    DisplayErrorOnMismatch(file, line, msg, result, expected, ser_failed_tests, ser_new_failed_tests, issue);
 }
 
-void check_ser_deser_hnumber(const char*, int line, const char* msg, const HNumber& src, const char* expected, int issue = 0) {
+void check_deser_cnumber(const char* file, int line, const char* msg, const char* str,  const char* expected, int issue = 0) {
+    /* Deserialization */
+    QJsonDocument doc = QJsonDocument::fromJson(str);
+    CNumber num(doc.object());
+    /* Test result and display info */
+    ++ser_total_tests;
+    string result = CMath::format(num, 'f').toStdString();
+    DisplayErrorOnMismatch(file, line, msg, result, expected, ser_failed_tests, ser_new_failed_tests, issue);
+}
+
+void check_deser_quantity(const char* file, int line, const char* msg, const char* str,  const char* expected, int issue = 0) {
+    /* Deserialization */
+    QJsonDocument doc = QJsonDocument::fromJson(str);
+    Quantity q(doc.object());
+    /* Test result and display info */
+    ++ser_total_tests;
+    string result = DMath::format(q, 'f').toStdString();
+    DisplayErrorOnMismatch(file, line, msg, result, expected, ser_failed_tests, ser_new_failed_tests, issue);
+}
+
+void check_ser_deser_hnumber(const char* file, int line, const char* msg, const HNumber& src, const char* expected, int issue = 0) {
     /* Serialization + deserialization */
     QJsonObject obj;
     src.serialize(obj);
     HNumber dest = HNumber::deSerialize(obj);
     /* Test result and display info */
-    char* result = HMath::format(dest, 'g', 50);
-    if (strcmp(result, expected)) {
-        ++ser_failed_tests;
-	cerr << "[Line " << line << "]\t" << msg << "\tResult: " << result;
-        cerr << "\tExpected: " << expected;
-	if (issue)
-            cerr << "\t[ISSUE " << issue << "]";
-        else {
-            cerr << "\t[NEW]";
-            ++ser_new_failed_tests;
-        }
-        cerr << endl;
-    }
-    /* Cleanup */
-    free(result);
+    string result = HMath::format(dest, 'g', 50).toStdString();
+    ++ser_total_tests;
+    DisplayErrorOnMismatch(file, line, msg, result, expected, ser_failed_tests, ser_new_failed_tests, issue);
 }
 
-void check_ser_deser_cnumber(const char*, int line, const char* msg, const CNumber& src, const char* expected, int issue = 0) {
+void check_ser_deser_cnumber(const char* file, int line, const char* msg, const CNumber& src, const char* expected, int issue = 0) {
     /* Serialization + deserialization */
     QJsonObject obj;
     src.serialize(obj);
     CNumber dest = CNumber::deSerialize(obj);
     /* Test result and display info */
-    char* result = CMath::format(dest, 'g', 50);
-    if (strcmp(result, expected)) {
-        ++ser_failed_tests;
-	cerr << "[Line " << line << "]\t" << msg << "\tResult: " << result;
-        cerr << "\tExpected: " << expected;
-	if (issue)
-            cerr << "\t[ISSUE " << issue << "]";
-        else {
-            cerr << "\t[NEW]";
-            ++ser_new_failed_tests;
-        }
-        cerr << endl;
-    }
-    /* Cleanup */
-    free(result);
+    string result = CMath::format(dest, 'g', 50).toStdString();
+    DisplayErrorOnMismatch(file, line, msg, result, expected, ser_failed_tests, ser_new_failed_tests, issue);
 }
 
 int main(int, char**)
@@ -156,14 +108,16 @@ int main(int, char**)
     /* Serialization tests */
     CHECK_SER(HNumber("3"), "{\"format\":\"NULL\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"}");
 
-    CNumber a("3");
-    a.setFormat('b');
-    a *= Units::meter();
-    a.setDisplayUnit(CNumber("0.3")*Units::meter(), "foot");
-    CHECK_SER(a,"{\"dimension\":{\"length\":\"1\"},\"format\":\"NULL\",\"unit\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000e-1\",\"unit_name\":\"foot\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"}");
-
     CHECK_SER(CNumber("3"), "{\"format\":\"NULL\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"}");
     CHECK_SER(CNumber("3+1j"), "{\"format\":\"NULL\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000+1.000000000000000000000000000000000000000000000000000000000000000000000000000000j\"}");
+
+    Quantity a(CNumber("3"));
+    a.setFormat('b');
+    a *= Units::meter();
+    a.setDisplayUnit(CNumber("0.3"), QString("foot"));
+    const char q_json_blob[] = "{\"dimension\":{\"length\":\"1\"},\"format\":\"\",\"numeric_value\":{\"format\":\"NULL\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"unit\":{\"format\":\"NULL\",\"value\":\"0.300000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"unit_name\":\"foot\"}";
+    CHECK_SER(a, q_json_blob);
+
     /* HNumber deserialization tests */
     CHECK_DESER_HNUMBER("{\"format\": \"g\",\"value\": \"1\"}", "1");
     CHECK_DESER_HNUMBER("{\"format\": \"g\",""\"value\": \"0.1\"}", "0.1");
@@ -171,9 +125,18 @@ int main(int, char**)
     CHECK_DESER_CNUMBER("{\"format\": \"g\",\"value\": \"1\"}", "1");
     CHECK_DESER_CNUMBER("{\"format\": \"g\",\"value\": \"0.1\"}", "0.1");
     CHECK_DESER_CNUMBER("{\"format\": \"g\",\"value\": \"0.0+1.0j\"}", "1j");
-    /* Serizalization + deserialization tests */
+    /* Quantity deserialization tests */
+    CHECK_DESER_QUANTITY(q_json_blob, "10 foot");
+
+    /* Serialization + deserialization tests */
     CHECK_SER_DESER_HNUMBER(HNumber("3"), "3.00000000000000000000000000000000000000000000000000");
     CHECK_SER_DESER_CNUMBER(CNumber("3"), "3.00000000000000000000000000000000000000000000000000");
     CHECK_SER_DESER_CNUMBER(CNumber("3+1j"), "3.00000000000000000000000000000000000000000000000000+1.00000000000000000000000000000000000000000000000000j");
+
+
+    /* Output test satistics */
+    cout << ser_total_tests  << " total, "
+         << ser_failed_tests << " failed, "
+         << ser_new_failed_tests << " new" << endl;
 }
 

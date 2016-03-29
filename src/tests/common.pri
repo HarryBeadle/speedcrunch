@@ -1,6 +1,6 @@
-DEFINES += SPEEDCRUNCH_VERSION="\"\\\"pw\\\"\""
+DEFINES += SPEEDCRUNCH_VERSION=\\\"master\\\"
 
-QT += widgets network help
+QT += widgets help
 CONFIG += c++11
 
 DEPENDPATH += . \
@@ -47,6 +47,7 @@ HEADERS += ../core/book.h \
            ../math/floattrig.h \
            ../math/hmath.h \
            ../math/number.h \
+           ../math/quantity.cpp \
            ../math/rational.h \
            ../math/units.h \
            ../gui/manualwindow.h
@@ -85,6 +86,7 @@ SOURCES += ../core/book.cpp \
            ../math/number.c \
            ../math/cmath.cpp \
            ../math/cnumberparser.cpp \
+           ../math/quantity.cpp \
            ../math/rational.cpp \
            ../math/units.cpp \
            ../gui/manualwindow.cpp
