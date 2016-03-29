@@ -1,6 +1,6 @@
 DEFINES += SPEEDCRUNCH_VERSION="\"\\\"pw\\\"\""
 
-QT += widgets
+QT += widgets network help
 CONFIG += c++11
 
 DEPENDPATH += . \
@@ -17,9 +17,9 @@ HEADERS += ../core/book.h \
            ../core/constants.h \
            ../core/evaluator.h \
            ../core/functions.h \
-           ../core/manual.h \
            ../core/session.h \
            ../core/errors.h \
+           ../core/manualserver.h \
            ../core/numberformatter.h \
            ../core/pageserver.h \
            ../core/settings.h \
@@ -48,13 +48,14 @@ HEADERS += ../core/book.h \
            ../math/hmath.h \
            ../math/number.h \
            ../math/rational.h \
-           ../math/units.h
+           ../math/units.h \
+           ../gui/manualwindow.h
 
 SOURCES += ../core/book.cpp \
            ../core/constants.cpp \
            ../core/evaluator.cpp \
            ../core/functions.cpp \
-           ../core/manual.cpp \
+           ../core/manualserver.cpp \
            ../core/numberformatter.cpp \
            ../core/pageserver.cpp \
            ../core/settings.cpp \
@@ -82,8 +83,9 @@ SOURCES += ../core/book.cpp \
            ../math/floatincgamma.c \
            ../math/hmath.cpp \
            ../math/number.c \
-	   ../math/cmath.cpp \
-	   ../math/cnumberparser.cpp \
+           ../math/cmath.cpp \
+           ../math/cnumberparser.cpp \
            ../math/rational.cpp \
-           ../math/units.cpp
+           ../math/units.cpp \
+           ../gui/manualwindow.cpp
 
