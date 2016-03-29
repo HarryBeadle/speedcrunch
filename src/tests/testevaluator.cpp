@@ -321,9 +321,6 @@ void test_function_basic()
     CHECK_EVAL("6!", "720");
     CHECK_EVAL("7!", "5040");
     CHECK_EVAL("(1+1)!^2", "4");
-    CHECK_EVAL_KNOWN_ISSUE("frac 3!", "0", 451);
-
-    CHECK_EVAL_KNOWN_ISSUE("lg 10^2", "2", 451);
 
     CHECK_EVAL("(-27)^(1/3)", "-3");
     CHECK_EVAL("(-27)^(-1/3)", "-0.33333333333333333333");
@@ -551,14 +548,14 @@ void test_function_simplified()
 {
     /* Tests for standard functions */
     CHECK_EVAL("abs 123", "123");
-    CHECK_EVAL("abs -123", "123");
+    CHECK_EVAL("abs -123", "123");       /* (issue #600) */
     CHECK_EVAL("10 + abs 123", "133");
-    CHECK_EVAL("10 + abs -123", "133");
+    CHECK_EVAL("10 + abs -123", "133");  /* (issue #600) */
     CHECK_EVAL("abs 123 + 10", "133");
-    CHECK_EVAL("abs -123 + 10", "133");
+    CHECK_EVAL("abs -123 + 10", "133");  /* (issue #600) */
     CHECK_EVAL("10 * abs 123", "1230");
     CHECK_EVAL("abs 123 * 10", "1230");
-    /* Tests for user functions */
+    /* Tests for user functions (issue #600, cf. discussion) */
     CHECK_USERFUNC_SET("func2(x) = abs(x)");
     CHECK_EVAL("func2 123", "123");
     CHECK_EVAL("func2 -123", "123");
@@ -568,7 +565,7 @@ void test_function_simplified()
     CHECK_EVAL("func2 -123 + 10", "133");
     CHECK_EVAL("10 * func2 123", "1230");
     CHECK_EVAL("func2 123 * 10", "1230");
-    /* Tests for priority management */
+    /* Tests for priority management (issue #451) */
     CHECK_EVAL("lg 10^2", "2");
     CHECK_EVAL("frac 3!",  "0");
 }
