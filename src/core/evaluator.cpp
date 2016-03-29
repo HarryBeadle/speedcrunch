@@ -231,6 +231,8 @@ static int opPrecedence(Token::Op op)
     switch(op) {
     case Token::Exclamation: prec = 800; break;
     case Token::Caret: prec = 700; break;
+    /* Not really an operator but needed for managing shift/reduce conflicts */
+    case Token::Function: prec = 600; break;
     case Token::Asterisk:
     case Token::Slash: prec = 500; break;
     case Token::Modulo:
@@ -971,10 +973,14 @@ void Evaluator::compile(const Tokens& tokens)
 
             // Rule for simplified syntax for function e.g. "sin pi" or "cos 1.2"
             // i.e no need for parentheses like "sin(pi)" or "cos(1.2)".
+            // Conditions: precedence of function reduction >= precedence of next token.
+            //             or next token is not an operator
             if (!ruleFound && syntaxStack.itemCount() >= 2) {
                 Token arg = syntaxStack.top();
                 Token id = syntaxStack.top(1);
-                if (arg.isOperand() && isFunction(id))
+                if (arg.isOperand() && isFunction(id)
+                    && (!token.isOperator() ||
+                        opPrecedence(Token::Function) >= opPrecedence(token.asOperator())))
                 {
                     ruleFound = true;
                     m_codes.append(Opcode(Opcode::Function, 1));
