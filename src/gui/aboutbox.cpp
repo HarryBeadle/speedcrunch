@@ -50,7 +50,7 @@ AboutBox::AboutBox(QWidget* parent, Qt::WindowFlags f)
         THANKS(Felix Krull)
         THANKS(Hadrien Theveneau)
         THANKS(Pol Welter)
-        THANKS(Tey)
+        THANKS(Teyut)
         ;
 
     msg += authors.arg(tr("Original author")).arg("Ariya Hidayat");
