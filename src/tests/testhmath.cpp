@@ -244,7 +244,7 @@ void test_functions()
     CHECK(HMath::floor("2.6041980"), "2");
     CHECK(HMath::floor("0.000001"), "0");
     CHECK(HMath::floor("-0.000001"), "-1");
-    CHECK_KNOWN_ISSUE(HMath::floor(HNumber(1) / 3 * 3), "1", 532);
+    CHECK(HMath::floor(HNumber(1) / 3 * 3), "1");
 
     CHECK(HMath::ceil("NaN"), "NaN");
     CHECK(HMath::ceil("0"), "0");

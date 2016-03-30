@@ -262,7 +262,7 @@ void test_functions()
     CHECK(CMath::floor("2.6041980"), "2");
     CHECK(CMath::floor("0.000001"), "0");
     CHECK(CMath::floor("-0.000001"), "-1");
-    CHECK_KNOWN_ISSUE(CMath::floor(CNumber(1) / 3 * 3), "1", 532);
+    CHECK(CMath::floor(CNumber(1) / 3 * 3), "1");
 
     CHECK(CMath::ceil("NaN"), "NaN");
     CHECK(CMath::ceil("0"), "0");
