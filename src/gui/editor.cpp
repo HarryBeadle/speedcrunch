@@ -383,6 +383,10 @@ QString Editor::getKeyword() const
 
 void Editor::triggerAutoComplete()
 {
+    if (m_shouldBlockAutoCompletionOnce) {
+        m_shouldBlockAutoCompletionOnce = false;
+        return;
+    }
     if (!m_isAutoCompletionEnabled)
         return;
 
@@ -650,6 +654,7 @@ void Editor::historyBack()
     if (!m_currentHistoryIndex)
         return;
 
+    m_shouldBlockAutoCompletionOnce = true;
     if (m_currentHistoryIndex == m_history.count())
         m_savedCurrentEditor = toPlainText();
     --m_currentHistoryIndex;
@@ -665,6 +670,7 @@ void Editor::historyForward()
     if (m_currentHistoryIndex == m_history.count())
         return;
 
+    m_shouldBlockAutoCompletionOnce = true;
     m_currentHistoryIndex++;
     if (m_currentHistoryIndex == m_history.count())
         setText(m_savedCurrentEditor);
