@@ -22,19 +22,35 @@
 #include <QHash>
 #include <QMap>
 
-class Quantity;
+#include "math/quantity.h"
 class Rational;
+
+struct Unit
+{
+    QString name;
+    Quantity value;
+    Unit(QString name, Quantity value) : name(name), value(value) {}
+    Unit() : name(""), value(1) {}
+};
 
 class Units
 {
 private:
-    static void init();
-    static QHash<QMap<QString, Rational>, Quantity> m_matchLookup;
     static void pushUnit(Quantity q, QString name);
+    static QHash<QMap<QString, Rational>, Unit> m_matchLookup;
+    static QMap<QString, Quantity> m_cache;
+    static void initTable();
 
 public:
     static void findUnit(Quantity &q);
+    static void clearCache() {m_cache.clear();}
+    static const QList<Unit> getList();
 
+    /*
+     #############################################
+     # Base (primitive) units.                   #
+     #############################################
+    */
 
     // base SI units
     static const Quantity meter();
@@ -45,32 +61,16 @@ public:
     static const Quantity kelvin();
     static const Quantity candela();
 
-    static const Quantity sqmeter();
-    static const Quantity cbmeter();
+    // base non-SI units
+    static const Quantity bit();
+    // ... currency would go here as well...
 
-    // derived SI units
-    static const Quantity newton();
-    static const Quantity hertz();
-    static const Quantity radian();
-    static const Quantity steradian();
-    static const Quantity pascal();
-    static const Quantity joule();
-    static const Quantity watt();
-    static const Quantity coulomb();
-    static const Quantity volt();
-    static const Quantity farad();
-    static const Quantity ohm();
-    static const Quantity siemens();
-    static const Quantity weber();
-    static const Quantity tesla();
-    static const Quantity henry();
-    static const Quantity lumen();
-    static const Quantity lux();
-    static const Quantity becquerel();
-    static const Quantity gray();
-    static const Quantity sievert();
-    static const Quantity katal();
 
+    /*
+     #############################################
+     # Prefixes                                  #
+     #############################################
+    */
     //SI prefixes
     static const Quantity yocto();
     static const Quantity zepto();
@@ -93,6 +93,165 @@ public:
     static const Quantity exa();
     static const Quantity zetta();
     static const Quantity yotta();
+
+    //Binary prefixes
+    static const Quantity kibi();
+    static const Quantity mebi();
+    static const Quantity gibi();
+    static const Quantity tebi();
+    static const Quantity pebi();
+    static const Quantity exbi();
+    static const Quantity zebi();
+    static const Quantity yobi();
+
+    /*
+     #############################################
+     # Derived units                             #
+     #############################################
+    */
+    // derived SI units
+    static const Quantity sqmeter();
+    static const Quantity cbmeter();
+    static const Quantity newton();
+    static const Quantity hertz();
+    static const Quantity radian();
+    static const Quantity steradian();
+    static const Quantity pascal();
+    static const Quantity joule();
+    static const Quantity watt();
+    static const Quantity coulomb();
+    static const Quantity volt();
+    static const Quantity farad();
+    static const Quantity ohm();
+    static const Quantity siemens();
+    static const Quantity weber();
+    static const Quantity tesla();
+    static const Quantity henry();
+    static const Quantity lumen();
+    static const Quantity lux();
+    static const Quantity becquerel();
+    static const Quantity gray();
+    static const Quantity sievert();
+    static const Quantity katal();
+
+
+    /*
+     * -------------------------------------
+     *  derived from SI units
+     * -------------------------------------
+     */
+    // mass
+    static const Quantity metric_ton();
+    static const Quantity short_ton();
+    static const Quantity long_ton();
+    static const Quantity pound();
+    static const Quantity ounce();
+    static const Quantity gram();
+    static const Quantity atomic_mass_unit();
+    static const Quantity carat();
+
+
+    // distance/length
+    //--------------------------------------
+    static const Quantity micron();
+    static const Quantity angstrom();
+    static const Quantity astronomicalUnit();
+    static const Quantity lightyear();
+    static const Quantity lightsecond();
+    static const Quantity lightminute();
+    static const Quantity parsec();
+    // US measures
+    static const Quantity inch();
+    static const Quantity foot();
+    static const Quantity yard();
+    static const Quantity mile();
+    static const Quantity line();
+    static const Quantity rod();
+    static const Quantity furlong();
+    // Nautical (US)
+    static const Quantity fathom();
+    static const Quantity nauticalMile();
+    static const Quantity cable();
+
+    // area
+    //--------------------------------------
+    static const Quantity are();
+    static const Quantity hectare();
+    static const Quantity acre();
+
+
+    // volume
+    //--------------------------------------
+    static const Quantity USgallon();
+    static const Quantity UKgallon();
+    static const Quantity USquart();
+    static const Quantity UKquart();
+    static const Quantity USpint();
+    static const Quantity UKpint();
+    static const Quantity USfluidOunce();
+    static const Quantity UKfluidOunce();
+    static const Quantity liter();
+
+
+    // time
+    //--------------------------------------
+    static const Quantity minute();
+    static const Quantity hour();
+    static const Quantity day();
+    static const Quantity week();
+    static const Quantity julianYear();
+    static const Quantity tropicalYear();
+    static const Quantity siderealYear();
+
+    // concentration
+    //--------------------------------------
+    static const Quantity percent();
+    static const Quantity ppm();
+    static const Quantity ppb();
+    static const Quantity karat();
+
+    // pressure
+    //--------------------------------------
+    static const Quantity bar();
+    static const Quantity atmosphere();
+    static const Quantity torr();
+    static const Quantity poundsPerSqInch();
+
+    // energy
+    //--------------------------------------
+    static const Quantity electronVolt();
+    static const Quantity calorie();
+    static const Quantity britishThermalUnit();
+
+
+    // Information
+    //--------------------------------------
+    static const Quantity nat();
+    static const Quantity hartley();
+    static const Quantity byte();
+
+
+    // Cooking
+    //--------------------------------------
+    // Note: these again differ from US to UK, Australia, Japan,...
+    // Since for cooking generally not that high a precision is
+    // required, let's just stick with the so called 'legal' variant...
+
+    static const Quantity tablepsoon();
+    static const Quantity teaspoon();
+    static const Quantity cup();
+
+
+    // Various others
+    //--------------------------------------
+    static const Quantity gravity();
+    static const Quantity speedOfSoundSTP();
+    static const Quantity knot();
+    static const Quantity horsepower();
+
+
+
+
 };
 
 #endif // UNITS_H
