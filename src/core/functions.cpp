@@ -233,17 +233,18 @@ Quantity function_sqrt(Function* f, const Function::ArgumentList& args)
 
 Quantity function_variance(Function* f, const Function::ArgumentList& args)
 {
-    ENSURE_REAL_ARGUMENTS()
     ENSURE_POSITIVE_ARGUMENT_COUNT()
 
     Quantity mean = function_average(f, args);
     if (mean.isNan())
         return mean;
 
-    Quantity acc = (args.first() - mean);
-    acc *= acc;
-    for (int i = 1; i < args.count(); ++i)
-        acc += (args.at(i) - mean) * (args.at(i) - mean);
+    Quantity acc(DMath::real(args[0] - mean)*DMath::real(args[0] - mean)
+            + DMath::imag(args[0] - mean)*DMath::imag(args[0] - mean));
+    for (int i = 1; i < args.count(); ++i) {
+        Quantity q(args[i] - mean);
+        acc += DMath::real(q)*DMath::real(q) + DMath::imag(q)*DMath::imag(q);
+    }
 
     return acc / Quantity(args.count());
 }

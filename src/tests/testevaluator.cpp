@@ -455,6 +455,10 @@ void test_function_stat()
     CHECK_EVAL("GEOMEAN(1;1;1)", "1");
     CHECK_EVAL("GEOMEAN(1;1;1;1)", "1");
     CHECK_EVAL_FAIL("GEOMEAN(1;1;1;-1)");
+
+    CHECK_EVAL("VARIANCE(1;-1)", "1");
+    CHECK_EVAL("VARIANCE(5 meter; 13 meter)", "16 meter²");
+    // for complex tests of VARIANCE test_complex
 }
 
 void test_function_logic()
@@ -696,6 +700,9 @@ void test_complex()
     // Check for basic complex number evaluation
     CHECK_EVAL("(1+1j)*(1-1j)", "2");
     CHECK_EVAL("(1+1j)*(1+1j)", "2j");           // TODO : Smarter formatting
+
+
+    CHECK_EVAL("VARIANCE(1j;-1j)", "1");
 }
 
 void test_angle_mode(Settings* settings)
