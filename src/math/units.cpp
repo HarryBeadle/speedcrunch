@@ -20,12 +20,70 @@
 #include "math/rational.h"
 #include "math/quantity.h"
 #include <QString>
-#include <QMap>
+#include <QStringList>
+
+QHash<QMap<QString, Rational>, Quantity> Units::m_matchLookup;
 
 
-#define MATCH_UNIT(val, name)   if(q.sameDimension(val)) { \
-                                    q.setDisplayUnit((val).numericValue(), (name));\
-                                }
+void Units::pushUnit(Quantity q, QString name)
+{
+    q.cleanDimension();
+    q.setDisplayUnit(CNumber(1), name);         //value of the unit is irrelevant here
+    m_matchLookup.insert(q.getDimension(), q);
+}
+
+unsigned int qHash(QMap<QString, Rational> dimension)
+{
+    QStringList keyList(dimension.keys());
+    QString blob("");
+    keyList.sort();
+    for (int i=0; i<keyList.size(); ++i) {
+        keyList[i].append(dimension[keyList[i]].toString());
+        blob.append(keyList[i]);
+    }
+    return qHash(blob);
+}
+
+
+/*
+ * initialize the lookup table for automatic matching
+ */
+void Units::init()
+{
+    m_matchLookup.clear();
+    pushUnit(joule(), "newton meter");                          // energy or torque
+    pushUnit(newton(), "newton");                               // force
+    pushUnit(watt(), "watt");                                   // power
+    pushUnit(pascal(), "pascal");                               // pressure or energy density
+    pushUnit(coulomb(), "coulomb");                             // charge
+    pushUnit(volt(), "volt");                                   // electrical potential
+    pushUnit(ohm(), "ohm");                                     // el. resistance
+    pushUnit(siemens(), "siemens");                             // el. conductance
+    pushUnit(ohm()*meter(), "ohm meter");                       // el. resistivity
+    pushUnit(siemens()/meter(), "siemens/meter");               // el. conductivity
+    pushUnit(siemens()/meter()/mole(), "siemens/(meter mole)"); // molar conductivity
+    pushUnit(farad(), "farad");                                 // capacitance
+    pushUnit(tesla(), "tesla");                                 // magnetic flux density
+    pushUnit(weber(), "weber");                                 // magnetic flux
+    pushUnit(henry(), "henry");                                 // inductance
+    pushUnit(coulomb()/cbmeter(), "coulomb/meter³");            // electric charge density
+    pushUnit(coulomb()/sqmeter(), "coulomb/meter²");            // surface charge density or el. flux
+    pushUnit(coulomb()/kilogram(), "coulomb/kilogram");         // exposure
+    pushUnit(farad()/meter(), "farad/meter");                   // permittivity
+    pushUnit(henry()/meter(), "henry/meter");                   // permeability
+    pushUnit(joule()/kilogram()/kelvin(),"joule/(kilogram kelvin)");    // specific heat capacity
+    pushUnit(joule()/mole()/kelvin(), "joule/(mole kelvin");            // molar heat capacity
+    pushUnit(mole()/second()/cbmeter(), "mole/(second meter³)");        // catalytic activity
+    pushUnit(newton()/meter(), "newton/meter");                 // surface tension
+    pushUnit(pascal()*second(), "pascal second");               // dynamic viscosity
+    pushUnit(volt()/meter(), "volt/meter");                     // el. field
+    pushUnit(watt()/meter()/kelvin(), "watt/(meter kelvin)");   // thermal conductivity
+    pushUnit(watt()/sqmeter(), "watt/meter²");                  // heat flux
+    pushUnit(joule()/kelvin(), "joule/kelvin");                 // entropy or heat capacity
+    pushUnit(joule()/kilogram(), "joule/kilogram");             // specific energy
+}
+
+
 
 void Units::findUnit(Quantity & q)
 {
@@ -33,40 +91,16 @@ void Units::findUnit(Quantity & q)
     CNumber unit(1);
     q.cleanDimension();
 
+    if (m_matchLookup.isEmpty())
+        init();
+
     /*
      *  match derived units
-     *  TODO: Store these units in a data structure to match the dimension vector more efficiently
      */
-    MATCH_UNIT(joule(), "newton meter")                             // energy or torque
-    else MATCH_UNIT(newton(), "newton")                             // force
-    else MATCH_UNIT(watt(), "watt")                                 // power
-    else MATCH_UNIT(pascal(), "pascal")                             // pressure or energy density
-    else MATCH_UNIT(coulomb(), "coulomb")                           // charge
-    else MATCH_UNIT(volt(), "volt")                                 // electrical potential
-    else MATCH_UNIT(ohm(), "ohm")                                   // el. resistance
-    else MATCH_UNIT(siemens(), "siemens")                           // el. conductance
-    else MATCH_UNIT(ohm()*meter(), "ohm meter")                     // el. resistivity
-    else MATCH_UNIT(siemens()/meter(), "siemens/meter")             // el. conductivity
-    else MATCH_UNIT(siemens()/meter()/mole(), "siemens/(meter mole)")         // molar conductivity
-    else MATCH_UNIT(farad(), "farad")                               // capacitance
-    else MATCH_UNIT(tesla(), "tesla")                               // magnetic flux density
-    else MATCH_UNIT(weber(), "weber")                               // magnetic flux
-    else MATCH_UNIT(henry(), "henry")                               // inductance
-    else MATCH_UNIT(coulomb()/cbmeter(), "coulomb/meter³")          // electric charge density
-    else MATCH_UNIT(coulomb()/sqmeter(), "coulomb/meter²")          // surface charge density or el. flux
-    else MATCH_UNIT(coulomb()/kilogram(), "coulomb/kilogram")       // exposure
-    else MATCH_UNIT(farad()/meter(), "farad/meter")                 // permittivity
-    else MATCH_UNIT(henry()/meter(), "henry/meter")                 // permeability
-    else MATCH_UNIT(joule()/kilogram()/kelvin(),"joule/(kilogram kelvin)")    // specific heat capacity
-    else MATCH_UNIT(joule()/mole()/kelvin(), "joule/(mole kelvin")  // molar heat capacity
-    else MATCH_UNIT(mole()/second()/cbmeter(), "mole/(second meter³)")        // catalytic activity
-    else MATCH_UNIT(newton()/meter(), "newton/meter")               // surface tension
-    else MATCH_UNIT(pascal()*second(), "pascal second")             // dynamic viscosity
-    else MATCH_UNIT(volt()/meter(), "volt/meter")                   // el. field
-    else MATCH_UNIT(watt()/meter()/kelvin(), "watt/(meter kelvin)") // thermal conductivity
-    else MATCH_UNIT(watt()/sqmeter(), "watt/meter²")                // heat flux
-    else MATCH_UNIT(joule()/kelvin(), "joule/kelvin")               // entropy or heat capacity
-    else MATCH_UNIT(joule()/kilogram(), "joule/kilogram")           // specific energy
+    if (m_matchLookup.contains(q.getDimension())) {
+        Quantity temp(m_matchLookup[q.getDimension()]);
+        q.setDisplayUnit(temp.numericValue(), temp.unitName());
+    }
     else
     {
         /*
@@ -84,31 +118,31 @@ void Units::findUnit(Quantity & q)
                 exponent = '^' + exponent;
 
             if(exponent == QLatin1String("^0")) exponent = QString::fromUtf8("⁰");
-            else if(exponent == QLatin1String("^2")) exponent = QString::fromUtf8("²");
-            else if(exponent == QLatin1String("^3")) exponent = QString::fromUtf8("³");
-            else if(exponent == QLatin1String("^4")) exponent = QString::fromUtf8("⁴") ;
-            else if(exponent == QLatin1String("^5")) exponent = QString::fromUtf8("⁵") ;
-            else if(exponent == QLatin1String("^6")) exponent = QString::fromUtf8("⁶") ;
-            else if(exponent == QLatin1String("^7")) exponent = QString::fromUtf8("⁷") ;
-            else if(exponent == QLatin1String("^8")) exponent = QString::fromUtf8("⁸") ;
-            else if(exponent == QLatin1String("^9")) exponent = QString::fromUtf8("⁹") ;
+            else if (exponent == QLatin1String("^2")) exponent = QString::fromUtf8("²");
+            else if (exponent == QLatin1String("^3")) exponent = QString::fromUtf8("³");
+            else if (exponent == QLatin1String("^4")) exponent = QString::fromUtf8("⁴") ;
+            else if (exponent == QLatin1String("^5")) exponent = QString::fromUtf8("⁵") ;
+            else if (exponent == QLatin1String("^6")) exponent = QString::fromUtf8("⁶") ;
+            else if (exponent == QLatin1String("^7")) exponent = QString::fromUtf8("⁷") ;
+            else if (exponent == QLatin1String("^8")) exponent = QString::fromUtf8("⁸") ;
+            else if (exponent == QLatin1String("^9")) exponent = QString::fromUtf8("⁹") ;
 
 
 
             // TODO: replace this with a lookup to a repository
-            if(i.key() == "length") {
+            if (i.key() == "length") {
                 unit_name += " meter";
-            } else if(i.key() == "time") {
+            } else if (i.key() == "time") {
                 unit_name += " second";
-            } else if(i.key() == "mass") {
+            } else if (i.key() == "mass") {
                 unit_name += " kilogram";
-            } else if(i.key() == "el. current") {
+            } else if (i.key() == "el. current") {
                 unit_name += " ampere";
-            } else if(i.key() == "amount") {
+            } else if (i.key() == "amount") {
                 unit_name += " mole";
-            } else if(i.key() == "luminous intensity") {
+            } else if (i.key() == "luminous intensity") {
                 unit_name += " candela";
-            } else if(i.key() == "temperature") {
+            } else if (i.key() == "temperature") {
                 unit_name += " kelvin";
             } else {
                 unit_name += " " + i.key(); // fall back to the dimension name
@@ -191,7 +225,7 @@ const Quantity Units::steradian()
 
 const Quantity Units::pascal()
 {
-    return newton()/meter()/meter();
+    return newton()/sqmeter();
 }
 
 const Quantity Units::joule()
@@ -236,7 +270,7 @@ const Quantity Units::weber()
 
 const Quantity Units::tesla()
 {
-    return weber()/meter()/meter();
+    return weber()/sqmeter();
 }
 
 const Quantity Units::henry()
@@ -251,7 +285,7 @@ const Quantity Units::lumen()
 
 const Quantity Units::lux()
 {
-    return lumen()/meter()/meter();
+    return lumen()/sqmeter();
 }
 
 const Quantity Units::becquerel()

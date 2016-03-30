@@ -19,14 +19,24 @@
 #ifndef UNITS_H
 #define UNITS_H
 
-class Quantity;
+#include <QHash>
+#include <QMap>
 
+class Quantity;
+class Rational;
 
 class Units
 {
+private:
+    static void init();
+    static QHash<QMap<QString, Rational>, Quantity> m_matchLookup;
+    static void pushUnit(Quantity q, QString name);
+
 public:
     static void findUnit(Quantity &q);
 
+
+    // base SI units
     static const Quantity meter();
     static const Quantity second();
     static const Quantity kilogram();
@@ -38,6 +48,7 @@ public:
     static const Quantity sqmeter();
     static const Quantity cbmeter();
 
+    // derived SI units
     static const Quantity newton();
     static const Quantity hertz();
     static const Quantity radian();
@@ -60,7 +71,7 @@ public:
     static const Quantity sievert();
     static const Quantity katal();
 
-
+    //SI prefixes
     static const Quantity yocto();
     static const Quantity zepto();
     static const Quantity atto();
