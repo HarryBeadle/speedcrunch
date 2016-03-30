@@ -56,7 +56,6 @@ public:
     void setAutoCompletionEnabled(bool);
     void setCursorPosition(int pos);
     void setText(const QString&);
-    QSize sizeHint() const;
     void stopAutoCalc();
     void stopAutoComplete();
     QString text() const;
@@ -88,7 +87,7 @@ public slots:
     void updateHistory();
 
 protected slots:
-    virtual void insertFromMimeData(const QMimeData*);
+    void insertFromMimeData(const QMimeData*) override;
     void autoCalc();
     void autoCalcSelection();
     void autoComplete(const QString&);
@@ -105,11 +104,13 @@ protected slots:
     void triggerEnter();
 
 protected:
-    virtual void changeEvent(QEvent*);
-    virtual void focusOutEvent(QFocusEvent*);
-    virtual void keyPressEvent(QKeyEvent*);
-    virtual void paintEvent(QPaintEvent*);
-    virtual void wheelEvent(QWheelEvent*);
+    void changeEvent(QEvent*) override;
+    void focusOutEvent(QFocusEvent*) override;
+    void keyPressEvent(QKeyEvent*) override;
+    void paintEvent(QPaintEvent*) override;
+    void scrollContentsBy(int, int) override;
+    QSize sizeHint() const override;
+    void wheelEvent(QWheelEvent*) override;
 
 private:
     Q_DISABLE_COPY(Editor)
