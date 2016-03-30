@@ -46,7 +46,7 @@ void check_ser(const char* file, int line, const char* msg, const T& num, const 
     QJsonObject obj;
     num.serialize(obj);
     QJsonDocument doc(obj);
-    string result = doc.toJson(QJsonDocument::Compact).toStdString();
+    string result(doc.toJson(QJsonDocument::Compact).data());
     /* Test result and display info */
     ++ser_total_tests;
     DisplayErrorOnMismatch(file, line, msg, result, expected, ser_failed_tests, ser_new_failed_tests, issue);
