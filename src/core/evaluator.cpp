@@ -1168,9 +1168,7 @@ void Evaluator::compile(const Tokens& tokens, const QString& _expression)
                                 || token.isOperand())) // token represents implicit multiplication
                     {
                         ruleFound = true;
-                        // workaround for min precedence (for the sake of coherency only):
-                        syntaxStack.push(Token(Token::stxOperator, "*"));
-                        syntaxStack.reduce(3);
+                        syntaxStack.reduce(2, opPrecedence(Token::Asterisk));
                         m_codes.append(Opcode::Mul);
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for implicit multiplication" << "\n";
