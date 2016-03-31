@@ -171,8 +171,8 @@ public:
     const Token& top(unsigned index);
 
     void reduce(int count, int minPrecedence = INVALID_PRECEDENCE);
-    void reduce(int count, Token &top, int minPrecedence = INVALID_PRECEDENCE);
-    void reduce(QList<Token> tokens, Token &top, int minPrecedence = INVALID_PRECEDENCE);
+    void reduce(int count, Token &&top, int minPrecedence = INVALID_PRECEDENCE);
+    void reduce(QList<Token> tokens, Token &&top, int minPrecedence = INVALID_PRECEDENCE);
 
 private:
     void ensureSpace();
@@ -398,7 +398,7 @@ void TokenStack::reduce(int count, int minPrecedence)
  * \param minPrecedence minimum precedence to set the top token, or \c INVALID_PRECEDENCE
  * if this method should use the minimum value from the removed tokens.
  */
-void TokenStack::reduce(int count, Token &top, int minPrecedence)
+void TokenStack::reduce(int count, Token &&top, int minPrecedence)
 {
     // assert(itemCount() >= count);
 
@@ -406,7 +406,7 @@ void TokenStack::reduce(int count, Token &top, int minPrecedence)
     for (int i = 0 ; i < count ; ++i)
         tokens.append(pop());
 
-    reduce(tokens, top, minPrecedence);
+    reduce(tokens, std::forward<Token>(top), minPrecedence);
 }
 
 /** Push \a top to the top and adjust its text position and minimum precedence using \a tokens.
@@ -414,7 +414,7 @@ void TokenStack::reduce(int count, Token &top, int minPrecedence)
  * \param minPrecedence minimum precedence to set the top token, or \c INVALID_PRECEDENCE
  * if this method should use the minimum value from the removed tokens.
  */
-void TokenStack::reduce(QList<Token> tokens, Token &top, int minPrecedence)
+void TokenStack::reduce(QList<Token> tokens, Token &&top, int minPrecedence)
 {
 
 #ifdef EVALUATOR_DEBUG
@@ -1058,7 +1058,7 @@ void Evaluator::compile(const Tokens& tokens, const QString& _expression)
                         ruleFound = true;
                         syntaxStack.reduce(2);
                         if (op.asOperator() == Token::Minus)
-                            m_codes.append(Opcode(Opcode::Neg));
+                          m_codes.append(Opcode(Opcode::Neg));
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for unary operator in simplified function syntax; function " << id.text() << "\n";
 #endif
