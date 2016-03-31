@@ -455,6 +455,10 @@ void test_function_stat()
     CHECK_EVAL("GEOMEAN(1;1;1)", "1");
     CHECK_EVAL("GEOMEAN(1;1;1;1)", "1");
     CHECK_EVAL_FAIL("GEOMEAN(1;1;1;-1)");
+
+    CHECK_EVAL("VARIANCE(1;-1)", "1");
+    CHECK_EVAL("VARIANCE(5 meter; 13 meter)", "16 meter²");
+    // for complex tests of VARIANCE see test_complex
 }
 
 void test_function_logic()
@@ -684,18 +688,23 @@ void test_user_functions()
 void test_complex()
 {
     // Check for basic complex number processing
-    CHECK_EVAL("1j", "1j");                      // TODO : Smarter formatting
-    CHECK_EVAL("0.1j", "0.1j");                  // TODO : Smarter formatting
-    CHECK_EVAL(".1j", "0.1j");                   // TODO : Smarter formatting
-    CHECK_EVAL("1E12j", "1000000000000j");       // TODO : Smarter formatting
-    CHECK_EVAL("0.1E12j", "100000000000j");      // TODO : Smarter formatting
-    CHECK_EVAL("1E-12j", "0.000000000001j");     // TODO : Smarter formatting
-    CHECK_EVAL("0.1E-12j", "0.0000000000001j");  // TODO : Smarter formatting
+    CHECK_EVAL("1j", "1j");
+    CHECK_EVAL("0.1j", "0.1j");
+    CHECK_EVAL(".1j", "0.1j");
+    CHECK_EVAL("1E12j", "1000000000000j");
+    CHECK_EVAL("0.1E12j", "100000000000j");
+    CHECK_EVAL("1E-12j", "0.000000000001j");
+    CHECK_EVAL("0.1E-12j", "0.0000000000001j");
     // Check for some bugs introduced by first versions of complex number processing
-    CHECK_EVAL("0.1", "0.1");                      // TODO : Smarter formatting
+    CHECK_EVAL("0.1", "0.1");
     // Check for basic complex number evaluation
     CHECK_EVAL("(1+1j)*(1-1j)", "2");
-    CHECK_EVAL("(1+1j)*(1+1j)", "2j");           // TODO : Smarter formatting
+    CHECK_EVAL("(1+1j)*(1+1j)", "2j");
+
+
+    CHECK_EVAL("VARIANCE(1j;-1j)", "1");
+    CHECK_EVAL("VARIANCE(1j;-1j;1;-1)", "1");
+    CHECK_EVAL("VARIANCE(2j;-2j;1;-1)", "2.5");
 }
 
 void test_angle_mode(Settings* settings)
