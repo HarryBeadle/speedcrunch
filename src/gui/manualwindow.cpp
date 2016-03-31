@@ -30,7 +30,7 @@
 
 
 ManualWindow::ManualWindow(QWidget* parent)
-    : QTextBrowser(parent)
+    : QTextBrowser(parent), m_scrollUpdated(false)
 {
     setWindowFlags(Qt::Window);
     setWindowIcon(QPixmap(":/speedcrunch.png"));
@@ -124,6 +124,30 @@ void ManualWindow::closeEvent(QCloseEvent* event)
 {
     emit windowClosed();
     QTextBrowser::closeEvent(event);
+}
+
+void ManualWindow::paintEvent(QPaintEvent* e)
+{
+    /* So the issue and reasoning here is:
+     * - When opening the manual window via the context help feature *and it was maximized before*,
+     *   it doesn't correctly scroll to the right anchor on the page.
+     * - QTextBrowser keeps its scrolling offset in pixels; when the widget is resized, the text on
+     *   the page is laid out again and the pixel offset of anchors may change. This means when
+     *   resizing the widget, the formerly-scrolled-to anchor may not be at the top anymore.
+     * - For maximized windows, the page is loaded first, -- including scrolling the widget to the
+     *   anchor -- then there's a resizeEvent that sets the actual, maximized window size. This throws
+     *   off the page position.
+     * - We work around this here by updating the scroll position on the very first paintEvent, which
+     *   happens after the window's maximized state has finally properly registered; late enough to fix
+     *   the scrolling.
+     *
+     * Yes, it's rather hackish.
+     */
+    if (!m_scrollUpdated && source().isValid()) {
+        scrollToAnchor(source().fragment());
+        m_scrollUpdated = true;
+    }
+    QTextBrowser::paintEvent(e);
 }
 
 void ManualWindow::handleAnchorClick(const QUrl &url)
