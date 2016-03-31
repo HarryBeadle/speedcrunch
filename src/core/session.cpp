@@ -36,16 +36,16 @@ void Session::serialize(QJsonObject &json) const
 
     // history
     QJsonArray hist_entries;
-    for(int i=0; i<history.size(); ++i) {
+    for(int i=0; i<m_history.size(); ++i) {
         QJsonObject curr_entry_obj;
-        history.at(i).serialize(curr_entry_obj);
+        m_history.at(i).serialize(curr_entry_obj);
         hist_entries.append(curr_entry_obj);
     }
     json["history"] = hist_entries;
 
     //variables
     QJsonArray var_entries;
-    QHashIterator<QString, Variable> i(variables);
+    QHashIterator<QString, Variable> i(m_variables);
     while(i.hasNext()) {
         i.next();
         QJsonObject curr_entry_obj;
@@ -60,7 +60,7 @@ void Session::serialize(QJsonObject &json) const
 
     // functions
     QJsonArray func_entries;
-    QHashIterator<QString, UserFunction> j(userFunctions);
+    QHashIterator<QString, UserFunction> j(m_userFunctions);
     while(j.hasNext()) {
         j.next();
         QJsonObject curr_entry_obj;
@@ -74,28 +74,34 @@ int Session::deSerialize(const QJsonObject &json, bool merge=false)
 {
     QString version = json["version"].toString();
     if(!merge) {
-        history.clear();
-        variables.clear();
+        m_history.clear();
+        m_variables.clear();
     }
 
-    QJsonArray hist_obj = json["history"].toArray();
-    int n = hist_obj.size();
-    for(int i=0; i<n; ++i) {
-        history.append(HistoryEntry(hist_obj[i].toObject()));
+    if (json.contains("history")) {
+        QJsonArray hist_obj = json["history"].toArray();
+        int n = hist_obj.size();
+        for(int i=0; i<n; ++i) {
+            m_history.append(HistoryEntry(hist_obj[i].toObject()));
+        }
     }
 
-    QJsonArray var_obj = json["variables"].toArray();
-    n = var_obj.size();
-    for(int i=0; i<n; ++i) {
-        QJsonObject var = var_obj[i].toObject();
-        variables[var["identifier"].toString()].deSerialize(var);
+    if (json.contains("variables")) {
+        QJsonArray var_obj = json["variables"].toArray();
+        int n = var_obj.size();
+        for(int i=0; i<n; ++i) {
+            QJsonObject var = var_obj[i].toObject();
+            m_variables[var["identifier"].toString()].deSerialize(var);
+        }
     }
 
-    QJsonArray func_obj = json["functions"].toArray();
-    n = func_obj.size();
-    for(int i=0; i<n; ++i) {
-        UserFunction func(func_obj[i].toObject());
-        addUserFunction(func);
+    if (json.contains("history")) {
+        QJsonArray func_obj = json["functions"].toArray();
+        int n = func_obj.size();
+        for(int i=0; i<n; ++i) {
+            UserFunction func(func_obj[i].toObject());
+            addUserFunction(func);
+        }
     }
     return version==SPEEDCRUNCH_VERSION;
 
@@ -104,32 +110,32 @@ int Session::deSerialize(const QJsonObject &json, bool merge=false)
 void Session::addVariable(const Variable &var)
 {
     QString id = var.identifier();
-    variables[id] = var;
+    m_variables[id] = var;
 }
 
 bool Session::hasVariable(const QString &id) const
 {
-    return variables.contains(id);
+    return m_variables.contains(id);
 }
 
 void Session::removeVariable(const QString &id)
 {
-    variables.remove(id);
+    m_variables.remove(id);
 }
 
 void Session::clearVariables()
 {
-    variables.clear();
+    m_variables.clear();
 }
 
 Variable Session::getVariable(const QString &id) const
 {
-    return variables.value(id);
+    return m_variables.value(id);
 }
 
 QList<Variable> Session::variablesToList() const
 {
-    return variables.values();
+    return m_variables.values();
 }
 
 bool Session::isBuiltInVariable(const QString & id) const
@@ -137,35 +143,35 @@ bool Session::isBuiltInVariable(const QString & id) const
     // Defining variables with the same name as existing functions is not supported for now.
     if(FunctionRepo::instance()->find(id))
         return true;
-    if(!variables.contains(id))
+    if(!m_variables.contains(id))
         return false;
 
-    return variables.value(id).type() == Variable::BuiltIn;
+    return m_variables.value(id).type() == Variable::BuiltIn;
 }
 
 void Session::addHistoryEntry(const HistoryEntry &entry)
 {
-    history.append(entry);
+    m_history.append(entry);
 }
 
 void Session::insertHistoryEntry(const int index, const HistoryEntry &entry)
 {
-    history.insert(index, entry);
+    m_history.insert(index, entry);
 }
 
 void Session::removeHistoryEntryAt(const int index)
 {
-    history.removeAt(index);
+    m_history.removeAt(index);
 }
 
 HistoryEntry Session::historyEntryAt(const int index) const
 {
-    return history.at(index);
+    return m_history.at(index);
 }
 
 void Session::clearHistory()
 {
-    history.clear();
+    m_history.clear();
 }
 
 void Session::addUserFunction(const UserFunction &func)
@@ -176,32 +182,32 @@ void Session::addUserFunction(const UserFunction &func)
         Evaluator::instance()->eval();
     } else {
         QString name = func.name();
-        userFunctions[name] = func;
+        m_userFunctions[name] = func;
     }
 }
 
 void Session::removeUserFunction(const QString &str)
 {
-    userFunctions.remove(str);
+    m_userFunctions.remove(str);
 }
 
 void Session::clearUserFunctions()
 {
-    userFunctions.clear();
+    m_userFunctions.clear();
 }
 
 bool Session::hasUserFunction(const QString &str) const
 {
-    return userFunctions.contains(str);
+    return m_userFunctions.contains(str);
 }
 
 QList<UserFunction> Session::UserFunctionsToList() const
 {
-    return userFunctions.values();
+    return m_userFunctions.values();
 }
 
 const UserFunction * Session::getUserFunction(const QString &fname) const
 {
-    return &*userFunctions.find(fname);
+    return &*m_userFunctions.find(fname);
 }
 

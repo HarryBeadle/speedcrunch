@@ -29,7 +29,7 @@ QString HistoryEntry::expr() const
     return m_expr;
 }
 
-CNumber HistoryEntry::result() const
+Quantity HistoryEntry::result() const
 {
     return m_result;
 }
@@ -39,7 +39,7 @@ void HistoryEntry::setExpr(const QString & e)
     m_expr = e;
 }
 
-void HistoryEntry::setResult(const CNumber & n)
+void HistoryEntry::setResult(const Quantity & n)
 {
     m_result = n;
 }
@@ -55,7 +55,12 @@ void HistoryEntry::serialize(QJsonObject & json) const
 
 void HistoryEntry::deSerialize(const QJsonObject & json)
 {
-    m_expr = json["expression"].toString();
-    m_result = CNumber(json["result"].toObject());
+    *this = HistoryEntry();
+
+    if (json.contains("expression"))
+        m_expr = json["expression"].toString();
+
+    if (json.contains("result"))
+        m_result = Quantity(json["result"].toObject());
     return;
 }

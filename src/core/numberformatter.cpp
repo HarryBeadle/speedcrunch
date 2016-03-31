@@ -20,38 +20,20 @@
 #include "core/numberformatter.h"
 
 #include "core/settings.h"
-#include "math/cmath.h"
-#include "math/rational.h"
-#include "math/units.h"
+#include "math/quantity.h"
 
-QString NumberFormatter::format(CNumber number)
+QString NumberFormatter::format(Quantity q)
 {
     Settings* settings = Settings::instance();
 
+    char format = q.format();
+    if (format == 0)
+        format = settings->resultFormat;
 
-    //handle units
-    QString unit_name = "";
-    CNumber unit(1);
-    if(!number.hasUnit() && !number.isDimensionless()) {
-        number.cleanDimension();
-        Units::findUnit(number);
-    }
-    unit_name = ' ' + number.getUnitName();
-    unit = number.getUnit();
-    number.stripUnits();
+    QString result = DMath::format(q, format, settings->resultPrecision);
 
-    const char format = number.format() != 0 ? number.format() : settings->resultFormat;
-    number /= unit;
-    char* str = CMath::format(number, format, settings->resultPrecision);
-    QString result = QString::fromLatin1(str);
-    free(str);
+    if (settings->radixCharacter() == ',')
+        result.replace('.', ',');
 
-    if(!number.real.isZero() && !number.imag.isZero() && unit_name != " ")
-        result = "(" + result + ")";
-    if(unit_name != " ") {
-        result.append(unit_name);
-    }
-    if (settings->radixCharacter() != '.')
-        result.replace('.', settings->radixCharacter());
     return result;
 }

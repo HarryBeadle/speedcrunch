@@ -34,7 +34,7 @@
 #include <QTreeWidget>
 #include <QVBoxLayout>
 
-static QString formatValue(const CNumber& value);
+static QString formatValue(const Quantity &value);
 
 VariableListWidget::VariableListWidget(QWidget* parent)
     : QWidget(parent)
@@ -203,15 +203,14 @@ void VariableListWidget::changeEvent(QEvent* event)
 void VariableListWidget::keyPressEvent(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_Delete) {
-        Evaluator::instance()->unsetVariable(currentItem()->text(0));
-        fillTable();
+        deleteItem();
         event->accept();
         return;
     }
     QWidget::keyPressEvent(event);
 }
 
-static QString formatValue(const CNumber& value)
+static QString formatValue(const Quantity& value)
 {
     return NumberFormatter::format(value);
 }

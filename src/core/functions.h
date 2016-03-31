@@ -21,7 +21,7 @@
 #define CORE_FUNCTION_H
 
 #include "core/errors.h"
-#include "math/cmath.h"
+#include "math/quantity.h"
 
 #include <QHash>
 #include <QObject>
@@ -33,8 +33,8 @@ class Function;
 class Function : public QObject {
     Q_OBJECT
 public:
-    typedef QVector<CNumber> ArgumentList;
-    typedef CNumber (*FunctionImpl)(Function*, const ArgumentList&);
+    typedef QVector<Quantity> ArgumentList;
+    typedef Quantity (*FunctionImpl)(Function*, const ArgumentList&);
 
     Function(const QString& identifier, FunctionImpl ptr, QObject* parent = 0)
         : QObject(parent)
@@ -46,7 +46,7 @@ public:
     const QString& name() const { return m_name; }
     const QString& usage() const { return m_usage; }
     Error error() const { return m_error; }
-    CNumber exec(const ArgumentList&);
+    Quantity exec(const ArgumentList&);
 
     void setName(const QString& name) { m_name = name; }
     void setUsage(const QString& usage) { m_usage = usage; }

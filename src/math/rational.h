@@ -62,8 +62,6 @@ public:
     QString toString() const;
     HNumber toHNumber( )const;
     double toDouble() const;
-
-    static void test();
 };
 
 #endif // RATIONAL_H

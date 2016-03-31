@@ -30,9 +30,10 @@
 
 
 ManualWindow::ManualWindow(QWidget* parent)
-    : QTextBrowser(parent)
+    : QTextBrowser(parent), m_scrollUpdated(false)
 {
     setWindowFlags(Qt::Window);
+    setWindowIcon(QPixmap(":/speedcrunch.png"));
     setStyleSheet(QStringLiteral("QTextBrowser { background-color: #FFFFFF; }"));
     QFont f("Helvetica");
     f.setStyleHint(QFont::SansSerif);
@@ -42,10 +43,11 @@ ManualWindow::ManualWindow(QWidget* parent)
     //Disable automatic opening of links. We handle them ourselves.
     this->setOpenLinks(false);
     connect(this, SIGNAL(anchorClicked(const QUrl&)), SLOT(handleAnchorClick(const QUrl&)));
+    connect(this, SIGNAL(sourceChanged(const QUrl&)), SLOT(handleSourceChanged(const QUrl&)));
 
     m_server = ManualServer::instance();
-    retranslateText();
     showHelpForKeyword("home");
+    retranslateText();
 }
 
 void ManualWindow::showHelpForKeyword(const QString &id)
@@ -62,16 +64,20 @@ void ManualWindow::openPage(const QUrl& url)
 
 void ManualWindow::retranslateText()
 {
-    setWindowTitle(tr("User Manual"));
+    QString docTitle = documentTitle();
+    if (docTitle.isEmpty())
+        setWindowTitle(tr("SpeedCrunch Manual"));
+    else
+        setWindowTitle(tr("%1 - SpeedCrunch Manual").arg(docTitle));
 }
 
 
 void ManualWindow::changeEvent(QEvent* event)
 {
     if (event->type() == QEvent::LanguageChange) {
-        retranslateText();
         m_server->ensureCorrectLanguage();
         this->reload();
+        retranslateText();
     }
     else
         QTextBrowser::changeEvent(event);
@@ -120,12 +126,42 @@ void ManualWindow::closeEvent(QCloseEvent* event)
     QTextBrowser::closeEvent(event);
 }
 
+void ManualWindow::paintEvent(QPaintEvent* e)
+{
+    /* So the issue and reasoning here is:
+     * - When opening the manual window via the context help feature *and it was maximized before*,
+     *   it doesn't correctly scroll to the right anchor on the page.
+     * - QTextBrowser keeps its scrolling offset in pixels; when the widget is resized, the text on
+     *   the page is laid out again and the pixel offset of anchors may change. This means when
+     *   resizing the widget, the formerly-scrolled-to anchor may not be at the top anymore.
+     * - For maximized windows, the page is loaded first, -- including scrolling the widget to the
+     *   anchor -- then there's a resizeEvent that sets the actual, maximized window size. This throws
+     *   off the page position.
+     * - We work around this here by updating the scroll position on the very first paintEvent, which
+     *   happens after the window's maximized state has finally properly registered; late enough to fix
+     *   the scrolling.
+     *
+     * Yes, it's rather hackish.
+     */
+    if (!m_scrollUpdated && source().isValid()) {
+        scrollToAnchor(source().fragment());
+        m_scrollUpdated = true;
+    }
+    QTextBrowser::paintEvent(e);
+}
+
 void ManualWindow::handleAnchorClick(const QUrl &url)
 {
-    if (url.toString().startsWith("qthelp:"))
+    if (url.scheme() == "qthelp") 
         openPage(url);
     else
         QDesktopServices::openUrl(url);
+}
+
+void ManualWindow::handleSourceChanged(const QUrl& url)
+{
+    // This updates the window title with the new document title.
+    retranslateText();
 }
 
 QVariant ManualWindow::loadResource(int type, const QUrl &name)

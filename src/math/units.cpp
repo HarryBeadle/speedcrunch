@@ -17,22 +17,21 @@
 // Boston, MA 02110-1301, USA.
 
 #include "math/units.h"
-#include "math/cmath.h"
 #include "math/rational.h"
+#include "math/quantity.h"
 #include <QString>
 #include <QMap>
 
-#define MATCH_UNIT(val, name)   if(number.sameDimension(val)) { \
-                                    number.setDisplayUnit((val), (name));\
+
+#define MATCH_UNIT(val, name)   if(q.sameDimension(val)) { \
+                                    q.setDisplayUnit((val).numericValue(), (name));\
                                 }
 
-void Units::findUnit(CNumber & number)
+void Units::findUnit(Quantity & q)
 {
     QString unit_name = "";
-    CNumber unit(number);
-    unit.clearDimension();
-    unit = number/unit;
-    number.cleanDimension();
+    CNumber unit(1);
+    q.cleanDimension();
 
     /*
      *  match derived units
@@ -73,7 +72,7 @@ void Units::findUnit(CNumber & number)
         /*
          *  autogenerate unit name (product of base units)
          */
-        QMap<QString, Rational> dimension = number.getDimension();
+        QMap<QString, Rational> dimension = q.getDimension();
         QMap<QString, Rational>::const_iterator i = dimension.constBegin();
         while (i != dimension.constEnd()) {
             QString exponent = i.value().toString();
@@ -117,170 +116,170 @@ void Units::findUnit(CNumber & number)
             unit_name += exponent;
             ++i;
         }
-        number.setDisplayUnit(unit, unit_name.trimmed());
+        q.setDisplayUnit(unit, unit_name.trimmed());
     }
 }
 
-const CNumber Units::meter()
+const Quantity Units::meter()
 {
-    CNumber meter(1);
+    Quantity meter(1);
     meter.modifyDimension("length", 1);
     return meter;
 }
 
-const CNumber Units::second()
+const Quantity Units::second()
 {
-    CNumber second(1);
+    Quantity second(1);
     second.modifyDimension("time", 1);
     return second;
 }
 
-const CNumber Units::kilogram()
+const Quantity Units::kilogram()
 {
-    CNumber kilogram(1);
+    Quantity kilogram(1);
     kilogram.modifyDimension("mass", 1);
     return kilogram;
 }
 
-const CNumber Units::ampere()
+const Quantity Units::ampere()
 {
-    CNumber ampere(1);
+    Quantity ampere(1);
     ampere.modifyDimension("el. current", 1);
     return ampere;
 }
 
-const CNumber Units::mole()
+const Quantity Units::mole()
 {
-    CNumber mole(1);
+    Quantity mole(1);
     mole.modifyDimension("amount", 1);
     return mole;
 }
 
-const CNumber Units::kelvin()
+const Quantity Units::kelvin()
 {
-    CNumber kelvin(1);
+    Quantity kelvin(1);
     kelvin.modifyDimension("temperature", 1);
     return kelvin;
 }
 
-const CNumber Units::candela()
+const Quantity Units::candela()
 {
-    CNumber candela(1);
+    Quantity candela(1);
     candela.modifyDimension("luminous intensity", 1);
     return candela;
 }
 
-const CNumber Units::newton()
+const Quantity Units::newton()
 {
     return meter()*kilogram()/second()/second();
 }
 
-const CNumber Units::hertz()
+const Quantity Units::hertz()
 {
-    return CNumber(1)/second();
+    return Quantity(1)/second();
 }
 
-const CNumber Units::radian()
+const Quantity Units::radian()
 {
-    return CNumber(1);
+    return Quantity(1);
 }
 
-const CNumber Units::steradian()
+const Quantity Units::steradian()
 {
-    return CNumber(1);
+    return Quantity(1);
 }
 
-const CNumber Units::pascal()
+const Quantity Units::pascal()
 {
     return newton()/meter()/meter();
 }
 
-const CNumber Units::joule()
+const Quantity Units::joule()
 {
     return newton()*meter();
 }
 
-const CNumber Units::watt()
+const Quantity Units::watt()
 {
     return joule()/second();
 }
 
-const CNumber Units::coulomb()
+const Quantity Units::coulomb()
 {
     return ampere()*second();
 }
 
-const CNumber Units::volt()
+const Quantity Units::volt()
 {
     return watt()/ampere();
 }
 
-const CNumber Units::farad()
+const Quantity Units::farad()
 {
     return coulomb()/volt();
 }
 
-const CNumber Units::ohm()
+const Quantity Units::ohm()
 {
     return volt()/ampere();
 }
 
-const CNumber Units::siemens()
+const Quantity Units::siemens()
 {
     return ampere()/volt();
 }
 
-const CNumber Units::weber()
+const Quantity Units::weber()
 {
     return volt()*second();
 }
 
-const CNumber Units::tesla()
+const Quantity Units::tesla()
 {
     return weber()/meter()/meter();
 }
 
-const CNumber Units::henry()
+const Quantity Units::henry()
 {
     return weber()/ampere();
 }
 
-const CNumber Units::lumen()
+const Quantity Units::lumen()
 {
     return candela()*steradian();
 }
 
-const CNumber Units::lux()
+const Quantity Units::lux()
 {
     return lumen()/meter()/meter();
 }
 
-const CNumber Units::becquerel()
+const Quantity Units::becquerel()
 {
-    return CNumber(1)/second();
+    return Quantity(1)/second();
 }
 
-const CNumber Units::gray()
-{
-    return joule()/kilogram();
-}
-
-const CNumber Units::sievert()
+const Quantity Units::gray()
 {
     return joule()/kilogram();
 }
 
-const CNumber Units::katal()
+const Quantity Units::sievert()
+{
+    return joule()/kilogram();
+}
+
+const Quantity Units::katal()
 {
     return mole()/second();
 }
 
-const CNumber Units::sqmeter()
+const Quantity Units::sqmeter()
 {
     return meter()*meter();
 }
 
-const CNumber Units::cbmeter()
+const Quantity Units::cbmeter()
 {
     return sqmeter()*meter();
 }

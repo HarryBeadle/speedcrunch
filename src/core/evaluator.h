@@ -23,6 +23,7 @@
 #include "core/functions.h"
 #include "math/hmath.h"
 #include "math/cmath.h"
+#include "math/quantity.h"
 
 #include <QHash>
 #include <QObject>
@@ -41,7 +42,8 @@ public:
     enum Op { InvalidOp = 0, Plus, Minus, Asterisk, Slash, Backslash, Caret,
               Super0, Super1, Super2, Super3, Super4, Super5, Super6, Super7, Super8, Super9,
               LeftPar, RightPar, Semicolon, Exclamation, Equal, Modulo,
-              LeftShift, RightShift, Ampersand, Pipe, RightArrow };
+              LeftShift, RightShift, Ampersand, Pipe, RightArrow,
+              Function };  /* Not really an operator but needed for managing shift/reduce conflicts */
     enum Type { stxUnknown, stxNumber, stxIdentifier, stxAbstract, stxOperator, stxOpenPar, stxClosePar, stxSep};
     //                     |<-------------isOperand------------->|<----------------isOperator----------------->|
 
@@ -50,7 +52,7 @@ public:
     Token(Type type = stxUnknown, const QString& text = QString::null, int pos = -1, int size = -1);
     Token(const Token&);
 
-    CNumber asNumber() const;
+    Quantity asNumber() const;
     Op asOperator() const;
     QString description() const;
     bool isNumber() const { return m_type == stxNumber; }
@@ -108,9 +110,9 @@ public:
     QString autoFix(const QString&);
     QString dump();
     QString error() const;
-    CNumber eval();
-    CNumber evalNoAssign();
-    CNumber evalUpdateAns();
+    Quantity eval();
+    Quantity evalNoAssign();
+    Quantity evalUpdateAns();
     QString expression() const;
     bool isValid();
     Tokens scan(const QString&) const;
@@ -122,7 +124,7 @@ public:
     QList<Variable> getVariables() const;
     QList<Variable> getUserDefinedVariables() const;
     QList<Variable> getUserDefinedVariablesPlusAns() const;
-    void setVariable(const QString&, CNumber, Variable::Type = Variable::UserDefined);
+    void setVariable(const QString&, Quantity, Variable::Type = Variable::UserDefined);
     void unsetVariable(const QString&, bool force_builtin = false);
     void unsetAllUserDefinedVariables();
     bool isBuiltInVariable(const QString&) const;
@@ -151,17 +153,19 @@ private:
     bool m_assignFunc;
     QStringList m_assignArg;
     QVector<Opcode> m_codes;
-    QVector<CNumber> m_constants;
+    QVector<Quantity> m_constants;
     QStringList m_identifiers;
     Session * m_session;
     QSet<QString> m_functionsInUse;
 
-    const CNumber& checkOperatorResult(const CNumber&);
+    const Quantity& checkOperatorResult(const Quantity&);
     static QString stringFromFunctionError(Function*);
-    CNumber exec(const QVector<Opcode>& opcodes, const QVector<CNumber>& constants,
+    Quantity exec(const QVector<Opcode>& opcodes, const QVector<Quantity>& constants,
                  const QStringList& identifiers);
-    CNumber execUserFunction(const UserFunction* function, QVector<CNumber>& arguments);
+    Quantity execUserFunction(const UserFunction* function, QVector<Quantity>& arguments);
     const UserFunction * getUserFunction(const QString&) const;
+
+    bool isFunction(Token token) { return token.isIdentifier() && (FunctionRepo::instance()->find(token.text()) || hasUserFunction(token.text())); };
 };
 
 #endif

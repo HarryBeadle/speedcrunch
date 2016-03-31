@@ -48,7 +48,6 @@ CNumber::CNumber( const HNumber& hn) :
   real(hn),
   imag(0)
 {
-  imag.setDimension(hn);
 }
 
 
@@ -188,87 +187,27 @@ CNumber& CNumber::setFormat(char c)
 }
 
 
-/**
- * Sets the display unit
- */
-CNumber& CNumber::setDisplayUnit(const CNumber unit, const QString &name)
-{
-  /* FIXME : This doesn't checks that real and imag part have the same unit */
-  /* after the execution.                                                   */
-  real.setDisplayUnit(unit.real, name);
-  imag.setDisplayUnit(unit.real, name);
-  return *this;
-}
-
-
-void CNumber::stripUnits() {
-  real.stripUnits();
-  imag.stripUnits();
-}
-
-
-void CNumber::modifyDimension(const QString &key, const Rational &exponent) {
-  real.modifyDimension(key, exponent);
-  imag.modifyDimension(key, exponent);
-}
-
-
-void CNumber::clearDimension(){
-  real.clearDimension();
-  imag.clearDimension();
-}
-
-
-void CNumber::cleanDimension(){
-  real.cleanDimension();
-  imag.cleanDimension();
-}
-
-
 /* FIXME !! (Almost) code duplicate of HNumber::serialize !! */
 void CNumber::serialize(QJsonObject &json) const
 {
     const char f = format();
-    json["format"] = (f=='\0') ? "NULL" : QString(f);
-    json["value"] = QString(CMath::format(*this, f, DECPRECISION));
-    if(hasUnit()) {
-        json["unit"] = QString(CMath::format(getUnit(), 'e', DECPRECISION));
-        json["unit_name"] = getUnitName();
-    }
-    if(hasDimension()) {
-        QJsonObject dim_json;
-        QMap<QString, Rational>::const_iterator i = real.getDimension().constBegin();
-        while (i !=  real.getDimension().constEnd()) {
-            const Rational & exp = i.value();
-            const QString & name = i.key();
-            dim_json[name] = exp.toString();
-            ++i;
-        }
-        json["dimension"] = dim_json;
-    }
+    json["format"] = (f=='\0') ? QString("NULL") : QString(QChar(f));
+    json["value"] = CMath::format(*this, f, DECPRECISION);
 }
 
 
 /* FIXME !! (Almost) code duplicate of HNumber::deSerialize !! */
 CNumber CNumber::deSerialize(const QJsonObject &json)
 {
-    QString str = json["value"].toString();
-    str.replace(",", ".");
-    CNumber result(str.toLatin1().constData());
-    QString f = json["format"].toString();
-    result.setFormat( (f=="NULL") ? '\0': f.at(0).toLatin1());
-
-    if(json.contains("unit")) {
-        str = json["unit"].toString();
-        result.setDisplayUnit(CNumber(str.toLatin1().constData()), json["unit_name"].toString());
+    CNumber result;
+    if (json.contains("value")) {
+        QString str = json["value"].toString();
+        str.replace(",", ".");
+        result = CNumber(str.toLatin1().constData());
     }
-    if(json.contains("dimension")) {
-        QJsonObject dim_json = json["dimension"].toObject();
-        for(int i=0; i<dim_json.count(); ++i) {
-            QString key = dim_json.keys()[i];
-            Rational val(dim_json[key].toString());
-            result.modifyDimension(key, val);
-        }
+    if (json.contains("format")) {
+        QString f = json["format"].toString();
+        result.setFormat((f.isEmpty() || f == QStringLiteral("NULL")) ? '\0': f.at(0).toLatin1());
     }
 
     return result;
@@ -315,8 +254,6 @@ CNumber& CNumber::operator=( const CNumber & cn )
  */
 CNumber CNumber::operator+( const CNumber & num ) const
 {
-  if(!sameDimension(num))
-    return HMath::nan(DimensionMismatch);
   CNumber result;
   result.real = real + num.real;
   result.imag = imag + num.imag;
@@ -338,8 +275,6 @@ CNumber& CNumber::operator+=( const CNumber & num )
  */
 CNumber operator-( const CNumber & n1, const CNumber & n2 )
 {
-  if(!n1.sameDimension(n2))
-    return HMath::nan(DimensionMismatch);
   CNumber result;
   result.real = n1.real - n2.real;
   result.imag = n1.imag - n2.imag;
@@ -558,14 +493,13 @@ CNumber CMath::i()
 
 
 /**
- * Formats the given number as string, in engineering notation.
- * Note that the returned string must be freed.
+ * Formats the given number as string.
  */
-char* CMath::format( const CNumber& cn, char format, int prec )
+QString CMath::format( const CNumber& cn, char format, int prec )
 {
   /* If number is NaN */
   if (cn.isNan())
-    return strdup("NaN");
+    return "NaN";
 
   /* If number is real */
   else if (cn.imag.isNearZero())
@@ -579,13 +513,13 @@ char* CMath::format( const CNumber& cn, char format, int prec )
     /* Use complex number formatting */
 
     /* Format real part */
-    const char * real_part = cn.real.isZero()? strdup("") : HMath::format(cn.real, format, prec);
+    QString real_part = cn.real.isZero()? "" : HMath::format(cn.real, format, prec);
 
     /* Format imaginary part */
-    const char * imag_part = "";
-    const char * separator = "";
-    const char * prefix    = "";   /* TODO : Insert two modes, one for a+jb and one for a+bj */
-    const char * postfix   = "j";  /* TODO : Insert two modes, one for a+bi and one for a+bj */
+    QString imag_part = "";
+    QString separator = "";
+    QString prefix    = "";   /* TODO : Insert two modes, one for a+jb and one for a+bj */
+    QString postfix   = "j";  /* TODO : Insert two modes, one for a+bi and one for a+bj */
 
     /* If imaginary part is positive */
     if (cn.imag.isPositive()) {
@@ -598,23 +532,7 @@ char* CMath::format( const CNumber& cn, char format, int prec )
       imag_part = HMath::format(-cn.imag, format, prec);
     }
 
-    /* Allocate string for the result */
-    int l1 = strlen(real_part) + strlen(separator) + strlen(prefix) + strlen(imag_part) + strlen(postfix);
-    char * result = (char *) malloc(l1+1);
-
-    /* Concatenate parts of the result */
-    strcpy(result, real_part);
-    strcat(result, separator);
-    strcat(result, prefix);
-    strcat(result, imag_part);
-    strcat(result, postfix);
-
-    /* Free old strings */
-    free((void *) real_part);
-    free((void *) imag_part);
-
-    return result;
-
+    return real_part + separator + prefix + imag_part + postfix;
   }
 }
 
@@ -664,19 +582,7 @@ CNumber CMath::raise( const CNumber & n1, int n )
  */
 CNumber CMath::raise( const CNumber & n1, const CNumber & n2  )
 {
-    if(!n2.isDimensionless()
-            || (!n1.isDimensionless() && !n2.isReal()))
-        return CMath::nan(InvalidDimension);
-
-
-    if(n1.isDimensionless())
         return CMath::exp(CMath::ln(n1) * n2);
-
-    // we can now assume that n1 has a dimension, but n2 is real
-    CNumber nominal_value = n1;
-    nominal_value.clearDimension();
-    HNumber unit = n1.real/nominal_value.real;
-    return CNumber(HMath::raise(unit, n2.real)) * CMath::raise(nominal_value, n2);
 }
 
 

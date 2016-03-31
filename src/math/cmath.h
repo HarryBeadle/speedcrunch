@@ -31,18 +31,19 @@
 
 class CMath;
 
-class CNumber {
-  friend class CMath;
-  friend CNumber operator-( const CNumber & );
-  friend CNumber operator-( const CNumber &, const CNumber& );
-  friend bool operator>( const CNumber& l, const CNumber& r );
-  friend bool operator<( const CNumber& l, const CNumber& r );
-  friend bool operator>=( const CNumber& l, const CNumber& r );
-  friend bool operator<=( const CNumber& l, const CNumber& r );
-  friend bool operator==( const CNumber& l, const CNumber& r );
-  friend bool operator!=( const CNumber& l, const CNumber& r );
+class CNumber
+{
+    friend class CMath;
+    friend CNumber operator-( const CNumber & );
+    friend CNumber operator-( const CNumber &, const CNumber& );
+    friend bool operator>( const CNumber& l, const CNumber& r );
+    friend bool operator<( const CNumber& l, const CNumber& r );
+    friend bool operator>=( const CNumber& l, const CNumber& r );
+    friend bool operator<=( const CNumber& l, const CNumber& r );
+    friend bool operator==( const CNumber& l, const CNumber& r );
+    friend bool operator!=( const CNumber& l, const CNumber& r );
 
-  public:
+public:
     CNumber();
     CNumber( const HNumber& );
     CNumber( const HNumber&, const HNumber& );
@@ -50,7 +51,7 @@ class CNumber {
     CNumber( int i );
     CNumber( const char* );
     CNumber( const QJsonObject & json );
-    ~CNumber(){};
+    ~CNumber(){}
 
     bool isNan() const;
     bool isZero() const;
@@ -72,21 +73,6 @@ class CNumber {
     // 'b': binary
     char format() const;
     CNumber& setFormat( char c = 0 );
-
-    /* The following functions assume that real and imaginary part have the same unit */
-    /* so this point must be enforced by the functions who change the unit            */
-    bool hasUnit() const { return real.hasUnit(); }
-    CNumber getUnit() const { return real.getUnit(); }
-    QString getUnitName() const { return real.getUnitName(); }
-    CNumber& setDisplayUnit(const CNumber, const QString &name);
-    void stripUnits();
-    bool hasDimension() const { return real.hasDimension(); }
-    bool isDimensionless() const { return real.isDimensionless(); }
-    QMap<QString, Rational> getDimension() const { return real.getDimension(); }
-    void modifyDimension(const QString & key, const Rational & exponent);
-    void clearDimension();
-    bool sameDimension(const CNumber & other) const { return real.sameDimension(other.real); }
-    void cleanDimension();
 
     void serialize(QJsonObject & json) const;
     static CNumber deSerialize(const QJsonObject & json);
@@ -117,10 +103,10 @@ class CNumber {
     CNumber operator>>( const CNumber& ) const;
     CNumber operator<<( const CNumber& ) const;
 
-  private:
+private:
     int compare( const CNumber & other ) const;
 
-  public:
+public:
     HNumber real;
     HNumber imag;
 
@@ -134,9 +120,9 @@ class CNumber {
 
 class CMath
 {
-  public:
+public:
     // FORMAT
-    static char * format( const CNumber & n, char format = 'g', int prec = -1 );
+    static QString format( const CNumber & n, char format = 'g', int prec = -1 );
     // CONSTANTS
     static CNumber e();
     static CNumber phi();
@@ -146,8 +132,6 @@ class CMath
     // GENERAL MATH
     static CNumber rad2deg( const CNumber & angle );
     static CNumber deg2rad( const CNumber & angle );
-    static CNumber max( const HNumber & n1, const HNumber & n2 );
-    static CNumber min( const HNumber & n1, const HNumber & n2 );
     static CNumber abs( const CNumber & n );
     static CNumber integer( const CNumber & n );
     static CNumber frac( const CNumber & n );
