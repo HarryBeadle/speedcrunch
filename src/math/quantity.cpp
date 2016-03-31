@@ -388,16 +388,19 @@ Quantity Quantity::operator*(const Quantity & other) const
 {
     Quantity result(*this);
     result.m_numericValue *= other.m_numericValue;
-    QMap<QString, Rational>::const_iterator i = other.m_dimension.constBegin();
-    while (i != other.m_dimension.constEnd()) {
-        const Rational & exp = i.value();
-        const QString & name = i.key();
-        if(!result.m_dimension.contains(name))
-            result.m_dimension[name] = Rational(0);
-        result.m_dimension[name] += exp;
-        ++i;
+    if (!other.isDimensionless()) {
+        result.stripUnits();
+        QMap<QString, Rational>::const_iterator i = other.m_dimension.constBegin();
+        while (i != other.m_dimension.constEnd()) {
+            const Rational & exp = i.value();
+            const QString & name = i.key();
+            if(!result.m_dimension.contains(name))
+                result.m_dimension[name] = Rational(0);
+            result.m_dimension[name] += exp;
+            ++i;
+        }
+        result.cleanDimension();
     }
-    result.cleanDimension();
     return result;
 }
 
@@ -422,16 +425,19 @@ Quantity Quantity::operator/(const Quantity & other) const
 {
     Quantity result(*this);
     result.m_numericValue /= other.m_numericValue;
-    QMap<QString, Rational>::const_iterator i = other.m_dimension.constBegin();
-    while (i != other.m_dimension.constEnd()) {
-        const Rational & exp = i.value();
-        const QString & name = i.key();
-        if(!result.m_dimension.contains(name))
-            result.m_dimension[name] = Rational(0);
-        result.m_dimension[name] -= exp;
-        ++i;
+    if (!other.isDimensionless()) {
+        result.stripUnits();
+        QMap<QString, Rational>::const_iterator i = other.m_dimension.constBegin();
+        while (i != other.m_dimension.constEnd()) {
+            const Rational & exp = i.value();
+            const QString & name = i.key();
+            if(!result.m_dimension.contains(name))
+                result.m_dimension[name] = Rational(0);
+            result.m_dimension[name] -= exp;
+            ++i;
+        }
+        result.cleanDimension();
     }
-    result.cleanDimension();
     return result;
 }
 

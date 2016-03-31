@@ -90,6 +90,10 @@ void test_basic()
     Quantity a(Quantity(123)*Units::meter());
     a.setDisplayUnit(foot, "foot");
     CHECK(a, "410 foot");
+    CHECK(a*Units::second(), "123 meter second");       // Issue 615
+    CHECK(a/Units::second(), "123 meter second^-1");    //
+    CHECK(a*HNumber(5), "2050 foot");                   //
+    CHECK(a/HNumber(5), "82 foot");                     //
 }
 
 void test_functions()
