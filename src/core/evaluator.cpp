@@ -444,6 +444,20 @@ void Evaluator::initializeBuiltInVariables()
     for(Unit u : unitList) {
         setVariable(u.name, u.value, Variable::BuiltIn);
     }
+
+    initializeAngleUnits();
+}
+
+void Evaluator::initializeAngleUnits()
+{
+    if (Settings::instance()->angleUnit == 'r') {
+        setVariable("radian", 1, Variable::BuiltIn);
+        setVariable("degree", HMath::pi()/HNumber(180),Variable::BuiltIn);
+    }
+    else {
+        setVariable("radian", HNumber(180)/HMath::pi(),Variable::BuiltIn);
+        setVariable("degree", 1,Variable::BuiltIn);
+    }
 }
 
 void Evaluator::setExpression(const QString& expr)

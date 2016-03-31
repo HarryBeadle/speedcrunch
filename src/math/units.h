@@ -114,7 +114,6 @@ public:
     static const Quantity cbmeter();
     static const Quantity newton();
     static const Quantity hertz();
-    static const Quantity radian();
     static const Quantity steradian();
     static const Quantity pascal();
     static const Quantity joule();

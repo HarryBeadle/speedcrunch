@@ -701,16 +701,23 @@ void test_complex()
 void test_angle_mode(Settings* settings)
 {
     settings->angleUnit = 'r';
+    Evaluator::instance()->initializeAngleUnits();
     CHECK_EVAL("sin(pi)", "0");
     CHECK_EVAL("arcsin(-1)", "-1.57079632679489661923");
     CHECK_EVAL("sin(1j)", "1.17520119364380145688j");
     CHECK_EVAL("arcsin(-2)", "-1.57079632679489661923+1.31695789692481670863j");
+    CHECK_EVAL("radian","1");
+    CHECK_EVAL("degree","0.01745329251994329577");
+
 
     settings->angleUnit = 'd';
+    Evaluator::instance()->initializeAngleUnits();
     CHECK_EVAL("sin(180)", "0");
     CHECK_EVAL("arcsin(-1)", "-90");
     CHECK_EVAL_FAIL("sin(1j)");
     CHECK_EVAL_FAIL("arcsin(-2)");
+    CHECK_EVAL("radian","57.2957795130823208768");
+    CHECK_EVAL("degree","1");
 }
 
 void test_implicit_multiplication()

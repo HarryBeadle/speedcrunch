@@ -226,8 +226,6 @@ const QList<Unit> Units::getList()
     ADD_UNIT(zebi);
     ADD_UNIT(yobi);
 
-    //ADD_UNIT(radian);
-    //ADD_UNIT(steradian);
     ADD_UNIT(sqmeter);
     ADD_UNIT(cbmeter);
     ADD_UNIT(newton);
@@ -243,12 +241,13 @@ const QList<Unit> Units::getList()
     ADD_UNIT(weber);
     ADD_UNIT(henry);
     ADD_UNIT(siemens);
-    //ADD_UNIT(lumen);
-    //ADD_UNIT(lux);
     ADD_UNIT(becquerel);
     ADD_UNIT(gray);
     ADD_UNIT(sievert);
     ADD_UNIT(katal);
+    ADD_UNIT(steradian);
+    ADD_UNIT(lumen);
+    ADD_UNIT(lux);
 
 
     ADD_UNIT(metric_ton);
@@ -282,6 +281,7 @@ const QList<Unit> Units::getList()
     ADD_UNIT(US_gallon);
     ADD_UNIT_ALIAS(US_gallon, gallon_US);
     ADD_UNIT_ALIAS(UK_gallon, gallon_UK);
+    ADD_UNIT_ALIAS(UK_gallon, imperial_gallon);
     ADD_UNIT(UK_quart);
     ADD_UNIT(US_quart);
     ADD_UNIT_ALIAS(US_quart, quart_US);
@@ -343,7 +343,7 @@ const QList<Unit> Units::getList()
 BASE_UNIT_CACHE(meter,     "length")
 BASE_UNIT_CACHE(second,    "time")
 BASE_UNIT_CACHE(kilogram,  "mass")
-BASE_UNIT_CACHE(ampere,    "el. currrent")
+BASE_UNIT_CACHE(ampere,    "el. current")
 BASE_UNIT_CACHE(mole,      "amount")
 BASE_UNIT_CACHE(kelvin,    "temperature")
 BASE_UNIT_CACHE(candela,   "luminous intensity")
@@ -381,26 +381,6 @@ UNIT_CACHE(exbi,  kibi()*pebi())
 UNIT_CACHE(zebi,  kibi()*exbi())
 UNIT_CACHE(yobi,  kibi()*zebi())
 
-
-//We want to avoid caching angle units. Their value should depend on the angle mode.
-const Quantity Units::radian()
-{
-    return Quantity(1);
-}
-const Quantity Units::steradian()
-{
-    return Quantity(1);
-}
-const Quantity Units::lumen()
-{
-    return candela()*steradian();
-}
-const Quantity Units::lux()
-{
-    return lumen()/sqmeter();
-}
-
-
 UNIT_CACHE(newton,              meter() * kilogram() / (second()*second()))
 UNIT_CACHE(hertz,               Quantity(1) / second())
 UNIT_CACHE(pascal,              newton() / sqmeter())
@@ -418,6 +398,9 @@ UNIT_CACHE(becquerel,           Quantity(1) / second())
 UNIT_CACHE(gray,                joule() / kilogram())
 UNIT_CACHE(sievert,             joule() / kilogram())
 UNIT_CACHE(katal,               mole() / second())
+UNIT_CACHE(steradian,           1)
+UNIT_CACHE(lumen,               candela()*steradian())
+UNIT_CACHE(lux,                 lumen()/sqmeter())
 
 UNIT_CACHE(sqmeter,             meter() * meter())
 UNIT_CACHE(cbmeter,             sqmeter() * meter())
