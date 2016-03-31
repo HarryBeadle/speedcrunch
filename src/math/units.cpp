@@ -22,7 +22,7 @@
 #include <QString>
 #include <QStringList>
 
-#define UNIT_CACHE(name, value)                \
+#define UNIT_CACHE(name, value)                     \
     const Quantity Units::name()                    \
     {                                               \
         if (!m_cache.contains(#name))               \
@@ -30,7 +30,7 @@
         return (m_cache[#name]);                    \
     }
 
-#define BASE_UNIT_CACHE(name, dimension)       \
+#define BASE_UNIT_CACHE(name, dimension)            \
     const Quantity Units::name()                    \
     {                                               \
         if (!m_cache.contains(#name)) {             \
@@ -178,7 +178,8 @@ void Units::findUnit(Quantity & q)
     }
 }
 
-#define ADD_UNIT(name)  result.append(Unit(#name, name()));
+#define ADD_UNIT(name)  result.append(Unit(#name, name()))
+#define ADD_UNIT_ALIAS(name, alias) result.append(Unit(#alias, name()))
 
 
 // This list contains the units that wil be set as builtin variables by the evaluator
@@ -249,6 +250,93 @@ const QList<Unit> Units::getList()
     ADD_UNIT(sievert);
     ADD_UNIT(katal);
 
+
+    ADD_UNIT(metric_ton);
+    ADD_UNIT(short_ton);
+    ADD_UNIT(long_ton);
+    ADD_UNIT(pound);
+    ADD_UNIT(ounce);
+    ADD_UNIT(grain);
+    ADD_UNIT(gram);
+    ADD_UNIT(atomic_mass_unit);
+    ADD_UNIT(carat);
+
+    ADD_UNIT(micron);
+    ADD_UNIT(angstrom);
+    ADD_UNIT(astronomical_unit);
+    ADD_UNIT(lightyear);
+    ADD_UNIT(lightsecond);
+    ADD_UNIT(lightminute);
+    ADD_UNIT(parsec);
+    ADD_UNIT(inch);
+    ADD_UNIT(foot);
+    ADD_UNIT(yard);
+    ADD_UNIT(mile);
+    ADD_UNIT(rod);
+    ADD_UNIT(furlong);
+    ADD_UNIT(fathom);
+    ADD_UNIT(nautical_mile);
+    ADD_UNIT(cable);
+
+    ADD_UNIT(UK_gallon);
+    ADD_UNIT(US_gallon);
+    ADD_UNIT_ALIAS(US_gallon, gallon_US);
+    ADD_UNIT_ALIAS(UK_gallon, gallon_UK);
+    ADD_UNIT(UK_quart);
+    ADD_UNIT(US_quart);
+    ADD_UNIT_ALIAS(US_quart, quart_US);
+    ADD_UNIT_ALIAS(UK_quart, quart_UK);
+    ADD_UNIT(UK_pint);
+    ADD_UNIT(US_pint);
+    ADD_UNIT_ALIAS(US_pint, pint_US);
+    ADD_UNIT_ALIAS(UK_pint, pint_UK);
+    ADD_UNIT(UK_fluid_ounce);
+    ADD_UNIT(US_fluid_ounce);
+    ADD_UNIT_ALIAS(US_fluid_ounce, fluid_ounce_US);
+    ADD_UNIT_ALIAS(UK_fluid_ounce, fluid_ounce_UK);
+    ADD_UNIT(liter);
+
+    ADD_UNIT(minute);
+    ADD_UNIT(hour);
+    ADD_UNIT(day);
+    ADD_UNIT(week);
+    ADD_UNIT(julian_year);
+    ADD_UNIT(tropical_year);
+    ADD_UNIT(sidereal_year);
+    ADD_UNIT_ALIAS(julian_year, year_julian);
+    ADD_UNIT_ALIAS(tropical_year, year_tropical);
+    ADD_UNIT_ALIAS(sidereal_year, year_sidereal);
+
+    ADD_UNIT(percent);
+    ADD_UNIT(ppm);
+    ADD_UNIT(ppb);
+    ADD_UNIT(karat);
+
+    ADD_UNIT(bar);
+    ADD_UNIT(atmosphere);
+    ADD_UNIT(torr);
+    ADD_UNIT(pounds_per_sqinch);
+
+    ADD_UNIT(electron_volt);
+    ADD_UNIT(calorie);
+    ADD_UNIT(british_thermal_unit);
+
+    ADD_UNIT(nat);
+    ADD_UNIT(hartley);
+    ADD_UNIT(byte);
+
+    ADD_UNIT(tablespoon);
+    ADD_UNIT(teaspoon);
+    ADD_UNIT(cup);
+
+    ADD_UNIT(gravity);
+    ADD_UNIT_ALIAS(gravity, force);
+    ADD_UNIT(speed_of_light);
+    ADD_UNIT(speed_of_sound_STP);
+    ADD_UNIT(elementary_charge);
+    ADD_UNIT(knot);
+    ADD_UNIT(horsepower);
+
     return result;
 }
 
@@ -294,10 +382,6 @@ UNIT_CACHE(zebi,  kibi()*exbi())
 UNIT_CACHE(yobi,  kibi()*zebi())
 
 
-
-
-
-
 //We want to avoid caching angle units. Their value should depend on the angle mode.
 const Quantity Units::radian()
 {
@@ -317,23 +401,103 @@ const Quantity Units::lux()
 }
 
 
-UNIT_CACHE(newton,  meter()*kilogram()/second()/second())
-UNIT_CACHE(hertz,   Quantity(1)/second())
-UNIT_CACHE(pascal,  newton()/sqmeter())
-UNIT_CACHE(joule,   newton()*meter())
-UNIT_CACHE(watt,    joule()/second())
-UNIT_CACHE(coulomb, ampere()*second())
-UNIT_CACHE(volt,    watt()/ampere())
-UNIT_CACHE(farad,   coulomb()/volt())
-UNIT_CACHE(ohm,     volt()/ampere())
-UNIT_CACHE(siemens, ampere()/volt())
-UNIT_CACHE(weber,   volt()*second())
-UNIT_CACHE(tesla,   weber()/sqmeter())
-UNIT_CACHE(henry,   weber()/ampere())
-UNIT_CACHE(becquerel, Quantity(1)/second())
-UNIT_CACHE(gray,    joule()/kilogram())
-UNIT_CACHE(sievert,    joule()/kilogram())
-UNIT_CACHE(katal, mole()/second())
+UNIT_CACHE(newton,              meter() * kilogram() / (second()*second()))
+UNIT_CACHE(hertz,               Quantity(1) / second())
+UNIT_CACHE(pascal,              newton() / sqmeter())
+UNIT_CACHE(joule,               newton() * meter())
+UNIT_CACHE(watt,                joule() / second())
+UNIT_CACHE(coulomb,             ampere() * second())
+UNIT_CACHE(volt,                watt() / ampere())
+UNIT_CACHE(farad,               coulomb() / volt())
+UNIT_CACHE(ohm,                 volt() / ampere())
+UNIT_CACHE(siemens,             ampere() / volt())
+UNIT_CACHE(weber,               volt() * second())
+UNIT_CACHE(tesla,               weber() / sqmeter())
+UNIT_CACHE(henry,               weber() / ampere())
+UNIT_CACHE(becquerel,           Quantity(1) / second())
+UNIT_CACHE(gray,                joule() / kilogram())
+UNIT_CACHE(sievert,             joule() / kilogram())
+UNIT_CACHE(katal,               mole() / second())
 
-UNIT_CACHE(sqmeter, meter()*meter())
-UNIT_CACHE(cbmeter, sqmeter()*meter())
+UNIT_CACHE(sqmeter,             meter() * meter())
+UNIT_CACHE(cbmeter,             sqmeter() * meter())
+
+UNIT_CACHE(metric_ton,          mega()*gram())
+UNIT_CACHE(gram,                milli()*kilogram())
+UNIT_CACHE(pound,               HNumber("0.45359237") * kilogram())
+UNIT_CACHE(ounce,               pound() / HNumber(16))
+UNIT_CACHE(grain,               pound() / HNumber(7000))
+UNIT_CACHE(short_ton,           HNumber(2000) * pound())
+UNIT_CACHE(long_ton,            HNumber(2240) * pound())
+UNIT_CACHE(atomic_mass_unit,    HNumber("1.660539040e-27") * kilogram()) // http://physics.nist.gov/cgi-bin/cuu/Value?tukg
+UNIT_CACHE(carat,               HNumber(200) * milli()*gram())        // do not confuse with karat below
+
+UNIT_CACHE(micron,              micro()*meter())
+UNIT_CACHE(angstrom,            HNumber("1e-10") * meter())
+UNIT_CACHE(astronomical_unit,   HNumber("149597870700") * meter())    // IAU 2012 Resolution B2
+UNIT_CACHE(lightyear,           speed_of_light() * julian_year())
+UNIT_CACHE(lightminute,         speed_of_light() * minute())
+UNIT_CACHE(lightsecond,         speed_of_light() * second())
+UNIT_CACHE(parsec,              HNumber(648000)/HMath::pi() * astronomical_unit()) // IAU 2015 Resolution B2
+UNIT_CACHE(inch,                HNumber("0.0254") * meter())          // international inch
+UNIT_CACHE(foot,                HNumber(12) * inch())
+UNIT_CACHE(yard,                HNumber(36) * inch())
+UNIT_CACHE(mile,                HNumber(1760) * yard())
+UNIT_CACHE(rod,                 HNumber("5.5") * yard())
+UNIT_CACHE(furlong,             HNumber(40) * rod())
+UNIT_CACHE(fathom,              HNumber(6) * foot())
+UNIT_CACHE(nautical_mile,       HNumber("1852") * meter())
+UNIT_CACHE(cable,               HNumber("0.1") * nautical_mile())
+
+UNIT_CACHE(are,                 HNumber(100) * sqmeter())
+UNIT_CACHE(hectare,             HNumber(100) * are())
+UNIT_CACHE(acre,                mile()*mile() / HNumber(640))
+
+UNIT_CACHE(US_gallon,           HNumber("3.785") * liter())
+UNIT_CACHE(UK_gallon,           HNumber("4.54609") * liter())
+UNIT_CACHE(US_quart,            US_gallon() / HNumber(4))
+UNIT_CACHE(UK_quart,            UK_gallon() / HNumber(4))
+UNIT_CACHE(US_pint,             US_gallon() / HNumber(8))
+UNIT_CACHE(UK_pint,             UK_gallon() / HNumber(8))
+UNIT_CACHE(US_fluid_ounce,      US_gallon() / HNumber(128))
+UNIT_CACHE(UK_fluid_ounce,      UK_gallon() / HNumber(160))
+UNIT_CACHE(liter,               milli() * cbmeter())
+
+
+UNIT_CACHE(minute,              HNumber(60) * second())
+UNIT_CACHE(hour,                HNumber(60) * minute())
+UNIT_CACHE(day,                 HNumber(24) * hour())
+UNIT_CACHE(week,                HNumber(7) * day())
+UNIT_CACHE(julian_year,         HNumber("365.25") * day())
+UNIT_CACHE(tropical_year,       HNumber("365.24219") * day())       // approximate; changes over time due to Earth's precession
+UNIT_CACHE(sidereal_year,       HNumber("365.25636") * day())       // http://hpiers.obspm.fr/eop-pc/models/constants.html
+
+UNIT_CACHE(percent,             HNumber("0.01"))
+UNIT_CACHE(ppm,                 HNumber("1e-6"))
+UNIT_CACHE(ppb,                 HNumber("1e-9"))
+UNIT_CACHE(karat,               Rational(1,24).toHNumber())         // do not confuse with carat above
+
+UNIT_CACHE(bar,                 HNumber("1e5") * pascal())
+UNIT_CACHE(atmosphere,          HNumber("1.01325") * bar())
+UNIT_CACHE(torr,                atmosphere() / HNumber(760))
+UNIT_CACHE(pounds_per_sqinch,   pound() * gravity() / (inch()*inch()))
+
+UNIT_CACHE(electron_volt,       elementary_charge() * volt())
+UNIT_CACHE(calorie,             HNumber("4.1868") * joule())        // International Table calorie
+UNIT_CACHE(british_thermal_unit, HNumber("1055.056") * joule())     // International standard ISO 31-4
+
+UNIT_CACHE(nat,                 bit() / HMath::ln(2))
+UNIT_CACHE(hartley,             HMath::ln(10) * nat())
+UNIT_CACHE(byte,                HNumber(8) * bit())
+
+UNIT_CACHE(tablespoon,          HNumber(15) * milli()*liter())
+UNIT_CACHE(teaspoon,            HNumber(5) * milli()*liter())
+UNIT_CACHE(cup,                 HNumber(240) * milli()*liter())
+
+UNIT_CACHE(gravity,             HNumber("9.80665") * newton() / kilogram())  // 3rd CGPM (1901, CR 70)
+UNIT_CACHE(speed_of_light,      HNumber(299792458) * meter() / second())
+UNIT_CACHE(elementary_charge,   HNumber("1.6021766208e-19") * coulomb())     // http://physics.nist.gov/cgi-bin/cuu/Value?e
+UNIT_CACHE(speed_of_sound_STP,  HNumber(331) * meter()/second())
+UNIT_CACHE(knot,                nautical_mile()/hour())
+UNIT_CACHE(horsepower,          HNumber(550) * foot() * pound() * gravity() / second()) // imperial horsepower
+

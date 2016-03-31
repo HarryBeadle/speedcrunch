@@ -34,6 +34,13 @@ class QJsonObject;
 class HNumber;
 
 class DMath;
+class Quantity;
+
+Quantity operator*(const HNumber &l, const Quantity &r);
+Quantity operator*(const CNumber &l, const Quantity &r);
+Quantity operator/(const HNumber &l, const Quantity &r);
+Quantity operator/(const CNumber &l, const Quantity &r);
+
 
 class Quantity
 {

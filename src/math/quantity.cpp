@@ -97,6 +97,26 @@ bool operator!=(const Quantity &l, const Quantity &r)
     return true;
 }
 
+Quantity operator*(const HNumber &l, const Quantity &r)
+{
+    return r*l;
+}
+
+Quantity operator*(const CNumber &l, const Quantity &r)
+{
+    return r*l;
+}
+
+Quantity operator/(const HNumber &l, const Quantity &r)
+{
+    return Quantity(l)/r;
+}
+
+Quantity operator/(const CNumber &l, const Quantity &r)
+{
+    return Quantity(l)/r;
+}
+
 Quantity::Quantity()
     : m_numericValue(0), m_unit(NULL), m_unitName(""), m_format(0)
 {

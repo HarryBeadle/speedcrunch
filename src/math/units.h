@@ -146,6 +146,7 @@ public:
     static const Quantity long_ton();
     static const Quantity pound();
     static const Quantity ounce();
+    static const Quantity grain();
     static const Quantity gram();
     static const Quantity atomic_mass_unit();
     static const Quantity carat();
@@ -155,7 +156,7 @@ public:
     //--------------------------------------
     static const Quantity micron();
     static const Quantity angstrom();
-    static const Quantity astronomicalUnit();
+    static const Quantity astronomical_unit();
     static const Quantity lightyear();
     static const Quantity lightsecond();
     static const Quantity lightminute();
@@ -165,12 +166,11 @@ public:
     static const Quantity foot();
     static const Quantity yard();
     static const Quantity mile();
-    static const Quantity line();
     static const Quantity rod();
     static const Quantity furlong();
     // Nautical (US)
     static const Quantity fathom();
-    static const Quantity nauticalMile();
+    static const Quantity nautical_mile();
     static const Quantity cable();
 
     // area
@@ -182,14 +182,14 @@ public:
 
     // volume
     //--------------------------------------
-    static const Quantity USgallon();
-    static const Quantity UKgallon();
-    static const Quantity USquart();
-    static const Quantity UKquart();
-    static const Quantity USpint();
-    static const Quantity UKpint();
-    static const Quantity USfluidOunce();
-    static const Quantity UKfluidOunce();
+    static const Quantity US_gallon();
+    static const Quantity UK_gallon();
+    static const Quantity US_quart();
+    static const Quantity UK_quart();
+    static const Quantity US_pint();
+    static const Quantity UK_pint();
+    static const Quantity US_fluid_ounce();
+    static const Quantity UK_fluid_ounce();
     static const Quantity liter();
 
 
@@ -199,9 +199,9 @@ public:
     static const Quantity hour();
     static const Quantity day();
     static const Quantity week();
-    static const Quantity julianYear();
-    static const Quantity tropicalYear();
-    static const Quantity siderealYear();
+    static const Quantity julian_year();
+    static const Quantity tropical_year();
+    static const Quantity sidereal_year();
 
     // concentration
     //--------------------------------------
@@ -215,13 +215,13 @@ public:
     static const Quantity bar();
     static const Quantity atmosphere();
     static const Quantity torr();
-    static const Quantity poundsPerSqInch();
+    static const Quantity pounds_per_sqinch();
 
     // energy
     //--------------------------------------
-    static const Quantity electronVolt();
+    static const Quantity electron_volt();
     static const Quantity calorie();
-    static const Quantity britishThermalUnit();
+    static const Quantity british_thermal_unit();
 
 
     // Information
@@ -237,20 +237,21 @@ public:
     // Since for cooking generally not that high a precision is
     // required, let's just stick with the so called 'legal' variant...
 
-    static const Quantity tablepsoon();
+    static const Quantity tablespoon();
     static const Quantity teaspoon();
     static const Quantity cup();
 
 
     // Various others
     //--------------------------------------
+    // Some of these are constants that should be moved once constants
+    // are also accessible via builtin names
     static const Quantity gravity();
-    static const Quantity speedOfSoundSTP();
+    static const Quantity speed_of_light();
+    static const Quantity elementary_charge();
+    static const Quantity speed_of_sound_STP();
     static const Quantity knot();
     static const Quantity horsepower();
-
-
-
 
 };
 
