@@ -976,7 +976,7 @@ HNumber HMath::frac( const HNumber & n )
   /* Note: float_relcmp doesn't work here, because it's doesn't check the relative */ \
   /* tolerance if exponents are not the same.                                      */ \
   /* FIXME: Put this value as parameter */                                            \
-  if (HMath::abs(n - nearest_int) < HNumber("1e-1000") * HMath::abs(n + nearest_int)) /* Very small value but works */ \
+  if (HMath::abs(n - nearest_int) < HNumber("1e-70") * HMath::abs(n + nearest_int)) /* FIXME: Make this configurable. */ \
       return nearest_int;                                                             \
 
 /**
