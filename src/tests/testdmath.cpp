@@ -54,12 +54,12 @@ static void check_format(const char* file, int line, const char* msg, const Quan
     DisplayErrorOnMismatch(file, line, msg, result, expected, dmath_failed_tests, dmath_new_failed_tests, 0);
 }
 
-static void check_precise(const char* file, int line, const char* msg, const Quantity& q, const char* expected)
-{
-    ++dmath_total_tests;
-    string result = DMath::format(q, 'f', 50).toStdString();
-    DisplayErrorOnMismatch(file, line, msg, result, expected, dmath_failed_tests, dmath_new_failed_tests, 0);
-}
+//static void check_precise(const char* file, int line, const char* msg, const Quantity& q, const char* expected)
+//{
+//    ++dmath_total_tests;
+//    string result = DMath::format(q, 'f', 50).toStdString();
+//    DisplayErrorOnMismatch(file, line, msg, result, expected, dmath_failed_tests, dmath_new_failed_tests, 0);
+//}
 
 void test_rational()
 {
