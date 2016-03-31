@@ -421,6 +421,10 @@ Evaluator::Evaluator()
     reset();
 }
 
+
+#define ADD_UNIT(name) \
+    setVariable(QString::fromUtf8(#name), Units::name(), Variable::BuiltIn)
+
 void Evaluator::initializeBuiltInVariables()
 {
     setVariable(QLatin1String("e"), DMath::e(), Variable::BuiltIn);
@@ -436,26 +440,24 @@ void Evaluator::initializeBuiltInVariables()
         unsetVariable("j", true);
     }
 
-    setVariable(QString::fromUtf8("meter"), Units::meter(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("second"), Units::second(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("kilogram"), Units::kilogram(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("ampere"), Units::ampere(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("mole"), Units::mole(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("candela"), Units::candela(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("kelvin"), Units::kelvin(), Variable::BuiltIn);
+    QList<Unit> unitList(Units::getList());
+    for(Unit u : unitList) {
+        setVariable(u.name, u.value, Variable::BuiltIn);
+    }
 
-    setVariable(QString::fromUtf8("newton"), Units::newton(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("joule"), Units::joule(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("watt"), Units::watt(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("pascal"), Units::pascal(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("coulomb"), Units::coulomb(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("volt"), Units::volt(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("ohm"), Units::ohm(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("farad"), Units::farad(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("tesla"), Units::tesla(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("weber"), Units::weber(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("henry"), Units::henry(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("siemens"), Units::siemens(), Variable::BuiltIn);
+    initializeAngleUnits();
+}
+
+void Evaluator::initializeAngleUnits()
+{
+    if (Settings::instance()->angleUnit == 'r') {
+        setVariable("radian", 1, Variable::BuiltIn);
+        setVariable("degree", HMath::pi()/HNumber(180),Variable::BuiltIn);
+    }
+    else {
+        setVariable("radian", HNumber(180)/HMath::pi(),Variable::BuiltIn);
+        setVariable("degree", 1,Variable::BuiltIn);
+    }
 }
 
 void Evaluator::setExpression(const QString& expr)
