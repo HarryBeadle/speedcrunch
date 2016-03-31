@@ -542,8 +542,8 @@ Tokens Evaluator::scan(const QString& expr) const
     int tokenStart = 0;
     Token::Type type;
     bool numberFrac = false;
-    int expStart;     // index of the exponent part in the expression
-    QString expText;  // start of the exponent text matching /E[\+\-]*/
+    int expStart = -1;  // index of the exponent part in the expression
+    QString expText;    // start of the exponent text matching /E[\+\-]*/
 
     // Force a terminator.
     ex.append(QChar());
