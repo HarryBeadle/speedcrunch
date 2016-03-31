@@ -42,6 +42,7 @@
 #include <QLineEdit>
 #include <QPainter>
 #include <QPlainTextEdit>
+#include <QScrollBar>
 #include <QStyle>
 #include <QTreeWidget>
 #include <QWheelEvent>
@@ -801,6 +802,15 @@ void Editor::keyPressEvent(QKeyEvent* event)
     }
 
     QPlainTextEdit::keyPressEvent(event);
+}
+
+void Editor::scrollContentsBy(int dx, int dy)
+{
+    if (dy)
+        return;
+    QPlainTextEdit::scrollContentsBy(dx, dy);
+    verticalScrollBar()->setMaximum(0);
+    verticalScrollBar()->setMinimum(0);
 }
 
 void Editor::wheelEvent(QWheelEvent* event)
