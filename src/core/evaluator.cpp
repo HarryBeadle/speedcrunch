@@ -886,8 +886,7 @@ Tokens Evaluator::scan(const QString& expr) const
                 // Rollback: might be an identifier used in implicit multiplication
                 i = expStart;
                 tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
-                tokenText = "";
-                state = Start;
+                state = Init;
             }
             break;
 
