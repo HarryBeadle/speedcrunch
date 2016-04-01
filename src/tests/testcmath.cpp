@@ -262,7 +262,7 @@ void test_functions()
     CHECK(CMath::floor("2.6041980"), "2");
     CHECK(CMath::floor("0.000001"), "0");
     CHECK(CMath::floor("-0.000001"), "-1");
-    CHECK_KNOWN_ISSUE(CMath::floor(CNumber(1) / 3 * 3), "1", 532);
+    CHECK(CMath::floor(CNumber(1) / 3 * 3), "1");
 
     CHECK(CMath::ceil("NaN"), "NaN");
     CHECK(CMath::ceil("0"), "0");
@@ -274,7 +274,7 @@ void test_functions()
     CHECK(CMath::ceil("2.6041980"), "3");
     CHECK(CMath::ceil("0.000001"), "1");
     CHECK(CMath::ceil("-0.000001"), "0");
-    CHECK_KNOWN_ISSUE(CMath::ceil(CMath::log(2, 128)), "7", 532); // suddenly passing?!?!
+    CHECK(CMath::ceil(CMath::log(2, 128)), "7");
 
     CHECK(CMath::gcd("NaN", "NaN"), "NaN");
     CHECK(CMath::gcd("NaN", "5"), "NaN");
