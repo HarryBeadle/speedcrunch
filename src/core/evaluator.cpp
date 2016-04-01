@@ -1144,27 +1144,26 @@ void Evaluator::compile(const Tokens& tokens, const QString& _expression)
                     {
                       ruleFound = true;
                       switch (op.asOperator()) {
-                          // Simple binary operations.
-                          case Token::Plus:      m_codes.append(Opcode::Add); break;
-                          case Token::Minus:     m_codes.append(Opcode::Sub); break;
-                          case Token::Asterisk:  m_codes.append(Opcode::Mul); break;
-                          case Token::Slash:     m_codes.append(Opcode::Div); break;
-                          case Token::Caret:     m_codes.append(Opcode::Pow); break;
-                          case Token::Modulo:    m_codes.append(Opcode::Modulo); break;
-                          case Token::Backslash: m_codes.append(Opcode::IntDiv); break;
-                          case Token::LeftShift: m_codes.append(Opcode::LSh); break;
-                          case Token::RightShift: m_codes.append(Opcode::RSh); break;
-                          case Token::Ampersand: m_codes.append(Opcode::BAnd); break;
-                          case Token::Pipe:      m_codes.append(Opcode::BOr); break;
-                          case Token::RightArrow: {
-                              QString unitName = expression.mid(b.pos(), b.size()).simplified();
-                              // Make sure the whole unit name can be used as a single operand in multiplications
-                              if (b.minPrecedence() < opPrecedence(Token::Asterisk))
-                                  unitName = "(" + unitName + ")";
-                              m_codes.append(Opcode(Opcode::Conv, unitName));
-                              break;
-                          }
-                          default: break;
+                      // Simple binary operations.
+                      case Token::Plus:      m_codes.append(Opcode::Add); break;
+                      case Token::Minus:     m_codes.append(Opcode::Sub); break;
+                      case Token::Asterisk:  m_codes.append(Opcode::Mul); break;
+                      case Token::Slash:     m_codes.append(Opcode::Div); break;
+                      case Token::Caret:     m_codes.append(Opcode::Pow); break;
+                      case Token::Modulo:    m_codes.append(Opcode::Modulo); break;
+                      case Token::Backslash: m_codes.append(Opcode::IntDiv); break;
+                      case Token::LeftShift: m_codes.append(Opcode::LSh); break;
+                      case Token::RightShift: m_codes.append(Opcode::RSh); break;
+                      case Token::Ampersand: m_codes.append(Opcode::BAnd); break;
+                      case Token::Pipe:      m_codes.append(Opcode::BOr); break;
+                      case Token::RightArrow:
+                          QString unitName = expression.mid(b.pos(), b.size()).simplified();
+                          // Make sure the whole unit name can be used as a single operand in multiplications
+                          if (b.minPrecedence() < opPrecedence(Token::Asterisk))
+                              unitName = "(" + unitName + ")";
+                          m_codes.append(Opcode(Opcode::Conv, unitName));
+                          break;
+                      default: break;
                       };
                       syntaxStack.reduce(3);
 #ifdef EVALUATOR_DEBUG
