@@ -618,6 +618,15 @@ void test_auto_fix_untouch()
     CHECK_AUTOFIX("1/sin pi", "1/sin pi");
 }
 
+void test_auto_fix_powers()
+{
+    CHECK_AUTOFIX("3¹", "3^1");
+    CHECK_AUTOFIX("3⁻¹", "3^-1");
+    CHECK_AUTOFIX("3¹²³⁴⁵⁶⁷⁸⁹", "3^123456789");
+    CHECK_AUTOFIX("3²⁰", "3^20");
+    CHECK_AUTOFIX("7 + 3²⁰ * 4", "7 + 3^20 * 4");
+}
+
 void test_comments()
 {
     CHECK_EVAL("ncr(3;3) ? this is because foo",  "1");
@@ -807,6 +816,7 @@ int main(int argc, char* argv[])
     test_auto_fix_parentheses();
     test_auto_fix_ans();
     test_auto_fix_trailing_equal();
+    test_auto_fix_powers();
     test_auto_fix_untouch();
 
     test_comments();
