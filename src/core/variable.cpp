@@ -33,15 +33,19 @@ void Variable::serialize(QJsonObject &json) const
     m_value.serialize(value);
     json["value"] = value;
     json["type"] = (m_type==UserDefined) ? QStringLiteral("User") : QStringLiteral("BuiltIn");
-    return;
 }
 
 void Variable::deSerialize(const QJsonObject &json)
 {
-    m_identifier = json["identifier"].toString();
-    QString str = json["type"].toString();
-    m_type = (str=="User") ? UserDefined : BuiltIn;
-    m_value = CNumber(json["value"].toObject());
-    return;
+    if (json.contains("identifier"))
+        m_identifier = json["identifier"].toString();
+
+    if (json.contains("type")) {
+        QString str = json["type"].toString();
+        m_type = (str=="User") ? UserDefined : BuiltIn;
+    }
+
+    if (json.contains("value"))
+        m_value = Quantity(json["value"].toObject());
 }
 

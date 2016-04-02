@@ -47,14 +47,17 @@ protected:
     virtual void keyPressEvent(QKeyEvent * ev);
     virtual void mouseReleaseEvent(QMouseEvent* ev);
 	virtual void closeEvent(QCloseEvent*);
+    virtual void paintEvent(QPaintEvent* e);
 private slots:
     void handleAnchorClick(const QUrl&url);
+    void handleSourceChanged(const QUrl& url);
 
 private:
     Q_DISABLE_COPY(ManualWindow)
 
     QVariant loadResource(int type, const QUrl &name);
     ManualServer *m_server;
+    bool m_scrollUpdated;
 };
 
 #endif // GUI_MANUALWINDOW_H

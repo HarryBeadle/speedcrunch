@@ -42,6 +42,7 @@
 #include <QLineEdit>
 #include <QPainter>
 #include <QPlainTextEdit>
+#include <QScrollBar>
 #include <QStyle>
 #include <QTreeWidget>
 #include <QWheelEvent>
@@ -383,6 +384,10 @@ QString Editor::getKeyword() const
 
 void Editor::triggerAutoComplete()
 {
+    if (m_shouldBlockAutoCompletionOnce) {
+        m_shouldBlockAutoCompletionOnce = false;
+        return;
+    }
     if (!m_isAutoCompletionEnabled)
         return;
 
@@ -525,7 +530,7 @@ void Editor::autoCalc()
 
     // Same reason as above, do not update "ans".
     m_evaluator->setExpression(str);
-    const CNumber num = m_evaluator->evalNoAssign();
+    const Quantity num = m_evaluator->evalNoAssign();
 
     if (m_evaluator->error().isEmpty()) {
         if (num.isNan() && m_evaluator->isUserFunctionAssign()) {
@@ -582,7 +587,7 @@ void Editor::autoCalcSelection()
 
     // Same reason as above, do not update "ans".
     m_evaluator->setExpression(str);
-    const CNumber num = m_evaluator->evalNoAssign();
+    const Quantity num = m_evaluator->evalNoAssign();
 
     if (m_evaluator->error().isEmpty()) {
         if (num.isNan() && m_evaluator->isUserFunctionAssign()) {
@@ -650,6 +655,7 @@ void Editor::historyBack()
     if (!m_currentHistoryIndex)
         return;
 
+    m_shouldBlockAutoCompletionOnce = true;
     if (m_currentHistoryIndex == m_history.count())
         m_savedCurrentEditor = toPlainText();
     --m_currentHistoryIndex;
@@ -665,6 +671,7 @@ void Editor::historyForward()
     if (m_currentHistoryIndex == m_history.count())
         return;
 
+    m_shouldBlockAutoCompletionOnce = true;
     m_currentHistoryIndex++;
     if (m_currentHistoryIndex == m_history.count())
         setText(m_savedCurrentEditor);
@@ -750,6 +757,9 @@ void Editor::keyPressEvent(QKeyEvent* event)
     case Qt::Key_End:
         checkMatching();
         checkAutoCalc();
+        QPlainTextEdit::keyPressEvent(event);
+        event->accept();
+        return;
 
     case Qt::Key_Space:
         if (event->modifiers() == Qt::ControlModifier && !m_constantCompletion) {
@@ -792,6 +802,15 @@ void Editor::keyPressEvent(QKeyEvent* event)
     }
 
     QPlainTextEdit::keyPressEvent(event);
+}
+
+void Editor::scrollContentsBy(int dx, int dy)
+{
+    if (dy)
+        return;
+    QPlainTextEdit::scrollContentsBy(dx, dy);
+    verticalScrollBar()->setMaximum(0);
+    verticalScrollBar()->setMinimum(0);
 }
 
 void Editor::wheelEvent(QWheelEvent* event)

@@ -27,14 +27,20 @@
 
 
 
-UserFunction::UserFunction(const QJsonObject &json)
+UserFunction::UserFunction(const QJsonObject &json) : UserFunction()
 {
-    m_name = json["name"].toString();
-    const QJsonArray args_json = json["args"].toArray();
-    int n = json["args"].toArray().size();
-    for(int i=0; i<n; ++i)
-        m_arguments.append(args_json.at(i).toString());
-    m_expression = json["expression"].toString();
+    if (json.contains("name"))
+        m_name = json["name"].toString();
+
+    if (json.contains("args")) {
+        const QJsonArray args_json = json["args"].toArray();
+        int n = json["args"].toArray().size();
+        for(int i=0; i<n; ++i)
+            m_arguments.append(args_json.at(i).toString());
+    }
+
+    if (json.contains("expression"))
+        m_expression = json["expression"].toString();
     if(json.contains("description"))
         m_description = json["description"].toString();
 

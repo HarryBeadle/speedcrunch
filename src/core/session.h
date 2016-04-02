@@ -35,9 +35,9 @@ private:
     typedef QList<HistoryEntry> History ;
     typedef QHash<QString, Variable> VariableContainer;
     typedef QHash<QString, UserFunction> FunctionContainer;
-    History history;
-    VariableContainer variables;
-    FunctionContainer userFunctions;
+    History m_history;
+    VariableContainer m_variables;
+    FunctionContainer m_userFunctions;
 
 public:
     Session() {}
@@ -62,7 +62,7 @@ public:
     void insertHistoryEntry(const int index, const HistoryEntry & entry);
     void removeHistoryEntryAt(const int index);
     HistoryEntry historyEntryAt(const int index) const;
-    QList<HistoryEntry> historyToList() const {return history;}
+    QList<HistoryEntry> historyToList() const {return m_history;}
     void clearHistory();
 
     void addUserFunction(const UserFunction & func);
@@ -71,8 +71,6 @@ public:
     bool hasUserFunction(const QString & str) const;
     QList<UserFunction> UserFunctionsToList() const;
     const UserFunction * getUserFunction(const QString & fname) const;
-
-    static void test();
 };
 
 #endif // CORE_SESSION_H

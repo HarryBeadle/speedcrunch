@@ -36,6 +36,11 @@
         <file>locale/vi.qm</file>
         <file>locale/zh_CN.qm</file>
         <file>color-schemes/Terminal.json</file>
+        <file>color-schemes/Tomorrow.json</file>
+        <file>color-schemes/Tomorrow Night.json</file>
+        <file>color-schemes/Tomorrow Night Eighties.json</file>
+        <file>color-schemes/Tomorrow Night Blue.json</file>
+        <file>color-schemes/Tomorrow Night Bright.json</file>
         <file>color-schemes/Solarized Dark.json</file>
         <file>color-schemes/Solarized Light.json</file>
         <file>color-schemes/Standard.json</file>

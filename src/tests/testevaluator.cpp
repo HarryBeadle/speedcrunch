@@ -19,10 +19,11 @@
 
 #include "core/evaluator.h"
 #include "core/settings.h"
+#include "tests/testcommon.h"
 
 #include <QtCore/QCoreApplication>
 
-#include <cstring>
+#include <string>
 #include <iostream>
 
 using namespace std;
@@ -36,60 +37,44 @@ static int eval_new_failed_tests = 0;
 #define CHECK_DIV_BY_ZERO(s) checkDivisionByZero(__FILE__,__LINE__,#s,s)
 #define CHECK_EVAL(x,y) checkEval(__FILE__,__LINE__,#x,x,y)
 #define CHECK_EVAL_KNOWN_ISSUE(x,y,n) checkEval(__FILE__,__LINE__,#x,x,y,n)
-#define CHECK_KNOWN_ISSUE(x,n) checkEval(__FILE__,__LINE__,#x,x,"",n,false)
 #define CHECK_EVAL_PRECISE(x,y) checkEvalPrecise(__FILE__,__LINE__,#x,x,y)
 #define CHECK_EVAL_FAIL(x) checkEval(__FILE__,__LINE__,#x,x,"",0,true)
 #define CHECK_USERFUNC_SET(x) checkEval(__FILE__,__LINE__,#x,x,"NaN")
 #define CHECK_USERFUNC_SET_FAIL(x) checkEval(__FILE__,__LINE__,#x,x,"",0,true)
 
-static void checkAutoFix(const char* file, int line, const char* msg, const QString& expr, const QString& fixed)
+static void checkAutoFix(const char* file, int line, const char* msg, const char* expr, const char* fixed)
 {
     ++eval_total_tests;
 
-    QString r = eval->autoFix(expr);
-    if (r != fixed) {
-        eval_failed_tests++;
-        cerr << file << "[" << line << "]: " << msg << endl
-             << "    Result: \"" << qPrintable(r) << "\"" << endl
-             << "  Expected: \"" << qPrintable(fixed) << "\"" << endl
-             << endl;
-    }
+    string r = eval->autoFix(QString(expr)).toStdString();
+    DisplayErrorOnMismatch(file, line, msg, r, fixed, eval_failed_tests, eval_new_failed_tests);
 }
 
-static void checkDivisionByZero(const char*, int line, const char* msg, const QString& expr)
+static void checkDivisionByZero(const char* file, int line, const char* msg, const QString& expr)
 {
     ++eval_total_tests;
 
     eval->setExpression(expr);
-    CNumber rn = eval->evalUpdateAns();
+    Quantity rn = eval->evalUpdateAns();
 
     if (eval->error().isEmpty()) {
         ++eval_failed_tests;
-        cerr << "[" << line << "]:\t" << msg << "  Error: " << "division by zero not caught" << endl;
+        cerr << file << "[" << line << "]\t" << msg << endl
+             << "\tError: " << "division by zero not caught" << endl;
     }
 }
 
-static void checkEval(const char*, int line, const char* msg, const QString& expr, const char* expected, int issue = 0, bool shouldFail = false)
+static void checkEval(const char* file, int line, const char* msg, const QString& expr, const char* expected, int issue = 0, bool shouldFail = false)
 {
     ++eval_total_tests;
 
     eval->setExpression(expr);
-    CNumber rn = eval->evalUpdateAns();
+    Quantity rn = eval->evalUpdateAns();
 
     if (!eval->error().isEmpty()) {
         if (!shouldFail) {
             ++eval_failed_tests;
-            cerr << "[Line " << line << "]\t:" << msg << "  Error: " << qPrintable(eval->error());
-            if (issue)
-                cerr << "\t[ISSUE " << issue << "]";
-            cerr << endl;
-        }
-    } else {
-        char* result = CMath::format(rn, 'f');
-        if (shouldFail || strcmp(result, expected)) {
-            ++eval_failed_tests;
-            cerr << "[Line " << line << "]\t" << msg << "\tResult: " << result;
-            cerr << "\tExpected: " << (shouldFail ? "should fail" : expected);
+            cerr << file << "[" << line << "]\t" << msg;
             if (issue)
                 cerr << "\t[ISSUE " << issue << "]";
             else {
@@ -97,26 +82,37 @@ static void checkEval(const char*, int line, const char* msg, const QString& exp
                 ++eval_new_failed_tests;
             }
             cerr << endl;
+            cerr << "\tError: " << qPrintable(eval->error()) << endl;
         }
-        free(result);
+    } else {
+        QString result = DMath::format(rn, 'f');
+        if (shouldFail || result != expected) {
+            ++eval_failed_tests;
+            cerr << file << "[" << line << "]\t" << msg;
+            if (issue)
+                cerr << "\t[ISSUE " << issue << "]";
+            else {
+                cerr << "\t[NEW]";
+                ++eval_new_failed_tests;
+            }
+            cerr << endl;
+            cerr << "\tResult   : " << result.toLatin1().constData() << endl
+                 << "\tExpected : " << (shouldFail ? "should fail" : expected) << endl;
+        }
     }
 }
 
-static void checkEvalPrecise(const char*, int line, const char* msg, const QString& expr, const char* expected)
+static void checkEvalPrecise(const char* file, int line, const char* msg, const QString& expr, const char* expected)
 {
     ++eval_total_tests;
 
     eval->setExpression(expr);
-    CNumber rn = eval->evalUpdateAns();
+    Quantity rn = eval->evalUpdateAns();
 
     // We compare up to 50 decimals, not exact number because it's often difficult
     // to represent the result as an irrational number, e.g. PI.
-    char* result = CMath::format(rn, 'f', 50);
-    if (strcmp(result, expected)) {
-        ++eval_failed_tests;
-        cerr << "[Line" << line <<"]:\t" << msg << "  Result: " << result << ", "<< "Expected: " << expected << endl;
-    }
-    free(result);
+    string result = DMath::format(rn, 'f', 50).toStdString();
+    DisplayErrorOnMismatch(file, line, msg, result, expected, eval_failed_tests, eval_new_failed_tests, 0);
 }
 
 void test_constants()
@@ -325,9 +321,6 @@ void test_function_basic()
     CHECK_EVAL("6!", "720");
     CHECK_EVAL("7!", "5040");
     CHECK_EVAL("(1+1)!^2", "4");
-    CHECK_EVAL_KNOWN_ISSUE("frac 3!", "0", 451);
-
-    CHECK_EVAL_KNOWN_ISSUE("lg 10^2", "2", 451);
 
     CHECK_EVAL("(-27)^(1/3)", "-3");
     CHECK_EVAL("(-27)^(-1/3)", "-0.33333333333333333333");
@@ -446,9 +439,9 @@ void test_function_stat()
     CHECK_EVAL("AVERAGE(2.25;4.75)", "3.5");
     CHECK_EVAL("AVERAGE(1/3;2/3)", "0.5");
 
-    CHECK_EVAL("GEOMEAN(0)", "NaN");
-    CHECK_EVAL("GEOMEAN(-1)", "NaN");
-    CHECK_EVAL("GEOMEAN(-1e20)", "NaN");
+    CHECK_EVAL_FAIL("GEOMEAN(0)");
+    CHECK_EVAL_FAIL("GEOMEAN(-1)");
+    CHECK_EVAL_FAIL("GEOMEAN(-1e20)");
     CHECK_EVAL("GEOMEAN(1)", "1");
     CHECK_EVAL("GEOMEAN(2)", "2");
     CHECK_EVAL("GEOMEAN(3)", "3");
@@ -461,7 +454,11 @@ void test_function_stat()
     CHECK_EVAL("GEOMEAN(3;4;18)", "6");
     CHECK_EVAL("GEOMEAN(1;1;1)", "1");
     CHECK_EVAL("GEOMEAN(1;1;1;1)", "1");
-    CHECK_EVAL("GEOMEAN(1;1;1;-1)", "NaN");
+    CHECK_EVAL_FAIL("GEOMEAN(1;1;1;-1)");
+
+    CHECK_EVAL("VARIANCE(1;-1)", "1");
+    CHECK_EVAL("VARIANCE(5 meter; 13 meter)", "16 meter²");
+    // for complex tests of VARIANCE see test_complex
 }
 
 void test_function_logic()
@@ -549,6 +546,32 @@ void test_function_discrete()
     CHECK_EVAL("ncr(4;3)", "4");
     CHECK_EVAL("ncr(4;4)", "1");
     CHECK_EVAL("ncr(4;5)", "0");
+}
+
+void test_function_simplified()
+{
+    /* Tests for standard functions */
+    CHECK_EVAL("abs 123", "123");
+    CHECK_EVAL("abs -123", "123");       /* (issue #600) */
+    CHECK_EVAL("10 + abs 123", "133");
+    CHECK_EVAL("10 + abs -123", "133");  /* (issue #600) */
+    CHECK_EVAL("abs 123 + 10", "133");
+    CHECK_EVAL("abs -123 + 10", "133");  /* (issue #600) */
+    CHECK_EVAL("10 * abs 123", "1230");
+    CHECK_EVAL("abs 123 * 10", "1230");
+    /* Tests for user functions (issue #600, cf. discussion) */
+    CHECK_USERFUNC_SET("func2(x) = abs(x)");
+    CHECK_EVAL("func2 123", "123");
+    CHECK_EVAL("func2 -123", "123");
+    CHECK_EVAL("10 + func2 123", "133");
+    CHECK_EVAL("10 + func2 -123", "133");
+    CHECK_EVAL("func2 123 + 10", "133");
+    CHECK_EVAL("func2 -123 + 10", "133");
+    CHECK_EVAL("10 * func2 123", "1230");
+    CHECK_EVAL("func2 123 * 10", "1230");
+    /* Tests for priority management (issue #451) */
+    CHECK_EVAL("lg 10^2", "2");
+    CHECK_EVAL("frac 3!",  "0");
 }
 
 void test_auto_fix_parentheses()
@@ -665,18 +688,45 @@ void test_user_functions()
 void test_complex()
 {
     // Check for basic complex number processing
-    CHECK_EVAL("1j", "1j");                      // TODO : Smarter formatting
-    CHECK_EVAL("0.1j", "0.1j");                  // TODO : Smarter formatting
-    CHECK_EVAL(".1j", "0.1j");                   // TODO : Smarter formatting
-    CHECK_EVAL("1E12j", "1000000000000j");       // TODO : Smarter formatting
-    CHECK_EVAL("0.1E12j", "100000000000j");      // TODO : Smarter formatting
-    CHECK_EVAL("1E-12j", "0.000000000001j");     // TODO : Smarter formatting
-    CHECK_EVAL("0.1E-12j", "0.0000000000001j");  // TODO : Smarter formatting
+    CHECK_EVAL("1j", "1j");
+    CHECK_EVAL("0.1j", "0.1j");
+    CHECK_EVAL(".1j", "0.1j");
+    CHECK_EVAL("1E12j", "1000000000000j");
+    CHECK_EVAL("0.1E12j", "100000000000j");
+    CHECK_EVAL("1E-12j", "0.000000000001j");
+    CHECK_EVAL("0.1E-12j", "0.0000000000001j");
     // Check for some bugs introduced by first versions of complex number processing
-    CHECK_EVAL("0.1", "0.1");                      // TODO : Smarter formatting
+    CHECK_EVAL("0.1", "0.1");
     // Check for basic complex number evaluation
     CHECK_EVAL("(1+1j)*(1-1j)", "2");
-    CHECK_EVAL("(1+1j)*(1+1j)", "2j");           // TODO : Smarter formatting
+    CHECK_EVAL("(1+1j)*(1+1j)", "2j");
+
+
+    CHECK_EVAL("VARIANCE(1j;-1j)", "1");
+    CHECK_EVAL("VARIANCE(1j;-1j;1;-1)", "1");
+    CHECK_EVAL("VARIANCE(2j;-2j;1;-1)", "2.5");
+}
+
+void test_angle_mode(Settings* settings)
+{
+    settings->angleUnit = 'r';
+    Evaluator::instance()->initializeAngleUnits();
+    CHECK_EVAL("sin(pi)", "0");
+    CHECK_EVAL("arcsin(-1)", "-1.57079632679489661923");
+    CHECK_EVAL("sin(1j)", "1.17520119364380145688j");
+    CHECK_EVAL("arcsin(-2)", "-1.57079632679489661923+1.31695789692481670863j");
+    CHECK_EVAL("radian","1");
+    CHECK_EVAL("degree","0.01745329251994329577");
+
+
+    settings->angleUnit = 'd';
+    Evaluator::instance()->initializeAngleUnits();
+    CHECK_EVAL("sin(180)", "0");
+    CHECK_EVAL("arcsin(-1)", "-90");
+    CHECK_EVAL_FAIL("sin(1j)");
+    CHECK_EVAL_FAIL("arcsin(-2)");
+    CHECK_EVAL("radian","57.2957795130823208768");
+    CHECK_EVAL("degree","1");
 }
 
 void test_implicit_multiplication()
@@ -693,7 +743,10 @@ void test_implicit_multiplication()
     CHECK_EVAL_FAIL("ab");
     CHECK_EVAL("a b", "10");
     CHECK_EVAL("eps = 10", "10");
-    CHECK_KNOWN_ISSUE("5 eps", 599);
+    CHECK_EVAL("5 eps", "50");
+    CHECK_EVAL("Eren = 1001", "1001");
+    CHECK_EVAL("7 Eren", "7007");
+    CHECK_EVAL("Eren 5", "5005");
     CHECK_EVAL("f() = 123", "123");
     CHECK_EVAL("2f()", "246");
     CHECK_EVAL("5   5", "55");
@@ -715,12 +768,6 @@ void test_implicit_multiplication()
     CHECK_EVAL("2(a)^3", "250");
 }
 
-void test_units()
-{
-    CHECK_EVAL("1 meter + 5 meter", "6 meter");
-}
-
-
 
 int main(int argc, char* argv[])
 {
@@ -732,6 +779,7 @@ int main(int argc, char* argv[])
     settings->parseAllRadixChar = true;
     settings->strictDigitGrouping = true;
     settings->complexNumbers = false;
+    DMath::complexMode = false;
 
     eval = Evaluator::instance();
 
@@ -754,6 +802,7 @@ int main(int argc, char* argv[])
     test_function_stat();
     test_function_logic();
     test_function_discrete();
+    test_function_simplified();
 
     test_auto_fix_parentheses();
     test_auto_fix_ans();
@@ -766,15 +815,16 @@ int main(int argc, char* argv[])
 
     test_implicit_multiplication();
 
-    //test_units();
-
     settings->complexNumbers = true;
+    DMath::complexMode = true;
     eval->initializeBuiltInVariables();
     test_complex();
 
-    cerr << eval_total_tests  << " total, " << eval_failed_tests << " failed";
+    test_angle_mode(settings);
+
+    cout << eval_total_tests  << " total, " << eval_failed_tests << " failed";
     if (eval_failed_tests)
-        cerr << ", " << eval_new_failed_tests << " new";
-    cerr << endl;
+        cout << ", " << eval_new_failed_tests << " new";
+    cout << endl;
     return 0;
 }

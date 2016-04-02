@@ -1066,7 +1066,7 @@ void MainWindow::showManualWindow()
         return;
     }
 
-    m_widgets.manual = new ManualWindow(this);
+    m_widgets.manual = new ManualWindow();
     if (!m_widgets.manual->restoreGeometry(m_settings->manualWindowGeometry))
         m_widgets.manual->resize(640, 480);
     m_widgets.manual->show();
@@ -1171,6 +1171,7 @@ MainWindow::MainWindow()
 
     m_translator = 0;
     m_settings = Settings::instance();
+    DMath::complexMode = m_settings->complexNumbers;
 
     m_widgets.trayIcon = 0;
     m_widgets.manual = 0;
@@ -1196,7 +1197,6 @@ MainWindow::MainWindow()
     applySettings();
     QTimer::singleShot(0, m_widgets.editor, SLOT(setFocus()));
 
-    //Create the manual server AFTER the UI is created. This way the creation of the QHelpEngine is delayed.
     m_manualServer = ManualServer::instance();
     connect(this, SIGNAL(languageChanged()), m_manualServer, SLOT(ensureCorrectLanguage()));
 }
@@ -1259,15 +1259,9 @@ void MainWindow::clearEditor()
 void MainWindow::copyResultToClipboard()
 {
     QClipboard* cb = QApplication::clipboard();
-    CNumber num = m_evaluator->getVariable(QLatin1String("ans")).value();
-    char fmt = num.format();
-    char* strToCopy = CMath::format(num, fmt ? fmt : m_settings->resultFormat,
-                                    m_settings->resultPrecision);
-    QString final(strToCopy);
-    if (m_settings->radixCharacter() == ',')
-        final.replace('.', ',');
-    cb->setText(final, QClipboard::Clipboard);
-    free(strToCopy);
+    Quantity q = m_evaluator->getVariable(QLatin1String("ans")).value();
+    QString strToCopy(NumberFormatter::format(q));
+    cb->setText(strToCopy, QClipboard::Clipboard);
 }
 
 void MainWindow::setAngleModeDegree()
@@ -1280,6 +1274,7 @@ void MainWindow::setAngleModeDegree()
     if (m_status.angleUnit)
         m_status.angleUnit->setText(tr("Degree"));
 
+    m_evaluator->initializeAngleUnits();
     emit angleUnitChanged();
 }
 
@@ -1462,7 +1457,7 @@ void MainWindow::showSessionImportDialog()
 
         m_evaluator->setExpression(str);
 
-        CNumber result = m_evaluator->evalUpdateAns();
+        Quantity result = m_evaluator->evalUpdateAns();
         if (!m_evaluator->error().isEmpty()) {
             if (!ignoreAll) {
                 QMessageBox::StandardButton button =
@@ -1612,6 +1607,7 @@ void MainWindow::setComplexNumbers(bool b)
     m_settings->complexNumbers = b;
     emit radixCharacterChanged();   // FIXME ?
     m_evaluator->initializeBuiltInVariables();
+    DMath::complexMode = b;
 }
 
 void MainWindow::setAngleModeRadian()
@@ -1624,6 +1620,7 @@ void MainWindow::setAngleModeRadian()
     if (m_status.angleUnit)
         m_status.angleUnit->setText(tr("Radian"));
 
+    m_evaluator->initializeAngleUnits();
     emit angleUnitChanged();
 }
 
@@ -2175,7 +2172,7 @@ void MainWindow::evaluateEditorExpression()
         return;
 
     m_evaluator->setExpression(expr);
-    CNumber result = m_evaluator->evalUpdateAns();
+    Quantity result = m_evaluator->evalUpdateAns();
 
     if (!m_evaluator->error().isEmpty()) {
         showStateLabel(m_evaluator->error());
@@ -2257,8 +2254,8 @@ void MainWindow::handleCopyAvailable(bool copyAvailable)
 void MainWindow::handleBitsChanged(const QString& str)
 {
     clearEditor();
-    CNumber num(str.toLatin1().data());
-    insertTextIntoEditor(QString(CMath::format(num, 'h')));
+    Quantity num(CNumber(str.toLatin1().data()));
+    insertTextIntoEditor(DMath::format(num, 'h'));
     showStateLabel(QString("Current value: %1").arg(NumberFormatter::format(num)));
 }
 
@@ -2349,6 +2346,9 @@ void MainWindow::setRadixCharacterComma()
 
 void MainWindow::closeEvent(QCloseEvent* e)
 {
+    if (m_widgets.manual) {
+        m_widgets.manual->close();
+    }
     saveSettings();
     if(m_settings->sessionSave) {
         QString data_path = Settings::getDataPath();

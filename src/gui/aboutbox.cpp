@@ -20,12 +20,11 @@
 
 #include "gui/aboutbox.h"
 
-#include <QHBoxLayout>
+#include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QSpacerItem>
 #include <QTextEdit>
-#include <QVBoxLayout>
 
 #define THANKS(name) #name"<br>"
 
@@ -43,17 +42,26 @@ AboutBox::AboutBox(QWidget* parent, Qt::WindowFlags f)
 #endif
     msg += "</b><br>(Qt " + QLatin1String(QT_VERSION_STR) + ")<br>";
 
-    const QString authors = "<p><b>%2</b><br>%1";
-    msg += authors.arg(tr("Maintainer, core developer, designer, translator")).arg("Helder Correia");
+    const QString authors = "<p><b>%1</b><br>%2";
+    msg += authors.arg(tr("Maintainer")).arg("Helder Correia");
+
+    msg += "<p>" + QString("<b>%1</b><br>").arg(tr("Core developers"));
+    msg +=
+        THANKS(Felix Krull)
+        THANKS(Hadrien Theveneau)
+        THANKS(Pol Welter)
+        THANKS(Teyut)
+        ;
+
     msg += authors.arg(tr("Original author")).arg("Ariya Hidayat");
     msg += authors.arg(tr("Math engine")).arg("Wolf Lammen");
-    msg += authors.arg(tr("Packager")).arg("Alessandro Portale");
-    msg += authors.arg(tr("Former maintainer")).arg("Johan Thelin");
 
     msg += "<p>" + QString("<b>%1</b><br>").arg(tr("Thanks"));
     msg +=
         THANKS(Alan Davies)
         THANKS(Alejandro Villarreal)
+        THANKS(Alessandro Portale)
+        THANKS(Alexey Gorishny)
         THANKS(Alexey Kouznetsov)
         THANKS(Anders Lund)
         THANKS(Andreas Scherer)
@@ -64,10 +72,9 @@ AboutBox::AboutBox(QWidget* parent, Qt::WindowFlags f)
         THANKS(Christian Ehrlich)
         THANKS(Damir Perisa)
         THANKS(Daniel Sch&auml;ufele)
-        THANKS(Derek O’Connor)
+        THANKS(Derek O&#39;Connor)
         THANKS(Enrico R&oacute;s)
         THANKS(Eugeniu Plamadeala)
-        THANKS(Felix Krull)
         THANKS(F Chris Carrera)
         THANKS(Francesco di Cugno)
         THANKS(Gary Cramblitt)
@@ -76,6 +83,7 @@ AboutBox::AboutBox(QWidget* parent, Qt::WindowFlags f)
         THANKS(James Yuzwalk)
         THANKS(Jean-Remy Falleri)
         THANKS(Johannes Lange)
+        THANKS(Johan Thelin)
         THANKS(Jonathan Avraham)
         THANKS(Jonathan Riddell)
         THANKS(Lars Ivar Igesund)
@@ -90,12 +98,11 @@ AboutBox::AboutBox(QWidget* parent, Qt::WindowFlags f)
         THANKS(Philippe Fremy)
         THANKS(Pieter Pareit)
         THANKS(Roberto Alsina)
-        THANKS(Roland ’liquidat’ Wolters)
+        THANKS(Roland &#39;liquidat&#39; Wolters)
         THANKS(Sarah Hobbs)
         THANKS(S&eacute;bastien Szymanski)
         THANKS(Stephan Binner)
         THANKS(Steven Honeyman)
-        THANKS(Tey)
         THANKS(Thomas Luebking)
         THANKS(Thomas Nagy)
         THANKS(Vibet Alexis)
@@ -130,8 +137,14 @@ AboutBox::AboutBox(QWidget* parent, Qt::WindowFlags f)
     textEdit->setReadOnly(true);
     textEdit->setText(msg);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
-    mainLayout->addWidget(textEdit);
+    QPushButton* closeButton = new QPushButton(this);
+    closeButton->setText(tr("Close"));
+    connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
+
+    QGridLayout* mainLayout = new QGridLayout(this);
+    mainLayout->addWidget(textEdit, 0, 0, 1, 2);
+    mainLayout->addWidget(closeButton, 1, 1, 1, 1);
+    mainLayout->setColumnStretch(0, 1);
 
     setWindowTitle(tr("About SpeedCrunch"));
 }

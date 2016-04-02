@@ -44,22 +44,26 @@ if(USING_MSVC)
     add_definitions(-D_USE_MATH_DEFINES)
 else()
     add_definitions(-Wall)
-    add_definitions(-std=c++0x)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 endif()
 
-option(BUILD_MANUAL "Build the embedded manual" TRUE)
-if(BUILD_MANUAL)
-    add_subdirectory(../doc/manual doc)
+# Embedded manual
+option(REBUILD_MANUAL "Rebuild the manual rather than using the bundled copy" FALSE)
+add_subdirectory(../doc/src doc)
+if(REBUILD_MANUAL)
+    # set here so CMake knows about this file in this CMakeLists
     set_property(SOURCE ${CMAKE_CURRENT_BINARY_DIR}/doc/manual.qrc PROPERTY GENERATED true)
-    qt5_add_RESOURCES(speedcrunch_RESOURCES_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/doc/manual.qrc)
+    set(speedcrunch_RESOURCES ${speedcrunch_RESOURCES} ${CMAKE_CURRENT_BINARY_DIR}/doc/manual.qrc)
+else()
+    set(speedcrunch_RESOURCES ${speedcrunch_RESOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/../doc/build_html_embedded/manual.qrc)
 endif()
 
 qt5_add_RESOURCES(speedcrunch_RESOURCES_SOURCES ${speedcrunch_RESOURCES})
 add_executable(${PROGNAME} WIN32 MACOSX_BUNDLE ${speedcrunch_SOURCES} ${speedcrunch_HEADERS_MOC} ${speedcrunch_RESOURCES_SOURCES} ${speedcrunch_FORMS_HEADERS} ${WIN32_RES_FILE})
-if(TARGET manual)
+
+if(REBUILD_MANUAL)
     add_dependencies(${PROGNAME} manual)
 endif()
-
 
 if(APPLE)
     set( speedcrunch_RESOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources )
@@ -96,9 +100,9 @@ add_executable(testcmath ${testcmath_SOURCES})
 target_link_libraries(testcmath ${QT_LIBRARIES})
 add_test(testcmath testcmath)
 
-add_executable(testcnumberparser ${testcnumberparser_SOURCES})
-target_link_libraries(testcnumberparser ${QT_LIBRARIES})
-add_test(testcnumberparser testcnumberparser)
+add_executable(testdmath ${testdmath_SOURCES})
+target_link_libraries(testdmath ${QT_LIBRARIES})
+add_test(testdmath testdmath)
 
 add_executable(testser ${testser_SOURCES})
 target_link_libraries(testser ${QT_LIBRARIES})
