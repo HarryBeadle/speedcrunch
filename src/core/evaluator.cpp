@@ -1795,7 +1795,7 @@ void Evaluator::unsetAllUserDefinedVariables()
     setVariable(QLatin1String("ans"), ansBackup, Variable::BuiltIn);
 }
 
-static QRegularExpression s_superscriptPowersRE("\\x{207B}?[\\x{2070}¹²³\\x{2074}-\\x{2079}]+");
+static QRegularExpression s_superscriptPowersRE("(\\x{207B})?[\\x{2070}¹²³\\x{2074}-\\x{2079}]+");
 static QHash<QChar, QChar> s_superscriptPowersHash{
   {L'\u207B', '-'},
   {L'\u2070', '0'},
@@ -1818,14 +1818,21 @@ static void replaceSuperscriptPowersWithCaretEquivalent(QString& expr)
       if (!match.hasMatch())
           break;
 
-      QString powers = "^" + match.captured();
-      for (int pos = powers.size() - 1; pos > 0; --pos) {
-        QChar c = powers.at(pos);
-        powers.replace(pos, 1, s_superscriptPowersHash.value(c, c));
+      QString power = match.captured();
+      for (int pos = power.size() - 1; pos >= 0; --pos) {
+        QChar c = power.at(pos);
+        power.replace(pos, 1, s_superscriptPowersHash.value(c, c));
       }
 
-      expr.replace(match.capturedStart(), match.capturedLength(), powers);
-      offset = match.capturedStart() + powers.size();
+      bool isNegative = match.capturedStart(1) != -1;
+      if (isNegative)
+          power = "^(" + power + ")";
+      else
+          power = "^" + power;
+
+
+      expr.replace(match.capturedStart(), match.capturedLength(), power);
+      offset = match.capturedStart() + power.size();
     }
 }
 

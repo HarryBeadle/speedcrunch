@@ -621,7 +621,7 @@ void test_auto_fix_untouch()
 void test_auto_fix_powers()
 {
     CHECK_AUTOFIX("3¹", "3^1");
-    CHECK_AUTOFIX("3⁻¹", "3^-1");
+    CHECK_AUTOFIX("3⁻¹", "3^(-1)");
     CHECK_AUTOFIX("3¹²³⁴⁵⁶⁷⁸⁹", "3^123456789");
     CHECK_AUTOFIX("3²⁰", "3^20");
     CHECK_AUTOFIX("7 + 3²⁰ * 4", "7 + 3^20 * 4");
