@@ -68,6 +68,8 @@ void test_rational()
     CHECK_STRING(Rational(-12345./96457).toString().toStdString(), "-12345/96457");
     CHECK_STRING(Rational(HNumber("-1234")/HNumber("7895")).toString().toStdString(), "-1234/7895");
     CHECK_STRING(Rational(HNumber("-1235000")/HNumber("78950000")).toString().toStdString(), "-247/15790");
+    CHECK_STRING(Rational(0.).toString().toStdString(), "0");
+    CHECK_STRING(Rational(HNumber(0)).toString().toStdString(), "0");
 }
 
 void test_create()

@@ -59,6 +59,10 @@ int Rational::compare(const Rational &other) const
 Rational::Rational(const HNumber &num) :
     m_num(1), m_denom(1), m_valid(1)
 {
+    if(num.isZero()) {
+        m_num = 0;
+        return;
+    }
     if(HMath::abs(num)>HNumber(INT_MAX) || HMath::abs(num)<HNumber(1)/HNumber(INT_MAX)) {
         m_valid = false;
         return;
