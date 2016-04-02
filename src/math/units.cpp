@@ -148,6 +148,15 @@ void Units::findUnit(Quantity & q)
             else if (exponent == QLatin1String("^7")) exponent = QString::fromUtf8("⁷") ;
             else if (exponent == QLatin1String("^8")) exponent = QString::fromUtf8("⁸") ;
             else if (exponent == QLatin1String("^9")) exponent = QString::fromUtf8("⁹") ;
+            else if (exponent == QLatin1String("^-1")) exponent = QString::fromUtf8("⁻¹");
+            else if (exponent == QLatin1String("^-2")) exponent = QString::fromUtf8("⁻²");
+            else if (exponent == QLatin1String("^-3")) exponent = QString::fromUtf8("⁻³");
+            else if (exponent == QLatin1String("^-4")) exponent = QString::fromUtf8("⁻⁴") ;
+            else if (exponent == QLatin1String("^-5")) exponent = QString::fromUtf8("⁻⁵") ;
+            else if (exponent == QLatin1String("^-6")) exponent = QString::fromUtf8("⁻⁶") ;
+            else if (exponent == QLatin1String("^-7")) exponent = QString::fromUtf8("⁻⁷") ;
+            else if (exponent == QLatin1String("^-8")) exponent = QString::fromUtf8("⁻⁸") ;
+            else if (exponent == QLatin1String("^-9")) exponent = QString::fromUtf8("⁻⁹") ;
 
 
 
