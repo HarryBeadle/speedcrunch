@@ -3,6 +3,7 @@ set -e
 
 BASE_DIR=~
 SPEEDCRUNCH_SOURCE_DIR=/speedcrunch-source
+OUTPUT_DIR=/vagrant/build
 
 function build_speedcrunch {
     ARCH=$*
@@ -14,8 +15,9 @@ function build_speedcrunch {
     scl enable devtoolset-2 "bash <<END
     $QT_INSTALL_DIR/bin/qmake $SPEEDCRUNCH_SOURCE_DIR/src 'CONFIG-=debug'
     make -j$(nproc --all)
-    mkdir -p /vagrant/build/speedcrunch-$ARCH
-    cp speedcrunch /vagrant/build/speedcrunch-$ARCH/
+    strip speedcrunch
+    mkdir -p $OUTPUT_DIR/speedcrunch-$ARCH
+    cp speedcrunch $OUTPUT_DIR/speedcrunch-$ARCH/
 END"
 }
 

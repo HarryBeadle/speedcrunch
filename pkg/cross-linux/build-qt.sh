@@ -14,6 +14,9 @@ COMMON_CONFIGURE_ARGS="-opensource -confirm-license \
 CONFIGURE_ARGS_32="-xplatform linux-g++-32 -pkg-config"
 CONFIGURE_ARGS_64="-platform linux-g++-64"
 
+PKG_CONFIG_PATH_32="/usr/lib/pkgconfig"
+PKG_CONFIG_PATH_64="/usr/lib64/pkgconfig"
+
 function build_qt {
     ARCH=$*
     echo "Building for '$ARCH'..."
@@ -22,6 +25,7 @@ function build_qt {
     mkdir -p $BUILD_DIR
     cd $BUILD_DIR
     scl enable devtoolset-2 "bash <<END
+    export PKG_CONFIG_PATH=$(eval echo \$PKG_CONFIG_PATH_$ARCH)
     $QT_SOURCE_DIR/configure $COMMON_CONFIGURE_ARGS $(eval echo \$CONFIGURE_ARGS_$ARCH) -prefix $INSTALL_DIR
     make -j$(nproc --all)
     make install
