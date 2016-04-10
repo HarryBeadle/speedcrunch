@@ -196,6 +196,13 @@ void test_binary()
     CHECK_EVAL("1+0", "1");
     CHECK_EVAL("0+1", "1");
     CHECK_EVAL("1+1", "2");
+
+    // Check that parentheses are added in unit conversion results when needed
+    CHECK_EVAL("1 meter -> 10 meter", "0.1 (10 meter)");
+    CHECK_EVAL("1 meter -> meter + meter", "0.5 (meter + meter)");
+    CHECK_EVAL("1 meter -> meter - 2meter", "-1 (meter - 2meter)");
+    CHECK_EVAL("1 meter -> meter", "1 meter");
+    CHECK_EVAL("1 (10 meter) -> meter", "10 meter");
 }
 
 void test_divide_by_zero()
