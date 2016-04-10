@@ -130,6 +130,7 @@ public:
     bool isBuiltInVariable(const QString&) const;
     bool hasVariable(const QString&) const;
     void initializeBuiltInVariables();
+    void initializeAngleUnits();
 
     QList<UserFunction> getUserFunctions() const;
     void setUserFunction(const UserFunction & f);

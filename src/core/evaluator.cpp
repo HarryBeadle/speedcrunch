@@ -30,6 +30,7 @@
 
 #include <QCoreApplication>
 #include <QStack>
+#include <QRegularExpression>
 
 #define ALLOW_IMPLICIT_MULT
 
@@ -549,6 +550,10 @@ Evaluator::Evaluator()
     reset();
 }
 
+
+#define ADD_UNIT(name) \
+    setVariable(QString::fromUtf8(#name), Units::name(), Variable::BuiltIn)
+
 void Evaluator::initializeBuiltInVariables()
 {
     setVariable(QLatin1String("e"), DMath::e(), Variable::BuiltIn);
@@ -564,26 +569,24 @@ void Evaluator::initializeBuiltInVariables()
         unsetVariable("j", true);
     }
 
-    setVariable(QString::fromUtf8("meter"), Units::meter(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("second"), Units::second(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("kilogram"), Units::kilogram(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("ampere"), Units::ampere(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("mole"), Units::mole(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("candela"), Units::candela(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("kelvin"), Units::kelvin(), Variable::BuiltIn);
+    QList<Unit> unitList(Units::getList());
+    for(Unit u : unitList) {
+        setVariable(u.name, u.value, Variable::BuiltIn);
+    }
 
-    setVariable(QString::fromUtf8("newton"), Units::newton(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("joule"), Units::joule(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("watt"), Units::watt(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("pascal"), Units::pascal(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("coulomb"), Units::coulomb(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("volt"), Units::volt(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("ohm"), Units::ohm(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("farad"), Units::farad(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("tesla"), Units::tesla(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("weber"), Units::weber(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("henry"), Units::henry(), Variable::BuiltIn);
-    setVariable(QString::fromUtf8("siemens"), Units::siemens(), Variable::BuiltIn);
+    initializeAngleUnits();
+}
+
+void Evaluator::initializeAngleUnits()
+{
+    if (Settings::instance()->angleUnit == 'r') {
+        setVariable("radian", 1, Variable::BuiltIn);
+        setVariable("degree", HMath::pi()/HNumber(180),Variable::BuiltIn);
+    }
+    else {
+        setVariable("radian", HNumber(180)/HMath::pi(),Variable::BuiltIn);
+        setVariable("degree", 1,Variable::BuiltIn);
+    }
 }
 
 void Evaluator::setExpression(const QString& expr)
@@ -1853,18 +1856,45 @@ void Evaluator::unsetAllUserDefinedVariables()
     setVariable(QLatin1String("ans"), ansBackup, Variable::BuiltIn);
 }
 
+static QRegularExpression s_superscriptPowersRE("(\\x{207B})?[\\x{2070}¹²³\\x{2074}-\\x{2079}]+");
+static QHash<QChar, QChar> s_superscriptPowersHash{
+  {L'\u207B', '-'},
+  {L'\u2070', '0'},
+  {L'\u00B9', '1'},
+  {L'\u00B2', '2'},
+  {L'\u00B3', '3'},
+  {L'\u2074', '4'},
+  {L'\u2075', '5'},
+  {L'\u2076', '6'},
+  {L'\u2077', '7'},
+  {L'\u2078', '8'},
+  {L'\u2079', '9'},
+};
+
 static void replaceSuperscriptPowersWithCaretEquivalent(QString& expr)
 {
-    expr.replace(QString::fromUtf8("⁰"), QLatin1String("^0"));
-    expr.replace(QString::fromUtf8("¹"), QLatin1String("^1"));
-    expr.replace(QString::fromUtf8("²"), QLatin1String("^2"));
-    expr.replace(QString::fromUtf8("³"), QLatin1String("^3"));
-    expr.replace(QString::fromUtf8("⁴"), QLatin1String("^4"));
-    expr.replace(QString::fromUtf8("⁵"), QLatin1String("^5"));
-    expr.replace(QString::fromUtf8("⁶"), QLatin1String("^6"));
-    expr.replace(QString::fromUtf8("⁷"), QLatin1String("^7"));
-    expr.replace(QString::fromUtf8("⁸"), QLatin1String("^8"));
-    expr.replace(QString::fromUtf8("⁹"), QLatin1String("^9"));
+    int offset = 0;
+    while (true) {
+      QRegularExpressionMatch match = s_superscriptPowersRE.match(expr, offset);
+      if (!match.hasMatch())
+          break;
+
+      QString power = match.captured();
+      for (int pos = power.size() - 1; pos >= 0; --pos) {
+        QChar c = power.at(pos);
+        power.replace(pos, 1, s_superscriptPowersHash.value(c, c));
+      }
+
+      bool isNegative = match.capturedStart(1) != -1;
+      if (isNegative)
+          power = "^(" + power + ")";
+      else
+          power = "^" + power;
+
+
+      expr.replace(match.capturedStart(), match.capturedLength(), power);
+      offset = match.capturedStart() + power.size();
+    }
 }
 
 QList<UserFunction> Evaluator::getUserFunctions() const

@@ -1274,6 +1274,7 @@ void MainWindow::setAngleModeDegree()
     if (m_status.angleUnit)
         m_status.angleUnit->setText(tr("Degree"));
 
+    m_evaluator->initializeAngleUnits();
     emit angleUnitChanged();
 }
 
@@ -1619,6 +1620,7 @@ void MainWindow::setAngleModeRadian()
     if (m_status.angleUnit)
         m_status.angleUnit->setText(tr("Radian"));
 
+    m_evaluator->initializeAngleUnits();
     emit angleUnitChanged();
 }
 

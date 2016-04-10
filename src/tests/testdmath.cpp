@@ -54,12 +54,12 @@ static void check_format(const char* file, int line, const char* msg, const Quan
     DisplayErrorOnMismatch(file, line, msg, result, expected, dmath_failed_tests, dmath_new_failed_tests, 0);
 }
 
-static void check_precise(const char* file, int line, const char* msg, const Quantity& q, const char* expected)
-{
-    ++dmath_total_tests;
-    string result = DMath::format(q, 'f', 50).toStdString();
-    DisplayErrorOnMismatch(file, line, msg, result, expected, dmath_failed_tests, dmath_new_failed_tests, 0);
-}
+//static void check_precise(const char* file, int line, const char* msg, const Quantity& q, const char* expected)
+//{
+//    ++dmath_total_tests;
+//    string result = DMath::format(q, 'f', 50).toStdString();
+//    DisplayErrorOnMismatch(file, line, msg, result, expected, dmath_failed_tests, dmath_new_failed_tests, 0);
+//}
 
 void test_rational()
 {
@@ -68,6 +68,8 @@ void test_rational()
     CHECK_STRING(Rational(-12345./96457).toString().toStdString(), "-12345/96457");
     CHECK_STRING(Rational(HNumber("-1234")/HNumber("7895")).toString().toStdString(), "-1234/7895");
     CHECK_STRING(Rational(HNumber("-1235000")/HNumber("78950000")).toString().toStdString(), "-247/15790");
+    CHECK_STRING(Rational(0.).toString().toStdString(), "0");
+    CHECK_STRING(Rational(HNumber(0)).toString().toStdString(), "0");
 }
 
 void test_create()
@@ -83,7 +85,7 @@ void test_basic()
     CHECK(Quantity(5) * Units::meter(), "5 meter");
     CHECK(Units::candela() + Units::second(), "NaN");
     CHECK(Quantity(3)*Units::mole() - Quantity(HNumber("2.5"))*Units::mole(), "0.5 mole");
-    CHECK(Units::kilogram()/Units::second(), "1 kilogram second^-1");
+    CHECK(Units::kilogram()/Units::second(), "1 kilogram second⁻¹");
     CHECK(Units::meter()*Units::meter(), "1 meter²");
     CHECK(-Quantity(5)*Units::meter(), "-5 meter");
     CNumber foot = CNumber("0.3");
@@ -91,7 +93,7 @@ void test_basic()
     a.setDisplayUnit(foot, "foot");
     CHECK(a, "410 foot");
     CHECK(a*Units::second(), "123 meter second");       // Issue 615
-    CHECK(a/Units::second(), "123 meter second^-1");    //
+    CHECK(a/Units::second(), "123 meter second⁻¹");    //
     CHECK(a*HNumber(5), "2050 foot");                   //
     CHECK(a/HNumber(5), "82 foot");                     //
 }

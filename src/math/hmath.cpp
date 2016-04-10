@@ -966,16 +966,31 @@ HNumber HMath::frac( const HNumber & n )
     return result;
 }
 
+#define CHECK_NAN                           \
+  if (n.isNan())                            \
+    return HMath::nan(checkNaNParam(*n.d));
+
+#define RETURN_IF_NEAR_INT                                                            \
+  HNumber nearest_int(n);                                                             \
+  float_roundtoint(&nearest_int.d->fnum, TONEAREST);                                  \
+  /* Note: float_relcmp doesn't work here, because it's doesn't check the relative */ \
+  /* tolerance if exponents are not the same.                                      */ \
+  /* FIXME: Put this value as parameter */                                            \
+  /* Kudos to the guy who can figure out why we need such a small tolerance here. 1e-70 does not work, but 1e-10000 does. */\
+  if (HMath::abs(n - nearest_int) < HNumber("1e-100") * HMath::abs(n + nearest_int)) /* FIXME: Make this configurable. */ \
+      return nearest_int;                                                             \
+
 /**
  * Returns the floor of n.
  */
 HNumber HMath::floor( const HNumber & n )
 {
-    if (n.isNan())
-        return HMath::nan(checkNaNParam(*n.d));
-    HNumber r(n);
-    float_roundtoint(&r.d->fnum, TOMINUSINFINITY);
-    return r;
+  CHECK_NAN;
+  RETURN_IF_NEAR_INT;
+  /* Actual rounding, if needed */
+  HNumber r(n);
+  float_roundtoint(&r.d->fnum, TOMINUSINFINITY);
+  return r;
 }
 
 /**
@@ -983,11 +998,12 @@ HNumber HMath::floor( const HNumber & n )
  */
 HNumber HMath::ceil( const HNumber & n )
 {
-    if (n.isNan())
-        return HMath::nan(checkNaNParam(*n.d));
-    HNumber r(n);
-    float_roundtoint(&r.d->fnum, TOPLUSINFINITY);
-    return r;
+  CHECK_NAN;
+  RETURN_IF_NEAR_INT;
+  /* Actual rounding, if needed */
+  HNumber r(n);
+  float_roundtoint(&r.d->fnum, TOPLUSINFINITY);
+  return r;
 }
 
 /**
