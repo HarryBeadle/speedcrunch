@@ -115,7 +115,7 @@ int main(int, char**)
     a.setFormat('b');
     a *= Units::meter();
     a.setDisplayUnit(CNumber("0.3"), QString("foot"));
-    const char q_json_blob[] = "{\"dimension\":{\"length\":\"1\"},\"format\":\"\",\"numeric_value\":{\"format\":\"NULL\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"unit\":{\"format\":\"NULL\",\"value\":\"0.300000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"unit_name\":\"foot\"}";
+    const char q_json_blob[] = "{\"dimension\":{\"length\":\"1\"},\"format\":\"b\",\"numeric_value\":{\"format\":\"NULL\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"unit\":{\"format\":\"NULL\",\"value\":\"0.300000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"unit_name\":\"foot\"}";
     CHECK_SER(a, q_json_blob);
 
     /* HNumber deserialization tests */
