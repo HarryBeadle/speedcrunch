@@ -9,6 +9,7 @@ It is targeted at people who wish to extend or contribute to SpeedCrunch.
 
    colorschemeformat
    docguide
+   linuxpackages
 
 .. TODO: Potential further topics:
 ..  - how to contribute
