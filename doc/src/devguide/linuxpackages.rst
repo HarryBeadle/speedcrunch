@@ -4,11 +4,13 @@ Building Linux Binary Packages
 The SpeedCrunch repository includes scripts to build generic Linux binary packages that are
 intended to be compatible with as many Linux distributions as possible. The packages are
 built in a controlled environment using a relatively old Linux distribution
-(currently `CentOS 6 x86-64 <centos_>`_) and include their own copy of the Qt libraries.
+(currently `CentOS 6 x86-64 <centos_>`_ with the `Red Hat Developer Toolset 2.0 <devtoolset_>`_)
+and include their own copy of the Qt libraries.
 For each architecture (x86 and x86-64), three packages are generated: a Debian package (``*.deb``),
 an RPM package and a generic tarball.
 
 .. _centos: http://centos.org
+.. _devtoolset: https://access.redhat.com/documentation/en-US/Red_Hat_Developer_Toolset/2/html/2.0_Release_Notes/index.html
 
 To build the Linux packages, the following software is required:
 
@@ -37,6 +39,14 @@ Rather than using the Vagrant configuration, the scripts can also be run in any 
 CentOS 6 x86-64 installation. However, it will be necessary to adjust the paths in
 :file:`build-speedcrunch.sh` to match the environment.
 
+
+.. seealso::
+
+   * `GCC ABI Policy and Guidelines <gccabi_>`_
+   * `glibc API/ABI Compatbility Tracker <glibccompat_>`_
+
+.. _gccabi: https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html
+.. _glibccompat: http://abi-laboratory.pro/tracker/timeline/glibc/
 
 
 .. rubric:: Footnotes
