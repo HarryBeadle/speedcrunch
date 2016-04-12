@@ -325,8 +325,8 @@ void Quantity::serialize(QJsonObject &json) const
         json["unit"] = unit_json;
         json["unit_name"] = m_unitName;
     }
-    if (m_format)
-        json["format"] = (m_format == '\0') ? QString(m_format) : NULL;
+    if (m_format != '\0')
+        json["format"] = QString(m_format);
 }
 
 Quantity Quantity::deSerialize(const QJsonObject &json)
