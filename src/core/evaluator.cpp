@@ -315,7 +315,7 @@ QString Token::description() const
 
     QString header;
     header.append(QString::number(m_pos) + "," + QString::number(m_pos + m_size - 1));
-    header.append( + "," + (m_minPrecedence == MAX_PRECEDENCE ? "MAX" : QString::number(m_minPrecedence)));
+    header.append("," + (m_minPrecedence == MAX_PRECEDENCE ? "MAX" : QString::number(m_minPrecedence)));
     header.append("  ");
 
     while (header.length() < 10)
