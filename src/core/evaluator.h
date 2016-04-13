@@ -139,7 +139,7 @@ public:
     bool hasUserFunction(const QString&) const;
 
 protected:
-    void compile(const Tokens&, const QString& expression = QString::Null());
+    void compile(const Tokens&);
 
 
 private:

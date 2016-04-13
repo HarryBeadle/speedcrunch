@@ -171,8 +171,8 @@ public:
     QString error() const { return m_error; }
 
     void reduce(int count, int minPrecedence = INVALID_PRECEDENCE);
-    void reduce(int count, Token &&top, int minPrecedence = INVALID_PRECEDENCE);
-    void reduce(QList<Token> tokens, Token &&top, int minPrecedence = INVALID_PRECEDENCE);
+    void reduce(int count, Token&& top, int minPrecedence = INVALID_PRECEDENCE);
+    void reduce(QList<Token> tokens, Token&& top, int minPrecedence = INVALID_PRECEDENCE);
 
 private:
     void ensureSpace();
@@ -327,7 +327,7 @@ QString Token::description() const
     return desc;
 }
 
-static bool tokenPositionCompare(const Token &a, const Token &b)
+static bool tokenPositionCompare(const Token& a, const Token& b)
 {
     return (a.pos() < b.pos());
 }
@@ -406,7 +406,7 @@ void TokenStack::reduce(int count, int minPrecedence)
  * \param minPrecedence minimum precedence to set the top token, or \c INVALID_PRECEDENCE
  * if this method should use the minimum value from the removed tokens.
  */
-void TokenStack::reduce(int count, Token &&top, int minPrecedence)
+void TokenStack::reduce(int count, Token&& top, int minPrecedence)
 {
     // assert(itemCount() >= count);
 
@@ -422,7 +422,7 @@ void TokenStack::reduce(int count, Token &&top, int minPrecedence)
  * \param minPrecedence minimum precedence to set the top token, or \c INVALID_PRECEDENCE
  * if this method should use the minimum value from the removed tokens.
  */
-void TokenStack::reduce(QList<Token> tokens, Token &&top, int minPrecedence)
+void TokenStack::reduce(QList<Token> tokens, Token&& top, int minPrecedence)
 {
 
 #ifdef EVALUATOR_DEBUG
@@ -920,15 +920,13 @@ Tokens Evaluator::scan(const QString& expr) const
     return tokens;
 }
 
-void Evaluator::compile(const Tokens& tokens, const QString& _expression)
+void Evaluator::compile(const Tokens& tokens)
 {
 #ifdef EVALUATOR_DEBUG
     QFile debugFile("eval.log");
     debugFile.open(QIODevice::WriteOnly);
     QTextStream dbg(&debugFile);
 #endif
-
-    const QString &expression = _expression.isNull() ? m_expression : _expression;
 
     // Initialize variables.
     m_dirty = false;
@@ -1161,7 +1159,7 @@ void Evaluator::compile(const Tokens& tokens, const QString& _expression)
                       case Token::Pipe:      m_codes.append(Opcode::BOr); break;
                       case Token::RightArrow: {
                           static const QRegExp s_unitNameNumberRE("(^[0-9e\\+\\-\\.,]|[0-9e\\.,]$)", Qt::CaseInsensitive);
-                          QString unitName = expression.mid(b.pos(), b.size()).simplified();
+                          QString unitName = m_expression.mid(b.pos(), b.size()).simplified();
                           // Make sure the whole unit name can be used as a single operand in multiplications
                           if (b.minPrecedence() < opPrecedence(Token::Asterisk))
                               unitName = "(" + unitName + ")";
