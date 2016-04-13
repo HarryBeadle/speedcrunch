@@ -888,7 +888,7 @@ Tokens Evaluator::scan(const QString& expr) const
             else {// Invalid thing here.
                 // Rollback: might be an identifier used in implicit multiplication
                 i = expStart;
-                tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, i - tokenStart));
                 state = Init;
             }
             break;
