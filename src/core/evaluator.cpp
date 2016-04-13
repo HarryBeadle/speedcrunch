@@ -920,8 +920,6 @@ Tokens Evaluator::scan(const QString& expr) const
     return tokens;
 }
 
-static QRegExp s_unitNameNumberRE("(^[0-9e\\+\\-\\.,]|[0-9e\\.,]$)", Qt::CaseInsensitive);
-
 void Evaluator::compile(const Tokens& tokens, const QString& _expression)
 {
 #ifdef EVALUATOR_DEBUG
@@ -1162,6 +1160,7 @@ void Evaluator::compile(const Tokens& tokens, const QString& _expression)
                       case Token::Ampersand: m_codes.append(Opcode::BAnd); break;
                       case Token::Pipe:      m_codes.append(Opcode::BOr); break;
                       case Token::RightArrow: {
+                          static const QRegExp s_unitNameNumberRE("(^[0-9e\\+\\-\\.,]|[0-9e\\.,]$)", Qt::CaseInsensitive);
                           QString unitName = expression.mid(b.pos(), b.size()).simplified();
                           // Make sure the whole unit name can be used as a single operand in multiplications
                           if (b.minPrecedence() < opPrecedence(Token::Asterisk))
