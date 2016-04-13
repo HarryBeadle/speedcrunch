@@ -748,7 +748,8 @@ Tokens Evaluator::scan(const QString& expr) const
                     }
                     int len = s.length();
                     i += len;
-                    tokens.append(Token(type, s.left(len), tokenStart, i - tokenStart));
+                    int tokenSize = i - tokenStart;
+                    tokens.append(Token(type, s.left(len), tokenStart, tokenSize));
 
                     state = Init;
                 }
@@ -767,13 +768,13 @@ Tokens Evaluator::scan(const QString& expr) const
             if (isIdentifier(ch) || ch.isDigit())
                 tokenText.append(ex.at(i++));
             else { // We're done with identifier.
-                // if token is an operator
+                int tokenSize = i - tokenStart;
                 if (matchOperator(tokenText)) {
-                    tokens.append(Token(Token::stxOperator, tokenText, tokenStart, i - tokenStart));
-                }
-                // else, normal identifier
-                else {
-                    tokens.append(Token(Token::stxIdentifier, tokenText, tokenStart, i - tokenStart));
+                    // if token is an operator
+                    tokens.append(Token(Token::stxOperator, tokenText, tokenStart, tokenSize));
+                } else {
+                    // else, normal identifier
+                    tokens.append(Token(Token::stxIdentifier, tokenText, tokenStart, tokenSize));
                 }
                 state = Init;
             }
@@ -808,7 +809,8 @@ Tokens Evaluator::scan(const QString& expr) const
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
             else { // We're done with integer number.
-                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, i - tokenStart));
+                int tokenSize = i - tokenStart;
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, tokenSize));
                 state = Init;
             }
             break;
@@ -824,7 +826,8 @@ Tokens Evaluator::scan(const QString& expr) const
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
             else { // We're done with hexadecimal number.
-                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, i - tokenStart));
+                int tokenSize = i - tokenStart;
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, tokenSize));
                 state = Init;
             }
             break;
@@ -840,7 +843,8 @@ Tokens Evaluator::scan(const QString& expr) const
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
             else { // We're done with binary number.
-                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, i - tokenStart));
+                int tokenSize = i - tokenStart;
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, tokenSize));
                 state = Init;
             }
             break;
@@ -856,7 +860,8 @@ Tokens Evaluator::scan(const QString& expr) const
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
             else { // We're done with octal number.
-                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, i - tokenStart));
+                int tokenSize = i - tokenStart;
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, tokenSize));
                 state = Init;
             }
             break;
@@ -872,7 +877,8 @@ Tokens Evaluator::scan(const QString& expr) const
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
             else { // We're done with floating-point number.
-                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, i - tokenStart));
+                int tokenSize = i - tokenStart;
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, tokenSize));
                 state = Init;
             };
             break;
@@ -888,7 +894,8 @@ Tokens Evaluator::scan(const QString& expr) const
             else {// Invalid thing here.
                 // Rollback: might be an identifier used in implicit multiplication
                 i = expStart;
-                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, i - tokenStart));
+                int tokenSize = i - tokenStart;
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, tokenSize));
                 state = Init;
             }
             break;
@@ -899,7 +906,8 @@ Tokens Evaluator::scan(const QString& expr) const
             else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
             else { // We're done with floating-point number.
-                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, i - tokenStart));
+                int tokenSize = i - tokenStart;
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, tokenSize));
                 state = Init;
             };
             break;
