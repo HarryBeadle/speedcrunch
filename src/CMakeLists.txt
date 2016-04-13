@@ -108,6 +108,8 @@ add_executable(testser ${testser_SOURCES})
 target_link_libraries(testser ${QT_LIBRARIES})
 add_test(testser testser)
 
+set_property(TARGET ${PROGNAME} APPEND PROPERTY COMPILE_DEFINITIONS $<$<CONFIG:Debug>:EVALUATOR_DEBUG>)
+
 include_directories(${CMAKE_BINARY_DIR} thirdparty core gui math)
 
 ################################# INSTALL ######################################

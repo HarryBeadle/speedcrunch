@@ -34,11 +34,14 @@
 
 #define ALLOW_IMPLICIT_MULT
 
+#define MAX_PRECEDENCE      INT_MAX
+#define INVALID_PRECEDENCE  INT_MIN
 
 #ifdef EVALUATOR_DEBUG
 #include <QFile>
 #include <QTextStream>
 
+#include <QDebug>
 
 QTextStream& operator<<(QTextStream& s, Quantity num)
 {
@@ -167,6 +170,10 @@ public:
     bool hasError() const { return !m_error.isEmpty(); }
     QString error() const { return m_error; }
 
+    void reduce(int count, int minPrecedence = INVALID_PRECEDENCE);
+    void reduce(int count, Token&& top, int minPrecedence = INVALID_PRECEDENCE);
+    void reduce(QList<Token> tokens, Token&& top, int minPrecedence = INVALID_PRECEDENCE);
+
 private:
     void ensureSpace();
     int topIndex;
@@ -250,11 +257,13 @@ static int opPrecedence(Token::Op op)
     return prec;
 }
 
-Token::Token(Type type, const QString& text, int pos)
+Token::Token(Type type, const QString& text, int pos, int size)
 {
     m_type = type;
     m_text = text;
     m_pos = pos;
+    m_size = size;
+    m_minPrecedence = MAX_PRECEDENCE;
 }
 
 Token::Token(const Token& token)
@@ -262,6 +271,8 @@ Token::Token(const Token& token)
     m_type = token.m_type;
     m_text = token.m_text;
     m_pos = token.m_pos;
+    m_size = token.m_size;
+    m_minPrecedence = token.m_minPrecedence;
 }
 
 Token& Token::operator=(const Token& token)
@@ -269,6 +280,8 @@ Token& Token::operator=(const Token& token)
     m_type = token.m_type;
     m_text = token.m_text;
     m_pos = token.m_pos;
+    m_size = token.m_size;
+    m_minPrecedence = token.m_minPrecedence;
     return*this;
 }
 
@@ -299,11 +312,24 @@ QString Token::description() const
 
     while (desc.length() < 10)
         desc.prepend(' ');
-    desc.prepend("  ");
-    desc.prepend(QString::number(m_pos));
+
+    QString header;
+    header.append(QString::number(m_pos) + "," + QString::number(m_pos + m_size - 1));
+    header.append("," + (m_minPrecedence == MAX_PRECEDENCE ? "MAX" : QString::number(m_minPrecedence)));
+    header.append("  ");
+
+    while (header.length() < 10)
+        header.append(' ');
+
+    desc.prepend(header);
     desc.append(" : ").append(m_text);
 
     return desc;
+}
+
+static bool tokenPositionCompare(const Token& a, const Token& b)
+{
+    return (a.pos() < b.pos());
 }
 
 TokenStack::TokenStack() : QVector<Token>()
@@ -355,6 +381,108 @@ void TokenStack::ensureSpace()
         length += 10;
         resize(length);
     }
+}
+
+/** Remove \a count tokens from the top of the stack, add a stxAbstract token to the top
+ * and adjust its text position and minimum precedence.
+ *
+ * \param minPrecedence minimum precedence to set the top token, or \c INVALID_PRECEDENCE
+ * if this method should use the minimum value from the removed tokens.
+ */
+void TokenStack::reduce(int count, int minPrecedence)
+{
+    // assert(itemCount() > count);
+
+    QList<Token> tokens;
+    for (int i = 0 ; i < count ; ++i)
+        tokens.append(pop());
+
+    reduce(tokens, Token(Token::stxAbstract), minPrecedence);
+}
+
+/** Remove \a count tokens from the top of the stack, push \a top to the top
+ * and adjust its text position and minimum precedence.
+ *
+ * \param minPrecedence minimum precedence to set the top token, or \c INVALID_PRECEDENCE
+ * if this method should use the minimum value from the removed tokens.
+ */
+void TokenStack::reduce(int count, Token&& top, int minPrecedence)
+{
+    // assert(itemCount() >= count);
+
+    QList<Token> tokens;
+    for (int i = 0 ; i < count ; ++i)
+        tokens.append(pop());
+
+    reduce(tokens, std::forward<Token>(top), minPrecedence);
+}
+
+/** Push \a top to the top and adjust its text position and minimum precedence using \a tokens.
+ *
+ * \param minPrecedence minimum precedence to set the top token, or \c INVALID_PRECEDENCE
+ * if this method should use the minimum value from the removed tokens.
+ */
+void TokenStack::reduce(QList<Token> tokens, Token&& top, int minPrecedence)
+{
+
+#ifdef EVALUATOR_DEBUG
+    qDebug() << "reduce(" << tokens.size() << ", " << top.description() << ", " << minPrecedence << ")";
+    for (Token& t : tokens)
+        qDebug() << t.description();
+#endif  /* EVALUATOR_DEBUG */
+
+    qSort(tokens.begin(), tokens.end(), tokenPositionCompare);
+
+    bool computeMinPrec = (minPrecedence == INVALID_PRECEDENCE);
+    int min_prec = computeMinPrec ? MAX_PRECEDENCE : minPrecedence;
+    int start = -1, end = -1;
+    for (Token& token : tokens) {
+        if (computeMinPrec) {
+            Token::Op op = token.asOperator();
+            if (op != Token::InvalidOp) {
+                int prec = opPrecedence(op);
+                if (prec < min_prec)
+                    min_prec = prec;
+            }
+        }
+
+        if (token.pos() == -1 && token.size() == -1)
+            continue;
+
+        if (token.pos() == -1 || token.size() == -1) {
+
+#ifdef EVALUATOR_DEBUG
+            qDebug() << "BUG: found token with either pos or size not set, but not both.";
+#endif  /* EVALUATOR_DEBUG */
+            continue;
+        }
+
+        if (start == -1) {
+            start = token.pos();
+        } else {
+
+#ifdef EVALUATOR_DEBUG
+            if (token.pos() != end)
+                qDebug() << "BUG: tokens expressions are not successive.";
+#endif  /* EVALUATOR_DEBUG */
+
+        }
+
+        end = token.pos() + token.size();
+    }
+
+    if (start != -1) {
+        top.setPos(start);
+        top.setSize(end - start);
+    }
+
+    top.setMinPrecedence(min_prec);
+
+#ifdef EVALUATOR_DEBUG
+    qDebug() << "=> " << top.description();
+#endif  /* EVALUATOR_DEBUG */    
+
+    push(top);
 }
 
 // Helper function: return true for valid identifier character.
@@ -534,15 +662,15 @@ Tokens Evaluator::scan(const QString& expr) const
     Tokens tokens;
 
     // Parsing state.
-    enum { Start, Finish, Bad, InNumber, InHexa, InOctal, InBinary, InDecimal, InExpIndicator,
+    enum { Init, Start, Finish, Bad, InNumber, InHexa, InOctal, InBinary, InDecimal, InExpIndicator,
            InExponent, InIdentifier } state;
 
     // Initialize variables.
-    state = Start;
+    state = Init;
     int i = 0;
     QString ex = expr;
     QString tokenText;
-    int tokenStart = 0;
+    int tokenStart = 0; // includes leading spaces
     Token::Type type;
     bool numberFrac = false;
     int expStart = -1;  // index of the exponent part in the expression
@@ -556,13 +684,19 @@ Tokens Evaluator::scan(const QString& expr) const
         QChar ch = ex.at(i);
 
         switch (state) {
-        case Start:
+        case Init:
             tokenStart = i;
+            tokenText = "";
+            state = Start;
+
             // State variables reset
             numberFrac = false;
             expStart = -1;
             expText = "";
 
+            // No break here on purpose (make sure Start is the next case)
+
+        case Start:
             // Skip any whitespaces.
             if (ch.isSpace())
                 ++i;
@@ -614,7 +748,10 @@ Tokens Evaluator::scan(const QString& expr) const
                     }
                     int len = s.length();
                     i += len;
-                    tokens.append(Token(type, s.left(len), tokenStart));
+                    int tokenSize = i - tokenStart;
+                    tokens.append(Token(type, s.left(len), tokenStart, tokenSize));
+
+                    state = Init;
                 }
                 else
                     state = Bad;
@@ -631,17 +768,15 @@ Tokens Evaluator::scan(const QString& expr) const
             if (isIdentifier(ch) || ch.isDigit())
                 tokenText.append(ex.at(i++));
             else { // We're done with identifier.
-                // if token is an operator
+                int tokenSize = i - tokenStart;
                 if (matchOperator(tokenText)) {
-                    tokens.append(Token(Token::stxOperator, tokenText, tokenStart));
+                    // if token is an operator
+                    tokens.append(Token(Token::stxOperator, tokenText, tokenStart, tokenSize));
+                } else {
+                    // else, normal identifier
+                    tokens.append(Token(Token::stxIdentifier, tokenText, tokenStart, tokenSize));
                 }
-                // else, normal identifier
-                else {
-                    tokens.append(Token(Token::stxIdentifier, tokenText, tokenStart));
-                }
-                tokenStart = i;
-                tokenText = "";
-                state = Start;
+                state = Init;
             }
             break;
 
@@ -674,9 +809,9 @@ Tokens Evaluator::scan(const QString& expr) const
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
             else { // We're done with integer number.
-                tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
-                tokenText = "";
-                state = Start;
+                int tokenSize = i - tokenStart;
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, tokenSize));
+                state = Init;
             }
             break;
 
@@ -691,9 +826,9 @@ Tokens Evaluator::scan(const QString& expr) const
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
             else { // We're done with hexadecimal number.
-                tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
-                tokenText = "";
-                state = Start;
+                int tokenSize = i - tokenStart;
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, tokenSize));
+                state = Init;
             }
             break;
 
@@ -708,9 +843,9 @@ Tokens Evaluator::scan(const QString& expr) const
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
             else { // We're done with binary number.
-                tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
-                tokenText = "";
-                state = Start;
+                int tokenSize = i - tokenStart;
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, tokenSize));
+                state = Init;
             }
             break;
 
@@ -725,8 +860,9 @@ Tokens Evaluator::scan(const QString& expr) const
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
             else { // We're done with octal number.
-                tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
-                tokenText = ""; state = Start;
+                int tokenSize = i - tokenStart;
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, tokenSize));
+                state = Init;
             }
             break;
 
@@ -741,9 +877,9 @@ Tokens Evaluator::scan(const QString& expr) const
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
             else { // We're done with floating-point number.
-                tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
-                tokenText = "";
-                state = Start;
+                int tokenSize = i - tokenStart;
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, tokenSize));
+                state = Init;
             };
             break;
 
@@ -758,9 +894,9 @@ Tokens Evaluator::scan(const QString& expr) const
             else {// Invalid thing here.
                 // Rollback: might be an identifier used in implicit multiplication
                 i = expStart;
-                tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
-                tokenText = "";
-                state = Start;
+                int tokenSize = i - tokenStart;
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, tokenSize));
+                state = Init;
             }
             break;
 
@@ -770,9 +906,9 @@ Tokens Evaluator::scan(const QString& expr) const
             else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
             else { // We're done with floating-point number.
-                tokens.append(Token(Token::stxNumber, tokenText, tokenStart));
-                tokenText = "";
-                state = Start;
+                int tokenSize = i - tokenStart;
+                tokens.append(Token(Token::stxNumber, tokenText, tokenStart, tokenSize));
+                state = Init;
             };
             break;
 
@@ -789,51 +925,6 @@ Tokens Evaluator::scan(const QString& expr) const
         // Invalidating here too, because usually when we set state to Bad, the case Bad won't be run.
         tokens.setValid(false);
 
-
-    // Find the correct text for the conversion operator (->)
-    // Advance up to the next operator with lower precedence, excluding higher precedence ops in parenthesis.
-    // WARNING: This assumes that there is no UNARY operator with lower precedence than the conversion operator.
-    for(int i=0; i<tokens.length(); ++i) {
-        //Find conversion operator
-        if(!tokens.at(i).isOperator() || tokens.at(i).asOperator()!=Token::RightArrow)
-            continue;
-        Token & conv_token = tokens[i];
-
-        bool must_fence = false;
-        int parens = 0;
-        QString expr = "";
-
-        //Make sure the next token cannot be mistake for part of a number
-        if(tokens.length()>i+1) {
-            QString s = tokens.at(i+1).text().toUpper();
-            if((QString("1234567890XBOED").contains(s[0]) || isRadixChar(s[0])) &&
-                  (s.length()<=1 || QString("0123456789abcdef").contains(s[1])))
-                must_fence=true;
-        }
-        while(++i<tokens.length()) {
-            if(tokens.at(i).isOperator()) {
-                int prec = opPrecedence(tokens.at(i).asOperator());
-                if(tokens.at(i).asOperator() == Token::LeftPar)
-                    ++parens;
-                else if(tokens.at(i).asOperator() == Token::RightPar)
-                    --parens;
-                else if (prec <= opPrecedence(Token::Asterisk) && !parens)
-                    must_fence = true;
-                //break if all parenthesis are matched and a lower priority op has been found
-                else if(parens==0 && prec <= opPrecedence(Token::RightArrow))
-                    break;
-            }
-            if(i>1 && (tokens.at(i-1).isIdentifier() || tokens.at(i-1).isNumber()) && (tokens.at(i).isIdentifier() || tokens.at(i).isNumber())) {
-                expr.append(" "); // Add a space to emphasize implicit multiplication
-            }
-            expr.append(tokens.at(i).text());
-        }
-        if(must_fence)
-            expr = "(" + expr + ")";
-        // We must replace "in" by "->" to manage alphanumeric unit conversion operator "in"
-        // addUnit does it
-        conv_token.addUnit(expr);
-    }
     return tokens;
 }
 
@@ -896,11 +987,7 @@ void Evaluator::compile(const Tokens& tokens)
                          && par1.asOperator() == Token::LeftPar && id.isIdentifier())
                     {
                         ruleFound = true;
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.push(Token::stxAbstract);
+                        syntaxStack.reduce(4, MAX_PRECEDENCE);
                         m_codes.append(Opcode(Opcode::Function, argCount));
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for function last argument " << argCount << " \n";
@@ -939,9 +1026,7 @@ void Evaluator::compile(const Tokens& tokens)
                         switch (postfix.asOperator()) {
                             case Token::Exclamation:
                                 ruleFound = true;
-                                syntaxStack.pop();
-                                syntaxStack.pop();
-                                syntaxStack.push(Token::stxAbstract);
+                                syntaxStack.reduce(2);
                                 m_codes.append(Opcode(Opcode::Fact));
                                 break;
                             default:;
@@ -960,10 +1045,7 @@ void Evaluator::compile(const Tokens& tokens)
                          && left.asOperator() == Token::LeftPar)
                     {
                         ruleFound = true;
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.push(Token::stxAbstract);
+                        syntaxStack.reduce(3, MAX_PRECEDENCE);
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for (Y) -> Y" << "\n";
 #endif
@@ -983,9 +1065,7 @@ void Evaluator::compile(const Tokens& tokens)
                     {
                       ruleFound = true;
                       m_codes.append(Opcode(Opcode::Function, 1));
-                      syntaxStack.pop();
-                      syntaxStack.pop();
-                      syntaxStack.push(Token::stxAbstract);
+                      syntaxStack.reduce(2);
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for simplified function syntax; function " << id.text() << "\n";
 #endif
@@ -1002,9 +1082,7 @@ void Evaluator::compile(const Tokens& tokens)
                       && (op.asOperator() == Token::Plus || op.asOperator() == Token::Minus))
                     {
                       ruleFound = true;
-                      syntaxStack.pop();
-                      syntaxStack.pop();
-                      syntaxStack.push(Token::stxAbstract);
+                      syntaxStack.reduce(2);
                       if (op.asOperator() == Token::Minus)
                         m_codes.append(Opcode(Opcode::Neg));
 #ifdef EVALUATOR_DEBUG
@@ -1029,10 +1107,7 @@ void Evaluator::compile(const Tokens& tokens)
                     {
                         ruleFound = true;
                         argHandled = true;
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.push(Token::stxAbstract);
+                        syntaxStack.reduce(3, MAX_PRECEDENCE);
                         ++argCount;
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for function argument " << argCount << " \n";
@@ -1049,10 +1124,7 @@ void Evaluator::compile(const Tokens& tokens)
                          && par1.asOperator() == Token::LeftPar && id.isIdentifier())
                     {
                         ruleFound = true;
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.push(Token::stxAbstract);
+                        syntaxStack.reduce(3, MAX_PRECEDENCE);
                         m_codes.append(Opcode(Opcode::Function, 0));
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for function call with parentheses, but without argument" << "\n";
@@ -1080,13 +1152,8 @@ void Evaluator::compile(const Tokens& tokens)
                       && !(isFunction(b)))
                     {
                       ruleFound = true;
-                      syntaxStack.pop();
-                      syntaxStack.pop();
-                      syntaxStack.pop();
-                      syntaxStack.push(Token::stxAbstract);
-
                       switch (op.asOperator()) {
-                        // Simple binary operations.
+                      // Simple binary operations.
                       case Token::Plus:      m_codes.append(Opcode::Add); break;
                       case Token::Minus:     m_codes.append(Opcode::Sub); break;
                       case Token::Asterisk:  m_codes.append(Opcode::Mul); break;
@@ -1098,10 +1165,20 @@ void Evaluator::compile(const Tokens& tokens)
                       case Token::RightShift: m_codes.append(Opcode::RSh); break;
                       case Token::Ampersand: m_codes.append(Opcode::BAnd); break;
                       case Token::Pipe:      m_codes.append(Opcode::BOr); break;
-                      case Token::RightArrow:
-                        m_codes.append(Opcode(Opcode::Conv, op.text().mid(2))); break;
+                      case Token::RightArrow: {
+                          static const QRegExp unitNameNumberRE("(^[0-9e\\+\\-\\.,]|[0-9e\\.,]$)", Qt::CaseInsensitive);
+                          QString unitName = m_expression.mid(b.pos(), b.size()).simplified();
+                          // Make sure the whole unit name can be used as a single operand in multiplications
+                          if (b.minPrecedence() < opPrecedence(Token::Asterisk))
+                              unitName = "(" + unitName + ")";
+                          // Protect the unit name if it starts or ends with a number
+                          else if (unitNameNumberRE.indexIn(unitName) != -1)
+                              unitName = "(" + unitName + ")";
+                          m_codes.append(Opcode(Opcode::Conv, unitName));
+                          break; }
                       default: break;
                       };
+                      syntaxStack.reduce(3);
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for binary operator" << "\n";
 #endif
@@ -1126,9 +1203,7 @@ void Evaluator::compile(const Tokens& tokens)
                      && !(isFunction(b)))
                     {
                       ruleFound = true;
-                      syntaxStack.pop();
-                      syntaxStack.pop();
-                      syntaxStack.push(Token::stxAbstract);
+                      syntaxStack.reduce(2, opPrecedence(Token::Asterisk));
                       m_codes.append(Opcode::Mul);
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for implicit multiplication" << "\n";
@@ -1155,9 +1230,7 @@ void Evaluator::compile(const Tokens& tokens)
                         if (op2.asOperator() == Token::Minus)
                             m_codes.append(Opcode(Opcode::Neg));
 
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.push(Token::stxAbstract);
+                        syntaxStack.reduce(2);
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for unary operator" << op2.text() << "\n";
 #endif
@@ -1183,9 +1256,7 @@ void Evaluator::compile(const Tokens& tokens)
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for unary operator (auxiliary)" << "\n";
 #endif
-                        syntaxStack.pop();
-                        syntaxStack.pop();
-                        syntaxStack.push(Token::stxAbstract);
+                        syntaxStack.reduce(2);
                     }
                 }
 
@@ -1904,7 +1975,7 @@ QString Evaluator::autoFix(const QString& expr)
 
         // If the scanner stops in the middle, do not bother to apply fix.
         const Token& lastToken = tokens.at(tokens.count() - 1);
-        if (lastToken.pos() + lastToken.text().length() >= result.length())
+        if (lastToken.pos() + lastToken.size() >= result.length())
             while (par--)
                 result.append(')');
     }
