@@ -1158,13 +1158,13 @@ void Evaluator::compile(const Tokens& tokens)
                       case Token::Ampersand: m_codes.append(Opcode::BAnd); break;
                       case Token::Pipe:      m_codes.append(Opcode::BOr); break;
                       case Token::RightArrow: {
-                          static const QRegExp s_unitNameNumberRE("(^[0-9e\\+\\-\\.,]|[0-9e\\.,]$)", Qt::CaseInsensitive);
+                          static const QRegExp unitNameNumberRE("(^[0-9e\\+\\-\\.,]|[0-9e\\.,]$)", Qt::CaseInsensitive);
                           QString unitName = m_expression.mid(b.pos(), b.size()).simplified();
                           // Make sure the whole unit name can be used as a single operand in multiplications
                           if (b.minPrecedence() < opPrecedence(Token::Asterisk))
                               unitName = "(" + unitName + ")";
                           // Protect the unit name if it starts or ends with a number
-                          else if (s_unitNameNumberRE.indexIn(unitName) != -1)
+                          else if (unitNameNumberRE.indexIn(unitName) != -1)
                               unitName = "(" + unitName + ")";
                           m_codes.append(Opcode(Opcode::Conv, unitName));
                           break; }
