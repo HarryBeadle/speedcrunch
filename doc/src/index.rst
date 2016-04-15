@@ -3,6 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. This explicit qtkeyword directive serves to identify the "home" location:
+.. when just opening the manual, this is what is displayed.
 
 .. qtkeyword:: id="home"
 
@@ -24,7 +26,7 @@ Table of Contents
 
    userguide/index
    reference/index
-   devguide/index
+   advanced/index
 
 
 Indices and tables
