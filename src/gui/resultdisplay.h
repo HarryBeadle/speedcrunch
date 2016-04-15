@@ -68,7 +68,7 @@ protected:
     virtual void wheelEvent(QWheelEvent*);
     virtual void timerEvent(QTimerEvent*);
     void fullContentScrollEvent();
-    float linesPerPage() { return static_cast<float>(viewport()->height()) / fontMetrics().height(); }
+    float linesPerPage() const { return static_cast<float>(viewport()->height()) / fontMetrics().height(); }
     void pageScrollEvent();
     void scrollToDirection(int);
     void stopActiveScrollingAnimation();
