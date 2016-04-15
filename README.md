@@ -2,7 +2,7 @@
 SpeedCrunch is a high-precision scientific calculator. It features a syntax-highlighted
 scrollable display and is designed to be fully used via keyboard. Some distinctive
 features are auto-completion of functions and variables, a formula book, and quick
-insertion of constants from various fields of knowledge. Available for Windows, OS X,
+insertion of constants from various fields of knowledge. It is available for Windows, OS X,
 and Linux in a number of languages.
 
 ![capture.png](https://bitbucket.org/repo/dR7BnG/images/3654665019-capture.png)
@@ -10,12 +10,12 @@ and Linux in a number of languages.
 ## Building
 To build SpeedCrunch, you need:
 
-- A C++11-capable compiler (Microsoft Visual C++ 2013 or later, GCC 4.8 or later)
+- A C++11-capable compiler (e.g. Microsoft Visual C++ 2013 or later, GCC 4.8 or later)
 - [Qt](http://qt.io) 5.2 or later
 - [CMake](http://cmake.org) 2.8.12 or later
 
 To build SpeedCrunch in a dedicated build directory and install it, run the following
-commands:
+commands from the root of the source directory:
 
     mkdir build
     cd build
@@ -27,7 +27,7 @@ point CMake towards the Qt installation to use by setting the `CMAKE_PREFIX_PATH
 environment variable to the prefix directory of the Qt installation when running CMake.
 
 You can customize the build using the following variables. These are specified when
-running CMake in the form `cmake ../src -Dvariable=value`.
+running CMake, in the form `cmake ../src -Dvariable=value`.
     
 - **PORTABLE_SPEEDCRUNCH**: Set this to `on` to have the application settings stored
   in the same location as the executable, e.g. for running from a USB drive without
