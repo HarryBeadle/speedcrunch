@@ -50,10 +50,10 @@ the "Terminal" scheme that ships with SpeedCrunch:
     }
 
 Here, the keys are *roles*, each referring to elements in the SpeedCrunch history view
-and expression editor that can be customized. The values specify the colors for these
-roles. The color definitions may be simple HTML-style ``#RRGGBB`` using two
-hexadecimal digits per color component. However, color values may be any valid argument
-to the method |setNamedColor|_.
+and expression editor that can be colored. The values specify the colors for these
+roles. Color values may be any valid argument to the method |setNamedColor|_; the
+recommended form are simple simple HTML-style ``#RRGGBB`` definitions, using two
+hexadecimal digits per color component as in the example.
 
 .. |setNamedColor| replace:: ``QColor::setNamedColor``
 .. _json: http://json.org
