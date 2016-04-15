@@ -564,38 +564,39 @@ void Editor::decreaseFontPointSize()
     setFont(newFont);
 }
 
-void Editor::autoCalcSelection()
+void Editor::autoCalcSelection(const QString& custom)
 {
     if (!m_isAutoCalcEnabled)
         return;
 
-    const QString str = m_evaluator->autoFix(textCursor().selectedText());
+    auto str = (custom.isNull() ? m_evaluator->autoFix(textCursor().selectedText()) : custom);
     if (str.isEmpty())
         return;
 
     // Very short (just one token) and still no calculation, then skip.
     if (!m_isAnsAvailable) {
-        const Tokens tokens = m_evaluator->scan(text());
+        auto expr = custom.isNull() ? text() : custom;
+        auto tokens = m_evaluator->scan(expr);
         if (tokens.count() < 2)
             return;
     }
 
     // Too short even after autofix? Don't bother either.
-    const Tokens tokens = m_evaluator->scan(str);
+    auto tokens = m_evaluator->scan(str);
     if (tokens.count() < 2)
         return;
 
     // Same reason as above, do not update "ans".
     m_evaluator->setExpression(str);
-    const Quantity num = m_evaluator->evalNoAssign();
+    auto num = m_evaluator->evalNoAssign();
 
     if (m_evaluator->error().isEmpty()) {
         if (num.isNan() && m_evaluator->isUserFunctionAssign()) {
             // Result is not always available when assigning a user function.
-            const QString message = tr("Selection result: n/a");
+            auto message = tr("Selection result: n/a");
             emit autoCalcEnabled(message);
         } else {
-            const QString message = tr("Selection result: <b>%1</b>").arg(NumberFormatter::format(num));
+            auto message = tr("Selection result: <b>%1</b>").arg(NumberFormatter::format(num));
             emit autoCalcEnabled(message);
         }
     } else

@@ -77,6 +77,7 @@ signals:
     void shiftPageUpPressed();
 
 public slots:
+    void autoCalcSelection(const QString& custom = QString::null);
     void cancelConstantCompletion();
     void evaluate();
     void decreaseFontPointSize();
@@ -89,7 +90,6 @@ public slots:
 protected slots:
     void insertFromMimeData(const QMimeData*) override;
     void autoCalc();
-    void autoCalcSelection();
     void autoComplete(const QString&);
     void checkAutoCalc();
     void checkAutoComplete();
