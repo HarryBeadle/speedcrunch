@@ -82,7 +82,6 @@ private:
     int m_scrolledLines;
     int m_scrollDirection;
     bool m_isScrollingPageOnly;
-    //QList<HistoryEntry> m_history;
     int m_count;
 };
 
