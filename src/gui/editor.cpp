@@ -68,7 +68,7 @@ Editor::Editor(QWidget* parent)
     m_isAutoCalcEnabled = true;
     m_highlighter = new SyntaxHighlighter(this);
     m_autoCalcTimer = new QTimer(this);
-    m_autoCalcSelTimer = new QTimer(this);
+    m_autoCalcSelectionTimer = new QTimer(this);
     m_matchingTimer = new QTimer(this);
     m_isAnsAvailable = false;
     m_shouldPaintCustomCursor = true;
@@ -82,7 +82,7 @@ Editor::Editor(QWidget* parent)
     setCursorWidth(0);
 
     connect(m_autoCalcTimer, SIGNAL(timeout()), SLOT(autoCalc()));
-    connect(m_autoCalcSelTimer, SIGNAL(timeout()), SLOT(autoCalcSelection()));
+    connect(m_autoCalcSelectionTimer, SIGNAL(timeout()), SLOT(autoCalcSelection()));
     connect(m_completion, SIGNAL(selectedCompletion(const QString&)), SLOT(autoComplete(const QString&)));
     connect(m_completionTimer, SIGNAL(timeout()), SLOT(triggerAutoComplete()));
     connect(m_matchingTimer, SIGNAL(timeout()), SLOT(doMatchingPar()));
@@ -202,9 +202,9 @@ void Editor::startSelAutoCalcTimer()
     if (!m_isAutoCalcEnabled)
         return;
 
-    m_autoCalcSelTimer->stop();
-    m_autoCalcSelTimer->setSingleShot(true);
-    m_autoCalcSelTimer->start();
+    m_autoCalcSelectionTimer->stop();
+    m_autoCalcSelectionTimer->setSingleShot(true);
+    m_autoCalcSelectionTimer->start();
 }
 
 void Editor::doMatchingPar()
@@ -686,7 +686,7 @@ void Editor::triggerEnter()
     m_completionTimer->stop();
     m_matchingTimer->stop();
     m_autoCalcTimer->stop();
-    m_autoCalcSelTimer->stop();
+    m_autoCalcSelectionTimer->stop();
     m_currentHistoryIndex = m_history.count();
     emit returnPressed();
 }
@@ -843,7 +843,7 @@ void Editor::setAnsAvailable(bool available)
 void Editor::stopAutoCalc()
 {
     m_autoCalcTimer->stop();
-    m_autoCalcSelTimer->stop();
+    m_autoCalcSelectionTimer->stop();
     emit autoCalcDisabled();
 }
 

@@ -118,7 +118,7 @@ private:
     bool m_isAnsAvailable;
     bool m_isAutoCalcEnabled;
     bool m_shouldBlockAutoCompletionOnce = false;
-    QTimer* m_autoCalcSelTimer;
+    QTimer* m_autoCalcSelectionTimer;
     QTimer* m_autoCalcTimer;
     bool m_isAutoCompletionEnabled;
     EditorCompletion* m_completion;
