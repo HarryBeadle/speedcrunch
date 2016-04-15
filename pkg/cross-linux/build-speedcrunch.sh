@@ -42,6 +42,7 @@ function create_pkgroot {
     ARCH=$*
     PKGROOT=$BASE_DIR/speedcrunch$ARCH-pkgroot
     echo "Creating package structure for '$ARCH'..."
+    rm -rf $PKGROOT
     mkdir --mode=0755 -p $PKGROOT/opt/speedcrunch
     install --mode 0755 $BASE_DIR/speedcrunch$ARCH-build/speedcrunch $PKGROOT/opt/speedcrunch/
     strip $PKGROOT/opt/speedcrunch/speedcrunch
