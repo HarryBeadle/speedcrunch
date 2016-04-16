@@ -36,9 +36,9 @@ running CMake, in the form `cmake ../src -Dvariable=value`.
 - **REBUILD_MANUAL**: Set to `on` to also rebuild the included manual. By default,
   a bundled prebuilt copy is used to minimize dependencies. Rebuilding the manual
   requires the following additional software:
-  - [Python](http://python.org) 3.4 or later
-  - [Sphinx](http://sphinx-doc.org) 1.3 or later
-  - [the Quark theme](https://pypi.python.org/pypi/quark-sphinx-theme) 0.2 or later
+    - [Python](http://python.org) 3.4 or later
+    - [Sphinx](http://sphinx-doc.org) 1.3 or later
+    - [the Quark theme](https://pypi.python.org/pypi/quark-sphinx-theme) 0.2 or later
 
 ## Contributing
 - Report bugs or request features in the
