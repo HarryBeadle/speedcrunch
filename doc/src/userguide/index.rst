@@ -9,6 +9,11 @@ read in order or simply used to look up the details of a feature.
    :maxdepth: 2
 
    installation
+   firststeps
+   syntax
+   advanced
+   interface
+   
 
 
 .. TODO: Potential further topics:
