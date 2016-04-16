@@ -77,6 +77,7 @@ signals:
     void shiftPageUpPressed();
 
 public slots:
+    void autoCalcSelection(const QString& custom = QString::null);
     void cancelConstantCompletion();
     void evaluate();
     void decreaseFontPointSize();
@@ -89,7 +90,6 @@ public slots:
 protected slots:
     void insertFromMimeData(const QMimeData*) override;
     void autoCalc();
-    void autoCalcSelection();
     void autoComplete(const QString&);
     void checkAutoCalc();
     void checkAutoComplete();
@@ -118,7 +118,7 @@ private:
     bool m_isAnsAvailable;
     bool m_isAutoCalcEnabled;
     bool m_shouldBlockAutoCompletionOnce = false;
-    QTimer* m_autoCalcSelTimer;
+    QTimer* m_autoCalcSelectionTimer;
     QTimer* m_autoCalcTimer;
     bool m_isAutoCompletionEnabled;
     EditorCompletion* m_completion;

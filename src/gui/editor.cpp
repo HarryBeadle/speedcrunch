@@ -68,7 +68,7 @@ Editor::Editor(QWidget* parent)
     m_isAutoCalcEnabled = true;
     m_highlighter = new SyntaxHighlighter(this);
     m_autoCalcTimer = new QTimer(this);
-    m_autoCalcSelTimer = new QTimer(this);
+    m_autoCalcSelectionTimer = new QTimer(this);
     m_matchingTimer = new QTimer(this);
     m_isAnsAvailable = false;
     m_shouldPaintCustomCursor = true;
@@ -82,7 +82,7 @@ Editor::Editor(QWidget* parent)
     setCursorWidth(0);
 
     connect(m_autoCalcTimer, SIGNAL(timeout()), SLOT(autoCalc()));
-    connect(m_autoCalcSelTimer, SIGNAL(timeout()), SLOT(autoCalcSelection()));
+    connect(m_autoCalcSelectionTimer, SIGNAL(timeout()), SLOT(autoCalcSelection()));
     connect(m_completion, SIGNAL(selectedCompletion(const QString&)), SLOT(autoComplete(const QString&)));
     connect(m_completionTimer, SIGNAL(timeout()), SLOT(triggerAutoComplete()));
     connect(m_matchingTimer, SIGNAL(timeout()), SLOT(doMatchingPar()));
@@ -202,9 +202,9 @@ void Editor::startSelAutoCalcTimer()
     if (!m_isAutoCalcEnabled)
         return;
 
-    m_autoCalcSelTimer->stop();
-    m_autoCalcSelTimer->setSingleShot(true);
-    m_autoCalcSelTimer->start();
+    m_autoCalcSelectionTimer->stop();
+    m_autoCalcSelectionTimer->setSingleShot(true);
+    m_autoCalcSelectionTimer->start();
 }
 
 void Editor::doMatchingPar()
@@ -564,38 +564,39 @@ void Editor::decreaseFontPointSize()
     setFont(newFont);
 }
 
-void Editor::autoCalcSelection()
+void Editor::autoCalcSelection(const QString& custom)
 {
     if (!m_isAutoCalcEnabled)
         return;
 
-    const QString str = m_evaluator->autoFix(textCursor().selectedText());
+    auto str = (custom.isNull() ? m_evaluator->autoFix(textCursor().selectedText()) : custom);
     if (str.isEmpty())
         return;
 
     // Very short (just one token) and still no calculation, then skip.
     if (!m_isAnsAvailable) {
-        const Tokens tokens = m_evaluator->scan(text());
+        auto expr = custom.isNull() ? text() : custom;
+        auto tokens = m_evaluator->scan(expr);
         if (tokens.count() < 2)
             return;
     }
 
     // Too short even after autofix? Don't bother either.
-    const Tokens tokens = m_evaluator->scan(str);
+    auto tokens = m_evaluator->scan(str);
     if (tokens.count() < 2)
         return;
 
     // Same reason as above, do not update "ans".
     m_evaluator->setExpression(str);
-    const Quantity num = m_evaluator->evalNoAssign();
+    auto num = m_evaluator->evalNoAssign();
 
     if (m_evaluator->error().isEmpty()) {
         if (num.isNan() && m_evaluator->isUserFunctionAssign()) {
             // Result is not always available when assigning a user function.
-            const QString message = tr("Selection result: n/a");
+            auto message = tr("Selection result: n/a");
             emit autoCalcEnabled(message);
         } else {
-            const QString message = tr("Selection result: <b>%1</b>").arg(NumberFormatter::format(num));
+            auto message = tr("Selection result: <b>%1</b>").arg(NumberFormatter::format(num));
             emit autoCalcEnabled(message);
         }
     } else
@@ -686,7 +687,7 @@ void Editor::triggerEnter()
     m_completionTimer->stop();
     m_matchingTimer->stop();
     m_autoCalcTimer->stop();
-    m_autoCalcSelTimer->stop();
+    m_autoCalcSelectionTimer->stop();
     m_currentHistoryIndex = m_history.count();
     emit returnPressed();
 }
@@ -843,7 +844,7 @@ void Editor::setAnsAvailable(bool available)
 void Editor::stopAutoCalc()
 {
     m_autoCalcTimer->stop();
-    m_autoCalcSelTimer->stop();
+    m_autoCalcSelectionTimer->stop();
     emit autoCalcDisabled();
 }
 

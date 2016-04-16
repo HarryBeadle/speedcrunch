@@ -2235,6 +2235,7 @@ void MainWindow::handleManualClosed()
 void MainWindow::handleDisplaySelectionChange()
 {
     clearTextEditSelection(m_widgets.editor);
+    m_widgets.editor->autoCalcSelection(m_widgets.display->textCursor().selectedText());
 }
 
 void MainWindow::handleEditorSelectionChange()
