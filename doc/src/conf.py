@@ -16,6 +16,9 @@
 import sys
 import os
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '.'))
+from languages import LANGUAGES
+
 
 try:
     bundled = tags.has('sc_bundled_docs')
@@ -44,8 +47,6 @@ primary_domain = 'sc'
 if bundled:
     extensions.append('quark_sphinx_theme.ext.html_compat')
 
-# Add any paths that contain templates here, relative to this directory.
-#templates_path = []
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -125,19 +126,31 @@ todo_include_todos = True
 # a list of builtin themes.
 
 import quark_sphinx_theme
-html_theme_path = [quark_sphinx_theme.get_path()]
-html_theme = 'quark' if bundled else 'alabaster'
-
-# Theme options are theme-specific and customize the look and feel of a theme
-# further.  For a list of options available for each theme, see the
-# documentation.
+import sphinx_bootstrap_theme
 if bundled:
+    html_theme_path = [quark_sphinx_theme.get_path()]
+    html_theme = 'quark'
     html_theme_options = {
         'headerlink_color': 'transparent',
     }
-
-# Add any paths that contain custom themes here, relative to this directory.
-#html_theme_path = []
+else:
+    html_theme = 'bootstrap'
+    html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+    html_theme_options = {
+        #Comment out next line for default bootstrap theme
+        #'bootswatch_theme': 'flatly',
+        'navbar_pagenav': False,
+        'source_link_position': "footer",
+        'globaltoc_depth': 2,
+        'navbar_site_name': "Navigation",
+    }
+    html_sidebars = {'**': ['scrollspy.html']}
+    html_static_path = ['_static_standalone']
+    templates_path = ['_templates_standalone']
+    html_logo = 'logo.png'
+    html_context = {
+        'languages': LANGUAGES.items(),
+    }
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -146,19 +159,13 @@ if bundled:
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None
 
-# The name of an image file (relative to this directory) to place at the top
-# of the sidebar.
-#html_logo = None
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
 #html_favicon = None
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied

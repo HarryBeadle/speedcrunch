@@ -60,7 +60,7 @@ SpeedCrunch stores integers with a precision of up to 256 bits. For this reason,
 Operators and Precedence
 ========================
 
-When wrinting an expression like ``10+5*4``, which operation will be executed first? The common rules of operator precedence tell us that in this case multiplaction shall be computed first, hence the reult is ``30``. We also distinguish **unary** operators (which act on a single number/operand) and **binary** operators (which link two operands).
+When writing an expression like ``10+5*4``, which operation will be executed first? The common rules of operator precedence tell us that in this case multiplaction shall be computed first, hence the reult is ``30``. We also distinguish **unary** operators (which act on a single number/operand) and **binary** operators (which link two operands).
 
 The operators in SpeedCrunch and their precedence are listed here in decreasing order of precedence.
 
