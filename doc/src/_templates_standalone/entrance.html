@@ -5,10 +5,92 @@
 {% endmacro %}
 
 
-
-
 {%- block content %}
 {{ entranceNavBar() }}
+
+{%- block jumbotron %}
+    <div class="jumbotron">
+      <div class="container">
+        <h1>SpeedCrunch</h1>
+        <p>A fast and usable calculator for power users</p>
+        <p><a class="btn btn-primary btn-lg" href="{{ pathto('download') }}" role="button"><i class="fa fa-download fa-lg" style="vertical-align:middle;"></i>&nbsp;{{ _('Download') }}</a>
+        <a class="btn btn-default btn-lg " href="{{ pathto('docs_intro') }}" role="button"> <i class="fa fa-book fa-lg" style="vertical-align:middle;"></i>&nbsp;{{ _('Documentation') }}</a></p>
+      </div>
+    </div>
+{%- endblock %}  
+
+
+{%- block featurette %}
+  <!-- START THE FEATURETTES -->
+<div class="container">
+  <hr class="featurette-divider">
+
+  <div class="row featurette">
+    <div class="col-md-7">
+      <h2 class="featurette-heading">First featurette heading. <span class="text-muted">It'll blow your mind.</span></h2>
+      <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+    </div>
+    <div class="col-md-5">
+      <img class="featurette-image img-responsive center-block" src="_static/dummy400x250.png" alt="Generic placeholder image">
+    </div>
+  </div>
+
+  <hr class="featurette-divider">
+
+  <div class="row featurette">
+    <div class="col-md-7 col-md-push-5">
+      <h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
+      <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+    </div>
+    <div class="col-md-5 col-md-pull-7">
+      <img class="featurette-image img-responsive center-block" src="_static/dummy400x250.png" alt="Generic placeholder image">
+    </div>
+  </div>
+
+  <hr class="featurette-divider">
+
+  <div class="row featurette">
+    <div class="col-md-7">
+      <h2 class="featurette-heading">And lastly, this one. <span class="text-muted">Checkmate.</span></h2>
+      <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+    </div>
+    <div class="col-md-5">
+      <img class="featurette-image img-responsive center-block" src="_static/dummy400x250.png" alt="Generic placeholder image">
+    </div>
+  </div>
+
+  <hr class="featurette-divider">
+
+  <div class="row featurette">
+    <div class="col-md-7 col-md-push-5">
+      <h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
+      <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+    </div>
+    <div class="col-md-5 col-md-pull-7">
+      <img class="featurette-image img-responsive center-block" src="_static/dummy400x250.png" alt="Generic placeholder image">
+    </div>
+  </div>
+
+  <hr class="featurette-divider">
+
+  <div class="row featurette">
+    <div class="col-md-7">
+      <h2 class="featurette-heading">And lastly, this one. <span class="text-muted">Checkmate.</span></h2>
+      <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+    </div>
+    <div class="col-md-5">
+      <img class="featurette-image img-responsive center-block" src="_static/dummy400x250.png" alt="Generic placeholder image">
+    </div>
+  </div>
+
+  <hr class="featurette-divider">
+</div>
+  <!-- /END THE FEATURETTES -->
+{%- endblock %}
+
+
+{% if 1 %}
+{%- block carousel %}
 <div>
     <div id="myCarousel" class="carousel slide" data-ride="carousel">
       <!-- Indicators -->
@@ -22,7 +104,7 @@
           <img class="first-slide img-responsive center-block" src="_static/logo.png" alt="First slide">
           <div class="container">
             <div class="carousel-caption">
-              <h1>{{ _(Example headline.) }}</h1>
+              <h1>{{ _('Example headline.') }}</h1>
               <p>{% trans %}Note: If you're viewing this page via a <code>file://</code> URL, the "next" and "previous" Glyphicon buttons on the left and right might not load/display properly due to web browser security rules.{% endtrans %}</p>
             </div>
           </div>
@@ -48,14 +130,16 @@
       </div>
       <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
         <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-        <span class="sr-only">{{ _(Previous) }}</span>
+        <span class="sr-only">{{ _('Previous') }}</span>
       </a>
       <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
         <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-        <span class="sr-only">{{ _(Next) }}</span>
+        <span class="sr-only">{{ _('Next') }}</span>
       </a>
     </div><!-- /.carousel -->
  </div>
- 
- 
+{%- endblock %}  
+{%- endif %}
+
+
 {%- endblock %}

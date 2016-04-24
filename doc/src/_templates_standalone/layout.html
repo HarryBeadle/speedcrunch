@@ -180,7 +180,8 @@
 <div class="container">
   <div class="row">
     <ul class="breadcrumb">
-      <li><a href="{{ pathto(master_doc) }}">{{ docstitle }} </a></li>
+      <li><a href="{{ pathto('index') }}">{{ _('Home') }} </a></li>
+      <li><a href="{{ pathto(master_doc) }}">{{ _('Documentation')  }} </a></li>
       {%- for parent in parents -%}
       <li><a href="{{ parent.link | e }}">{{ parent.title }}</a></li>
       {%- endfor %}
