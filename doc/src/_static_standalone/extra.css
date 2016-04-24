@@ -21,3 +21,17 @@
 .breadcrumb {
     margin-top: 20px;
 }
+
+.alert-warning .admonition-title:before {
+    content: "\f071";
+    font-family: FontAwesome;
+    margin-right: 10px;
+    font-size: 120%;
+    vertical-align: middle;
+}
+.admonition-example .admonition-title:before {
+    content: "\f0eb";
+    font-family: FontAwesome;
+    margin-right: 10px;
+    font-size: 120%;
+}
