@@ -18,9 +18,6 @@
 .affix {
     top: 50px;
 }
-.breadcrumb {
-    margin-top: 20px;
-}
 
 .alert-warning .admonition-title:before {
     content: "\f071";
@@ -34,4 +31,19 @@
     font-family: FontAwesome;
     margin-right: 10px;
     font-size: 120%;
+}
+
+body { 
+    padding-top: 65px; 
+}
+
+.carousel .item {
+width: 100%;
+/*slider width*/
+max-height: 400px;
+/*slider height*/
+}
+.carousel .item img {
+width: 100%;
+/*image width*/
 }

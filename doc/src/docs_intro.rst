@@ -18,15 +18,14 @@ It is available for Windows, OS X, and Linux in a number of languages.
 Have fun with SpeedCrunch!
 
 
-Table of Contents
-=================
+About this documentation
+------------------------
 
-.. toctree::
-   :maxdepth: 2
+The documentation of SpeedCrunch is organized in three parts.
 
-   userguide/index
-   reference/index
-   advanced/index
+* The :ref:`userguide` is designed as a manual, that you are invited to read in the order it is presented. It lays out all the features of SpeedCrunch, and how to get the most out of it.
+* The :ref:`reference` is dedicated to documenting all the built-in functions and units that come with SpeedCrunch. If you try to read it page by page, you will probably get bored. However, it is still very useful if you want to :ref:`look up<context-help>` how e.g. a particular function is used.
+* Finally, the :ref:`advanced-topics` cover anything that might be useful, but is not sufficiently interesting for the average user to be put in the manual. For instance instructions on how to create your own colorscheme can be found there. Head over to it if you are interested.
 
 
 Indices and tables

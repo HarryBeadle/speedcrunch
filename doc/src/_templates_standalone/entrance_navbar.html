@@ -1,0 +1,24 @@
+{% extends "navbar.html" %}
+
+{% block navcontent %}
+<div class="collapse navbar-collapse nav-collapse">
+  <ul class="nav navbar-nav">
+    <li><a href="{{ pathto('index') }}">{{  _('Home') }}</a></li>
+    <li><a href="{{ pathto('download') }}">{{  _('Get It') }}</a></li>
+    <li><a href="{{ pathto('docs_intro') }}">{{  _('Documentation') }}</a></li>
+    <li><a href="https://groups.google.com/forum/#!forum/speedcrunch">{{  _('Forum') }}</a></li>
+    <li><a href="#">{{  _('Contribute') }}</a></li>
+
+    {% block navbarextra %}
+    {% endblock %}
+    {% if theme_source_link_position == "nav" %}
+      <li class="hidden-sm">{% include "sourcelink.html" %}</li>
+    {% endif %}
+  </ul>
+  <ul class="nav navbar-nav navbar-right">
+  {% block language_selector %}
+    {% include "language.html" %}
+  {% endblock %}
+  </ul>
+</div>
+{% endblock %}

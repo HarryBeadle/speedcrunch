@@ -57,7 +57,7 @@ source_suffix = '.rst'
 #source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = 'contents'
 
 # General information about the project.
 project = 'SpeedCrunch'
@@ -139,6 +139,7 @@ else:
     html_theme_options = {
         #Comment out next line for default bootstrap theme
         #'bootswatch_theme': 'flatly',
+        'navbar_class': 'navbar-inverse',
         'navbar_pagenav': False,
         'source_link_position': "footer",
         'globaltoc_depth': 2,
@@ -150,6 +151,10 @@ else:
     html_logo = 'logo.png'
     html_context = {
         'languages': LANGUAGES.items(),
+    }
+    html_additional_pages = {
+        "index": "entrance.html",
+        "download": "download.html"
     }
 
 # The name for this set of Sphinx documents.  If None, it defaults to
@@ -182,10 +187,6 @@ else:
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
-
-# Additional templates that should be rendered to pages, maps page names to
-# template names.
-#html_additional_pages = {}
 
 # If false, no module index is generated.
 #html_domain_indices = True
