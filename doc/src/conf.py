@@ -150,7 +150,7 @@ else:
     templates_path = ['_templates_standalone']
     html_logo = 'logo.png'
     html_context = {
-        'languages': LANGUAGES.items(),
+        'languages': list(LANGUAGES.items()),
     }
     html_additional_pages = {
         "index": "entrance.html",
