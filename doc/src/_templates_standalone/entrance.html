@@ -12,14 +12,15 @@
     <div class="jumbotron">
       <div class="container">
         <h1>SpeedCrunch</h1>
-        <p>A fast and usable calculator for power users</p>
+        <p>{% trans %}A fast, high precision and powerful desktop calculator. {% endtrans %}</p>
         <p><a class="btn btn-primary btn-lg" href="{{ pathto('download') }}" role="button"><i class="fa fa-download fa-lg" style="vertical-align:middle;"></i>&nbsp;{{ _('Download') }}</a>
         <a class="btn btn-default btn-lg " href="{{ pathto('docs_intro') }}" role="button"> <i class="fa fa-book fa-lg" style="vertical-align:middle;"></i>&nbsp;{{ _('Documentation') }}</a></p>
       </div>
     </div>
 {%- endblock %}  
-
-
+<div class="container">
+  <p>{% trans %}SpeedCrunch is a high-precision scientific calculator with a broad range of features. It is available for Windows, OS X, and Linux in a number of languages. SpeedCrunch is free and open-source, licensed under the GPL.{% endtrans %}</p>
+</div>
 {%- block featurette %}
   <!-- START THE FEATURETTES -->
 <div class="container">
@@ -27,8 +28,8 @@
 
   <div class="row featurette">
     <div class="col-md-7">
-      <h2 class="featurette-heading">First featurette heading. <span class="text-muted">It'll blow your mind.</span></h2>
-      <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+      <h2 class="featurette-heading">{{ _('Fast &amp efficient.') }}</h2>
+      <p class="lead">{{ _('SpeedCrunch computes the result on fly, as you enter your input. Customizable syntax highlighting allows you to easily spot mistakes. Select a part of an expression with your cursor to evaluate that part only.') }}</p>
     </div>
     <div class="col-md-5">
       <img class="featurette-image img-responsive center-block" src="_static/dummy400x250.png" alt="Generic placeholder image">
@@ -39,8 +40,9 @@
 
   <div class="row featurette">
     <div class="col-md-7 col-md-push-5">
-      <h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
-      <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+      <h2 class="featurette-heading">{{ _('Easy to use.') }} <span class="text-muted">{{ _('Even for Grandma.') }}</span></h2>
+      <p class="lead">{{ _('The results are shown in a scrollable window. Both inputs and results can be easily recalled.') }}</p>
+      <p class="lead">{{ _('If you prefer the oldschool way, an on-screen keypad is available as well.') }}</p>
     </div>
     <div class="col-md-5 col-md-pull-7">
       <img class="featurette-image img-responsive center-block" src="_static/dummy400x250.png" alt="Generic placeholder image">
@@ -51,8 +53,10 @@
 
   <div class="row featurette">
     <div class="col-md-7">
-      <h2 class="featurette-heading">And lastly, this one. <span class="text-muted">Checkmate.</span></h2>
-      <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+      <h2 class="featurette-heading">{{ _('Powerful.') }}</h2>
+      <p class="lead">{{ _('SpeedCrunch comes with over 80 built-in mathematical functions. Easily define more on your own.') }}</p>
+      <p class="lead">{{ _('Support for variables to store your results, 50 digits precision, complex numbers, numeral bases and unit conversions, ... ') }}</p>
+      <p class="lead">{{ _('Naturally, tab-completion allows you to speed up your task.') }}</p>
     </div>
     <div class="col-md-5">
       <img class="featurette-image img-responsive center-block" src="_static/dummy400x250.png" alt="Generic placeholder image">
@@ -63,8 +67,9 @@
 
   <div class="row featurette">
     <div class="col-md-7 col-md-push-5">
-      <h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
-      <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+      <h2 class="featurette-heading">{{ _('Library included.') }}</h2>
+      <p class="lead">{{ _('A built-in formula book allows to you to review and insert commonly used formulas, such as the volume of a cone.') }}</p>
+      <p class="lead">{{ _('Or insert one out of over 150 built-in scientific constants.') }}</p>
     </div>
     <div class="col-md-5 col-md-pull-7">
       <img class="featurette-image img-responsive center-block" src="_static/dummy400x250.png" alt="Generic placeholder image">
@@ -75,11 +80,15 @@
 
   <div class="row featurette">
     <div class="col-md-7">
-      <h2 class="featurette-heading">And lastly, this one. <span class="text-muted">Checkmate.</span></h2>
-      <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+      <h2 class="featurette-heading">{{ _('Cross-platform.') }} <span class="text-muted">{{ _('And multi-language.') }}</span></h2>
+      <p class="lead">{{ _('SpeedCrunch is available for Windows, OSX and Linux, and comes in a number of languages.') }}</p>
     </div>
     <div class="col-md-5">
-      <img class="featurette-image img-responsive center-block" src="_static/dummy400x250.png" alt="Generic placeholder image">
+      <div class="row" style="margin-top:20px">
+        <span class="col-md-4"><i class="fa fa-windows fa-5x"></i></span>
+        <span class="col-md-4"><i class="fa fa-apple fa-5x"></i></span>
+        <span class="col-md-4"><i class="fa fa-linux fa-5x"></i></span>
+      </div>
     </div>
   </div>
 
@@ -89,7 +98,7 @@
 {%- endblock %}
 
 
-{% if 1 %}
+{% if 0 %}
 {%- block carousel %}
 <div>
     <div id="myCarousel" class="carousel slide" data-ride="carousel">
