@@ -249,10 +249,12 @@ latex_elements = {
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
-#  author, documentclass [howto, manual, or own class]).
+#  author, documentclass [howto, manual, or own class], toctree_only).
+# Setting toctree_only doesn't include the text content of the master document
+# in the output, only the TOC.
 latex_documents = [
-    (master_doc, 'SpeedCrunch.tex', 'SpeedCrunch Documentation',
-     'The SpeedCrunch Developers', 'manual'),
+    (master_doc, 'SpeedCrunch.tex', 'SpeedCrunch Manual',
+     author, 'manual', True),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
