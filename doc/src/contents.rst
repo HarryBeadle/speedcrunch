@@ -1,3 +1,6 @@
+Table of Contents
+=================
+
 .. toctree::
    :maxdepth: 3
 
@@ -7,7 +10,7 @@
    advanced/index
 
 
-Indices and tables
+Indices and Tables
 ==================
 
 .. Checking for the sc_bundled_docs tag here so as to not include a link to the search
