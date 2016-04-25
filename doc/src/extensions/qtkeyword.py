@@ -37,8 +37,9 @@ def add_keyword(env, docname, lineno, target, designation, ref_uri):
 
 
 def add_id_keyword(env, id, docname, anchor):
-    add_keyword(env, docname, 0, None, 'id="%s"' % id,
-                env.app.builder.get_target_uri(docname) + '#' + anchor)
+    if "qthelp" in env.app.builder.name:    # don't do anything if building .tex file for instance
+        add_keyword(env, docname, 0, None, 'id="%s"' % id,
+                    env.app.builder.get_target_uri(docname) + '#' + anchor)
 
 
 class QtKeywordDirective(Directive):
