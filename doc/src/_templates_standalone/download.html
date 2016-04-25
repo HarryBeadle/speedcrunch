@@ -27,10 +27,13 @@
       <div align="center"><p><i class="fa fa-apple" style="vertical-align:middle; font-size:8em;"></i></p><p><b>OS X</b></p> </div>
       <div align="center"><p><a class="btn btn-primary btn-md" href="{{ osx }}" role="button"><i class="fa fa-download fa-lg" style="vertical-align:middle;"></i>&nbsp;&nbsp;{{ _('Download') }}</a>&nbsp;</p></div>
      {% endif %}</div><!-- /.col-lg-4 --> 
-    <div class="col-lg-4">{% if not linux is none() %}
+    <div class="col-lg-4">
       <div align="center"><p><i class="fa fa-linux" style="vertical-align:middle; font-size:8em;"></i></p><p><b>Linux</b></p> </div>
+    {% if not linux is none() %}
       <div align="center"><p><a class="btn btn-primary btn-md" href="{{ linux }}" role="button"><i class="fa fa-download fa-lg" style="vertical-align:middle;"></i>&nbsp;&nbsp;{{ _('Download') }}</a>&nbsp;</p></div>
-    {% endif %}</div><!-- /.col-lg-4 --> 
+    {% endif %}
+      If available, we recommend to install SpeeCrunch directly from your distribution's package manager.
+     </div><!-- /.col-lg-4 -->
   </div><!-- /.row -->
   </div>
 {%- endmacro %}

@@ -7,7 +7,19 @@
     <li><a href="{{ pathto('download') }}">{{  _('Get It') }}</a></li>
     <li><a href="{{ pathto('docs_intro') }}">{{  _('Documentation') }}</a></li>
     <li><a href="https://groups.google.com/forum/#!forum/speedcrunch">{{  _('Forum') }}</a></li>
-    <li><a href="#">{{  _('Contribute') }}</a></li>
+    <li class="dropdown">
+      <a role="button"
+         id="languageSelector"
+         class="dropdown-toggle"
+         data-toggle="dropdown"
+         data-target="#"
+         href="">  {{_('Contribute')}}<b class="caret"></b></a>
+      <ul class="dropdown-menu">                                      
+       <li> <a href="https://bitbucket.org/heldercorreia/speedcrunch"> <i class="fa fa-bitbucket"></i>&nbsp;Bitbucket </a></li>
+       <li> <a href="https://www.transifex.com/heldercorreia/speedcrunch/">{{ _('Help translating') }} </a></li>
+       <li> <a href="https://bitbucket.org/heldercorreia/speedcrunch/issues">{{ _('Report a bug') }} </a></li>
+      </ul>
+    </li>
 
     {% block navbarextra %}
     {% endblock %}
