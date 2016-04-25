@@ -125,17 +125,17 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
-import quark_sphinx_theme
-import sphinx_bootstrap_theme
 if bundled:
+    import quark_sphinx_theme
     html_theme_path = [quark_sphinx_theme.get_path()]
     html_theme = 'quark'
     html_theme_options = {
         'headerlink_color': 'transparent',
     }
 else:
-    html_theme = 'bootstrap'
+    import sphinx_bootstrap_theme
     html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+    html_theme = 'bootstrap'
     html_theme_options = {
         #Comment out next line for default bootstrap theme
         #'bootswatch_theme': 'flatly',
