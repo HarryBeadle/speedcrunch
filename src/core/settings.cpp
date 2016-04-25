@@ -42,6 +42,20 @@
 
 static const char* DefaultColorScheme = "Terminal";
 
+QString Settings::getConfigPath()
+{
+#ifdef SPEEDCRUNCH_PORTABLE
+    return QApplication::applicationDirPath();
+#elif defined(Q_OS_WIN)
+    // On Windows, use AppData/Roaming/SpeedCrunch, the same path as getDataPath.
+    return getDataPath();
+#else
+    // Everywhere else, use ConfigLocation/SpeedCrunch. On OSX, that's ~/Library/Preferences, on Linux,
+    // ~/.config.
+    return QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation),
+                                QCoreApplication::applicationName());
+#endif
+}
 
 QString Settings::getDataPath()
 {
@@ -266,19 +280,5 @@ void Settings::setRadixCharacter(char c)
 
 QSettings* createQSettings(const QString& KEY)
 {
-    QSettings* settings = 0;
-
-#ifdef SPEEDCRUNCH_PORTABLE
-    // Portable Edition: settings are from INI file in same directory.
-    QString appPath = QApplication::applicationFilePath();
-    int ii = appPath.lastIndexOf('/');
-    if (ii > 0)
-        appPath.remove(ii, appPath.length());
-    QString iniFile = appPath + '/' + KEY + ".ini";
-    settings = new QSettings(iniFile, QSettings::IniFormat);
-#else // SPEEDCRUNCH_PORTABLE
-    settings = new QSettings(QSettings::NativeFormat, QSettings::UserScope, KEY, KEY);
-#endif // SPEEDCRUNCH_PORTABLE
-
-    return settings;
+    return new QSettings(Settings::getConfigPath() + "/" + KEY + ".ini", QSettings::IniFormat);
 }

@@ -30,6 +30,7 @@
 class Settings {
 public:
     static Settings* instance();
+    static QString getConfigPath();
     static QString getDataPath();
     static QString getCachePath();
 
