@@ -50,8 +50,9 @@ QString Settings::getConfigPath()
     // On Windows, use AppData/Roaming/SpeedCrunch, the same path as getDataPath.
     return getDataPath();
 #else
-    // Everywhere else, use ConfigLocation/SpeedCrunch. On OSX, that's ~/Library/Preferences, on Linux,
-    // ~/.config.
+    // Everywhere else, use `QStandardPaths::ConfigLocation`/SpeedCrunch:
+    // * OSX: ~/Library/Preferences/SpeedCrunch
+    // * Linux: ~/.config/SpeedCrunch
     return QString("%1/%2").arg(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation),
                                 QCoreApplication::applicationName());
 #endif
