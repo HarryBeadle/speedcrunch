@@ -342,18 +342,16 @@ static void migrateSettings_legacyTo1200(QSettings* settings, const QString& KEY
     case 2:
         colorSchemeName = "Sublime";
         break;
-    case 3:
-        colorSchemeName = "Solarized Light";
-        break;
-    case 4:
-        colorSchemeName = "Solarized Dark";
-        break;
     default:
         colorSchemeName = DefaultColorScheme;
         break;
     }
     settings->setValue("SpeedCrunch/Display/ColorSchemeName", colorSchemeName);
     settings->remove("SpeedCrunch/Display/ColorScheme");
+
+    // DigitGrouping (bool) -> DigitGrouping (int)
+    bool groupDigits = settings->value("SpeedCrunch/General/DigitGrouping", false).toBool();
+    settings->setValue("SpeedCrunch/General/DigitGrouping", groupDigits ? 1 : 0);
 }
 
 
