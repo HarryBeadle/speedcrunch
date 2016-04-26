@@ -40,6 +40,15 @@
 #endif
 
 
+// The current config revision. Based on the application version number
+// ('1200' corresponds to 0.12.0, '10300' would be 1.3.0 etc.). When making
+// a backwards-incompatible change to the config format, bump this number to
+// the next release (if not already happened), then update the migration code
+// in createQSettings. Don't bump the config version unnecessarily for
+// releases that don't contain incompatible changes.
+static const int ConfigVersion = 1200;
+
+
 static const char* DefaultColorScheme = "Terminal";
 
 QString Settings::getConfigPath()
@@ -279,7 +288,82 @@ void Settings::setRadixCharacter(char c)
     s_radixCharacter = (c != ',' && c != '.') ? 0 : c;
 };
 
+
+// Settings migration from legacy (0.11 and before) to 0.12 (ConfigVersion 1200).
+static void migrateSettings_legacyTo1200(QSettings* settings, const QString& KEY)
+{
+#ifdef SPEEDCRUNCH_PORTABLE
+    // This is the same as the new path, but let's cut down
+    QSettings* legacy = new QSettings(Settings::getConfigPath() + "/" + KEY + ".ini", QSettings::IniFormat);
+#else
+    QSettings* legacy = new QSettings(QSettings::NativeFormat, QSettings::UserScope, KEY, KEY);
+#endif
+
+    QString legacyFile = legacy->fileName();
+    if (legacyFile != settings->fileName()) {
+        // If the file names are different, we assume the legacy settings were in a
+        // different location (most were, but e.g. not on the portable version) so we
+        // copy everything over, then delete the old settings. On Windows, the file
+        // name may also be a registry path, but the same reasoning applies.
+        for (QString key : legacy->allKeys())
+            settings->setValue(key, legacy->value(key));
+
+#ifdef Q_OS_WIN
+        // On Windows, check if the legacy settings were in the registry; if so, just clear()
+        // them.
+        if (legacy->format() == QSettings::NativeFormat) {
+            legacy->clear();
+            delete legacy;
+        } else {
+            delete legacy;
+            QFile::remove(legacyFile);
+        }
+#else
+        // On other platforms, delete the legacy settings file.
+        delete legacy;
+        QFile::remove(legacyFile);
+#endif
+    } else {
+        // If both settings objects point to the same location, removing the old stuff
+        // may well break the new settings.
+        delete legacy;
+    }
+
+
+    // ColorScheme -> ColorSchemeName
+    QString colorSchemeName;
+    switch (settings->value("SpeedCrunch/Display/ColorScheme", -1).toInt()) {
+    case 0:
+        colorSchemeName = "Terminal";
+        break;
+    case 1:
+        colorSchemeName = "Standard";
+        break;
+    case 2:
+        colorSchemeName = "Sublime";
+        break;
+    default:
+        colorSchemeName = DefaultColorScheme;
+        break;
+    }
+    settings->setValue("SpeedCrunch/Display/ColorSchemeName", colorSchemeName);
+    settings->remove("SpeedCrunch/Display/ColorScheme");
+
+    // DigitGrouping (bool) -> DigitGrouping (int)
+    bool groupDigits = settings->value("SpeedCrunch/General/DigitGrouping", false).toBool();
+    settings->setValue("SpeedCrunch/General/DigitGrouping", groupDigits ? 1 : 0);
+}
+
+
 QSettings* createQSettings(const QString& KEY)
 {
-    return new QSettings(Settings::getConfigPath() + "/" + KEY + ".ini", QSettings::IniFormat);
+    QSettings* settings = new QSettings(Settings::getConfigPath() + "/" + KEY + ".ini", QSettings::IniFormat);
+    int ver = settings->value("ConfigVersion", 0).toInt();
+    switch (ver) {
+    case 0:
+        migrateSettings_legacyTo1200(settings, KEY);
+        break;
+    }
+    settings->setValue("ConfigVersion", ConfigVersion);
+    return settings;
 }
