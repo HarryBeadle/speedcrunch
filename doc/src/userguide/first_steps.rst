@@ -1,7 +1,7 @@
 First Steps
 ===========
 
-SpeedCrunch has been designed to be used via the keyboard. While it is perfectly viable to use it via the mouse (and enter numbers by clicking the buttons on the onscreen keypad), it is highly recommended to get used to the keyboard interface, and harness SpeedCrunch's full power. For this reason the onscreen keypad widget is disabled by default.
+SpeedCrunch has been designed to be used via the keyboard. While it is perfectly viable to use it via the mouse (and enter numbers by clicking the buttons on the on-screen keypad), it is highly recommended to get used to the keyboard interface, and harness SpeedCrunch's full power. For this reason the on-screen keypad widget is disabled by default.
 
 .. TODO: link to how to enable the keypad widget.
 
@@ -24,7 +24,7 @@ Let's try this out. First, input some more calculations, so that more than one e
     54*(4.514 - 5.7)
     = -64.044
     
-Note how the multiplication ``*`` takes precedence over the addition ``+``, unless parentheses are used to specify a particular order of operations. If you now wish to continue working with one of the results, double-click for instance on ``= 300.756``. The input bar will automatically be populated with this result. Similarly you can also quickly recall prevous input, rather than results. Alternatively, you can use the :kbd:`UP` and :kbd:`DOWN` arrow keys on your keyboard to recall previous input expressions, or use the mousewheel for the same effect (the mouse cursor must hover over the editor for this, otherwise the result window will be scrolled).
+Note how the multiplication ``*`` takes precedence over the addition ``+``, unless parentheses are used to specify a particular order of operations. If you now wish to continue working with one of the results, double-click for instance on ``= 300.756``. The input bar will automatically be populated with this result. Similarly you can also quickly recall previous input, rather than results. Alternatively, you can use the :kbd:`UP` and :kbd:`DOWN` arrow keys on your keyboard to recall previous input expressions, or use the mouse wheel for the same effect (the mouse cursor must hover over the editor for this, otherwise the result window will be scrolled).
 
 For continuing the computation directly from the previous result, you may use the special variable ``ans``, which always holds the result of the last entry in the history. Try this::
 
@@ -53,7 +53,7 @@ SpeedCrunch comes with a number of mathematical constants like π, that are avai
     pi*1.2^2
     = 4.52389342116930226339
     
-Let us finish this short introduction with a word about functions. SpeedCrunch comes with an extensive list of built-in mathematical functions, which can be accessed by just typing their name in the editor, followed by their parameter (also called argument) between paretheses. ::
+Let us finish this short introduction with a word about functions. SpeedCrunch comes with an extensive list of built-in mathematical functions, which can be accessed by just typing their name in the editor, followed by their parameter (also called argument) between parentheses. ::
 
     sqrt(144)
     = 12

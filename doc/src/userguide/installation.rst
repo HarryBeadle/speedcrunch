@@ -64,7 +64,7 @@ As an alternative to distribution packages, Linux binary packages of SpeedCrunch
 available on `the SpeedCrunch website <sc_>`_. They are generic packages that are built
 to be compatible with many different Linux systems. As a rule of thumb, they are likely
 to work on most Linux distributions released since around 2010; however, due to the
-wide variety and flexibility of Linux systems, this is only a best-effort endeavour and
+wide variety and flexibility of Linux systems, this is only a best-effort endeavor and
 never guaranteed. Additionally, due to the generic nature of the packages, they may not
 integrate as well with the system as your distribution's packages; in particular, they
 won't adapt to the visual style of your desktop environment as well. In general, if there's
@@ -96,7 +96,7 @@ Development Builds
    and may contain changes that break your session history. Use them at your own risk.
 
 Pre-built development versions of SpeedCrunch are available allow you to use newer features
-and bugfixes before they become available in a release, without having to build SpeedCrunch
+and bug-fixes before they become available in a release, without having to build SpeedCrunch
 from the development source yourself. Currently, regularly updated
 development builds of SpeedCrunch are available for the following platforms:
 

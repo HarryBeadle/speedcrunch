@@ -4,7 +4,7 @@ User-defined Variables and Functions
 Variables
 ---------
 
-When working on a more sophisticated problem, you will find yourself in the situation where you frequently need to access results from previous computations. As we have already seen, you can simply recall results from the result window. SpeedCrunch offers another, much more powerful way: variables. Variables allow you to store and recall any number, by assignung it a name. For instance, for storing data, try this::
+When working on a more sophisticated problem, you will find yourself in the situation where you frequently need to access results from previous computations. As we have already seen, you can simply recall results from the result window. SpeedCrunch offers another, much more powerful way: variables. Variables allow you to store and recall any number, by assigning it a name. For instance, for storing data, try this::
 
     a = 5.123
     
@@ -63,7 +63,7 @@ SpeedCrunch supports calculations involving complex numbers. To enable them, mak
     (5+3j)/(8-2j)
     = 0.5+0.5j
     
-A word on the syntax of complex numbers: ``5j`` denotes the number ``5*j``, while ``j5`` is a variable named 'j5'. Consider writing the multiplication explicitely, i.e. ``j*5``.
+A word on the syntax of complex numbers: ``5j`` denotes the number ``5*j``, while ``j5`` is a variable named 'j5'. Consider writing the multiplication explicitly, i.e. ``j*5``.
 
 Some users (especially mathematicians or physicists) may prefer the letter ``i`` to stand for the imaginary unit. Although SpeedCrunch does not support this notation by default, it added is easily enough. Just define ``i=j``, then ``i`` may be used as a alias for :const:`j`.
 
@@ -84,7 +84,7 @@ Just as in common textbook notation, you specify a quantity's unit by multiplica
     5 foot
     = 1.524 meter
     
-Note that this really is a multiplication, the operator ``*`` is just ommitted (implied)! As you can see, by default SpeedCrunch converts the quantity into SI units::
+Note that this really is a multiplication, the operator ``*`` is just omitted (implied)! As you can see, by default SpeedCrunch converts the quantity into SI units::
  
     60 mile/hour
     = 26.8224 meter second^-1
@@ -106,7 +106,7 @@ As you can see, you may also use any of the SI prefixes (like ``kilo`` or ``cent
     
     Similarly, be aware that expressions like ``500 gram / 20 gram`` and ``(500 gram) / (20 gram)`` yield different results.
     
-An important feature of SpeedCrunch's unit system is *dimensional checking*. Basically, it prevents comparison between apples and pears: if you try to convert seconds to meters, SpeedCrunch will comlain, saying that the dimensions of ``second`` and ``meter`` do not match. Indeed, the dimension of ``second`` is *time*, while ``meter`` denotes a *length*, thus they canot be compared, added, etc. When you add, multiply, etc. units, SpeedCrunch will track the dimension, and raise an error if you try to perform an illegal operation. For instance if you type ``meter^2`` the result will be a quantity of dimension *length*\ :sup:`2`, and can only be compared to other quantities of the same dimension. Currently the implemented dimensions, and their primitive units are
+An important feature of SpeedCrunch's unit system is *dimensional checking*. Basically, it prevents comparison between apples and pears: if you try to convert seconds to meters, SpeedCrunch will complain, saying that the dimensions of ``second`` and ``meter`` do not match. Indeed, the dimension of ``second`` is *time*, while ``meter`` denotes a *length*, thus they cannot be compared, added, etc. When you add, multiply, etc. units, SpeedCrunch will track the dimension, and raise an error if you try to perform an illegal operation. For instance if you type ``meter^2`` the result will be a quantity of dimension *length*\ :sup:`2`, and can only be compared to other quantities of the same dimension. Currently the implemented dimensions, and their primitive units are
 
 * *length*, ``meter``;
 * *mass*, ``kilogram``;

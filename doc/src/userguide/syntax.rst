@@ -1,4 +1,4 @@
-This part of the documentation lays out the general syntax of a valid SpeedCrunch input. As you will see, SpeedCrunch honours most conventions for mathematical expressions. Especially if you are already familiar with a programming language, you will find using SpeedCrunch to be very natural and intuitive.
+This part of the documentation lays out the general syntax of a valid SpeedCrunch input. As you will see, SpeedCrunch honors most conventions for mathematical expressions. Especially if you are already familiar with a programming language, you will find using SpeedCrunch to be very natural and intuitive.
 
 
 Notation of Numbers
@@ -10,7 +10,7 @@ Fixed point
 -----------
 When you would like to specify a non-integer value, simply enter the number as you would write it on paper, with either a dot ``.`` or a comma ``,`` as the decimal separator. Indeed, since in some countries it is customary to use a comma rather than a dot for this purpose, SpeedCrunch treats them interchangeably, both ``1.234`` and ``1,234`` will evaluate to the same result. Note that for this reason you must not use either comma or dot as a thousand's separator. For instance ``1,234.567`` is not a valid input. Use spaces or apostrophes ``'`` for emphasis of digit groups, e.g. ``1 000 000`` or ``1'000'000`` for a million.
 
-Trailing zeros after the decimal point (like in ``12.300``), or leading zeros before it (``0012.3``) are redundant, and can be icluded or ommitted to the user's preference. Expressions like ``.5`` as a shorthand notation for ``0.5`` are also permitted.
+Trailing zeros after the decimal point (like in ``12.300``), or leading zeros before it (``0012.3``) are redundant, and can be included or omitted to the user's preference. Expressions like ``.5`` as a shorthand notation for ``0.5`` are also permitted.
 
 Scientific notation (floating point)
 ------------------------------------
@@ -60,23 +60,25 @@ SpeedCrunch stores integers with a precision of up to 256 bits. For this reason,
 Operators and Precedence
 ========================
 
-When writing an expression like ``10+5*4``, which operation will be executed first? The common rules of operator precedence tell us that in this case multiplaction shall be computed first, hence the reult is ``30``. We also distinguish **unary** operators (which act on a single number/operand) and **binary** operators (which link two operands).
+When writing an expression like ``10+5*4``, which operation will be executed first? The common rules of operator precedence tell us that in this case multipication shall be computed first, hence the result is ``30``. We also distinguish **unary** operators (which act on a single number/operand) and **binary** operators (which link two operands).
 
 The operators in SpeedCrunch and their precedence are listed here in decreasing order of precedence.
 
 * Parentheses ``(...)``. Use these to mark precedence explicitly, e.g. ``(2+3)*4 = 5*4 = 20``.
 * Unary operator ``!``. Computes the factorial of its argument, e.g. ``5! = 125``, see also :func:`gamma`.
-* Binary operator ``^`` or ``**`` (power). Both notations (``^`` and ``**``) are equivalent. Note that the power operation is *right-asscociative*, i.e. evaluated from right to left, e.g. ``2^2^3 = 2^8 = 256``.
-* Simplified fuction syntax, e.g. ``sqrt 2`` [#simplified_function]_.
+* Binary operator ``^`` or ``**`` (power). Both notations (``^`` and ``**``) are equivalent. Note that the power operation is *right-associative*, i.e. evaluated from right to left, e.g. ``2^2^3 = 2^8 = 256``.
+* Simplified function syntax, e.g. ``sqrt 2`` [#simplified_function]_.
 * Binary operator ``\`` (integer division).
 * Binary operators ``*`` (multiplication), ``/`` (division), unary operators ``+`` and ``-`` (negation), implied multiplication [#implied_mult]_, unary operator ``%`` (percent) [#percent]_.
-* Binary operator ``+`` (addition), binary operator ``-`` (substraction).
+* Binary operator ``+`` (addition), binary operator ``-`` (subtraction).
 * Binary operators ``<<`` (left shift) and ``>>`` (right shift); see also :func:`shl` and :func:`shr`.
 * Binary operator ``&`` (bitwise and); see also :func:`and`.
 * Binary operator ``|`` (bitwise or); see also :func:`or`.
 * Binary operator ``->`` or ``in`` (unit conversion). Again, both notations are equivalent. See the chapter about units for more information.
 
-Some of these require a few details to be mentioned:
+
+.. only :: html
+    Some of these require a few details to be mentioned:
 
 .. [#simplified_function] 
     .. deprecated :: 0.12
@@ -84,7 +86,7 @@ Some of these require a few details to be mentioned:
 
 .. [#implied_mult]
     .. versionadded :: 0.12
-        *Implicit multiplication* is the syntax feature where the multiplication operator ``*`` may be ommitted, for instance in ``3 sqrt(2)``. 
+        *Implicit multiplication* is the syntax feature where the multiplication operator ``*`` may be omitted, for instance in ``3 sqrt(2)``. 
     
 .. [#percent]
     .. deprecated :: 0.12
