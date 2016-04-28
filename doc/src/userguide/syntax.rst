@@ -77,7 +77,8 @@ The operators in SpeedCrunch and their precedence are listed here in decreasing 
 * Binary operator ``->`` or ``in`` (unit conversion). Again, both notations are equivalent. See the chapter about units for more information.
 
 
-.. only :: html
+.. only:: html
+
     Some of these require a few details to be mentioned:
 
 .. [#simplified_function] 
