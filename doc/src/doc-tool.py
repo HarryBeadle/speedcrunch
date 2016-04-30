@@ -29,10 +29,7 @@ import os
 import subprocess
 import sys
 
-
-SOURCE_LANGUAGE = 'en_US'
-TRANSLATIONS = ['de_DE', 'es_ES', 'fr_FR']
-LANGUAGES = [SOURCE_LANGUAGE] + TRANSLATIONS
+from languages import SOURCE_LANGUAGE, TRANSLATIONS, LANGUAGE_CODES as LANGUAGES
 
 DOC_DIR = os.path.dirname(os.path.abspath(__file__))
 
