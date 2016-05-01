@@ -14,7 +14,7 @@ update-metadata-files)
     ;;
 *)
     echo Commands:
-    echo "    extract-strings - generate desktop.pot"
+    echo "    extract-strings - generate .pot file"
     echo "    update-metadata-files - update desktop and appdata files"
     ;;
 esac
