@@ -1,5 +1,5 @@
 // This file is part of the SpeedCrunch project
-// Copyright (C) 2014 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (C) 2014 @heldercorreia
 // Copyright (c) 2016 Pol Welter <polwelter@gmail.com
 // Copyright (c) 2016 Felix Krull <f_krull@gmx.de>
 //
