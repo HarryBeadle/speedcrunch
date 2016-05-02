@@ -46,7 +46,6 @@ win32-msvc*:LIBS += User32.lib
     !win32 {
         DEPENDPATH += thirdparty
         INCLUDEPATH += thirdparty
-        LIBS += -lX11
         target.path = "/bin"
         menu.path = "/share/applications"
         icon.path = "/share/pixmaps"

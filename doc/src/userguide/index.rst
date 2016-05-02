@@ -1,3 +1,5 @@
+.. _userguide:
+
 User Guide
 ==========
 
@@ -9,6 +11,11 @@ read in order or simply used to look up the details of a feature.
    :maxdepth: 2
 
    installation
+   first_steps
+   syntax
+   advanced
+   interface
+   
 
 
 .. TODO: Potential further topics:

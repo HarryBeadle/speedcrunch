@@ -75,13 +75,7 @@ endif(APPLE)
 add_custom_target(confclean COMMAND rm -rf Makefile CMakeFiles/ CMakeCache.txt cmake_install.cmake DartTestfile.txt install_manifest.txt)
 
 set(QT_LIBRARIES Qt5::Widgets Qt5::Help)
-
-find_library(x11 X11)
-if(x11)
-    target_link_libraries(${PROGNAME} ${QT_LIBRARIES} X11)
-else(x11)
-    target_link_libraries(${PROGNAME} ${QT_LIBRARIES})
-endif(x11)
+target_link_libraries(${PROGNAME} ${QT_LIBRARIES})
 
 enable_testing()
 

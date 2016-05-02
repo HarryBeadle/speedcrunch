@@ -12,6 +12,12 @@ General
     
     Computes the geometric mean of the arguments, defined by ``product(x1; x2; ...)^(1/n)`` where ``n`` is the number of arguments. All the arguments may each have a different dimension. The geometric mean is useful for comparing sets of quantities that are very different in order of magnitude and even possibly dimension.
     
+.. function:: median(x1; x2; ...)
+    
+    Computes the median of the arguments, i.e. the value dividing the set of arguments into two evenly sized parts.
+    
+    First the set of arguments is sorted. If the number of arguments is odd, the element in the middle of the sorted list is returned. If the number of arguments is even, the arithmetic mean of the two central elements is returned.
+    
 .. function:: min(x1; x2; ...)
     
     Returns the minimum out of the supplied argument list. The arguments must be real and share the same dimension.
@@ -198,7 +204,7 @@ The hypergeometric distribution is described by the three parameters `N`, `K` an
 Poisson Distribution
 --------------------
 
-The Poisson distribution is characterized by only a single parameter, named `mu`. It represents both the mean and the variance of the distribution. It describes the probability distribution of the number of events during a fixed period of time, when the average rate of events is known. The Poisson distribution reqires the events to be independent. This is usually a good approximation when the rate is low compared to the total population size.
+The Poisson distribution is characterized by only a single parameter, named `mu`. It represents both the mean and the variance of the distribution. It describes the probability distribution of the number of events during a fixed period of time, when the average rate of events is known. The Poisson distribution requires the events to be independent. This is usually a good approximation when the rate is low compared to the total population size.
 
 .. function:: poipmf(x, mu)
 

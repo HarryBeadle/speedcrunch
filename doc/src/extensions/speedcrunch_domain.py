@@ -21,6 +21,7 @@ import bisect
 from collections import deque
 import re
 
+import sphinx
 from sphinx import addnodes
 from sphinx.directives import ObjectDescription
 from sphinx.domains import Domain, Index, ObjType, StandardDomain
@@ -101,6 +102,15 @@ class SpeedCrunchObject(ObjectDescription):
         """Get index display string for the given object name."""
         return name
 
+    def add_index_entry(self, type, text, target, main='', key=None):
+        # To accomodate for an API change in Sphinx 1.4.
+        if sphinx.version_info[:3] < (1, 4, 0):
+            idx = (type, text, target, main)
+        else:
+            idx = (type, text, target, main, key)
+        if text:
+            self.indexnode['entries'].append(idx)
+
     def add_target_and_index(self, name, sig, signode):
         targetname = 'sc.' + name
         if targetname not in self.state.document.ids:
@@ -117,9 +127,7 @@ class SpeedCrunchObject(ObjectDescription):
             inv[name] = (self.env.docname, self.objtype)
 
         indextext = self.get_index_text(name)
-        if indextext:
-            self.indexnode['entries'].append(('single', indextext,
-                                              targetname, None))
+        self.add_index_entry('single', indextext, targetname)
 
         qtkeyword.add_id_keyword(self.env, name, self.env.docname, targetname)
 
