@@ -42,21 +42,6 @@
 
 ManualServer* ManualServer::s_instance = NULL;
 
-// Map between language codes and locale names for language codes that do not match a country code
-static QHash<QString, QString> s_langHash{
-  {"en", "en_GB"},
-  {"ca", "ca_ES"},
-  {"cs", "cs_CZ"},
-  {"et", "et_EE"},
-  {"eu", "eu_ES"},
-  {"he", "he_IL"},
-  {"ja", "ja_JP"},
-  {"ko", "ko_KR"},
-  {"nb", "nb_NO"},
-  {"sv", "sv_SE"},
-  {"zh", "zh_CN"},
-};
-
 QString ManualServer::deployDocs()
 {
     QString dest = Settings::getCachePath() + "/manual/";
@@ -68,21 +53,17 @@ QString ManualServer::deployDocs()
         lang = QLocale().name();
 
     if (!isSupportedLanguage(lang)) {
-        // Extract the language code and try to find a generic translation for it
-        QStringList lang_parts = lang.split(QRegExp("[_-]"));
-        if (!lang_parts.isEmpty() && !lang_parts[0].isEmpty()) {
-            QString lang_code = lang_parts[0];
-            QString lang_generic = lang_code.toLower() + "_" + lang_code.toUpper();
-            lang_generic = s_langHash.value(lang_code.toLower(), lang_generic);
-
-            if (isSupportedLanguage(lang_code))
-                lang = lang_code;
-            else if (isSupportedLanguage(lang_generic))
-                lang = lang_generic;
-            else
-                lang = FALLBACK_LANG;
-        } else
-            lang = FALLBACK_LANG;
+        // Extract the language from the locale and try to find a generic translation for it
+        QStringList languages = QLocale((QLocale(lang).language())).uiLanguages();
+        lang = FALLBACK_LANG;
+        for (int i = 0; i < languages.size(); ++i) {
+            QString extra_lang = languages[i].replace('-', '_');
+            if (isSupportedLanguage(extra_lang)) {
+                lang = extra_lang;
+                break;
+            }
+        }
+        
     }
 
     QFile::remove(dest + QHC_NAME(lang));

@@ -81,14 +81,13 @@
 QTranslator* MainWindow::createTranslator(const QString& langCode)
 {
     QTranslator* translator = new QTranslator;
-    QString locale = (langCode == "C") ? QLocale().name() : langCode;
+    QLocale locale(langCode == "C" ? QLocale() : langCode);
 
-    if (locale == "C")
-        locale = "en";
-    else if (locale == "uz" || locale == "uz_UZ")
-        locale = "uz@Latn";
+    translator->load(locale, QString(":/locale/"));
+    // Make sure ":/locale/en_US.qm" does not exist, or it will be picked up for locales for which
+    // we don't support the country (e.g., de_AT, fr_CA, ...), because the default constructor of
+    // QLocale adds it to the languages list automatically (on Windows at least).
 
-    translator->load(QString(":/locale/") + locale);
     return translator;
 }
 
@@ -2418,7 +2417,7 @@ void MainWindow::showLanguageChooserDialog()
     map.insert(QLatin1String("Magyar"), QLatin1String("hu_HU"));
     map.insert(QLatin1String("Nederlands"), QLatin1String("nl_NL"));
     map.insert(QString::fromUtf8("Norsk (Bokmål)") + QChar(0x200E), QLatin1String("nb_NO"));
-    map.insert(QString::fromUtf8("Oʻzbekcha"), QLatin1String("uz@Latn"));
+    map.insert(QString::fromUtf8("Oʻzbekcha"), QLatin1String("uz_Latn_UZ"));
     map.insert(QLatin1String("Polski"), QLatin1String("pl_PL"));
     map.insert(QString::fromUtf8("Português do Brasil"), QLatin1String("pt_BR"));
     map.insert(QString::fromUtf8("Português Europeu"), QLatin1String("pt_PT"));
