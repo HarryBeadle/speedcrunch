@@ -63,7 +63,6 @@ QString ManualServer::deployDocs()
                 break;
             }
         }
-        
     }
 
     QFile::remove(dest + QHC_NAME(lang));
