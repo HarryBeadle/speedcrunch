@@ -2400,40 +2400,18 @@ void MainWindow::showLanguageChooserDialog()
 {
     QMap<QString, QString> map;
 
-    map.insert(QLatin1String("American English"), QLatin1String("en_US"));
-    map.insert(QLatin1String("Bahasa Indonesia"), QLatin1String("id_ID"));
-    map.insert(QString::fromUtf8("Català"), QLatin1String("ca_ES"));
-    map.insert(QLatin1String("Dansk"), QLatin1String("da"));
-    map.insert(QLatin1String("Deutsch"), QLatin1String("de_DE"));
-    map.insert(QString::fromUtf8("Ελληνικά"), QLatin1String("el"));
-    map.insert(QLatin1String("Eesti"), QLatin1String("et_EE"));
-    map.insert(QString::fromUtf8("Español"), QLatin1String("es_ES"));
-    map.insert(QString::fromUtf8("Español Argentino"), QLatin1String("es_AR"));
-    map.insert(QLatin1String("Euskara"), QLatin1String("eu_ES"));
-    map.insert(QString::fromUtf8("Français"), QLatin1String("fr_FR"));
-    map.insert(QLatin1String("Italiano"), QLatin1String("it_IT"));
-    map.insert(QString::fromUtf8("Latviešu"), QLatin1String("lv_LV"));
-    map.insert(QString::fromUtf8("Lietuvių"), QLatin1String("lt"));
-    map.insert(QLatin1String("Magyar"), QLatin1String("hu_HU"));
-    map.insert(QLatin1String("Nederlands"), QLatin1String("nl_NL"));
-    map.insert(QString::fromUtf8("Norsk (Bokmål)") + QChar(0x200E), QLatin1String("nb_NO"));
-    map.insert(QString::fromUtf8("Oʻzbekcha"), QLatin1String("uz_Latn_UZ"));
-    map.insert(QLatin1String("Polski"), QLatin1String("pl_PL"));
-    map.insert(QString::fromUtf8("Português do Brasil"), QLatin1String("pt_BR"));
-    map.insert(QString::fromUtf8("Português Europeu"), QLatin1String("pt_PT"));
-    map.insert(QString::fromUtf8("Română"), QLatin1String("ro_RO"));
-    map.insert(QString::fromUtf8("Slovenčina"), QLatin1String("sk"));
-    map.insert(QLatin1String("Suomi"), QLatin1String("fi_FI"));
-    map.insert(QLatin1String("Svenska"), QLatin1String("sv_SE"));
-    map.insert(QString::fromUtf8("Česky"), QLatin1String("cs_CZ"));
-    map.insert(QString::fromUtf8("한국어"), QLatin1String("ko_KR"));
-    map.insert(QString::fromUtf8("Tiếng Việt"), QLatin1String("vi"));
-    map.insert(QString::fromUtf8("Türkçe"), QLatin1String("tr_TR"));
-    map.insert(QString::fromUtf8("العربية"), QLatin1String("ar"));
-    map.insert(QString::fromUtf8("עברית"), QLatin1String("he_IL"));
-    map.insert(QString::fromUtf8("Русский"), QLatin1String("ru_RU"));
-    map.insert(QString::fromUtf8("日本語"), QLatin1String("ja_JP"));
-    map.insert(QString::fromUtf8("简化字"), QLatin1String("zh_CN"));
+    // List all available translations from the resource files
+    QDir localeDir(":/locale/", "*.qm");
+    QFileInfoList localeList = localeDir.entryInfoList();
+    for (int i = 0; i < localeList.size(); ++i) {
+        QFileInfo fileInfo = localeList.at(i);
+        QString localeName = fileInfo.baseName();
+        QString langName = QLocale(localeName).nativeLanguageName();
+
+        // The first letter is not always capitalized so force it
+        langName[0] = langName[0].toUpper();
+        map.insert(langName, localeName);
+    }
 
     int current = map.values().indexOf(m_settings->language) + 1;
 
