@@ -81,12 +81,9 @@
 QTranslator* MainWindow::createTranslator(const QString& langCode)
 {
     QTranslator* translator = new QTranslator;
-    QLocale locale(langCode == "C" ? QLocale() : langCode);
+    QLocale locale(langCode == "C" ? QLocale().name() : langCode);
 
     translator->load(locale, QString(":/locale/"));
-    // Make sure ":/locale/en_US.qm" does not exist, or it will be picked up for locales for which
-    // we don't support the country (e.g., de_AT, fr_CA, ...), because the default constructor of
-    // QLocale adds it to the languages list automatically (on Windows at least).
 
     return translator;
 }
