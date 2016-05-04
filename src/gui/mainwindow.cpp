@@ -83,7 +83,11 @@ QTranslator* MainWindow::createTranslator(const QString& langCode)
     QTranslator* translator = new QTranslator;
     QLocale locale(langCode == "C" ? QLocale().name() : langCode);
 
-    translator->load(locale, QString(":/locale/"));
+    if(!translator->load(locale, QString(":/locale/"))) {
+        // Strip the country and try to find a generic translation for this language
+        locale = QLocale(locale.language());
+        translator->load(locale, QString(":/locale/"));
+    }
 
     return translator;
 }
