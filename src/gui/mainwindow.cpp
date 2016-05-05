@@ -2409,6 +2409,9 @@ void MainWindow::showLanguageChooserDialog()
         QString localeName = fileInfo.baseName();
         QString langName = QLocale(localeName).nativeLanguageName();
 
+        // Kludge for es_AR which shows as "Español"
+        if(localeName == "es_AR") langName = QString::fromUtf8("Español Argentino");
+
         // The first letter is not always capitalized so force it
         langName[0] = langName[0].toUpper();
         map.insert(langName, localeName);
