@@ -534,19 +534,19 @@ Quantity function_dec(Function* f, const Function::ArgumentList& args)
 Quantity function_hex(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return Quantity(args.at(0)).setFormat(Quantity::Format::Hexadecimal() + Quantity(args.at(0)).format());
+    return Quantity(args.at(0)).setFormat(Quantity::Format::Fixed() + Quantity::Format::Hexadecimal() + Quantity(args.at(0)).format());
 }
 
 Quantity function_oct(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return Quantity(args.at(0)).setFormat(Quantity::Format::Octal() + Quantity(args.at(0)).format());
+    return Quantity(args.at(0)).setFormat(Quantity::Format::Fixed() + Quantity::Format::Octal() + Quantity(args.at(0)).format());
 }
 
 Quantity function_bin(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(1);
-    return Quantity(args.at(0)).setFormat(Quantity::Format::Binary() + Quantity(args.at(0)).format());
+    return Quantity(args.at(0)).setFormat(Quantity::Format::Fixed() + Quantity::Format::Binary() + Quantity(args.at(0)).format());
 }
 
 Quantity function_binompmf(Function* f, const Function::ArgumentList& args)
