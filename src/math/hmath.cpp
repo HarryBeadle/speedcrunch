@@ -647,7 +647,7 @@ HNumber::Format HNumber::Format::operator+(const HNumber::Format &other) const
     result.base = this->base != Base::Null ? this->base : other.base;
     result.radixChar = this->radixChar != RadixChar::Null ? this->radixChar : other.radixChar;
     result.mode = this->mode != Mode::Null ? this->mode : other.mode;
-    result.precision = this->precision < 1 ? this->precision : other.precision;
+    result.precision = this->precision != 0 ? this->precision : other.precision;
     return result;
 }
 

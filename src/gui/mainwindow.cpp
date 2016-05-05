@@ -1978,7 +1978,6 @@ void MainWindow::setResultFormatFixed()
     if (m_status.resultFormat)
         m_status.resultFormat->setText(tr("Fixed decimal"));
 }
-
 void MainWindow::setResultFormatGeneral()
 {
     m_actionGroups.digits->setEnabled(true);

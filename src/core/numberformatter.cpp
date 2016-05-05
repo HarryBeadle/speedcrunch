@@ -27,8 +27,39 @@ QString NumberFormatter::format(Quantity q)
     Settings* settings = Settings::instance();
 
     Quantity::Format format = q.format();
-    if (format.base == Quantity::Format::Base::Null)
-        format.base = Quantity::Format::Base::Decimal; //settings->resultFormat;
+    if (format.base == Quantity::Format::Base::Null) {
+        switch (settings->resultFormat) {
+        case 'b':
+            format.base = Quantity::Format::Base::Binary;
+            format.mode = Quantity::Format::Mode::Fixed;
+            break;
+        case 'o':
+            format.base = Quantity::Format::Base::Octal;
+            format.mode = Quantity::Format::Mode::Fixed;
+            break;
+        case 'h':
+            format.base = Quantity::Format::Base::Hexadecimal;
+            format.mode = Quantity::Format::Mode::Fixed;
+            break;
+        case 'n':
+            format.base = Quantity::Format::Base::Decimal;
+            format.mode = Quantity::Format::Mode::Engineering;
+            break;
+        case 'f':
+            format.base = Quantity::Format::Base::Decimal;
+            format.mode = Quantity::Format::Mode::Fixed;
+            break;
+        case 'e':
+            format.base = Quantity::Format::Base::Decimal;
+            format.mode = Quantity::Format::Mode::Scientific;
+            break;
+        case 'g':
+        default:
+            format.base = Quantity::Format::Base::Decimal;
+            format.mode = Quantity::Format::Mode::General;
+            break;
+        }
+    }
     if (format.mode == Quantity::Format::Mode::Null)
         format.mode = Quantity::Format::Mode::General;
     if (format.precision == 0)
