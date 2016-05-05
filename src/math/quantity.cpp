@@ -266,7 +266,10 @@ QMap<QString, Rational> Quantity::getDimension() const
 
 void Quantity::modifyDimension(const QString &key, const Rational &exponent)
 {
-    m_dimension.insert(key, exponent);
+    if (exponent.isZero())
+        m_dimension.remove(key);
+    else
+        m_dimension.insert(key, exponent);
 }
 
 void Quantity::copyDimension(const Quantity &other)

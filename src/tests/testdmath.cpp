@@ -96,6 +96,11 @@ void test_basic()
     CHECK(a/Units::second(), "123 meter second⁻¹");    //
     CHECK(a*HNumber(5), "2050 foot");                   //
     CHECK(a/HNumber(5), "82 foot");                     //
+
+    CHECK(DMath::raise(Units::meter(), 0),"1");
+    CHECK(DMath::raise(Units::meter(), Quantity(0)),"1");
+    CHECK(DMath::raise(Units::meter(), 0) + DMath::raise(Units::second(), 0),"2");
+    CHECK(DMath::raise(Units::meter(), Quantity(0)) + DMath::raise(Units::second(), Quantity(0)),"2");
 }
 
 void test_functions()
