@@ -38,7 +38,7 @@ BitWidget::BitWidget(int bitPosition, QWidget* parent)
     HNumber number(HMath::raise(HNumber(2), bitPosition));
     setToolTip(QString("2<sup>%1</sup> = %2")
         .arg(bitPosition)
-        .arg(HMath::format(number, 'd')));
+        .arg(HMath::format(number, Quantity::Format::Decimal())));
 }
 
 void BitWidget::mouseReleaseEvent(QMouseEvent*)
@@ -152,7 +152,7 @@ void BitFieldWidget::wheelEvent(QWheelEvent* we)
 
 void BitFieldWidget::updateBits(const Quantity& number)
 {
-    QString binaryNumberString = DMath::format(number, 'b');
+    QString binaryNumberString = DMath::format(number, Quantity::Format::Binary());
     QListIterator<BitWidget*> bitsIterator(m_bitWidgets);
 
     if (number.isZero() || !number.isInteger())

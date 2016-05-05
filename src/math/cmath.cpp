@@ -165,38 +165,12 @@ bool CNumber::isNearReal() const
 }
 
 
-/**
- * Returns the preferred format (base/precision), default is 0
- */
-char CNumber::format() const
-{
-  /* real and imag have always the same format */
-  return real.format();
-}
-
-
-/**
- * Sets the preferred format (base/precision), default is 0
- */
-CNumber& CNumber::setFormat(char c)
-{
-  /* We must always ensure that both numbers have the same preferred format */
-  real.setFormat(c);
-  imag.setFormat(c);
-  return *this;
-}
-
-
-/* FIXME !! (Almost) code duplicate of HNumber::serialize !! */
 void CNumber::serialize(QJsonObject &json) const
 {
-    const char f = format();
-    json["format"] = (f=='\0') ? QString("NULL") : QString(QChar(f));
-    json["value"] = CMath::format(*this, f, DECPRECISION);
+    json["value"] = CMath::format(*this, CNumber::Format::Fixed() + CNumber::Format::Precision(DECPRECISION));
 }
 
 
-/* FIXME !! (Almost) code duplicate of HNumber::deSerialize !! */
 CNumber CNumber::deSerialize(const QJsonObject &json)
 {
     CNumber result;
@@ -204,10 +178,6 @@ CNumber CNumber::deSerialize(const QJsonObject &json)
         QString str = json["value"].toString();
         str.replace(",", ".");
         result = CNumber(str.toLatin1().constData());
-    }
-    if (json.contains("format")) {
-        QString f = json["format"].toString();
-        result.setFormat((f.isEmpty() || f == QStringLiteral("NULL")) ? '\0': f.at(0).toLatin1());
     }
 
     return result;
@@ -433,6 +403,32 @@ CNumber operator-( const CNumber & x )
   return CNumber(-x.real, -x.imag);
 }
 
+CNumber::Format::Format()
+    : HNumber::Format(),
+      notation(Format::Notation::Null)
+{
+}
+
+CNumber::Format::Format(const Format &other)
+    : HNumber::Format(static_cast<const HNumber::Format &>(other)),
+      notation(other.notation)
+{
+}
+
+CNumber::Format::Format(const HNumber::Format &other)
+    : HNumber::Format(other),
+      notation(Notation::Null)
+{
+}
+
+CNumber::Format CNumber::Format::operator+(const CNumber::Format &other) const
+{
+    Format result(HNumber::Format::operator+(static_cast<const HNumber::Format &>(other)));
+    result.notation = this->notation != Notation::Null ? this->notation : other.notation;
+    return result;
+}
+
+
 
 /**
  * Returns the constant e (Euler's number).
@@ -472,30 +468,10 @@ CNumber CMath::i()
 
 /* TODO : Improve complex number formatting */
 
-// /**
-//  * Formats the given number as string, using specified decimal digits.
-//  * Note that the returned string must be freed.
-//  */
-// char * CMath::formatFixed( const CNumber & cn, int prec )
-// {
-//   return format(cn, 'f', prec);
-// }
-
-
-// /**
-//  * Formats the given number as string, in scientific format.
-//  * Note that the returned string must be freed.
-//  */
-// char * CMath::formatScientific( const CNumber & cn, int prec )
-// {
-//   return format(cn, 'e', prec);
-// }
-
-
 /**
  * Formats the given number as string.
  */
-QString CMath::format( const CNumber& cn, char format, int prec )
+QString CMath::format(const CNumber& cn, CNumber::Format format)
 {
   /* If number is NaN */
   if (cn.isNan())
@@ -505,7 +481,7 @@ QString CMath::format( const CNumber& cn, char format, int prec )
   else if (cn.imag.isNearZero())
 
     /* Reverts to normal formatting */
-    return HMath::format(cn.real, format, prec);
+    return HMath::format(cn.real, format);
 
   /* If number is complex */
   else {
@@ -513,7 +489,7 @@ QString CMath::format( const CNumber& cn, char format, int prec )
     /* Use complex number formatting */
 
     /* Format real part */
-    QString real_part = cn.real.isZero()? "" : HMath::format(cn.real, format, prec);
+    QString real_part = cn.real.isZero()? "" : HMath::format(cn.real, format);
 
     /* Format imaginary part */
     QString imag_part = "";
@@ -524,12 +500,12 @@ QString CMath::format( const CNumber& cn, char format, int prec )
     /* If imaginary part is positive */
     if (cn.imag.isPositive()) {
       separator = cn.real.isZero() ? "": "+";
-      imag_part = HMath::format(cn.imag,  format, prec);
+      imag_part = HMath::format(cn.imag, format);
     }
     /* If imaginary part is negative */
     else {
       separator = "-";
-      imag_part = HMath::format(-cn.imag, format, prec);
+      imag_part = HMath::format(-cn.imag, format);
     }
 
     return real_part + separator + prefix + imag_part + postfix;
@@ -945,3 +921,5 @@ CNumber CMath::encodeIeee754( const CNumber & val, const CNumber & exp_bits,
         return CMath::nan( OutOfDomain );
     return CNumber( HMath::encodeIeee754( val.real, exp_bits.real, significand_bits.real ) );
 }
+
+

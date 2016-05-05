@@ -63,18 +63,6 @@ public:
     bool isNegative() const;
     bool isInteger() const;
 
-//TODO formats should be separated from numbers
-
-    // 'g': decimal general (default)
-    // 'f': decimal fixed
-    // 'e': decimal scientific
-    // 'n': decimal engineering
-    // 'h': hexadecimal
-    // 'o': octal
-    // 'b': binary
-    char format() const;
-    HNumber& setFormat( char c = 0 );
-
     void serialize(QJsonObject & json) const;
     static HNumber deSerialize(const QJsonObject & json);
 
@@ -104,13 +92,46 @@ public:
     HNumberPrivate * d;
 
     int compare( const HNumber & other ) const;
+
+
+
+public:
+    struct Format {
+        enum class Base {Null, Binary, Decimal, Octal, Hexadecimal};
+        enum class RadixChar {Null, Point, Comma};
+        enum class Mode {Null, General, Fixed, Scientific, Engineering};
+
+        Base base;
+        RadixChar radixChar;
+        Mode mode;
+        int precision;  // 0 means 'null', < 0 means 'auto'
+
+        Format();
+        Format(const Format &other);
+        Format operator+(const Format & other) const;
+
+        static const Format Binary();
+        static const Format Octal();
+        static const Format Decimal();
+        static const Format Hexadecimal();
+
+        static const Format Precision(int prec);
+
+        static const Format Point();
+        static const Format Comma();
+
+        static const Format General();
+        static const Format Fixed();
+        static const Format Scientific();
+        static const Format Engineering();
+    };
 };
 
 class HMath
 {
 public:
     // FORMAT
-    static QString format( const HNumber & n, char format = 'g', int prec = -1 );
+    static QString format( const HNumber & n, HNumber::Format format = HNumber::Format());
     // PARSING
     static HNumber parse_str (const char * str_in, const char ** str_out);
     // CONSTANTS

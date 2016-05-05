@@ -2256,7 +2256,7 @@ void MainWindow::handleBitsChanged(const QString& str)
 {
     clearEditor();
     Quantity num(CNumber(str.toLatin1().data()));
-    insertTextIntoEditor(DMath::format(num, 'h'));
+    insertTextIntoEditor(DMath::format(num, Quantity::Format::Hexadecimal()));
     showStateLabel(QString("Current value: %1").arg(NumberFormatter::format(num)));
 }
 

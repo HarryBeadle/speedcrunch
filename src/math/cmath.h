@@ -62,18 +62,6 @@ public:
     bool isReal() const;
     bool isNearReal() const;
 
-//TODO formats should be separated from numbers
-
-    // 'g': decimal general (default)
-    // 'f': decimal fixed
-    // 'e': decimal scientific
-    // 'n': decimal engineering
-    // 'h': hexadecimal
-    // 'o': octal
-    // 'b': binary
-    char format() const;
-    CNumber& setFormat( char c = 0 );
-
     void serialize(QJsonObject & json) const;
     static CNumber deSerialize(const QJsonObject & json);
 
@@ -113,16 +101,26 @@ public:
     /* FIXME ! Better control of access to real and imag */
 
     /* Invariants :
-       - real and imag have the same format settings
-       - real and image are neither or both NaN
+       - real and imag are neither or both NaN
        - real and imag have the same NaN error       */
+
+    struct Format : public HNumber::Format
+    {
+        enum class Notation {Null, Cartesian, Polar};
+        Notation notation;
+
+        Format();
+        Format(const Format & other);
+        Format(const HNumber::Format &other);
+        Format operator+(const Format &other) const;
+    };
 };
 
 class CMath
 {
 public:
     // FORMAT
-    static QString format( const CNumber & n, char format = 'g', int prec = -1 );
+    static QString format( const CNumber & n, CNumber::Format format = CNumber::Format());
     // CONSTANTS
     static CNumber e();
     static CNumber phi();

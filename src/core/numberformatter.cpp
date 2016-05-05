@@ -26,11 +26,15 @@ QString NumberFormatter::format(Quantity q)
 {
     Settings* settings = Settings::instance();
 
-    char format = q.format();
-    if (format == 0)
-        format = settings->resultFormat;
+    Quantity::Format format = q.format();
+    if (format.base == Quantity::Format::Base::Null)
+        format.base = Quantity::Format::Base::Decimal; //settings->resultFormat;
+    if (format.mode == Quantity::Format::Mode::Null)
+        format.mode = Quantity::Format::Mode::General;
+    if (format.precision == 0)
+        format.precision = settings->resultPrecision;
 
-    QString result = DMath::format(q, format, settings->resultPrecision);
+    QString result = DMath::format(q, format);
 
     if (settings->radixCharacter() == ',')
         result.replace('.', ',');

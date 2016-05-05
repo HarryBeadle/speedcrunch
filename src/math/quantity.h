@@ -57,8 +57,8 @@ class Quantity
 public:
     Quantity();
     Quantity(const Quantity& other);
-    Quantity( int i );
-    Quantity( const QJsonObject & json);
+    Quantity(int i);
+    Quantity(const QJsonObject & json);
     Quantity(const HNumber &h);
     Quantity(const CNumber &c);
     ~Quantity();
@@ -75,9 +75,7 @@ public:
     CNumber unit() const;
     QString unitName() const;
     CNumber numericValue() const;
-    char format() const;
     Quantity& setDisplayUnit(const CNumber unit, const QString &name);
-    Quantity& setFormat(char c);
     void stripUnits();
     bool hasDimension() const;
     bool isDimensionless() const;
@@ -116,13 +114,31 @@ public:
     Quantity operator>>( const Quantity& ) const;
     Quantity operator<<( const Quantity& ) const;
 
+    class Format : public CNumber::Format
+    {
+    public:
+        static const Format Cartesian();
+        static const Format Polar();
+
+        Format();
+        Format(const CNumber::Format &other);
+        Format(const HNumber::Format &other);
+        Format operator+(const Format &other) const;
+
+        void serialize(QJsonObject &json) const;
+        static Format deSerialize(const QJsonObject &json);
+        bool isNull() const;
+    };
+
+    Format format() const;
+    Quantity& setFormat(Format c);
 
 private:
     CNumber m_numericValue;
     QMap<QString, Rational> m_dimension;
     CNumber * m_unit;
     QString m_unitName;
-    char m_format;
+    Format m_format;
 };
 
 
@@ -134,7 +150,7 @@ class DMath
   public:
     static bool complexMode;
 
-    static QString format(const Quantity q, char format=0, int prec=-1);
+    static QString format(const Quantity q, Quantity::Format format = Quantity::Format());
 
     static Quantity real(const Quantity& x);
     static Quantity imag(const Quantity& x);

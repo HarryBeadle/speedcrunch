@@ -120,12 +120,10 @@ public:
     //TODO make this a variant
     floatstruct fnum;
     Error error;
-    //TODO do not keep formats with numbers
-    char format;
 };
 
 HNumberPrivate::HNumberPrivate()
-  : error(Success), format('\0')
+  : error(Success)
 {
     h_init();
     float_create(&fnum);
@@ -335,28 +333,9 @@ bool HNumber::isInteger() const
     return float_isinteger(&d->fnum) != 0;
 }
 
-/**
- * Returns the preferred format (base/precision), default is 0
- */
-char HNumber::format() const
-{
-   return d->format;
-}
-
-/**
- * Sets the preferred format (base/precision), default is 0
- */
-HNumber& HNumber::setFormat(char c)
-{
-   d->format = float_isnan(&d->fnum)?0:c;
-   return *this;
-}
-
 void HNumber::serialize(QJsonObject &json) const
 {
-    const char f = format();
-    json["format"] = (f=='\0') ? QString("NULL") : QString(QChar(f));
-    json["value"] = HMath::format(*this, f, DECPRECISION);
+    json["value"] = HMath::format(*this, Format::Fixed() + Format::Precision(DECPRECISION));
 }
 
 HNumber HNumber::deSerialize(const QJsonObject &json)
@@ -367,11 +346,6 @@ HNumber HNumber::deSerialize(const QJsonObject &json)
         str.replace(",", ".");
         result = HNumber(str.toLatin1().constData());
     }
-    if (json.contains("format")) {
-        QString f = json["format"].toString();
-        result.setFormat((f.isEmpty() || f == QStringLiteral("NULL")) ? '\0': f.at(0).toLatin1());
-    }
-
     return result;
 }
 
@@ -390,7 +364,6 @@ int HNumber::toInt() const
  */
 HNumber& HNumber::operator=( const HNumber & hn )
 {
-    d->format = hn.format();
     d->error = hn.error();
 
     float_copy(&d->fnum, &hn.d->fnum, EXACT);
@@ -651,6 +624,112 @@ HNumber HNumber::operator>>( const HNumber & num ) const
     return result;
 }
 
+
+
+HNumber::Format::Format() : base(Base::Null),
+                            radixChar(RadixChar::Null),
+                            mode(Mode::Null),
+                            precision(0)
+{
+}
+
+HNumber::Format::Format(const HNumber::Format &other)
+    : base(other.base),
+      radixChar(other.radixChar),
+      mode(other.mode),
+      precision(other.precision)
+{
+}
+
+HNumber::Format HNumber::Format::operator+(const HNumber::Format &other) const
+{
+    Format result;
+    result.base = this->base != Base::Null ? this->base : other.base;
+    result.radixChar = this->radixChar != RadixChar::Null ? this->radixChar : other.radixChar;
+    result.mode = this->mode != Mode::Null ? this->mode : other.mode;
+    result.precision = this->precision < 1 ? this->precision : other.precision;
+    return result;
+}
+
+
+const HNumber::Format HNumber::Format::Binary()
+{
+    Format result;
+    result.base = Base::Binary;
+    return result;
+}
+
+const HNumber::Format HNumber::Format::Octal()
+{
+    Format result;
+    result.base = Base::Octal;
+    return result;
+}
+
+const HNumber::Format HNumber::Format::Decimal()
+{
+    Format result;
+    result.base = Base::Decimal;
+    return result;
+}
+
+const HNumber::Format HNumber::Format::Hexadecimal()
+{
+    Format result;
+    result.base = Base::Hexadecimal;
+    return result;
+}
+
+const HNumber::Format HNumber::Format::Precision(int prec)
+{
+    Format result;
+    result.precision = prec;
+    return result;
+}
+
+const HNumber::Format HNumber::Format::Point()
+{
+    Format result;
+    result.radixChar = RadixChar::Point;
+    return result;
+}
+
+const HNumber::Format HNumber::Format::Comma()
+{
+    Format result;
+    result.radixChar = RadixChar::Comma;
+    return result;
+}
+
+const HNumber::Format HNumber::Format::General()
+{
+    Format result;
+    result.mode = Mode::General;
+    return result;
+}
+
+const HNumber::Format HNumber::Format::Fixed()
+{
+    Format result;
+    result.mode = Mode::Fixed;
+    return result;
+}
+
+const HNumber::Format HNumber::Format::Scientific()
+{
+    Format result;
+    result.mode = Mode::Scientific;
+    return result;
+}
+
+const HNumber::Format HNumber::Format::Engineering()
+{
+    Format result;
+    result.mode = Mode::Engineering;
+    return result;
+}
+
+
 namespace /* unnamed */ {
 
 char* _doFormat(cfloatnum x, signed char base, signed char expbase, char outmode, int prec, unsigned flags)
@@ -696,70 +775,76 @@ char* _doFormat(cfloatnum x, signed char base, signed char expbase, char outmode
  * Formats the given number as string, using specified decimal digits.
  * Note that the returned string must be freed.
  */
-char* formatFixed( cfloatnum x, int prec )
+char* formatFixed( cfloatnum x, int prec, int base=10 )
 {
     int scale = float_getlength(x) - float_getexponent(x) - 1;
     if (scale < 0)
         scale = 0;
     unsigned flags = IO_FLAG_SUPPRESS_PLUS + IO_FLAG_SUPPRESS_DOT + IO_FLAG_SUPPRESS_EXPZERO;
+    if( base != 10 )
+        flags += IO_FLAG_SHOW_BASE;
     if( prec < 0 ) {
         flags |= IO_FLAG_SUPPRESS_TRL_ZERO;
         prec = HMATH_MAX_SHOWN;
         if( scale < HMATH_MAX_SHOWN )
             prec = scale;
     }
-    char* result = _doFormat(x, 10, 10, IO_MODE_FIXPOINT, prec, flags);
+    char* result = _doFormat(x, base, base, IO_MODE_FIXPOINT, prec, flags);
     return result ? result
-      : _doFormat(x, 10, 10, IO_MODE_SCIENTIFIC, HMATH_MAX_SHOWN, flags);
+      : _doFormat(x, base, base, IO_MODE_SCIENTIFIC, HMATH_MAX_SHOWN, flags);
 }
 
 /**
  * Formats the given number as string, in scientific format.
  * Note that the returned string must be freed.
  */
-char* formatScientific( cfloatnum x, int prec )
+char* formatScientific( cfloatnum x, int prec, int base=10  )
 {
     unsigned flags = IO_FLAG_SUPPRESS_PLUS + IO_FLAG_SUPPRESS_DOT
       + IO_FLAG_SUPPRESS_EXPPLUS;
+    if( base != 10 )
+        flags += IO_FLAG_SHOW_BASE;
     if( prec < 0 ) {
         flags |= IO_FLAG_SUPPRESS_TRL_ZERO;
         prec = HMATH_MAX_SHOWN;
     }
-    return _doFormat(x, 10, 10, IO_MODE_SCIENTIFIC, prec, flags);
+    return _doFormat(x, base, base, IO_MODE_SCIENTIFIC, prec, flags);
 }
 
 /**
  * Formats the given number as string, in engineering notation.
  * Note that the returned string must be freed.
  */
-char* formatEngineering( cfloatnum x, int prec )
+char* formatEngineering( cfloatnum x, int prec, int base=10 )
 {
     unsigned flags = IO_FLAG_SUPPRESS_PLUS + IO_FLAG_SUPPRESS_EXPPLUS;
+    if( base != 10 )
+        flags += IO_FLAG_SHOW_BASE;
     if( prec <= 1 ) {
         flags |= IO_FLAG_SUPPRESS_TRL_ZERO + IO_FLAG_SUPPRESS_DOT;
         prec = HMATH_MAX_SHOWN;
     }
-    return _doFormat(x, 10, 10, IO_MODE_ENG, prec, flags);
+    return _doFormat(x, base, base, IO_MODE_ENG, prec, flags);
 }
 
 /**
  * Formats the given number as string, using specified decimal digits.
  * Note that the returned string must be freed.
  */
-char* formatGeneral( cfloatnum x, int prec )
+char* formatGeneral( cfloatnum x, int prec, int base=10 )
 {
     // find the exponent and the factor
     int expd = float_getexponent(x);
 
     char* str;
     if( expd > 5 )
-        str = formatScientific( x, prec );
+        str = formatScientific( x, prec, base );
     else if( expd < -4 )
-        str = formatScientific( x, prec );
+        str = formatScientific( x, prec, base );
     else if ( (expd < 0) && (prec>0) && (expd < -prec) )
-        str = formatScientific( x, prec );
+        str = formatScientific( x, prec, base );
     else
-        str = formatFixed( x, prec );
+        str = formatFixed( x, prec, base );
 
     return str;
 }
@@ -784,19 +869,37 @@ char* formathexfp( cfloatnum x, char base,
 /**
  * Formats the given number as string, using specified decimal digits.
  */
-QString HMath::format( const HNumber& hn, char format, int prec )
+QString HMath::format(const HNumber& hn, HNumber::Format format)
 {
     char* rs = 0;
 
-    switch (format)
+    if (format.precision < 1)
+        format.precision = -1;
+
+    int base;
+    switch (format.base)
     {
-    case 'f': rs = formatFixed(&hn.d->fnum, prec ); break;
-    case 'e': rs = formatScientific(&hn.d->fnum, prec ); break;
-    case 'n': rs = formatEngineering(&hn.d->fnum, prec ); break;
-    case 'h': rs = formathexfp(&hn.d->fnum, 16, 10, HMATH_HEX_MAX_SHOWN); break;
-    case 'o': rs = formathexfp(&hn.d->fnum, 8, 10, HMATH_OCT_MAX_SHOWN); break;
-    case 'b': rs = formathexfp(&hn.d->fnum, 2, 10, HMATH_BIN_MAX_SHOWN); break;
-    case 'g': default: rs = formatGeneral(&hn.d->fnum, prec );
+    case HNumber::Format::Base::Binary :
+        base = 2; break;
+    case HNumber::Format::Base::Octal :
+        base = 8; break;
+    case HNumber::Format::Base::Hexadecimal :
+        base = 16; break;
+    case HNumber::Format::Base::Decimal :
+    case HNumber::Format::Base::Null :
+        base = 10; break;
+    }
+
+    switch (format.mode)
+    {
+    case HNumber::Format::Mode::Fixed :
+        rs = formatFixed(&hn.d->fnum, format.precision, base); break;
+    case HNumber::Format::Mode::Scientific :
+        rs = formatScientific(&hn.d->fnum, format.precision, base) ; break;
+    case HNumber::Format::Mode::Engineering :
+        rs = formatEngineering(&hn.d->fnum, format.precision, base); break;
+    case HNumber::Format::Mode::General : default:
+        rs = formatGeneral(&hn.d->fnum, format.precision, base);
     }
 
     QString result(rs);
@@ -1986,13 +2089,13 @@ HNumber HMath::encodeIeee754( const HNumber & val, const HNumber & exp_bits,
     }
 
     HNumber result = sign_bit << (exp_bits + significand_bits) | exponent << (significand_bits) | significand;
-    result.setFormat('h');
+    //result.setFormat('h');
     return result;
 }
 
 std::ostream& operator<<( std::ostream& s, const HNumber& n )
 {
-    QString str = HMath::format( n, 'f' );
+    QString str = HMath::format(n);
     s << str.toLatin1().constData();
     return s;
 }
@@ -2037,4 +2140,7 @@ HNumber HMath::parse_str (const char * str_in, const char ** str_out) {
 bool HNumber::isNearZero() const {
     return float_iszero(&(d->fnum)) || float_getexponent(&(d->fnum)) <= -80;
 }
+
+
+
 
