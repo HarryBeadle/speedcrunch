@@ -83,7 +83,7 @@ static char checkSub(floatnum dest, cfloatnum s1, cfloatnum s2, int digits)
 static void h_init()
 {
     static bool h_initialized = false;
-    if(!h_initialized) {
+    if (!h_initialized) {
         h_initialized = true;
         //TODO related to formats, get rid of it.
         float_stdconvert();
@@ -791,12 +791,11 @@ char* formatFixed(cfloatnum x, int prec, int base = 10)
     if (prec < 0) {
         flags |= IO_FLAG_SUPPRESS_TRL_ZERO;
         prec = HMATH_MAX_SHOWN;
-        if(scale < HMATH_MAX_SHOWN)
+        if (scale < HMATH_MAX_SHOWN)
             prec = scale;
     }
     char* result = _doFormat(x, base, base, IO_MODE_FIXPOINT, prec, flags);
-    return result ? result
-      : _doFormat(x, base, base, IO_MODE_SCIENTIFIC, HMATH_MAX_SHOWN, flags);
+    return result ? result : _doFormat(x, base, base, IO_MODE_SCIENTIFIC, HMATH_MAX_SHOWN, flags);
 }
 
 /**
@@ -805,8 +804,7 @@ char* formatFixed(cfloatnum x, int prec, int base = 10)
  */
 char* formatScientific(cfloatnum x, int prec, int base = 10)
 {
-    unsigned flags = IO_FLAG_SUPPRESS_PLUS + IO_FLAG_SUPPRESS_DOT
-      + IO_FLAG_SUPPRESS_EXPPLUS;
+    unsigned flags = IO_FLAG_SUPPRESS_PLUS + IO_FLAG_SUPPRESS_DOT + IO_FLAG_SUPPRESS_EXPPLUS;
     if (base != 10)
         flags += IO_FLAG_SHOW_BASE + IO_FLAG_SHOW_EXPBASE;
     if (prec < 0) {
@@ -869,17 +867,17 @@ QString HMath::format(const HNumber& hn, HNumber::Format format)
 
     int base;
     switch (format.base) {
-    case HNumber::Format::Base::Binary :
+    case HNumber::Format::Base::Binary:
         base = 2;
         break;
-    case HNumber::Format::Base::Octal :
+    case HNumber::Format::Base::Octal:
         base = 8;
         break;
-    case HNumber::Format::Base::Hexadecimal :
+    case HNumber::Format::Base::Hexadecimal:
         base = 16;
         break;
-    case HNumber::Format::Base::Decimal :
-    case HNumber::Format::Base::Null :
+    case HNumber::Format::Base::Decimal:
+    case HNumber::Format::Base::Null:
         base = 10;
         break;
     }
@@ -1569,7 +1567,7 @@ HNumber HMath::factorial(const HNumber& x, const HNumber& base)
 
 static bool checkpn(const HNumber& p, const HNumber& n)
 {
-    return n.isInteger() && ! n.isNegative() && ! p.isNan() && ! p.isNegative() && p <= 1;
+    return n.isInteger() && !n.isNegative() && !p.isNan() && !p.isNegative() && p <= 1;
 }
 
 /**
@@ -1924,7 +1922,7 @@ HNumber HMath::mask(const HNumber& val, const HNumber& bits)
  */
 HNumber HMath::sgnext(const HNumber& val, const HNumber& bits)
 {
-    if (val.isNan() || bits == 0 || bits >= LOGICRANGE || ! bits.isInteger())
+    if (val.isNan() || bits == 0 || bits >= LOGICRANGE || !bits.isInteger())
         return HMath::nan();
     HNumber ofs = HNumber(LOGICRANGE) - bits;
     return (val << ofs) >> ofs;
@@ -1957,7 +1955,7 @@ HNumber HMath::decodeIeee754(const HNumber& val, const HNumber& exp_bits, const 
                              const HNumber& exp_bias)
 {
     if (val.isNan()
-        || exp_bits <= 0 || exp_bits >= LOGICRANGE || ! exp_bits.isInteger()
+        || exp_bits <= 0 || exp_bits >= LOGICRANGE || !exp_bits.isInteger()
         || significand_bits <= 0 || significand_bits >= LOGICRANGE || !significand_bits.isInteger()
         || !exp_bias.isInteger())
         return HMath::nan();
@@ -1997,7 +1995,7 @@ HNumber HMath::encodeIeee754(const HNumber& val, const HNumber& exp_bits, const 
 HNumber HMath::encodeIeee754(const HNumber& val, const HNumber& exp_bits, const HNumber& significand_bits,
                              const HNumber& exp_bias)
 {
-    if (exp_bits <= 0 || exp_bits >= LOGICRANGE || ! exp_bits.isInteger()
+    if (exp_bits <= 0 || exp_bits >= LOGICRANGE || !exp_bits.isInteger()
         || significand_bits <= 0 || significand_bits >= LOGICRANGE || !significand_bits.isInteger()
         || !exp_bias.isInteger())
         return HMath::nan();
