@@ -137,7 +137,6 @@ void MainWindow::createActions()
     m_actions.settingsBehaviorAutoAns = new QAction(this);
     m_actions.settingsBehaviorAutoCompletion = new QAction(this);
     m_actions.settingsBehaviorLeaveLastExpression = new QAction(this);
-    m_actions.settingsBehaviorMinimizeToTray = new QAction(this);
     m_actions.settingsBehaviorPartialResults = new QAction(this);
     m_actions.settingsBehaviorSaveSessionOnExit = new QAction(this);
     m_actions.settingsBehaviorSaveWindowPositionOnExit = new QAction(this);
@@ -182,7 +181,6 @@ void MainWindow::createActions()
     m_actions.settingsBehaviorAutoAns->setCheckable(true);
     m_actions.settingsBehaviorAutoCompletion->setCheckable(true);
     m_actions.settingsBehaviorLeaveLastExpression->setCheckable(true);
-    m_actions.settingsBehaviorMinimizeToTray->setCheckable(true);
     m_actions.settingsBehaviorPartialResults->setCheckable(true);
     m_actions.settingsBehaviorSaveSessionOnExit->setCheckable(true);
     m_actions.settingsBehaviorSaveWindowPositionOnExit->setCheckable(true);
@@ -316,7 +314,6 @@ void MainWindow::setActionsText()
     m_actions.settingsBehaviorAlwaysOnTop->setText(MainWindow::tr("Always On &Top"));
     m_actions.settingsBehaviorAutoAns->setText(MainWindow::tr("Automatic Result &Reuse"));
     m_actions.settingsBehaviorAutoCompletion->setText(MainWindow::tr("Automatic &Completion"));
-    m_actions.settingsBehaviorMinimizeToTray->setText(MainWindow::tr("&Minimize To System Tray"));
     m_actions.settingsBehaviorPartialResults->setText(MainWindow::tr("&Partial Results"));
     m_actions.settingsBehaviorSaveSessionOnExit->setText(MainWindow::tr("Save &History on Exit"));
     m_actions.settingsBehaviorSaveWindowPositionOnExit->setText(MainWindow::tr("Save &Window Positon on Exit"));
@@ -530,7 +527,6 @@ void MainWindow::createMenus()
     m_menus.behavior->addAction(m_actions.settingsBehaviorComplexNumbers);
     m_menus.behavior->addSeparator();
     m_menus.behavior->addAction(m_actions.settingsBehaviorAlwaysOnTop);
-    m_menus.behavior->addAction(m_actions.settingsBehaviorMinimizeToTray);
     m_menus.behavior->addAction(m_actions.settingsBehaviorAutoResultToClipboard);
 
     m_menus.display = m_menus.settings->addMenu("");
@@ -871,7 +867,6 @@ void MainWindow::createFixedConnections()
 
     connect(m_actions.settingsBehaviorAlwaysOnTop, SIGNAL(toggled(bool)), SLOT(setAlwaysOnTopEnabled(bool)));
     connect(m_actions.settingsBehaviorAutoCompletion, SIGNAL(toggled(bool)), SLOT(setAutoCompletionEnabled(bool)));
-    connect(m_actions.settingsBehaviorMinimizeToTray, SIGNAL(toggled(bool)), SLOT(setSystemTrayIconEnabled(bool)));
     connect(m_actions.settingsBehaviorAutoAns, SIGNAL(toggled(bool)), SLOT(setAutoAnsEnabled(bool)));
     connect(m_actions.settingsBehaviorPartialResults, SIGNAL(toggled(bool)), SLOT(setAutoCalcEnabled(bool)));
     connect(m_actions.settingsBehaviorSaveSessionOnExit, SIGNAL(toggled(bool)), SLOT(setSessionSaveEnabled(bool)));
@@ -1022,8 +1017,6 @@ void MainWindow::applySettings()
     else
         setAutoCompletionEnabled(false);
 
-    m_actions.settingsBehaviorMinimizeToTray->setChecked(m_settings->systemTrayIconVisible);
-
     checkInitialDigitGrouping();
 
     if (m_settings->syntaxHighlighting)
@@ -1173,13 +1166,10 @@ MainWindow::MainWindow()
     m_settings = Settings::instance();
     DMath::complexMode = m_settings->complexNumbers;
 
-    m_widgets.trayIcon = 0;
     m_widgets.manual = 0;
     m_widgets.keypad  = 0;
-    m_menus.trayIcon = 0;
 
     m_conditions.autoAns = false;
-    m_conditions.trayNotify = true;
 
     m_docks.book = 0;
     m_docks.history = 0;
@@ -1203,8 +1193,6 @@ MainWindow::MainWindow()
 
 MainWindow::~MainWindow()
 {
-    if (m_widgets.trayIcon)
-        m_widgets.trayIcon->hide();
     if (m_docks.book)
         deleteBookDock();
     if (m_docks.constants)
@@ -1218,22 +1206,6 @@ MainWindow::~MainWindow()
     if (m_docks.history)
         deleteHistoryDock();
     delete m_session;
-}
-
-
-bool MainWindow::event(QEvent* event)
-{
-    bool conditionsToMinimize =
-        (event->type() == QEvent::WindowStateChange)
-        && (windowState() & Qt::WindowMinimized)
-        && (m_settings->systemTrayIconVisible);
-
-    if (conditionsToMinimize) {
-        QTimer::singleShot(100, this, SLOT(minimizeToSystemTray()));
-        return true;
-    }
-
-    return QMainWindow::event(event);
 }
 
 void MainWindow::showAboutDialog()
@@ -1545,31 +1517,6 @@ void MainWindow::setBitfieldVisible(bool b)
         createBitField();
     else
         deleteBitField();
-}
-
-void MainWindow::setSystemTrayIconEnabled(bool b)
-{
-    if (b && !m_widgets.trayIcon && QSystemTrayIcon::isSystemTrayAvailable()) {
-        m_conditions.trayNotify = true;
-        m_widgets.trayIcon = new QSystemTrayIcon(this);
-        m_widgets.trayIcon->setToolTip("SpeedCrunch");
-        m_widgets.trayIcon->setIcon(QPixmap(":/speedcrunch.png"));
-
-        m_menus.trayIcon = new QMenu(this);
-        m_menus.trayIcon->addAction(m_actions.editCopyLastResult);
-        m_menus.trayIcon->addSeparator();
-        m_menus.trayIcon->addAction(m_actions.sessionQuit);
-
-        m_widgets.trayIcon->setContextMenu(m_menus.trayIcon);
-        connect(m_widgets.trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
-            SLOT(handleSystemTrayIconActivation(QSystemTrayIcon::ActivationReason)));
-    } else {
-        if (m_widgets.trayIcon)
-            m_widgets.trayIcon->deleteLater();
-        m_widgets.trayIcon = 0;
-    }
-
-    m_settings->systemTrayIconVisible = b;
 }
 
 void MainWindow::setSyntaxHighlightingEnabled(bool b)
@@ -2108,17 +2055,6 @@ void MainWindow::handleKeypadButtonPress(Keypad::Button b)
     }
 }
 
-void MainWindow::minimizeToSystemTray()
-{
-    if (!m_widgets.trayIcon)
-        return;
-    hide();
-    m_widgets.trayIcon->show();
-    if (m_conditions.trayNotify)
-        QTimer::singleShot(500, this, SLOT(showSystemTrayMessage()));
-    m_conditions.trayNotify = false;
-}
-
 void MainWindow::openUpdatesURL()
 {
     QDesktopServices::openUrl(QUrl(QString::fromLatin1("http://speedcrunch.org")));
@@ -2206,15 +2142,6 @@ void MainWindow::evaluateEditorExpression()
         m_conditions.autoAns = true;
 }
 
-void MainWindow::showSystemTrayMessage()
-{
-    QString msg = tr("SpeedCrunch is minimized.\nLeft click the icon to restore it or right click for options.");
-    if (menuBar()->layoutDirection() == Qt::RightToLeft)
-        msg += QChar(0x200E);
-    if (m_widgets.trayIcon)
-        m_widgets.trayIcon->showMessage(QString(), msg, QSystemTrayIcon::NoIcon, 4000);
-}
-
 void MainWindow::clearTextEditSelection(QPlainTextEdit* edit)
 {
     QTextCursor cursor = edit->textCursor();
@@ -2282,40 +2209,6 @@ void MainWindow::handleEditorTextChange()
                 m_widgets.editor->setText(expr);
                 m_widgets.editor->setCursorPosition(expr.length());
             }
-        }
-    }
-}
-
-void MainWindow::handleSystemTrayIconActivation(QSystemTrayIcon::ActivationReason reason)
-{
-    if (reason == QSystemTrayIcon::Context)
-        m_menus.trayIcon->show();
-    else {
-        showNormal();
-        activateWindow();
-        m_widgets.editor->setFocus();
-        QTimer::singleShot(0, m_widgets.trayIcon, SLOT(hide()));
-
-        // Work around docks do not reappear if floating.
-        if (m_docks.history && m_docks.history->isFloating()) {
-            m_docks.history->hide();
-            m_docks.history->show();
-        }
-        if (m_docks.functions && m_docks.functions->isFloating()) {
-            m_docks.functions->hide();
-            m_docks.functions->show();
-        }
-        if (m_docks.variables && m_docks.variables->isFloating()) {
-            m_docks.variables->hide();
-            m_docks.variables->show();
-        }
-        if (m_docks.userFunctions && m_docks.userFunctions->isFloating()) {
-            m_docks.userFunctions->hide();
-            m_docks.userFunctions->show();
-        }
-        if (m_docks.constants && m_docks.constants->isFloating()) {
-            m_docks.constants->hide();
-            m_docks.constants->show();
         }
     }
 }
