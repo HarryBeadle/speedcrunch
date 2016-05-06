@@ -37,6 +37,8 @@
 
 #define QHC_NAME(lang) ("manual-" + QString(lang) + ".qhc")
 #define QCH_NAME(lang) ("manual-" + QString(lang) + ".qch")
+#define QHC_RES_PATH(lang) (":/manual/" + QHC_NAME(lang))
+#define QCH_RES_PATH(lang) (":/manual/" + QCH_NAME(lang))
 
 ManualServer* ManualServer::s_instance = NULL;
 
@@ -46,27 +48,39 @@ QString ManualServer::deployDocs()
     QDir qdir;
     qdir.mkpath(dest);
     QString lang = Settings::instance()->language;
+    m_deployedLanguage = lang;
     if (lang == "C")
         lang = QLocale().name();
 
-    if(!(QFile(":/manual/" + QHC_NAME(lang)).exists()
-        && QFile(":/manual/" + QCH_NAME(lang)).exists()))
+    if (!isSupportedLanguage(lang)) {
+        // Extract the language from the locale and try to find a generic translation for it
+        QStringList languages = QLocale((QLocale(lang).language())).uiLanguages();
         lang = FALLBACK_LANG;
+        for (int i = 0; i < languages.size(); ++i) {
+            QString extra_lang = languages[i].replace('-', '_');
+            if (isSupportedLanguage(extra_lang)) {
+                lang = extra_lang;
+                break;
+            }
+        }
+    }
 
     QFile::remove(dest + QHC_NAME(lang));
     QFile::remove(dest + QCH_NAME(lang));
 
-    QFile::copy(":/manual/" + QHC_NAME(lang), dest + QHC_NAME(lang));
-    QFile::copy(":/manual/" + QCH_NAME(lang), dest + QCH_NAME(lang));
+    QFile::copy(QHC_RES_PATH(lang), dest + QHC_NAME(lang));
+    QFile::copy(QCH_RES_PATH(lang), dest + QCH_NAME(lang));
 
     QFile qhc(dest + QHC_NAME(lang));
     qhc.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner);
     QFile qch(dest + QCH_NAME(lang));
     qch.setPermissions(QFile::ReadOwner|QFile::WriteOwner|QFile::ExeOwner);
 
-    m_deployedLanguage = lang;
-
     return dest + "manual-" + lang + ".qhc";
+}
+
+bool ManualServer::isSupportedLanguage(const QString& lang) {
+  return (QFile(QHC_RES_PATH(lang)).exists() && QFile(QCH_RES_PATH(lang)).exists());
 }
 
 void ManualServer::setupHelpEngine()
