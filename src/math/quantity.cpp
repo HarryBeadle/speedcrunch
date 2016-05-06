@@ -118,7 +118,9 @@ Quantity operator/(const CNumber &l, const Quantity &r)
 }
 
 Quantity::Quantity()
-    : m_numericValue(0), m_unit(NULL), m_unitName(""), m_format()
+    : m_numericValue(0)
+    , m_unit(NULL)
+    , m_unitName("")
 {
 }
 
@@ -209,11 +211,6 @@ QString Quantity::unitName() const
 CNumber Quantity::numericValue() const
 {
     return m_numericValue;
-}
-
-Quantity::Format Quantity::format() const
-{
-    return m_format;
 }
 
 Quantity &Quantity::setDisplayUnit(const CNumber unit, const QString &name)
@@ -567,46 +564,53 @@ Quantity::Format::Format()
 {
 }
 
-Quantity::Format::Format(const CNumber::Format &other)
+Quantity::Format::Format(const CNumber::Format& other)
     : CNumber::Format(other)
 {
 }
 
-Quantity::Format::Format(const HNumber::Format &other)
+Quantity::Format::Format(const HNumber::Format& other)
     : CNumber::Format(other)
 {
 }
 
 Quantity::Format Quantity::Format::operator+(const Quantity::Format &other) const
 {
-    return Quantity::Format(CNumber::Format::operator+(static_cast<const CNumber::Format &>(other)));
+    return Quantity::Format(CNumber::Format::operator+(static_cast<const CNumber::Format&>(other)));
 }
 
-void Quantity::Format::serialize(QJsonObject &json) const
+void Quantity::Format::serialize(QJsonObject& json) const
 {
     switch (mode) {
     case Mode::General:
-        json["mode"] = "General"; break;
+        json["mode"] = "General";
+        break;
     case Mode::Fixed:
-        json["mode"] = "Fixed"; break;
+        json["mode"] = "Fixed";
+        break;
     case Mode::Scientific:
-        json["mode"] = "Scientific"; break;
+        json["mode"] = "Scientific";
+        break;
     case Mode::Engineering:
-        json["mode"] = "Engineering"; break;
+        json["mode"] = "Engineering";
+        break;
     case Mode::Null:
-        break;          // don't write anything
+        break;
     }
 
     switch (base) {
     case Base::Binary:
-        json["base"] = "Binary"; break;
+        json["base"] = "Binary";
+        break;
     case Base::Octal:
-        json["base"] = "Octal"; break;
+        json["base"] = "Octal";
+        break;
     case Base::Hexadecimal:
-        json["base"] = "Hexadecimal"; break;
+        json["base"] = "Hexadecimal";
+        break;
     case Base::Decimal:
     case Base::Null:
-        break;          // don't write anything
+        break;
     }
 
     if (precision != PrecisionNull)
@@ -628,8 +632,7 @@ Quantity::Format Quantity::Format::deSerialize(const QJsonObject &json)
             result.mode = Mode::Engineering;
         else
             result.mode = Mode::Null;
-    }
-    else {
+    } else {
         result.mode = Mode::Null;
     }
 
@@ -645,15 +648,13 @@ Quantity::Format Quantity::Format::deSerialize(const QJsonObject &json)
             result.base = Base::Hexadecimal;
         else
             result.base = Base::Null;
-    }
-    else {
+    } else {
         result.base = Base::Null;
     }
 
     if (json.contains("precision")) {
         result.precision = json["precision"].toInt();
-    }
-    else
+    } else
         result.precision = PrecisionNull;
 
     return result;
@@ -831,11 +832,8 @@ WRAPPER_DMATH_2(sgnext)
 WRAPPER_DMATH_2(ashr)
 
 
-// TODO: make these functions output hex
 WRAPPER_DMATH_3(decodeIeee754)
 WRAPPER_DMATH_4(decodeIeee754)
-WRAPPER_DMATH_3(encodeIeee754)
-WRAPPER_DMATH_4(encodeIeee754)
 
 
 QString DMath::format(Quantity q, Quantity::Format format)

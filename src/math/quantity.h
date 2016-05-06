@@ -45,22 +45,22 @@ Quantity operator/(const CNumber &l, const Quantity &r);
 class Quantity
 {
     friend class DMath;
-    friend Quantity operator-( const Quantity & );
-    friend Quantity operator-( const Quantity &, const Quantity& );
-    friend bool operator>( const Quantity& l, const Quantity& r );
-    friend bool operator<( const Quantity& l, const Quantity& r );
-    friend bool operator>=( const Quantity& l, const Quantity& r );
-    friend bool operator<=( const Quantity& l, const Quantity& r );
-    friend bool operator==( const Quantity& l, const Quantity& r );
-    friend bool operator!=( const Quantity& l, const Quantity& r );
+    friend Quantity operator-(const Quantity &);
+    friend Quantity operator-(const Quantity &, const Quantity&);
+    friend bool operator>(const Quantity& l, const Quantity& r);
+    friend bool operator<(const Quantity& l, const Quantity& r);
+    friend bool operator>=(const Quantity& l, const Quantity& r);
+    friend bool operator<=(const Quantity& l, const Quantity& r);
+    friend bool operator==(const Quantity& l, const Quantity& r);
+    friend bool operator!=(const Quantity& l, const Quantity& r);
 
 public:
     Quantity();
     Quantity(const Quantity& other);
     Quantity(int i);
-    Quantity(const QJsonObject & json);
-    Quantity(const HNumber &h);
-    Quantity(const CNumber &c);
+    Quantity(const QJsonObject&);
+    Quantity(const HNumber&);
+    Quantity(const CNumber&);
     ~Quantity();
 
 
@@ -91,31 +91,30 @@ public:
 
     Error error() const;
 
-    Quantity &operator=( const Quantity& other);
-    Quantity operator+( const Quantity& ) const;
-    Quantity &operator+=( const Quantity& );
-    Quantity &operator-=( const Quantity& );
-    Quantity operator*( const Quantity& ) const;
-    Quantity operator*( const CNumber& ) const;
-    Quantity operator*( const HNumber& ) const;
-    Quantity &operator*=( const Quantity& );
-    Quantity operator/( const Quantity& ) const;
-    Quantity operator/( const HNumber& ) const;
-    Quantity operator/( const CNumber& ) const;
-    Quantity &operator/=( const Quantity& );
-    Quantity operator%( const Quantity& ) const;
-    Quantity operator&( const Quantity& ) const;
-    Quantity &operator&=( const Quantity& );
-    Quantity operator|( const Quantity& ) const;
-    Quantity& operator|=( const Quantity& );
-    Quantity operator^( const Quantity& ) const;
-    Quantity& operator^=( const Quantity& );
+    Quantity &operator=(const Quantity& other);
+    Quantity operator+(const Quantity&) const;
+    Quantity &operator+=(const Quantity&);
+    Quantity &operator-=(const Quantity&);
+    Quantity operator*(const Quantity&) const;
+    Quantity operator*(const CNumber&) const;
+    Quantity operator*(const HNumber&) const;
+    Quantity &operator*=(const Quantity&);
+    Quantity operator/(const Quantity&) const;
+    Quantity operator/(const HNumber&) const;
+    Quantity operator/(const CNumber&) const;
+    Quantity &operator/=(const Quantity&);
+    Quantity operator%(const Quantity&) const;
+    Quantity operator&(const Quantity&) const;
+    Quantity &operator&=(const Quantity&);
+    Quantity operator|(const Quantity&) const;
+    Quantity& operator|=(const Quantity&);
+    Quantity operator^(const Quantity&) const;
+    Quantity& operator^=(const Quantity&);
     Quantity operator~() const;
-    Quantity operator>>( const Quantity& ) const;
-    Quantity operator<<( const Quantity& ) const;
+    Quantity operator>>(const Quantity&) const;
+    Quantity operator<<(const Quantity&) const;
 
-    class Format : public CNumber::Format
-    {
+    class Format : public CNumber::Format {
     public:
         static const Format Cartesian();
         static const Format Polar();
@@ -126,12 +125,12 @@ public:
         Format operator+(const Format &other) const;
 
         void serialize(QJsonObject &json) const;
-        static Format deSerialize(const QJsonObject &json);
+        static Format deSerialize(const QJsonObject&);
         bool isNull() const;
     };
 
-    Format format() const;
-    Quantity& setFormat(Format c);
+    Format format() const {return m_format;}
+    Quantity& setFormat(Format);
 
 private:
     CNumber m_numericValue;
@@ -150,7 +149,7 @@ class DMath
   public:
     static bool complexMode;
 
-    static QString format(const Quantity q, Quantity::Format format = Quantity::Format());
+    static QString format(const Quantity, Quantity::Format = Quantity::Format());
 
     static Quantity real(const Quantity& x);
     static Quantity imag(const Quantity& x);
@@ -162,78 +161,78 @@ class DMath
     static Quantity nan(Error error = Success);
     static Quantity i();
     // GENERAL MATH
-    static Quantity rad2deg( const Quantity & angle );
-    static Quantity deg2rad( const Quantity & angle );
-    static Quantity abs( const Quantity & n );
-    static Quantity integer( const Quantity & n );
-    static Quantity frac( const Quantity & n );
-    static Quantity floor( const Quantity & n );
-    static Quantity ceil( const Quantity & n );
-    static Quantity gcd( const Quantity & n1, const Quantity & n2 );
-    static Quantity idiv( const Quantity& n1, const Quantity& n2 );
-    static Quantity round( const Quantity & n, int prec = 0 );
-    static Quantity trunc( const Quantity & n, int prec = 0 );
-    static Quantity sqrt( const Quantity & n );
-    static Quantity cbrt( const Quantity & n );
-    static Quantity raise( const Quantity & n1, int n );
-    static Quantity raise( const Quantity & n1, const Quantity & n2 );
-    static Quantity sgn( const Quantity & x );
+    static Quantity rad2deg(const Quantity & angle);
+    static Quantity deg2rad(const Quantity & angle);
+    static Quantity abs(const Quantity & n);
+    static Quantity integer(const Quantity & n);
+    static Quantity frac(const Quantity & n);
+    static Quantity floor(const Quantity & n);
+    static Quantity ceil(const Quantity & n);
+    static Quantity gcd(const Quantity & n1, const Quantity & n2);
+    static Quantity idiv(const Quantity& n1, const Quantity& n2);
+    static Quantity round(const Quantity & n, int prec = 0);
+    static Quantity trunc(const Quantity & n, int prec = 0);
+    static Quantity sqrt(const Quantity & n);
+    static Quantity cbrt(const Quantity & n);
+    static Quantity raise(const Quantity & n1, int n);
+    static Quantity raise(const Quantity & n1, const Quantity & n2);
+    static Quantity sgn(const Quantity & x);
     // EXPONENTIAL FUNCTION AND RELATED
-    static Quantity exp( const Quantity & x );
-    static Quantity ln( const Quantity & x );
-    static Quantity lg( const Quantity & x );
-    static Quantity lb( const Quantity & x );
-    static Quantity log( const Quantity & base, const Quantity & x );
-    static Quantity sinh( const Quantity & x );
-    static Quantity cosh( const Quantity & x );
-    static Quantity tanh( const Quantity & x );
-    static Quantity arsinh( const Quantity & x );
-    static Quantity arcosh( const Quantity & x );
-    static Quantity artanh( const Quantity & x );
+    static Quantity exp(const Quantity & x);
+    static Quantity ln(const Quantity & x);
+    static Quantity lg(const Quantity & x);
+    static Quantity lb(const Quantity & x);
+    static Quantity log(const Quantity & base, const Quantity & x);
+    static Quantity sinh(const Quantity & x);
+    static Quantity cosh(const Quantity & x);
+    static Quantity tanh(const Quantity & x);
+    static Quantity arsinh(const Quantity & x);
+    static Quantity arcosh(const Quantity & x);
+    static Quantity artanh(const Quantity & x);
     // TRIGONOMETRY
-    static Quantity sin( const Quantity & x );
-    static Quantity cos( const Quantity & x );
-    static Quantity tan( const Quantity & x );
-    static Quantity cot( const Quantity & x );
-    static Quantity sec( const Quantity & x );
-    static Quantity csc( const Quantity & x );
-    static Quantity arcsin( const Quantity & x );
-    static Quantity arccos( const Quantity & x );
-    static Quantity arctan( const Quantity & x );
+    static Quantity sin(const Quantity & x);
+    static Quantity cos(const Quantity & x);
+    static Quantity tan(const Quantity & x);
+    static Quantity cot(const Quantity & x);
+    static Quantity sec(const Quantity & x);
+    static Quantity csc(const Quantity & x);
+    static Quantity arcsin(const Quantity & x);
+    static Quantity arccos(const Quantity & x);
+    static Quantity arctan(const Quantity & x);
     // HIGHER MATH FUNCTIONS
-    static Quantity factorial( const Quantity & x, const Quantity & base = CNumber(1) );
-    static Quantity gamma( const Quantity & x);
-    static Quantity lnGamma( const Quantity & x);
-    static Quantity erf( const Quantity & x );
-    static Quantity erfc( const Quantity & x );
+    static Quantity factorial(const Quantity & x, const Quantity & base = CNumber(1));
+    static Quantity gamma(const Quantity & x);
+    static Quantity lnGamma(const Quantity & x);
+    static Quantity erf(const Quantity & x);
+    static Quantity erfc(const Quantity & x);
     // PROBABILITY
-    static Quantity nCr( const Quantity & n, const Quantity & k );
-    static Quantity nPr( const Quantity & n, const Quantity & r );
-    static Quantity binomialPmf( const Quantity & k, const Quantity & n, const Quantity & p );
-    static Quantity binomialCdf( const Quantity & k, const Quantity & n, const Quantity & p );
-    static Quantity binomialMean( const Quantity & n, const Quantity & p );
-    static Quantity binomialVariance( const Quantity & n, const Quantity & p );
-    static Quantity hypergeometricPmf( const Quantity & k, const Quantity & N, const Quantity & M, const Quantity & n );
-    static Quantity hypergeometricCdf( const Quantity & k, const Quantity & N, const Quantity & M, const Quantity & n );
-    static Quantity hypergeometricMean( const Quantity & N, const Quantity & M, const Quantity & n );
-    static Quantity hypergeometricVariance( const Quantity & N, const Quantity & M, const Quantity & n );
-    static Quantity poissonPmf( const Quantity & k, const Quantity & l );
-    static Quantity poissonCdf( const Quantity & k, const Quantity & l );
-    static Quantity poissonMean( const Quantity & l );
-    static Quantity poissonVariance( const Quantity & l );
+    static Quantity nCr(const Quantity & n, const Quantity & k);
+    static Quantity nPr(const Quantity & n, const Quantity & r);
+    static Quantity binomialPmf(const Quantity & k, const Quantity & n, const Quantity & p);
+    static Quantity binomialCdf(const Quantity & k, const Quantity & n, const Quantity & p);
+    static Quantity binomialMean(const Quantity & n, const Quantity & p);
+    static Quantity binomialVariance(const Quantity & n, const Quantity & p);
+    static Quantity hypergeometricPmf(const Quantity & k, const Quantity & N, const Quantity & M, const Quantity & n);
+    static Quantity hypergeometricCdf(const Quantity & k, const Quantity & N, const Quantity & M, const Quantity & n);
+    static Quantity hypergeometricMean(const Quantity & N, const Quantity & M, const Quantity & n);
+    static Quantity hypergeometricVariance(const Quantity & N, const Quantity & M, const Quantity & n);
+    static Quantity poissonPmf(const Quantity & k, const Quantity & l);
+    static Quantity poissonCdf(const Quantity & k, const Quantity & l);
+    static Quantity poissonMean(const Quantity & l);
+    static Quantity poissonVariance(const Quantity & l);
     // LOGIC
-    static Quantity mask ( const Quantity & val, const Quantity & bits);
-    static Quantity sgnext ( const Quantity & val, const Quantity & bits);
-    static Quantity ashr( const Quantity & val, const Quantity & bits );
+    static Quantity mask (const Quantity & val, const Quantity & bits);
+    static Quantity sgnext (const Quantity & val, const Quantity & bits);
+    static Quantity ashr(const Quantity & val, const Quantity & bits);
     // IEEE-754 CONVERSION
-    static Quantity decodeIeee754( const Quantity & val, const Quantity & exp_bits,
-                                  const Quantity & significand_bits );
-    static Quantity decodeIeee754( const Quantity & val, const Quantity & exp_bits,
-                                  const Quantity & significand_bits, const Quantity & exp_bias );
-    static Quantity encodeIeee754( const Quantity & val, const Quantity & exp_bits,
-                                  const Quantity & significand_bits );
-    static Quantity encodeIeee754( const Quantity & val, const Quantity & exp_bits,
-                                  const Quantity & significand_bits, const Quantity & exp_bias );
+    static Quantity decodeIeee754(const Quantity & val, const Quantity & exp_bits,
+                                  const Quantity & significand_bits);
+    static Quantity decodeIeee754(const Quantity & val, const Quantity & exp_bits,
+                                  const Quantity & significand_bits, const Quantity & exp_bias);
+    static Quantity encodeIeee754(const Quantity & val, const Quantity & exp_bits,
+                                  const Quantity & significand_bits);
+    static Quantity encodeIeee754(const Quantity & val, const Quantity & exp_bits,
+                                  const Quantity & significand_bits, const Quantity & exp_bias);
 };
 
 #endif // QUANTITY_H

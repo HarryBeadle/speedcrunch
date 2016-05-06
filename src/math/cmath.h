@@ -34,23 +34,23 @@ class CMath;
 class CNumber
 {
     friend class CMath;
-    friend CNumber operator-( const CNumber & );
-    friend CNumber operator-( const CNumber &, const CNumber& );
-    friend bool operator>( const CNumber& l, const CNumber& r );
-    friend bool operator<( const CNumber& l, const CNumber& r );
-    friend bool operator>=( const CNumber& l, const CNumber& r );
-    friend bool operator<=( const CNumber& l, const CNumber& r );
-    friend bool operator==( const CNumber& l, const CNumber& r );
-    friend bool operator!=( const CNumber& l, const CNumber& r );
+    friend CNumber operator-(const CNumber &);
+    friend CNumber operator-(const CNumber &, const CNumber&);
+    friend bool operator>(const CNumber& l, const CNumber& r);
+    friend bool operator<(const CNumber& l, const CNumber& r);
+    friend bool operator>=(const CNumber& l, const CNumber& r);
+    friend bool operator<=(const CNumber& l, const CNumber& r);
+    friend bool operator==(const CNumber& l, const CNumber& r);
+    friend bool operator!=(const CNumber& l, const CNumber& r);
 
 public:
     CNumber();
-    CNumber( const HNumber& );
-    CNumber( const HNumber&, const HNumber& );
-    CNumber( const CNumber& );
-    CNumber( int i );
-    CNumber( const char* );
-    CNumber( const QJsonObject & json );
+    CNumber(const HNumber&);
+    CNumber(const HNumber&, const HNumber&);
+    CNumber(const CNumber&);
+    CNumber(int i);
+    CNumber(const char*);
+    CNumber(const QJsonObject & json);
     ~CNumber(){}
 
     bool isNan() const;
@@ -68,31 +68,31 @@ public:
     int toInt() const;  // Removed because too much problematic for complex numbers
     Error error() const;
 
-    CNumber& operator=( const CNumber& );
-    CNumber operator+( const CNumber& ) const;
-    CNumber& operator+=( const CNumber& );
-    CNumber& operator-=( const CNumber& );
-    CNumber operator*( const CNumber& ) const;
-    CNumber operator*( const HNumber& ) const;
-    CNumber operator*( int x) { return operator*( HNumber(x) ); } /* Overload ambiguity resolution */
-    CNumber& operator*=( const CNumber& );
-    CNumber operator/( const CNumber& ) const;
-    CNumber operator/( const HNumber& ) const;
-    CNumber operator/( int x) { return operator/( HNumber(x) ); } /* Overload ambiguity resolution */
-    CNumber& operator/=( const CNumber& );
-    CNumber operator%( const CNumber& ) const;
-    CNumber operator&( const CNumber& ) const;
-    CNumber& operator&=( const CNumber& );
-    CNumber operator|( const CNumber& ) const;
-    CNumber& operator|=( const CNumber& );
-    CNumber operator^( const CNumber& ) const;
-    CNumber& operator^=( const CNumber& );
+    CNumber& operator=(const CNumber&);
+    CNumber operator+(const CNumber&) const;
+    CNumber& operator+=(const CNumber&);
+    CNumber& operator-=(const CNumber&);
+    CNumber operator*(const CNumber&) const;
+    CNumber operator*(const HNumber&) const;
+    CNumber operator*(int x) { return operator*(HNumber(x)); } /* Overload ambiguity resolution */
+    CNumber& operator*=(const CNumber&);
+    CNumber operator/(const CNumber&) const;
+    CNumber operator/(const HNumber&) const;
+    CNumber operator/(int x) { return operator/(HNumber(x)); } /* Overload ambiguity resolution */
+    CNumber& operator/=(const CNumber&);
+    CNumber operator%(const CNumber&) const;
+    CNumber operator&(const CNumber&) const;
+    CNumber& operator&=(const CNumber&);
+    CNumber operator|(const CNumber&) const;
+    CNumber& operator|=(const CNumber&);
+    CNumber operator^(const CNumber&) const;
+    CNumber& operator^=(const CNumber&);
     CNumber operator~() const;
-    CNumber operator>>( const CNumber& ) const;
-    CNumber operator<<( const CNumber& ) const;
+    CNumber operator>>(const CNumber&) const;
+    CNumber operator<<(const CNumber&) const;
 
 private:
-    int compare( const CNumber & other ) const;
+    int compare(const CNumber & other) const;
 
 public:
     HNumber real;
@@ -104,15 +104,14 @@ public:
        - real and imag are neither or both NaN
        - real and imag have the same NaN error       */
 
-    struct Format : public HNumber::Format
-    {
+    struct Format : public HNumber::Format  {
         enum class Notation {Null, Cartesian, Polar};
         Notation notation;
 
         Format();
-        Format(const Format & other);
-        Format(const HNumber::Format &other);
-        Format operator+(const Format &other) const;
+        Format(const Format&);
+        Format(const HNumber::Format&);
+        Format operator+(const Format&) const;
     };
 };
 
@@ -120,7 +119,7 @@ class CMath
 {
 public:
     // FORMAT
-    static QString format( const CNumber & n, CNumber::Format format = CNumber::Format());
+    static QString format(const CNumber&, CNumber::Format = CNumber::Format());
     // CONSTANTS
     static CNumber e();
     static CNumber phi();
@@ -128,80 +127,80 @@ public:
     static CNumber nan(Error error = Success);
     static CNumber i();
     // GENERAL MATH
-    static CNumber rad2deg( const CNumber & angle );
-    static CNumber deg2rad( const CNumber & angle );
-    static CNumber abs( const CNumber & n );
-    static CNumber integer( const CNumber & n );
-    static CNumber frac( const CNumber & n );
-    static CNumber floor( const CNumber & n );
-    static CNumber ceil( const CNumber & n );
-    static CNumber gcd( const CNumber & n1, const CNumber & n2 );
-    static CNumber idiv( const CNumber& n1, const CNumber& n2 );
-    static CNumber round( const CNumber & n, int prec = 0 );
-    static CNumber trunc( const CNumber & n, int prec = 0 );
-    static CNumber sqrt( const CNumber & n );
-    static CNumber cbrt( const CNumber & n );
-    static CNumber raise( const CNumber & n1, int n );
-    static CNumber raise( const CNumber & n1, const CNumber & n2 );
-    static CNumber sgn( const CNumber & x );
+    static CNumber rad2deg(const CNumber & angle);
+    static CNumber deg2rad(const CNumber & angle);
+    static CNumber abs(const CNumber & n);
+    static CNumber integer(const CNumber & n);
+    static CNumber frac(const CNumber & n);
+    static CNumber floor(const CNumber & n);
+    static CNumber ceil(const CNumber & n);
+    static CNumber gcd(const CNumber & n1, const CNumber & n2);
+    static CNumber idiv(const CNumber& n1, const CNumber& n2);
+    static CNumber round(const CNumber & n, int prec = 0);
+    static CNumber trunc(const CNumber & n, int prec = 0);
+    static CNumber sqrt(const CNumber & n);
+    static CNumber cbrt(const CNumber & n);
+    static CNumber raise(const CNumber & n1, int n);
+    static CNumber raise(const CNumber & n1, const CNumber & n2);
+    static CNumber sgn(const CNumber & x);
     // EXPONENTIAL FUNCTION AND RELATED
-    static CNumber exp( const CNumber & x );
-    static CNumber ln( const CNumber & x );
-    static CNumber lg( const CNumber & x );
-    static CNumber lb( const CNumber & x );
-    static CNumber log( const CNumber & base, const CNumber & x );
-    static CNumber sinh( const CNumber & x );
-    static CNumber cosh( const CNumber & x );
-    static CNumber tanh( const CNumber & x );
-    static CNumber arsinh( const CNumber & x );
-    static CNumber arcosh( const CNumber & x );
-    static CNumber artanh( const CNumber & x );
+    static CNumber exp(const CNumber & x);
+    static CNumber ln(const CNumber & x);
+    static CNumber lg(const CNumber & x);
+    static CNumber lb(const CNumber & x);
+    static CNumber log(const CNumber & base, const CNumber & x);
+    static CNumber sinh(const CNumber & x);
+    static CNumber cosh(const CNumber & x);
+    static CNumber tanh(const CNumber & x);
+    static CNumber arsinh(const CNumber & x);
+    static CNumber arcosh(const CNumber & x);
+    static CNumber artanh(const CNumber & x);
     // TRIGONOMETRY
-    static CNumber sin( const CNumber & x );
-    static CNumber cos( const CNumber & x );
-    static CNumber tan( const CNumber & x );
-    static CNumber cot( const CNumber & x );
-    static CNumber sec( const CNumber & x );
-    static CNumber csc( const CNumber & x );
-    static CNumber arcsin( const CNumber & x );
-    static CNumber arccos( const CNumber & x );
-    static CNumber arctan( const CNumber & x );
+    static CNumber sin(const CNumber & x);
+    static CNumber cos(const CNumber & x);
+    static CNumber tan(const CNumber & x);
+    static CNumber cot(const CNumber & x);
+    static CNumber sec(const CNumber & x);
+    static CNumber csc(const CNumber & x);
+    static CNumber arcsin(const CNumber & x);
+    static CNumber arccos(const CNumber & x);
+    static CNumber arctan(const CNumber & x);
     // HIGHER MATH FUNCTIONS
-    static CNumber factorial( const CNumber & x, const CNumber & base = CNumber(1) );
-    static CNumber gamma( const CNumber & x);
-    static CNumber lnGamma( const CNumber & x);
-    static CNumber erf( const CNumber & x );
-    static CNumber erfc( const CNumber & x );
+    static CNumber factorial(const CNumber & x, const CNumber & base = CNumber(1));
+    static CNumber gamma(const CNumber & x);
+    static CNumber lnGamma(const CNumber & x);
+    static CNumber erf(const CNumber & x);
+    static CNumber erfc(const CNumber & x);
     // PROBABILITY
-    static CNumber nCr( const CNumber & n, const CNumber & k );
-    static CNumber nPr( const CNumber & n, const CNumber & r );
-    static CNumber binomialPmf( const CNumber & k, const CNumber & n, const CNumber & p );
-    static CNumber binomialCdf( const CNumber & k, const CNumber & n, const CNumber & p );
-    static CNumber binomialMean( const CNumber & n, const CNumber & p );
-    static CNumber binomialVariance( const CNumber & n, const CNumber & p );
-    static CNumber hypergeometricPmf( const CNumber & k, const CNumber & N, const CNumber & M, const CNumber & n );
-    static CNumber hypergeometricCdf( const CNumber & k, const CNumber & N, const CNumber & M, const CNumber & n );
-    static CNumber hypergeometricMean( const CNumber & N, const CNumber & M, const CNumber & n );
-    static CNumber hypergeometricVariance( const CNumber & N, const CNumber & M, const CNumber & n );
-    static CNumber poissonPmf( const CNumber & k, const CNumber & l );
-    static CNumber poissonCdf( const CNumber & k, const CNumber & l );
-    static CNumber poissonMean( const CNumber & l );
-    static CNumber poissonVariance( const CNumber & l );
+    static CNumber nCr(const CNumber & n, const CNumber & k);
+    static CNumber nPr(const CNumber & n, const CNumber & r);
+    static CNumber binomialPmf(const CNumber & k, const CNumber & n, const CNumber & p);
+    static CNumber binomialCdf(const CNumber & k, const CNumber & n, const CNumber & p);
+    static CNumber binomialMean(const CNumber & n, const CNumber & p);
+    static CNumber binomialVariance(const CNumber & n, const CNumber & p);
+    static CNumber hypergeometricPmf(const CNumber & k, const CNumber & N, const CNumber & M, const CNumber & n);
+    static CNumber hypergeometricCdf(const CNumber & k, const CNumber & N, const CNumber & M, const CNumber & n);
+    static CNumber hypergeometricMean(const CNumber & N, const CNumber & M, const CNumber & n);
+    static CNumber hypergeometricVariance(const CNumber & N, const CNumber & M, const CNumber & n);
+    static CNumber poissonPmf(const CNumber & k, const CNumber & l);
+    static CNumber poissonCdf(const CNumber & k, const CNumber & l);
+    static CNumber poissonMean(const CNumber & l);
+    static CNumber poissonVariance(const CNumber & l);
     // LOGIC
-    static CNumber mask ( const CNumber & val, const CNumber & bits);
-    static CNumber sgnext ( const CNumber & val, const CNumber & bits);
-    static CNumber ashr( const CNumber & val, const CNumber & bits );
+    static CNumber mask (const CNumber & val, const CNumber & bits);
+    static CNumber sgnext (const CNumber & val, const CNumber & bits);
+    static CNumber ashr(const CNumber & val, const CNumber & bits);
     // IEEE-754 CONVERSION
-    static CNumber decodeIeee754( const CNumber & val, const CNumber & exp_bits,
-                                  const CNumber & significand_bits );
-    static CNumber decodeIeee754( const CNumber & val, const CNumber & exp_bits,
-                                  const CNumber & significand_bits, const CNumber & exp_bias );
-    static CNumber encodeIeee754( const CNumber & val, const CNumber & exp_bits,
-                                  const CNumber & significand_bits );
-    static CNumber encodeIeee754( const CNumber & val, const CNumber & exp_bits,
-                                  const CNumber & significand_bits, const CNumber & exp_bias );
+    static CNumber decodeIeee754(const CNumber & val, const CNumber & exp_bits,
+                                  const CNumber & significand_bits);
+    static CNumber decodeIeee754(const CNumber & val, const CNumber & exp_bits,
+                                  const CNumber & significand_bits, const CNumber & exp_bias);
+    static CNumber encodeIeee754(const CNumber & val, const CNumber & exp_bits,
+                                  const CNumber & significand_bits);
+    static CNumber encodeIeee754(const CNumber & val, const CNumber & exp_bits,
+                                  const CNumber & significand_bits, const CNumber & exp_bias);
 };
 
-std::ostream & operator<<( std::ostream &, const CNumber & );
+std::ostream & operator<<(std::ostream &, const CNumber &);
 
 #endif // CMATH_CMATH_H
