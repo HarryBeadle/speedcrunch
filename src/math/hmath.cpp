@@ -628,8 +628,6 @@ HNumber HNumber::operator>>(const HNumber& num) const
     return result;
 }
 
-
-
 HNumber::Format::Format()
     : base(Base::Null)
     , radixChar(RadixChar::Null)
@@ -655,7 +653,6 @@ HNumber::Format HNumber::Format::operator+(const HNumber::Format& other) const
     result.precision = (this->precision != PrecisionNull) ? this->precision : other.precision;
     return result;
 }
-
 
 const HNumber::Format HNumber::Format::Binary()
 {
@@ -734,8 +731,7 @@ const HNumber::Format HNumber::Format::Engineering()
     return result;
 }
 
-
-namespace /* unnamed */ {
+namespace {
 
 char* _doFormat(cfloatnum x, signed char base, signed char expbase, char outmode, int prec, unsigned flags)
 {
