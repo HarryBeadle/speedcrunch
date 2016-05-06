@@ -118,7 +118,9 @@ Quantity operator/(const CNumber &l, const Quantity &r)
 }
 
 Quantity::Quantity()
-    : m_numericValue(0), m_unit(NULL), m_unitName(""), m_format(0)
+    : m_numericValue(0)
+    , m_unit(NULL)
+    , m_unitName("")
 {
 }
 
@@ -211,11 +213,6 @@ CNumber Quantity::numericValue() const
     return m_numericValue;
 }
 
-char Quantity::format() const
-{
-    return m_format;
-}
-
 Quantity &Quantity::setDisplayUnit(const CNumber unit, const QString &name)
 {
     if(unit.isNan())
@@ -228,7 +225,7 @@ Quantity &Quantity::setDisplayUnit(const CNumber unit, const QString &name)
     return *this;
 }
 
-Quantity& Quantity::setFormat(char c)
+Quantity& Quantity::setFormat(Format c)
 {
     m_format = c;
     return *this;
@@ -328,8 +325,12 @@ void Quantity::serialize(QJsonObject &json) const
         json["unit"] = unit_json;
         json["unit_name"] = m_unitName;
     }
-    if (m_format != '\0')
-        json["format"] = QString(m_format);
+
+    if (!m_format.isNull()) {
+        QJsonObject format_json;
+        m_format.serialize(format_json);
+        json["format"] = format_json;
+    }
 }
 
 Quantity Quantity::deSerialize(const QJsonObject &json)
@@ -358,9 +359,8 @@ Quantity Quantity::deSerialize(const QJsonObject &json)
         }
     }
     if (json.contains("format")) {
-        QString f = json["format"].toString();
-        result.m_format = (f == "NULL" || f.isEmpty()) ? '\0' : f.at(0).toLatin1();
-
+        QJsonObject format_json = json["format"].toObject();
+        result.m_format = Quantity::Format::deSerialize(format_json);
     }
     return result;
 }
@@ -559,6 +559,112 @@ Quantity Quantity::operator<<(const Quantity &other) const
 
 
 
+Quantity::Format::Format()
+    : CNumber::Format()
+{
+}
+
+Quantity::Format::Format(const CNumber::Format& other)
+    : CNumber::Format(other)
+{
+}
+
+Quantity::Format::Format(const HNumber::Format& other)
+    : CNumber::Format(other)
+{
+}
+
+Quantity::Format Quantity::Format::operator+(const Quantity::Format &other) const
+{
+    return Quantity::Format(CNumber::Format::operator+(static_cast<const CNumber::Format&>(other)));
+}
+
+void Quantity::Format::serialize(QJsonObject& json) const
+{
+    switch (mode) {
+    case Mode::General:
+        json["mode"] = "General";
+        break;
+    case Mode::Fixed:
+        json["mode"] = "Fixed";
+        break;
+    case Mode::Scientific:
+        json["mode"] = "Scientific";
+        break;
+    case Mode::Engineering:
+        json["mode"] = "Engineering";
+        break;
+    case Mode::Null:
+        break;
+    }
+
+    switch (base) {
+    case Base::Binary:
+        json["base"] = "Binary";
+        break;
+    case Base::Octal:
+        json["base"] = "Octal";
+        break;
+    case Base::Hexadecimal:
+        json["base"] = "Hexadecimal";
+        break;
+    case Base::Decimal:
+    case Base::Null:
+        break;
+    }
+
+    if (precision != PrecisionNull)
+        json["precision"] = precision;
+}
+
+Quantity::Format Quantity::Format::deSerialize(const QJsonObject &json)
+{
+    Format result;
+    if (json.contains("mode")) {
+        QString strMode = json["mode"].toString();
+        if (strMode == "General")
+            result.mode = Mode::General;
+        else if (strMode == "Fixed")
+            result.mode = Mode::Fixed;
+        else if (strMode == "Scientific")
+            result.mode = Mode::Scientific;
+        else if (strMode == "Engineering")
+            result.mode = Mode::Engineering;
+        else
+            result.mode = Mode::Null;
+    } else {
+        result.mode = Mode::Null;
+    }
+
+    if (json.contains("base")) {
+        QString strBase = json["base"].toString();
+        if (strBase == "Binary")
+            result.base = Base::Binary;
+        else if (strBase == "Octal")
+            result.base = Base::Octal;
+        else if (strBase == "Decimal")
+            result.base = Base::Decimal;
+        else if (strBase == "Hexadecimal")
+            result.base = Base::Hexadecimal;
+        else
+            result.base = Base::Null;
+    } else {
+        result.base = Base::Null;
+    }
+
+    if (json.contains("precision")) {
+        result.precision = json["precision"].toInt();
+    } else
+        result.precision = PrecisionNull;
+
+    return result;
+}
+
+bool Quantity::Format::isNull() const
+{
+    return (mode == Mode::Null && base == Base::Null && precision == PrecisionNull);
+}
+
 
 /* --------------------------------------------------------------------
  *    DMath
@@ -725,16 +831,14 @@ WRAPPER_DMATH_2(mask)
 WRAPPER_DMATH_2(sgnext)
 WRAPPER_DMATH_2(ashr)
 
+
 WRAPPER_DMATH_3(decodeIeee754)
 WRAPPER_DMATH_4(decodeIeee754)
-WRAPPER_DMATH_3(encodeIeee754)
-WRAPPER_DMATH_4(encodeIeee754)
 
 
-QString DMath::format(Quantity q, char format, int prec)
+QString DMath::format(Quantity q, Quantity::Format format)
 {
-    if (format == 0)
-        format = q.format();
+    format = q.format() + format;  // Left hand side oerator takes priority
 
     //handle units
     if(!q.hasUnit() && !q.isDimensionless()) {
@@ -747,7 +851,7 @@ QString DMath::format(Quantity q, char format, int prec)
 
     number /= unit;
 
-    QString result = CMath::format(number, format, prec);
+    QString result = CMath::format(number, format);
 
 
     if(!number.real.isZero() && !number.imag.isZero() && unit_name != " ")
@@ -858,4 +962,27 @@ Quantity DMath::raise(const Quantity &n1, const Quantity &n2)
 Quantity DMath::sgn(const Quantity &x)
 {
     return Quantity(CMath::sgn(x.m_numericValue));
+}
+
+Quantity DMath::encodeIeee754(const Quantity &val, const Quantity& exp_bits, const Quantity& significand_bits)
+{
+    ENSURE_DIMENSIONLESS(val);
+    ENSURE_DIMENSIONLESS(exp_bits);
+    ENSURE_DIMENSIONLESS(significand_bits);
+
+    Quantity result(CMath::encodeIeee754(val.numericValue(), exp_bits.numericValue(), significand_bits.numericValue()));
+    result.m_format = result.m_format + Quantity::Format::Fixed() + Quantity::Format::Hexadecimal();
+    return result;
+}
+
+Quantity DMath::encodeIeee754(const Quantity &val, const Quantity& exp_bits, const Quantity& significand_bits, const Quantity& exp_bias)
+{
+    ENSURE_DIMENSIONLESS(val);
+    ENSURE_DIMENSIONLESS(exp_bits);
+    ENSURE_DIMENSIONLESS(significand_bits);
+    ENSURE_DIMENSIONLESS(exp_bias);
+
+    Quantity result(CMath::encodeIeee754(val.numericValue(), exp_bits.numericValue(), significand_bits.numericValue(), exp_bias.numericValue()));
+    result.m_format = result.m_format + Quantity::Format::Fixed() + Quantity::Format::Hexadecimal();
+    return result;
 }

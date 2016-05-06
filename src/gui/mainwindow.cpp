@@ -330,11 +330,11 @@ void MainWindow::setActionsText()
     m_actions.settingsRadixCharComma->setText(MainWindow::tr("&Comma"));
     m_actions.settingsRadixCharDefault->setText(MainWindow::tr("&System Default"));
     m_actions.settingsRadixCharDot->setText(MainWindow::tr("&Dot"));
-    m_actions.settingsResultFormat15Digits->setText(MainWindow::tr("&15 Decimal Digits"));
-    m_actions.settingsResultFormat2Digits->setText(MainWindow::tr("&2 Decimal Digits"));
-    m_actions.settingsResultFormat3Digits->setText(MainWindow::tr("&3 Decimal Digits"));
-    m_actions.settingsResultFormat50Digits->setText(MainWindow::tr("&50 Decimal Digits"));
-    m_actions.settingsResultFormat8Digits->setText(MainWindow::tr("&8 Decimal Digits"));
+    m_actions.settingsResultFormat15Digits->setText(MainWindow::tr("&15 Digits"));
+    m_actions.settingsResultFormat2Digits->setText(MainWindow::tr("&2 Digits"));
+    m_actions.settingsResultFormat3Digits->setText(MainWindow::tr("&3 Digits"));
+    m_actions.settingsResultFormat50Digits->setText(MainWindow::tr("&50 Digits"));
+    m_actions.settingsResultFormat8Digits->setText(MainWindow::tr("&8 Digits"));
     m_actions.settingsResultFormatAutoPrecision->setText(MainWindow::tr("&Automatic"));
     m_actions.settingsResultFormatBinary->setText(MainWindow::tr("&Binary"));
     m_actions.settingsResultFormatEngineering->setText(MainWindow::tr("&Engineering"));
@@ -478,9 +478,13 @@ void MainWindow::createMenus()
     m_menus.decimal->addAction(m_actions.settingsResultFormatFixed);
     m_menus.decimal->addAction(m_actions.settingsResultFormatEngineering);
     m_menus.decimal->addAction(m_actions.settingsResultFormatScientific);
-    m_menus.decimal->addSeparator();
 
-    m_menus.precision = m_menus.decimal->addMenu("");
+    m_menus.resultFormat->addAction(m_actions.settingsResultFormatBinary);
+    m_menus.resultFormat->addAction(m_actions.settingsResultFormatOctal);
+    m_menus.resultFormat->addAction(m_actions.settingsResultFormatHexadecimal);
+    m_menus.resultFormat->addSeparator();
+
+    m_menus.precision = m_menus.resultFormat->addMenu("");
     m_menus.precision->addAction(m_actions.settingsResultFormatAutoPrecision);
     m_menus.precision->addAction(m_actions.settingsResultFormat2Digits);
     m_menus.precision->addAction(m_actions.settingsResultFormat3Digits);
@@ -488,11 +492,7 @@ void MainWindow::createMenus()
     m_menus.precision->addAction(m_actions.settingsResultFormat15Digits);
     m_menus.precision->addAction(m_actions.settingsResultFormat50Digits);
 
-    m_menus.resultFormat->addSeparator();
 
-    m_menus.resultFormat->addAction(m_actions.settingsResultFormatBinary);
-    m_menus.resultFormat->addAction(m_actions.settingsResultFormatOctal);
-    m_menus.resultFormat->addAction(m_actions.settingsResultFormatHexadecimal);
 
     m_menus.resultFormat->addSeparator();
 
@@ -1901,7 +1901,6 @@ void MainWindow::setKeypadVisible(bool b)
 
 void MainWindow::setResultFormatBinary()
 {
-    m_actionGroups.digits->setDisabled(true);
     setResultFormat('b');
 
     if (m_status.resultFormat)
@@ -1910,7 +1909,6 @@ void MainWindow::setResultFormatBinary()
 
 void MainWindow::setResultFormatEngineering()
 {
-    m_actionGroups.digits->setEnabled(true);
     setResultFormat('n');
 
     if (m_status.resultFormat)
@@ -1919,16 +1917,13 @@ void MainWindow::setResultFormatEngineering()
 
 void MainWindow::setResultFormatFixed()
 {
-    m_actionGroups.digits->setEnabled(true);
     setResultFormat('f');
 
     if (m_status.resultFormat)
         m_status.resultFormat->setText(tr("Fixed decimal"));
 }
-
 void MainWindow::setResultFormatGeneral()
 {
-    m_actionGroups.digits->setEnabled(true);
     setResultFormat('g');
 
     if (m_status.resultFormat)
@@ -1937,7 +1932,6 @@ void MainWindow::setResultFormatGeneral()
 
 void MainWindow::setResultFormatHexadecimal()
 {
-    m_actionGroups.digits->setDisabled(true);
     setResultFormat('h');
 
     if (m_status.resultFormat)
@@ -1946,7 +1940,6 @@ void MainWindow::setResultFormatHexadecimal()
 
 void MainWindow::setResultFormatOctal()
 {
-    m_actionGroups.digits->setDisabled(true);
     setResultFormat('o');
 
     if (m_status.resultFormat)
@@ -1955,7 +1948,6 @@ void MainWindow::setResultFormatOctal()
 
 void MainWindow::setResultFormatScientific()
 {
-    m_actionGroups.digits->setEnabled(true);
     setResultFormat('e');
 
     if (m_status.resultFormat)
@@ -2183,7 +2175,7 @@ void MainWindow::handleBitsChanged(const QString& str)
 {
     clearEditor();
     Quantity num(CNumber(str.toLatin1().data()));
-    insertTextIntoEditor(DMath::format(num, 'h'));
+    insertTextIntoEditor(DMath::format(num, Quantity::Format::Fixed() + Quantity::Format::Hexadecimal()));
     showStateLabel(QString("Current value: %1").arg(NumberFormatter::format(num)));
 }
 

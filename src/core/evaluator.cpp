@@ -45,7 +45,7 @@
 
 QTextStream& operator<<(QTextStream& s, Quantity num)
 {
-    s << DMath::format(num, 'f');
+    s << DMath::format(num, Quantity::Format::Fixed());
     return s;
 }
 #endif // EVALUATOR_DEBUG
@@ -2009,7 +2009,7 @@ QString Evaluator::dump()
     result.append("  Constants:\n");
     for (c = 0; c < m_constants.count(); ++c) {
         Quantity val = m_constants.at(c);
-        result += QString("    #%1 = %2\n").arg(c).arg(DMath::format(val, 'f'));
+        result += QString("    #%1 = %2\n").arg(c).arg(DMath::format(val, Quantity::Format::Fixed()));
 
     }
 

@@ -29,6 +29,8 @@
 
 using namespace std;
 
+typedef Quantity::Format Format;
+
 #define CHECK_SER(x,y) check_ser(__FILE__, __LINE__, #x, x, y)
 #define CHECK_DESER_HNUMBER(x,y) check_deser_hnumber(__FILE__, __LINE__, #x, x, y)
 #define CHECK_DESER_CNUMBER(x,y) check_deser_cnumber(__FILE__, __LINE__, #x, x, y)
@@ -58,7 +60,7 @@ void check_deser_hnumber(const char* file, int line, const char* msg, const char
     HNumber num(doc.object());
     /* Test result and display info */
     ++ser_total_tests;
-    string result = HMath::format(num, 'f').toStdString();
+    string result = HMath::format(num, Format::Fixed()).toStdString();
     DisplayErrorOnMismatch(file, line, msg, result, expected, ser_failed_tests, ser_new_failed_tests, issue);
 }
 
@@ -68,7 +70,7 @@ void check_deser_cnumber(const char* file, int line, const char* msg, const char
     CNumber num(doc.object());
     /* Test result and display info */
     ++ser_total_tests;
-    string result = CMath::format(num, 'f').toStdString();
+    string result = CMath::format(num, Format::Fixed()).toStdString();
     DisplayErrorOnMismatch(file, line, msg, result, expected, ser_failed_tests, ser_new_failed_tests, issue);
 }
 
@@ -78,7 +80,7 @@ void check_deser_quantity(const char* file, int line, const char* msg, const cha
     Quantity q(doc.object());
     /* Test result and display info */
     ++ser_total_tests;
-    string result = DMath::format(q, 'f').toStdString();
+    string result = DMath::format(q, Format::Fixed()).toStdString();
     DisplayErrorOnMismatch(file, line, msg, result, expected, ser_failed_tests, ser_new_failed_tests, issue);
 }
 
@@ -88,7 +90,7 @@ void check_ser_deser_hnumber(const char* file, int line, const char* msg, const 
     src.serialize(obj);
     HNumber dest = HNumber::deSerialize(obj);
     /* Test result and display info */
-    string result = HMath::format(dest, 'g', 50).toStdString();
+    string result = HMath::format(dest, Format::General() + Format::Precision(50)).toStdString();
     ++ser_total_tests;
     DisplayErrorOnMismatch(file, line, msg, result, expected, ser_failed_tests, ser_new_failed_tests, issue);
 }
@@ -99,23 +101,23 @@ void check_ser_deser_cnumber(const char* file, int line, const char* msg, const 
     src.serialize(obj);
     CNumber dest = CNumber::deSerialize(obj);
     /* Test result and display info */
-    string result = CMath::format(dest, 'g', 50).toStdString();
+    string result = CMath::format(dest, Format::General() + Format::Precision(50)).toStdString();
     DisplayErrorOnMismatch(file, line, msg, result, expected, ser_failed_tests, ser_new_failed_tests, issue);
 }
 
 int main(int, char**)
 {
     /* Serialization tests */
-    CHECK_SER(HNumber("3"), "{\"format\":\"NULL\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"}");
+    CHECK_SER(HNumber("3"), "{\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"}");
 
-    CHECK_SER(CNumber("3"), "{\"format\":\"NULL\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"}");
-    CHECK_SER(CNumber("3+1j"), "{\"format\":\"NULL\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000+1.000000000000000000000000000000000000000000000000000000000000000000000000000000j\"}");
+    CHECK_SER(CNumber("3"), "{\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"}");
+    CHECK_SER(CNumber("3+1j"), "{\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000+1.000000000000000000000000000000000000000000000000000000000000000000000000000000j\"}");
 
     Quantity a(CNumber("3"));
-    a.setFormat('b');
+    a.setFormat(Format::Binary() + Format::Fixed());
     a *= Units::meter();
     a.setDisplayUnit(CNumber("0.3"), QString("foot"));
-    const char q_json_blob[] = "{\"dimension\":{\"length\":\"1\"},\"format\":\"b\",\"numeric_value\":{\"format\":\"NULL\",\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"unit\":{\"format\":\"NULL\",\"value\":\"0.300000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"unit_name\":\"foot\"}";
+    const char q_json_blob[] = "{\"dimension\":{\"length\":\"1\"},\"format\":{\"base\":\"Binary\",\"mode\":\"Fixed\"},\"numeric_value\":{\"value\":\"3.000000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"unit\":{\"value\":\"0.300000000000000000000000000000000000000000000000000000000000000000000000000000\"},\"unit_name\":\"foot\"}";
     CHECK_SER(a, q_json_blob);
 
     /* HNumber deserialization tests */
@@ -126,7 +128,7 @@ int main(int, char**)
     CHECK_DESER_CNUMBER("{\"format\": \"g\",\"value\": \"0.1\"}", "0.1");
     CHECK_DESER_CNUMBER("{\"format\": \"g\",\"value\": \"0.0+1.0j\"}", "1j");
     /* Quantity deserialization tests */
-    CHECK_DESER_QUANTITY(q_json_blob, "10 foot");
+    CHECK_DESER_QUANTITY(q_json_blob, "0b1010 foot");
 
     /* Serialization + deserialization tests */
     CHECK_SER_DESER_HNUMBER(HNumber("3"), "3.00000000000000000000000000000000000000000000000000");
