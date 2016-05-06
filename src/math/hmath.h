@@ -104,7 +104,8 @@ public:
         Base base;
         RadixChar radixChar;
         Mode mode;
-        int precision;  // 0 means 'null', < 0 means 'auto'
+        int precision;  // -1 means 'auto'
+        static const int PrecisionNull = -1000;
 
         Format();
         Format(const Format &other);

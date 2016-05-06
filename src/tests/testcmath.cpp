@@ -29,8 +29,10 @@
 
 using namespace std;
 
+typedef CNumber::Format Format;
+
 #define CHECK(x,y) check_value(__FILE__,__LINE__,#x,x,y)
-#define CHECK_FORMAT(f,p,x,y) check_format(__FILE__,__LINE__,#x,x,f,p,y)
+#define CHECK_FORMAT(f,x,y) check_format(__FILE__,__LINE__,#x,x,f,y)
 #define CHECK_PRECISE(x,y) check_precise(__FILE__,__LINE__,#x,x,y)
 #define CHECK_KNOWN_ISSUE(x,y,n) check_value(__FILE__,__LINE__,#x,x,y,n)
 
@@ -43,21 +45,21 @@ static CNumber PI;
 static void check_value(const char* file, int line, const char* msg, const CNumber& n, const char* expected, int issue = 0)
 {
     ++cmath_total_tests;
-    string result = CMath::format(n, 'f').toStdString();
+    string result = CMath::format(n, Format::Fixed()).toStdString();
     DisplayErrorOnMismatch(file, line, msg, result, expected, cmath_failed_tests, cmath_new_failed_tests, issue);
 }
 
-static void check_format(const char* file, int line, const char* msg, const CNumber& n, char format, int prec, const char* expected)
+static void check_format(const char* file, int line, const char* msg, const CNumber& n, Format format, const char* expected)
 {
     ++cmath_total_tests;
-    string result = CMath::format(n, format, prec).toStdString();
+    string result = CMath::format(n, format).toStdString();
     DisplayErrorOnMismatch(file, line, msg, result, expected, cmath_failed_tests, cmath_new_failed_tests, 0);
 }
 
 static void check_precise(const char* file, int line, const char* msg, const CNumber& n, const char* expected)
 {
     ++cmath_total_tests;
-    string result = CMath::format(n, 'f', 50).toStdString();
+    string result = CMath::format(n, Format::Fixed() + Format::Precision(50)).toStdString();
     DisplayErrorOnMismatch(file, line, msg, result, expected, cmath_failed_tests, cmath_new_failed_tests, 0);
 }
 
@@ -83,8 +85,8 @@ void test_create()
     // Too large or too small.
     CHECK(CNumber("1e1000000000"), "NaN");
     CHECK(CNumber("1e-1000000000"), "NaN");
-    CHECK_FORMAT('e', 2, CNumber("1e1000000000"), "NaN");
-    CHECK_FORMAT('e', 2, CNumber("1e-1000000000"), "NaN");
+    CHECK_FORMAT(Format::Scientific() + Format::Precision(2), CNumber("1e1000000000"), "NaN");
+    CHECK_FORMAT(Format::Scientific() + Format::Precision(2), CNumber("1e-1000000000"), "NaN");
 
     CHECK(CMath::i()*CMath::i(), "-1");
 
@@ -94,92 +96,97 @@ void test_create()
 
 void test_format()
 {
+    Format f = Format::Fixed();
+    Format n = Format::Engineering();
+    Format e = Format::Scientific();
+    Format g = Format::General();
+
     // Fixed decimal digits.
-    CHECK_FORMAT('f', 0, CNumber("NaN"), "NaN");
-    CHECK_FORMAT('f', 0, CNumber("0"), "0");
-    CHECK_FORMAT('f', 0, CNumber("1.1"), "1");
-    CHECK_FORMAT('f', 1, CNumber("2.11"), "2.1");
-    CHECK_FORMAT('f', 2, CNumber("3.111"), "3.11");
-    CHECK_FORMAT('f', 1, CNumber("4.001"), "4.0");
-    CHECK_FORMAT('f', 3, CNumber("4.1111"), "4.111");
-    CHECK_FORMAT('f', 2, CNumber("3.14"), "3.14");
-    CHECK_FORMAT('f', 3, CNumber("3.14"), "3.140");
-    CHECK_FORMAT('f', 5, CNumber("3.14"), "3.14000");
-    CHECK_FORMAT('f', 7, CNumber("3.14"), "3.1400000");
-    CHECK_FORMAT('f', 7, CNumber("-0.001"), "-0.0010000");
-    CHECK_FORMAT('f', 8, CNumber("-0.001"), "-0.00100000");
-    CHECK_FORMAT('f', 9, CNumber("-0.001"), "-0.001000000");
-    CHECK_FORMAT('f', -1, CNumber("4.000000000000000000000000000000000000000000001"), "4");
+    CHECK_FORMAT(f + Format::Precision(0), CNumber("NaN"), "NaN");
+    CHECK_FORMAT(f + Format::Precision(0), CNumber("0"), "0");
+    CHECK_FORMAT(f + Format::Precision(0), CNumber("1.1"), "1");
+    CHECK_FORMAT(f + Format::Precision(1), CNumber("2.11"), "2.1");
+    CHECK_FORMAT(f + Format::Precision(2), CNumber("3.111"), "3.11");
+    CHECK_FORMAT(f + Format::Precision(1), CNumber("4.001"), "4.0");
+    CHECK_FORMAT(f + Format::Precision(3), CNumber("4.1111"), "4.111");
+    CHECK_FORMAT(f + Format::Precision(2), CNumber("3.14"), "3.14");
+    CHECK_FORMAT(f + Format::Precision(3), CNumber("3.14"), "3.140");
+    CHECK_FORMAT(f + Format::Precision(5), CNumber("3.14"), "3.14000");
+    CHECK_FORMAT(f + Format::Precision(7), CNumber("3.14"), "3.1400000");
+    CHECK_FORMAT(f + Format::Precision(7), CNumber("-0.001"), "-0.0010000");
+    CHECK_FORMAT(f + Format::Precision(8), CNumber("-0.001"), "-0.00100000");
+    CHECK_FORMAT(f + Format::Precision(9), CNumber("-0.001"), "-0.001000000");
+    CHECK_FORMAT(f + Format::Precision(-1), CNumber("4.000000000000000000000000000000000000000000001"), "4");
 
     // Engineering notation.
-    CHECK_FORMAT('n', 0, CNumber("NaN"), "NaN");
-    CHECK_FORMAT('n', 0, CNumber("0"), "0");
-    CHECK_FORMAT('n', 0, CNumber("3.14"), "3.14e0");
-    CHECK_FORMAT('n', 1, CNumber("3.14"), "3.14e0");
-    CHECK_FORMAT('n', 2, CNumber("3.14"), "3.14e0");
-    CHECK_FORMAT('n', 3, CNumber("3.14"), "3.140e0");
-    CHECK_FORMAT('n', 5, CNumber("3.14"), "3.14000e0");
-    CHECK_FORMAT('n', 7, CNumber("3.14"), "3.1400000e0");
-    CHECK_FORMAT('n', 3, CNumber("-0.001"), "-1.000e-3");
-    CHECK_FORMAT('n', 2, CNumber("0.0001"), "100.e-6");
-    CHECK_FORMAT('n', 2, CNumber("0.001"), "1.00e-3");
-    CHECK_FORMAT('n', 2, CNumber("0.01"), "10.0e-3");
-    CHECK_FORMAT('n', 2, CNumber("0.1"), "100.e-3");
-    CHECK_FORMAT('n', 2, CNumber("1"), "1.00e0");
-    CHECK_FORMAT('n', 2, CNumber("10"), "10.0e0");
-    CHECK_FORMAT('n', 2, CNumber("100"), "100.e0");
-    CHECK_FORMAT('n', 2, CNumber("1000"), "1.00e3");
-    CHECK_FORMAT('n', 2, CNumber("10000"), "10.0e3");
-    CHECK_FORMAT('n', 2, CNumber("100000"), "100.e3");
-    CHECK_FORMAT('n', 2, CNumber("1000000"), "1.00e6");
-    CHECK_FORMAT('n', 2, CNumber("10000000"), "10.0e6");
+    CHECK_FORMAT(n + Format::Precision(0), CNumber("NaN"), "NaN");
+    CHECK_FORMAT(n + Format::Precision(0), CNumber("0"), "0");
+    CHECK_FORMAT(n + Format::Precision(0), CNumber("3.14"), "3.14e0");
+    CHECK_FORMAT(n + Format::Precision(1), CNumber("3.14"), "3.14e0");
+    CHECK_FORMAT(n + Format::Precision(2), CNumber("3.14"), "3.14e0");
+    CHECK_FORMAT(n + Format::Precision(3), CNumber("3.14"), "3.140e0");
+    CHECK_FORMAT(n + Format::Precision(5), CNumber("3.14"), "3.14000e0");
+    CHECK_FORMAT(n + Format::Precision(7), CNumber("3.14"), "3.1400000e0");
+    CHECK_FORMAT(n + Format::Precision(3), CNumber("-0.001"), "-1.000e-3");
+    CHECK_FORMAT(n + Format::Precision(2), CNumber("0.0001"), "100.e-6");
+    CHECK_FORMAT(n + Format::Precision(2), CNumber("0.001"), "1.00e-3");
+    CHECK_FORMAT(n + Format::Precision(2), CNumber("0.01"), "10.0e-3");
+    CHECK_FORMAT(n + Format::Precision(2), CNumber("0.1"), "100.e-3");
+    CHECK_FORMAT(n + Format::Precision(2), CNumber("1"), "1.00e0");
+    CHECK_FORMAT(n + Format::Precision(2), CNumber("10"), "10.0e0");
+    CHECK_FORMAT(n + Format::Precision(2), CNumber("100"), "100.e0");
+    CHECK_FORMAT(n + Format::Precision(2), CNumber("1000"), "1.00e3");
+    CHECK_FORMAT(n + Format::Precision(2), CNumber("10000"), "10.0e3");
+    CHECK_FORMAT(n + Format::Precision(2), CNumber("100000"), "100.e3");
+    CHECK_FORMAT(n + Format::Precision(2), CNumber("1000000"), "1.00e6");
+    CHECK_FORMAT(n + Format::Precision(2), CNumber("10000000"), "10.0e6");
 
     // Scientific notation.
-    CHECK_FORMAT('e', 0, CNumber("NaN"), "NaN");
-    CHECK_FORMAT('e', 0, CNumber("0"), "0");
-    CHECK_FORMAT('e', 0, CNumber("3.14"), "3e0");
-    CHECK_FORMAT('e', 1, CNumber("3.14"), "3.1e0");
-    CHECK_FORMAT('e', 2, CNumber("3.14"), "3.14e0");
-    CHECK_FORMAT('e', 3, CNumber("3.14"), "3.140e0");
-    CHECK_FORMAT('e', 5, CNumber("3.14"), "3.14000e0");
-    CHECK_FORMAT('e', 7, CNumber("3.14"), "3.1400000e0");
-    CHECK_FORMAT('e', 3, CNumber("-0.001"), "-1.000e-3");
-    CHECK_FORMAT('e', 2, CNumber("0.0001"), "1.00e-4");
-    CHECK_FORMAT('e', 2, CNumber("0.001"), "1.00e-3");
-    CHECK_FORMAT('e', 2, CNumber("0.01"), "1.00e-2");
-    CHECK_FORMAT('e', 2, CNumber("0.1"), "1.00e-1");
-    CHECK_FORMAT('e', 2, CNumber("1"), "1.00e0");
-    CHECK_FORMAT('e', 2, CNumber("10"), "1.00e1");
-    CHECK_FORMAT('e', 2, CNumber("100"), "1.00e2");
-    CHECK_FORMAT('e', 2, CNumber("1000"), "1.00e3");
-    CHECK_FORMAT('e', 2, CNumber("10000"), "1.00e4");
-    CHECK_FORMAT('e', 2, CNumber("100000"), "1.00e5");
-    CHECK_FORMAT('e', 2, CNumber("1000000"), "1.00e6");
-    CHECK_FORMAT('e', 2, CNumber("10000000"), "1.00e7");
+    CHECK_FORMAT(e + Format::Precision(0), CNumber("NaN"), "NaN");
+    CHECK_FORMAT(e + Format::Precision(0), CNumber("0"), "0");
+    CHECK_FORMAT(e + Format::Precision(0), CNumber("3.14"), "3e0");
+    CHECK_FORMAT(e + Format::Precision(1), CNumber("3.14"), "3.1e0");
+    CHECK_FORMAT(e + Format::Precision(2), CNumber("3.14"), "3.14e0");
+    CHECK_FORMAT(e + Format::Precision(3), CNumber("3.14"), "3.140e0");
+    CHECK_FORMAT(e + Format::Precision(5), CNumber("3.14"), "3.14000e0");
+    CHECK_FORMAT(e + Format::Precision(7), CNumber("3.14"), "3.1400000e0");
+    CHECK_FORMAT(e + Format::Precision(3), CNumber("-0.001"), "-1.000e-3");
+    CHECK_FORMAT(e + Format::Precision(2), CNumber("0.0001"), "1.00e-4");
+    CHECK_FORMAT(e + Format::Precision(2), CNumber("0.001"), "1.00e-3");
+    CHECK_FORMAT(e + Format::Precision(2), CNumber("0.01"), "1.00e-2");
+    CHECK_FORMAT(e + Format::Precision(2), CNumber("0.1"), "1.00e-1");
+    CHECK_FORMAT(e + Format::Precision(2), CNumber("1"), "1.00e0");
+    CHECK_FORMAT(e + Format::Precision(2), CNumber("10"), "1.00e1");
+    CHECK_FORMAT(e + Format::Precision(2), CNumber("100"), "1.00e2");
+    CHECK_FORMAT(e + Format::Precision(2), CNumber("1000"), "1.00e3");
+    CHECK_FORMAT(e + Format::Precision(2), CNumber("10000"), "1.00e4");
+    CHECK_FORMAT(e + Format::Precision(2), CNumber("100000"), "1.00e5");
+    CHECK_FORMAT(e + Format::Precision(2), CNumber("1000000"), "1.00e6");
+    CHECK_FORMAT(e + Format::Precision(2), CNumber("10000000"), "1.00e7");
 
     // General format.
-    CHECK_FORMAT('g', -1, PI, "3.14159265358979323846");
-    CHECK_FORMAT('g', 3, CNumber("0"), "0");
-    CHECK_FORMAT('g', 3, CNumber("0.000000001"), "1.000e-9");
-    CHECK_FORMAT('g', 3, CNumber("0.00000001"), "1.000e-8");
-    CHECK_FORMAT('g', 3, CNumber("0.0000001"), "1.000e-7");
-    CHECK_FORMAT('g', 3, CNumber("0.000001"), "1.000e-6");
-    CHECK_FORMAT('g', 3, CNumber("0.00001"), "1.000e-5");
-    CHECK_FORMAT('g', 3, CNumber("0.0001"), "1.000e-4");
-    CHECK_FORMAT('g', 3, CNumber("0.001"), "0.001");
-    CHECK_FORMAT('g', 3, CNumber("0.01"), "0.010");
-    CHECK_FORMAT('g', 3, CNumber("0.1"), "0.100");
-    CHECK_FORMAT('g', 3, CNumber("10"), "10.000");
-    CHECK_FORMAT('g', 3, CNumber("100"), "100.000");
-    CHECK_FORMAT('g', 3, CNumber("1000"), "1000.000");
-    CHECK_FORMAT('g', 3, CNumber("10000"), "10000.000");
-    CHECK_FORMAT('g', 3, CNumber("100000"), "100000.000");
-    CHECK_FORMAT('g', 3, CNumber("1000000"), "1.000e6");
-    CHECK_FORMAT('g', 3, CNumber("10000000"), "1.000e7");
-    CHECK_FORMAT('g', 3, CNumber("100000000"), "1.000e8");
-    CHECK_FORMAT('g', 3, CNumber("1403.1977"), "1403.198");
-    CHECK_FORMAT('g', 3, CNumber("2604.1980"), "2604.198");
-    CHECK_FORMAT('g', 3, CNumber("2.47e4"), "24700.000");
+    CHECK_FORMAT(g + Format::Precision(-1), PI, "3.14159265358979323846");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("0"), "0");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("0.000000001"), "1.000e-9");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("0.00000001"), "1.000e-8");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("0.0000001"), "1.000e-7");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("0.000001"), "1.000e-6");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("0.00001"), "1.000e-5");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("0.0001"), "1.000e-4");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("0.001"), "0.001");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("0.01"), "0.010");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("0.1"), "0.100");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("10"), "10.000");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("100"), "100.000");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("1000"), "1000.000");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("10000"), "10000.000");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("100000"), "100000.000");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("1000000"), "1.000e6");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("10000000"), "1.000e7");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("100000000"), "1.000e8");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("1403.1977"), "1403.198");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("2604.1980"), "2604.198");
+    CHECK_FORMAT(g + Format::Precision(3), CNumber("2.47e4"), "24700.000");
 }
 
 void test_op()
@@ -957,25 +964,25 @@ void test_functions()
     CHECK(CMath::encodeIeee754("1", "NaN", "NaN"), "NaN");
     CHECK(CMath::encodeIeee754("1", "-1", "1"), "NaN");
     CHECK(CMath::encodeIeee754("1", "1", "0"), "NaN");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("NaN", "5", "10"), "0x7FFF");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("NaN", "11", "52"), "0x7FFFFFFFFFFFFFFF");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("0", "5", "10"), "0");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("1.17549435E-38", "8", "23"), "0x800000");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("10", "8", "23"), "0x41200000");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("-10", "8", "23"), "0xC1200000");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("1.5", "8", "23"), "0x3FC00000");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("340282346638528859811704183484516925440","8", "23"), "0x7F7FFFFF");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("9999999999999999999999999999999999", "5", "10"), "0x7C00");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("-0.1", "8", "23"), "0xBDCCCCCD");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("-0.1", "11", "52"), "0xBFB999999999999A");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("16.1253528594970703125", "8", "23"), "0x418100B9");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("1", "4", "3", "-2"), "0x1");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("7", "4", "3", "-2"), "0x7");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("8", "4", "3", "-2"), "0x8");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("-73728", "4", "3", "-2"), "0xF1");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("122880", "4", "3", "-2"), "0x77");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("3", "2", "1"), "0x5");
-    CHECK_FORMAT('h', 0, CMath::encodeIeee754("1.5", "2", "1"), "0x3");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("NaN", "5", "10"), "0x7FFF");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("NaN", "11", "52"), "0x7FFFFFFFFFFFFFFF");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("0", "5", "10"), "0");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("1.17549435E-38", "8", "23"), "0x800000");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("10", "8", "23"), "0x41200000");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("-10", "8", "23"), "0xC1200000");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("1.5", "8", "23"), "0x3FC00000");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("340282346638528859811704183484516925440","8", "23"), "0x7F7FFFFF");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("9999999999999999999999999999999999", "5", "10"), "0x7C00");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("-0.1", "8", "23"), "0xBDCCCCCD");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("-0.1", "11", "52"), "0xBFB999999999999A");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("16.1253528594970703125", "8", "23"), "0x418100B9");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("1", "4", "3", "-2"), "0x1");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("7", "4", "3", "-2"), "0x7");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("8", "4", "3", "-2"), "0x8");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("-73728", "4", "3", "-2"), "0xF1");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("122880", "4", "3", "-2"), "0x77");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("3", "2", "1"), "0x5");
+    CHECK_FORMAT(Format::Hexadecimal() + Format::Fixed(), CMath::encodeIeee754("1.5", "2", "1"), "0x3");
 }
 
 void test_branches()

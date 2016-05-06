@@ -629,7 +629,7 @@ HNumber HNumber::operator>>( const HNumber & num ) const
 HNumber::Format::Format() : base(Base::Null),
                             radixChar(RadixChar::Null),
                             mode(Mode::Null),
-                            precision(0)
+                            precision(PrecisionNull)
 {
 }
 
@@ -647,7 +647,7 @@ HNumber::Format HNumber::Format::operator+(const HNumber::Format &other) const
     result.base = this->base != Base::Null ? this->base : other.base;
     result.radixChar = this->radixChar != RadixChar::Null ? this->radixChar : other.radixChar;
     result.mode = this->mode != Mode::Null ? this->mode : other.mode;
-    result.precision = this->precision != 0 ? this->precision : other.precision;
+    result.precision = this->precision != PrecisionNull ? this->precision : other.precision;
     return result;
 }
 
@@ -849,20 +849,6 @@ char* formatGeneral( cfloatnum x, int prec, int base=10 )
     return str;
 }
 
-char* formathexfp( cfloatnum x, char base,
-                   char expbase, int scale )
-{
-    int tmpscale = scale;
-    if (float_isinteger(x))
-        tmpscale = 0;
-    char* result = _doFormat(x, base, expbase, IO_MODE_FIXPOINT, tmpscale,
-                      IO_FLAG_SUPPRESS_PLUS + IO_FLAG_SUPPRESS_DOT
-                      + IO_FLAG_SHOW_BASE + IO_FLAG_SUPPRESS_EXPZERO);
-    return result ? result
-      : _doFormat(x, base, expbase, IO_MODE_SCIENTIFIC, scale,
-                    IO_FLAG_SUPPRESS_PLUS + IO_FLAG_SUPPRESS_DOT
-                    + IO_FLAG_SHOW_BASE + IO_FLAG_SHOW_EXPBASE);
-}
 
 } /* unnamed namespace */
 
@@ -873,7 +859,7 @@ QString HMath::format(const HNumber& hn, HNumber::Format format)
 {
     char* rs = 0;
 
-    if (format.precision < 1)
+    if (format.precision < 0)  // This includes PrecisionNull
         format.precision = -1;
 
     int base;

@@ -363,7 +363,7 @@ Quantity Quantity::deSerialize(const QJsonObject &json)
     }
     if (json.contains("format")) {
         QJsonObject format_json = json["format"].toObject();
-        result.m_format.deSerialize(format_json);
+        result.m_format = Quantity::Format::deSerialize(format_json);
     }
     return result;
 }
@@ -609,7 +609,7 @@ void Quantity::Format::serialize(QJsonObject &json) const
         break;          // don't write anything
     }
 
-    if (precision != 0)
+    if (precision != PrecisionNull)
         json["precision"] = precision;
 }
 
@@ -654,14 +654,14 @@ Quantity::Format Quantity::Format::deSerialize(const QJsonObject &json)
         result.precision = json["precision"].toInt();
     }
     else
-        result.precision = 0;
+        result.precision = PrecisionNull;
 
     return result;
 }
 
 bool Quantity::Format::isNull() const
 {
-    return (mode == Mode::Null && base == Base::Null && precision == 0);
+    return (mode == Mode::Null && base == Base::Null && precision == PrecisionNull);
 }
 
 

@@ -28,6 +28,8 @@
 
 using namespace std;
 
+typedef Quantity::Format Format;
+
 static Evaluator* eval = 0;
 static int eval_total_tests  = 0;
 static int eval_failed_tests = 0;
@@ -85,7 +87,7 @@ static void checkEval(const char* file, int line, const char* msg, const QString
             cerr << "\tError: " << qPrintable(eval->error()) << endl;
         }
     } else {
-        QString result = DMath::format(rn, 'f');
+        QString result = DMath::format(rn, Format::Fixed());
         if (shouldFail || result != expected) {
             ++eval_failed_tests;
             cerr << file << "[" << line << "]\t" << msg;
@@ -111,7 +113,7 @@ static void checkEvalPrecise(const char* file, int line, const char* msg, const 
 
     // We compare up to 50 decimals, not exact number because it's often difficult
     // to represent the result as an irrational number, e.g. PI.
-    string result = DMath::format(rn, 'f', 50).toStdString();
+    string result = DMath::format(rn, Format::Fixed() + Format::Precision(50)).toStdString();
     DisplayErrorOnMismatch(file, line, msg, result, expected, eval_failed_tests, eval_new_failed_tests, 0);
 }
 

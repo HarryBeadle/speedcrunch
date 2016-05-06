@@ -62,7 +62,7 @@ QString NumberFormatter::format(Quantity q)
     }
     if (format.mode == Quantity::Format::Mode::Null)
         format.mode = Quantity::Format::Mode::General;
-    if (format.precision == 0)
+    if (format.precision == format.PrecisionNull)
         format.precision = settings->resultPrecision;
 
     QString result = DMath::format(q, format);
