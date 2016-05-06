@@ -1,5 +1,6 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2015 Pol Welter <polwelter@gmail.com>
+// Copyright (C) 2016 @heldercorreia
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -25,34 +26,31 @@
 #include "math/quantity.h"
 class Rational;
 
-struct Unit
-{
+struct Unit {
     QString name;
     Quantity value;
-    Unit(QString name, Quantity value) : name(name), value(value) {}
-    Unit() : name(""), value(1) {}
+    Unit(QString name, Quantity value)
+        : name(name)
+        , value(value)
+    { }
+    Unit()
+        : name("")
+        , value(1)
+    { }
 };
 
-class Units
-{
-private:
+class Units {
     static void pushUnit(Quantity q, QString name);
     static QHash<QMap<QString, Rational>, Unit> m_matchLookup;
     static QMap<QString, Quantity> m_cache;
     static void initTable();
 
 public:
-    static void findUnit(Quantity &q);
-    static void clearCache() {m_cache.clear();}
+    static void findUnit(Quantity& q);
+    static void clearCache() { m_cache.clear(); }
     static const QList<Unit> getList();
 
-    /*
-     #############################################
-     # Base (primitive) units.                   #
-     #############################################
-    */
-
-    // base SI units
+    // Base SI units.
     static const Quantity meter();
     static const Quantity second();
     static const Quantity kilogram();
@@ -61,17 +59,10 @@ public:
     static const Quantity kelvin();
     static const Quantity candela();
 
-    // base non-SI units
+    // Base non-SI units.
     static const Quantity bit();
-    // ... currency would go here as well...
 
-
-    /*
-     #############################################
-     # Prefixes                                  #
-     #############################################
-    */
-    //SI prefixes
+    // SI prefixes.
     static const Quantity yocto();
     static const Quantity zepto();
     static const Quantity atto();
@@ -94,7 +85,7 @@ public:
     static const Quantity zetta();
     static const Quantity yotta();
 
-    //Binary prefixes
+    // Binary prefixes.
     static const Quantity kibi();
     static const Quantity mebi();
     static const Quantity gibi();
@@ -104,12 +95,7 @@ public:
     static const Quantity zebi();
     static const Quantity yobi();
 
-    /*
-     #############################################
-     # Derived units                             #
-     #############################################
-    */
-    // derived SI units
+    // Derived SI units.
     static const Quantity sqmeter();
     static const Quantity cbmeter();
     static const Quantity newton();
@@ -133,13 +119,9 @@ public:
     static const Quantity sievert();
     static const Quantity katal();
 
+    // Derived from SI units.
 
-    /*
-     * -------------------------------------
-     *  derived from SI units
-     * -------------------------------------
-     */
-    // mass
+    // Mass.
     static const Quantity metric_ton();
     static const Quantity short_ton();
     static const Quantity long_ton();
@@ -151,8 +133,7 @@ public:
     static const Quantity carat();
 
 
-    // distance/length
-    //--------------------------------------
+    // Distance/length.
     static const Quantity micron();
     static const Quantity angstrom();
     static const Quantity astronomical_unit();
@@ -160,27 +141,24 @@ public:
     static const Quantity lightsecond();
     static const Quantity lightminute();
     static const Quantity parsec();
-    // US measures
+    // US measures.
     static const Quantity inch();
     static const Quantity foot();
     static const Quantity yard();
     static const Quantity mile();
     static const Quantity rod();
     static const Quantity furlong();
-    // Nautical (US)
+    // Nautical (US).
     static const Quantity fathom();
     static const Quantity nautical_mile();
     static const Quantity cable();
 
-    // area
-    //--------------------------------------
+    // Area.
     static const Quantity are();
     static const Quantity hectare();
     static const Quantity acre();
 
-
-    // volume
-    //--------------------------------------
+    // Volume.
     static const Quantity US_gallon();
     static const Quantity UK_gallon();
     static const Quantity US_quart();
@@ -191,9 +169,7 @@ public:
     static const Quantity UK_fluid_ounce();
     static const Quantity liter();
 
-
-    // time
-    //--------------------------------------
+    // Time.
     static const Quantity minute();
     static const Quantity hour();
     static const Quantity day();
@@ -202,56 +178,46 @@ public:
     static const Quantity tropical_year();
     static const Quantity sidereal_year();
 
-    // concentration
-    //--------------------------------------
+    // Concentration.
     static const Quantity percent();
     static const Quantity ppm();
     static const Quantity ppb();
     static const Quantity karat();
 
-    // pressure
-    //--------------------------------------
+    // Pressure.
     static const Quantity bar();
     static const Quantity atmosphere();
     static const Quantity torr();
     static const Quantity pounds_per_sqinch();
 
-    // energy
-    //--------------------------------------
+    // Energy.
     static const Quantity electron_volt();
     static const Quantity calorie();
     static const Quantity british_thermal_unit();
 
 
-    // Information
-    //--------------------------------------
+    // Information.
     static const Quantity nat();
     static const Quantity hartley();
     static const Quantity byte();
 
 
-    // Cooking
-    //--------------------------------------
-    // Note: these again differ from US to UK, Australia, Japan,...
+    // Cooking.
+    // Note: these again differ from US to UK, Australia, Japan, ...
     // Since for cooking generally not that high a precision is
-    // required, let's just stick with the so called 'legal' variant...
-
+    // required, let's just stick with the so called 'legal' variant.
     static const Quantity tablespoon();
     static const Quantity teaspoon();
     static const Quantity cup();
 
-
-    // Various others
-    //--------------------------------------
-    // Some of these are constants that should be moved once constants
-    // are also accessible via builtin names
+    // Various others.
+    // TODO: Some of these are constants that should be moved once constants are also accessible via builtin names.
     static const Quantity gravity();
     static const Quantity speed_of_light();
     static const Quantity elementary_charge();
     static const Quantity speed_of_sound_STP();
     static const Quantity knot();
     static const Quantity horsepower();
-
 };
 
 #endif // UNITS_H
