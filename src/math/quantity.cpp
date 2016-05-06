@@ -965,3 +965,26 @@ Quantity DMath::sgn(const Quantity &x)
 {
     return Quantity(CMath::sgn(x.m_numericValue));
 }
+
+Quantity DMath::encodeIeee754(const Quantity &val, const Quantity& exp_bits, const Quantity& significand_bits)
+{
+    ENSURE_DIMENSIONLESS(val);
+    ENSURE_DIMENSIONLESS(exp_bits);
+    ENSURE_DIMENSIONLESS(significand_bits);
+
+    Quantity result(CMath::encodeIeee754(val.numericValue(), exp_bits.numericValue(), significand_bits.numericValue()));
+    result.m_format = result.m_format + Quantity::Format::Fixed() + Quantity::Format::Hexadecimal();
+    return result;
+}
+
+Quantity DMath::encodeIeee754(const Quantity &val, const Quantity& exp_bits, const Quantity& significand_bits, const Quantity& exp_bias)
+{
+    ENSURE_DIMENSIONLESS(val);
+    ENSURE_DIMENSIONLESS(exp_bits);
+    ENSURE_DIMENSIONLESS(significand_bits);
+    ENSURE_DIMENSIONLESS(exp_bias);
+
+    Quantity result(CMath::encodeIeee754(val.numericValue(), exp_bits.numericValue(), significand_bits.numericValue(), exp_bias.numericValue()));
+    result.m_format = result.m_format + Quantity::Format::Fixed() + Quantity::Format::Hexadecimal();
+    return result;
+}
