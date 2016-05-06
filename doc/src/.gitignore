@@ -1,4 +1,4 @@
 /_build*
-/extensions/*.pyc
-/extensions/__pycache__
+*.pyc
+__pycache__
 *.mo
