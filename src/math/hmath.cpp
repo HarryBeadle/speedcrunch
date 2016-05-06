@@ -782,7 +782,7 @@ char* formatFixed( cfloatnum x, int prec, int base=10 )
         scale = 0;
     unsigned flags = IO_FLAG_SUPPRESS_PLUS + IO_FLAG_SUPPRESS_DOT + IO_FLAG_SUPPRESS_EXPZERO;
     if( base != 10 )
-        flags += IO_FLAG_SHOW_BASE;
+        flags += IO_FLAG_SHOW_BASE + IO_FLAG_SHOW_EXPBASE;
     if( prec < 0 ) {
         flags |= IO_FLAG_SUPPRESS_TRL_ZERO;
         prec = HMATH_MAX_SHOWN;
@@ -803,7 +803,7 @@ char* formatScientific( cfloatnum x, int prec, int base=10  )
     unsigned flags = IO_FLAG_SUPPRESS_PLUS + IO_FLAG_SUPPRESS_DOT
       + IO_FLAG_SUPPRESS_EXPPLUS;
     if( base != 10 )
-        flags += IO_FLAG_SHOW_BASE;
+        flags += IO_FLAG_SHOW_BASE + IO_FLAG_SHOW_EXPBASE;
     if( prec < 0 ) {
         flags |= IO_FLAG_SUPPRESS_TRL_ZERO;
         prec = HMATH_MAX_SHOWN;
@@ -819,7 +819,7 @@ char* formatEngineering( cfloatnum x, int prec, int base=10 )
 {
     unsigned flags = IO_FLAG_SUPPRESS_PLUS + IO_FLAG_SUPPRESS_EXPPLUS;
     if( base != 10 )
-        flags += IO_FLAG_SHOW_BASE;
+        flags += IO_FLAG_SHOW_BASE + IO_FLAG_SHOW_EXPBASE;
     if( prec <= 1 ) {
         flags |= IO_FLAG_SUPPRESS_TRL_ZERO + IO_FLAG_SUPPRESS_DOT;
         prec = HMATH_MAX_SHOWN;
