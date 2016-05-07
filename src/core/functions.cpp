@@ -580,6 +580,18 @@ Quantity function_bin(Function* f, const Function::ArgumentList& args)
     return Quantity(args.at(0)).setFormat(Quantity::Format::Fixed() + Quantity::Format::Binary() + Quantity(args.at(0)).format());
 }
 
+Quantity function_cart(Function* f, const Function::ArgumentList& args)
+{
+    ENSURE_ARGUMENT_COUNT(1);
+    return Quantity(args.at(0)).setFormat(Quantity::Format::Cartesian() + Quantity(args.at(0)).format());
+}
+
+Quantity function_polar(Function* f, const Function::ArgumentList& args)
+{
+    ENSURE_ARGUMENT_COUNT(1);
+    return Quantity(args.at(0)).setFormat(Quantity::Format::Polar() + Quantity(args.at(0)).format());
+}
+
 Quantity function_binompmf(Function* f, const Function::ArgumentList& args)
 {
     ENSURE_ARGUMENT_COUNT(3);
@@ -847,6 +859,8 @@ void FunctionRepo::createFunctions()
     FUNCTION_INSERT(real);
     FUNCTION_INSERT(imag);
     FUNCTION_INSERT(phase);
+    FUNCTION_INSERT(polar);
+    FUNCTION_INSERT(cart);
 
     // Discrete.
     FUNCTION_INSERT(gcd);
@@ -971,6 +985,7 @@ void FunctionRepo::setNonTranslatableFunctionUsages()
     FUNCTION_USAGE(arctan2, "x, y");
     FUNCTION_USAGE(average, "x<sub>1</sub>; x<sub>2</sub>; ...");
     FUNCTION_USAGE(bin, "n");
+    FUNCTION_USAGE(cart, "x");
     FUNCTION_USAGE(cbrt, "x");
     FUNCTION_USAGE(ceil, "x");
     FUNCTION_USAGE(cos, "x");
@@ -1010,6 +1025,7 @@ void FunctionRepo::setNonTranslatableFunctionUsages()
     FUNCTION_USAGE(npr, "x<sub>1</sub>; x<sub>2</sub>");
     FUNCTION_USAGE(oct, "n");
     FUNCTION_USAGE(or, "x<sub>1</sub>; x<sub>2</sub>; ...");
+    FUNCTION_USAGE(polar, "x");
     FUNCTION_USAGE(product, "x<sub>1</sub>; x<sub>2</sub>; ...");
     FUNCTION_USAGE(phase, "x");
     FUNCTION_USAGE(radians, "x");
@@ -1072,6 +1088,7 @@ void FunctionRepo::setFunctionNames()
     FUNCTION_NAME(binommean, tr("Binomial Distribution Mean"));
     FUNCTION_NAME(binompmf, tr("Binomial Probability Mass Function"));
     FUNCTION_NAME(binomvar, tr("Binomial Distribution Variance"));
+    FUNCTION_NAME(cart, tr("Convert to Cartesian Notation"));
     FUNCTION_NAME(cbrt, tr("Cube Root"));
     FUNCTION_NAME(ceil, tr("Ceiling"));
     FUNCTION_NAME(cos, tr("Cosine"));
@@ -1126,6 +1143,7 @@ void FunctionRepo::setFunctionNames()
     FUNCTION_NAME(poimean, tr("Poissonian Distribution Mean"));
     FUNCTION_NAME(poipmf, tr("Poissonian Probability Mass Function"));
     FUNCTION_NAME(poivar, tr("Poissonian Distribution Variance"));
+    FUNCTION_NAME(polar, tr("Convert to Polar Notation"));
     FUNCTION_NAME(product, tr("Product"));
     FUNCTION_NAME(radians, tr("Radians"));
     FUNCTION_NAME(real, tr("Real Part"));

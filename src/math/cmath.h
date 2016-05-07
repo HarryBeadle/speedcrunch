@@ -112,6 +112,9 @@ public:
         Format(const Format&);
         Format(const HNumber::Format&);
         Format operator+(const Format&) const;
+
+        static const Format Polar();
+        static const Format Cartesian();
     };
 };
 

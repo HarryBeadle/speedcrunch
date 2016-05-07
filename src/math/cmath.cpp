@@ -428,7 +428,19 @@ CNumber::Format CNumber::Format::operator+(const CNumber::Format &other) const
     return result;
 }
 
+const CNumber::Format CNumber::Format::Polar()
+{
+    Format result;
+    result.notation = Format::Notation::Polar;
+    return result;
+}
 
+const CNumber::Format CNumber::Format::Cartesian()
+{
+    Format result;
+    result.notation = Format::Notation::Cartesian;
+    return result;
+}
 
 /**
  * Returns the constant e (Euler's number).
@@ -473,43 +485,48 @@ CNumber CMath::i()
  */
 QString CMath::format(const CNumber& cn, CNumber::Format format)
 {
-  /* If number is NaN */
-  if (cn.isNan())
-    return "NaN";
+    /* If number is NaN */
+    if (cn.isNan())
+        return "NaN";
 
-  /* If number is real */
-  else if (cn.imag.isNearZero())
+    /* If number is real */
+    else if (cn.imag.isNearZero()) {
+        /* Reverts to normal formatting */
+        return HMath::format(cn.real, format);
 
-    /* Reverts to normal formatting */
-    return HMath::format(cn.real, format);
+    /* If number is complex */
+    } else {
+        if (format.notation == CNumber::Format::Notation::Polar) {
+            QString strRadius = HMath::format(CMath::abs(cn).real, format);
+            HNumber phase = CMath::phase(cn).real;
+            if (phase.isZero())
+                return strRadius;
+            QString strPhase = HMath::format(phase, format);
+            return QString("%1 * exp(j*%2)").arg(strRadius).arg(strPhase);
+        } else {
+            /* Format real part */
+            QString real_part = cn.real.isZero()? "" : HMath::format(cn.real, format);
 
-  /* If number is complex */
-  else {
+            /* Format imaginary part */
+            QString imag_part = "";
+            QString separator = "";
+            QString prefix    = "";   /* TODO : Insert two modes, one for a+jb and one for a+bj */
+            QString postfix   = "j";  /* TODO : Insert two modes, one for a+bi and one for a+bj */
 
-    /* Use complex number formatting */
+            /* If imaginary part is positive */
+            if (cn.imag.isPositive()) {
+                separator = cn.real.isZero() ? "": "+";
+                imag_part = HMath::format(cn.imag, format);
+            }
+            /* If imaginary part is negative */
+            else {
+                separator = "-";
+                imag_part = HMath::format(-cn.imag, format);
+            }
 
-    /* Format real part */
-    QString real_part = cn.real.isZero()? "" : HMath::format(cn.real, format);
-
-    /* Format imaginary part */
-    QString imag_part = "";
-    QString separator = "";
-    QString prefix    = "";   /* TODO : Insert two modes, one for a+jb and one for a+bj */
-    QString postfix   = "j";  /* TODO : Insert two modes, one for a+bi and one for a+bj */
-
-    /* If imaginary part is positive */
-    if (cn.imag.isPositive()) {
-      separator = cn.real.isZero() ? "": "+";
-      imag_part = HMath::format(cn.imag, format);
+            return real_part + separator + prefix + imag_part + postfix;
+        }
     }
-    /* If imaginary part is negative */
-    else {
-      separator = "-";
-      imag_part = HMath::format(-cn.imag, format);
-    }
-
-    return real_part + separator + prefix + imag_part + postfix;
-  }
 }
 
 

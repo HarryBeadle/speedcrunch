@@ -315,12 +315,20 @@ Complex Numbers
 
 .. function:: phase(x)
 
-    Returns the phase (angle) of a complex number `x`.
+    Returns the phase (angle) of a complex number `x`. The unit of the angle corresponds to the current angle mode.
     
     The argument may have a dimension.
     
     .. seealso ::
         * :func:`abs` (absolute value)
+        
+.. function:: polar(x)
+
+    Converts the complex number `x` to polar form, i.e. it bring it in the form *r* e\ :sup:`jɸ`. Here the angle ɸ is always given in radians.
+    
+.. function:: cart(x)
+
+    Converts the complex number `x` to cartesian form, i.e. it bring it in the form *a + j b*.
         
               
 

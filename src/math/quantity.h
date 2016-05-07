@@ -116,9 +116,6 @@ public:
 
     class Format : public CNumber::Format {
     public:
-        static const Format Cartesian();
-        static const Format Polar();
-
         Format();
         Format(const CNumber::Format &other);
         Format(const HNumber::Format &other);
