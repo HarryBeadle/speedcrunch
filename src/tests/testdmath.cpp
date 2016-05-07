@@ -1,5 +1,6 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2016 Pol Welter <polwelter@gmail.com>
+// Copyright (C) 2016 @heldercorreia
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,8 +31,10 @@
 
 using namespace std;
 
+typedef Quantity::Format Format;
+
 #define CHECK(x,y) check_value(__FILE__,__LINE__,#x,x,y)
-#define CHECK_FORMAT(f,p,x,y) check_format(__FILE__,__LINE__,#x,x,f,p,y)
+#define CHECK_FORMAT(f,x,y) check_format(__FILE__,__LINE__,#x,x,f,y)
 #define CHECK_PRECISE(x,y) check_precise(__FILE__,__LINE__,#x,x,y)
 #define CHECK_KNOWN_ISSUE(x,y,n) check_value(__FILE__,__LINE__,#x,x,y,n)
 #define CHECK_STRING(x,y) {++dmath_total_tests; DisplayErrorOnMismatch(__FILE__,__LINE__,#x,x,y,dmath_failed_tests,dmath_new_failed_tests);}
@@ -43,21 +46,21 @@ static int dmath_new_failed_tests = 0;
 static void check_value(const char* file, int line, const char* msg, const Quantity& q, const char* expected, int issue = 0)
 {
     ++dmath_total_tests;
-    string result = DMath::format(q, 'f').toStdString();
+    string result = DMath::format(q, Format::Fixed()).toStdString();
     DisplayErrorOnMismatch(file, line, msg, result, expected, dmath_failed_tests, dmath_new_failed_tests, issue);
 }
 
-static void check_format(const char* file, int line, const char* msg, const Quantity& q, char format, int prec, const char* expected)
+static void check_format(const char* file, int line, const char* msg, const Quantity& q, Format format, const char* expected)
 {
     ++dmath_total_tests;
-    string result = DMath::format(q, format, prec).toStdString();
+    string result = DMath::format(q, format).toStdString();
     DisplayErrorOnMismatch(file, line, msg, result, expected, dmath_failed_tests, dmath_new_failed_tests, 0);
 }
 
 //static void check_precise(const char* file, int line, const char* msg, const Quantity& q, const char* expected)
 //{
 //    ++dmath_total_tests;
-//    string result = DMath::format(q, 'f', 50).toStdString();
+//    string result = DMath::format(q, Format::Fixed() + Format::Precision(50)).toStdString();
 //    DisplayErrorOnMismatch(file, line, msg, result, expected, dmath_failed_tests, dmath_new_failed_tests, 0);
 //}
 
@@ -96,6 +99,11 @@ void test_basic()
     CHECK(a/Units::second(), "123 meter second⁻¹");    //
     CHECK(a*HNumber(5), "2050 foot");                   //
     CHECK(a/HNumber(5), "82 foot");                     //
+
+    CHECK(DMath::raise(Units::meter(), 0),"1");
+    CHECK(DMath::raise(Units::meter(), Quantity(0)),"1");
+    CHECK(DMath::raise(Units::meter(), 0) + DMath::raise(Units::second(), 0),"2");
+    CHECK(DMath::raise(Units::meter(), Quantity(0)) + DMath::raise(Units::second(), Quantity(0)),"2");
 }
 
 void test_functions()
@@ -131,11 +139,11 @@ void test_functions()
 void test_format()
 {
     Quantity a = Quantity(CNumber("12365234.45647"));
-    CHECK_FORMAT('b', 10, a, "0b101111001010110110110010.0111010011011011001101111100100110011010111010010010010011110010001");
+    CHECK_FORMAT(Format::Binary() + Format::Fixed() + Format::Precision(10), a, "0b101111001010110110110010.0111010011");
 
 
     a *= Units::coulomb();
-    CHECK_FORMAT('b', 10, a, "0b101111001010110110110010.0111010011011011001101111100100110011010111010010010010011110010001 coulomb");
+    CHECK_FORMAT(Format::Binary() + Format::Fixed() + Format::Precision(10), a, "0b101111001010110110110010.0111010011 coulomb");
 }
 
 
@@ -143,7 +151,7 @@ int main(int argc, char* argv[])
 {
     QCoreApplication app(argc, argv);
 
-    dmath_total_tests  = 0;
+    dmath_total_tests = 0;
     dmath_failed_tests = 0;
 
     test_rational();
@@ -154,9 +162,10 @@ int main(int argc, char* argv[])
     test_format();
 
     cerr.flush();
+    if (!dmath_failed_tests)
+        return 0;
     cout << dmath_total_tests  << " total, "
          << dmath_failed_tests << " failed, "
          << dmath_new_failed_tests << " new" << endl;
-
-    return dmath_failed_tests;
+    return dmath_new_failed_tests;
 }

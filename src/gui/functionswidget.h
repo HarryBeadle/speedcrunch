@@ -1,6 +1,6 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2009 Andreas Scherer <andreas_coder@freenet.de>
-// Copyright (C) 2009, 2011, 2013 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (C) 2009, 2011, 2013 @heldercorreia
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License

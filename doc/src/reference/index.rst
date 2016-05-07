@@ -1,3 +1,5 @@
+.. _reference:
+
 Reference
 =========
 
@@ -6,7 +8,8 @@ are documented in this reference, organized by categories. For an alphabetical l
 consult the :ref:`genindex` and the :ref:`sc:functionindex`.
 
 
-.. rubric:: Built-in Functions
+Built-in Functions
+------------------
 
 
 .. toctree::
@@ -18,7 +21,8 @@ consult the :ref:`genindex` and the :ref:`sc:functionindex`.
    ieee754
 
 
-.. rubric:: Constants
+Constants
+---------
 
 .. toctree::
    :maxdepth: 2

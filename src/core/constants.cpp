@@ -1,6 +1,6 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2007 Ariya Hidayat <ariya@kde.org>
-// Copyright (C) 2007, 2009, 2011, 2013 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (C) 2007, 2009, 2011, 2013 @heldercorreia
 // Copyright (C) 2009 Andreas Scherer <andreas_coder@freenet.de>
 // Copyright (C) 2016 Hadrien Theveneau <theveneau@gmail.com>
 //

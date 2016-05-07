@@ -1,7 +1,7 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2004, 2005, 2007, 2008 Ariya Hidayat <ariya@kde.org>
 // Copyright (C) 2005-2006 Johan Thelin <e8johan@gmail.com>
-// Copyright (C) 2007-2016 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (C) 2007-2016 @heldercorreia
 // Copyright (C) 2015 Pol Welter <polwelter@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -161,7 +161,6 @@ void Settings::load()
     leaveLastExpression = settings->value(key + QLatin1String("LeaveLastExpression"), false).toBool();
     language = settings->value(key + QLatin1String("Language"), "C").toString();
     syntaxHighlighting = settings->value(key + QLatin1String("SyntaxHighlighting"), true).toBool();
-    systemTrayIconVisible = settings->value(key + QLatin1String("SystemTrayIconVisible"), false).toBool();
     autoResultToClipboard = settings->value(key + QLatin1String("AutoResultToClipboard"), false).toBool();
     windowPositionSave = settings->value(key + QLatin1String("WindowPositionSave"), true).toBool();
     parseAllRadixChar = settings->value(key + QLatin1String("ParseAllRadixChar"), true).toBool();
@@ -225,7 +224,6 @@ void Settings::save()
     settings->setValue(key + QLatin1String("AutoCompletion"), autoCompletion);
     settings->setValue(key + QLatin1String("AutoAns"), autoAns);
     settings->setValue(key + QLatin1String("AutoCalc"), autoCalc);
-    settings->setValue(key + QLatin1String("SystemTrayIconVisible"), systemTrayIconVisible);
     settings->setValue(key + QLatin1String("SyntaxHighlighting"), syntaxHighlighting);
     settings->setValue(key + QLatin1String("DigitGrouping"), digitGrouping);
     settings->setValue(key + QLatin1String("AutoResultToClipboard"), autoResultToClipboard);

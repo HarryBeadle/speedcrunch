@@ -1,5 +1,5 @@
 // This file is part of the SpeedCrunch project
-// Copyright (C) 2013 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (C) 2013 @heldercorreia
 // Copyright (C) 2015 Pol Welter <polwelter@gmail.com>
 //
 // This program is free software; you can redistribute it and/or

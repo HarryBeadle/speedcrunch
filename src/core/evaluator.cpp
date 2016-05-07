@@ -1,7 +1,7 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2004 Ariya Hidayat <ariya@kde.org>
 // Copyright (C) 2005, 2006 Johan Thelin <e8johan@gmail.com>
-// Copyright (C) 2007, 2008, 2009, 2010, 2013 Helder Correia <helder.pereira.correia@gmail.com>
+// Copyright (C) 2007, 2008, 2009, 2010, 2013 @heldercorreia
 // Copyright (C) 2009 Wolf Lammen <ookami1@gmx.de>
 // Copyright (C) 2014 Tey <teyut@free.fr>
 // Copyright (C) 2015 Pol Welter <polwelter@gmail.com>
@@ -45,7 +45,7 @@
 
 QTextStream& operator<<(QTextStream& s, Quantity num)
 {
-    s << DMath::format(num, 'f');
+    s << DMath::format(num, Quantity::Format::Fixed());
     return s;
 }
 #endif // EVALUATOR_DEBUG
@@ -1094,7 +1094,9 @@ void Evaluator::compile(const Tokens& tokens)
                 // Rule for function arguments, if token is ; or ): id (arg1 ; arg2 -> id (arg.
                 // Must come before binary op rule, as it is a special case of the latter.
                 if (!ruleFound && syntaxStack.itemCount() >= 5
-                     && token.isOperator() && opPrecedence(token.asOperator()) <=  opPrecedence(Token::Semicolon))
+                     && token.isOperator()
+                     && (token.asOperator() == Token::RightPar
+                         || token.asOperator() == Token::Semicolon))
                 {
                     Token arg2 = syntaxStack.top();
                     Token sep = syntaxStack.top(1);
@@ -2009,7 +2011,7 @@ QString Evaluator::dump()
     result.append("  Constants:\n");
     for (c = 0; c < m_constants.count(); ++c) {
         Quantity val = m_constants.at(c);
-        result += QString("    #%1 = %2\n").arg(c).arg(DMath::format(val, 'f'));
+        result += QString("    #%1 = %2\n").arg(c).arg(DMath::format(val, Quantity::Format::Fixed()));
 
     }
 

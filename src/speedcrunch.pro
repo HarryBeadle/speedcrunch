@@ -215,6 +215,6 @@ TRANSLATIONS += resources/locale/ar.ts \
                 resources/locale/sk.ts \
                 resources/locale/sv_SE.ts \
                 resources/locale/tr_TR.ts \
-                resources/locale/uz@Latn.ts \
+                resources/locale/uz_Latn_UZ.ts \
                 resources/locale/vi.ts \
                 resources/locale/zh_CN.ts
