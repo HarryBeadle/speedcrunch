@@ -1,5 +1,6 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2016 Pol Welter <polwelter@gmail.com>
+// Copyright (C) 2016 @heldercorreia
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -150,7 +151,7 @@ int main(int argc, char* argv[])
 {
     QCoreApplication app(argc, argv);
 
-    dmath_total_tests  = 0;
+    dmath_total_tests = 0;
     dmath_failed_tests = 0;
 
     test_rational();
@@ -161,9 +162,10 @@ int main(int argc, char* argv[])
     test_format();
 
     cerr.flush();
+    if (!dmath_failed_tests)
+        return 0;
     cout << dmath_total_tests  << " total, "
          << dmath_failed_tests << " failed, "
          << dmath_new_failed_tests << " new" << endl;
-
-    return dmath_failed_tests;
+    return dmath_new_failed_tests;
 }

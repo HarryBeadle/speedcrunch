@@ -1,6 +1,6 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2004-2006 Ariya Hidayat <ariya@kde.org>
-// Copyright (C) 2007-2009, 2013 @heldercorreia
+// Copyright (C) 2007-2009, 2013, 2016 @heldercorreia
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@ using namespace std;
 typedef Quantity::Format Format;
 
 static Evaluator* eval = 0;
-static int eval_total_tests  = 0;
+static int eval_total_tests = 0;
 static int eval_failed_tests = 0;
 static int eval_new_failed_tests = 0;
 
@@ -856,9 +856,10 @@ int main(int argc, char* argv[])
 
     test_angle_mode(settings);
 
-    cout << eval_total_tests  << " total, " << eval_failed_tests << " failed";
-    if (eval_failed_tests)
-        cout << ", " << eval_new_failed_tests << " new";
-    cout << endl;
-    return 0;
+    if (!eval_failed_tests)
+        return 0;
+    cout << eval_total_tests  << " total, "
+         << eval_failed_tests << " failed, "
+         << eval_new_failed_tests << " new" << endl;
+    return eval_new_failed_tests;
 }
