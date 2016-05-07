@@ -580,16 +580,16 @@ void Quantity::Format::serialize(QJsonObject& json) const
 {
     switch (mode) {
     case Mode::General:
-        json["mode"] = "General";
+        json["mode"] = QStringLiteral("General");
         break;
     case Mode::Fixed:
-        json["mode"] = "Fixed";
+        json["mode"] = QStringLiteral("Fixed");
         break;
     case Mode::Scientific:
-        json["mode"] = "Scientific";
+        json["mode"] = QStringLiteral("Scientific");
         break;
     case Mode::Engineering:
-        json["mode"] = "Engineering";
+        json["mode"] = QStringLiteral("Engineering");
         break;
     case Mode::Null:
         break;
@@ -597,13 +597,13 @@ void Quantity::Format::serialize(QJsonObject& json) const
 
     switch (base) {
     case Base::Binary:
-        json["base"] = "Binary";
+        json["base"] = QStringLiteral("Binary");
         break;
     case Base::Octal:
-        json["base"] = "Octal";
+        json["base"] = QStringLiteral("Octal");
         break;
     case Base::Hexadecimal:
-        json["base"] = "Hexadecimal";
+        json["base"] = QStringLiteral("Hexadecimal");
         break;
     case Base::Decimal:
     case Base::Null:
