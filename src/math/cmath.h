@@ -155,6 +155,10 @@ public:
     static CNumber arsinh(const CNumber & x);
     static CNumber arcosh(const CNumber & x);
     static CNumber artanh(const CNumber & x);
+    // COMPLEX SPECIFIC
+    static const CNumber real(const CNumber& x) {return x.real;}
+    static const CNumber imag(const CNumber& x) {return x.imag;}
+    static const CNumber phase(const CNumber&);
     // TRIGONOMETRY
     static CNumber sin(const CNumber & x);
     static CNumber cos(const CNumber & x);
@@ -165,6 +169,7 @@ public:
     static CNumber arcsin(const CNumber & x);
     static CNumber arccos(const CNumber & x);
     static CNumber arctan(const CNumber & x);
+    static CNumber arctan2(const CNumber& x, const CNumber& y);
     // HIGHER MATH FUNCTIONS
     static CNumber factorial(const CNumber & x, const CNumber & base = CNumber(1));
     static CNumber gamma(const CNumber & x);

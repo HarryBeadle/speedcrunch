@@ -1368,7 +1368,30 @@ HNumber HMath::arctan(const HNumber & x)
     HNumber result;
     call1Arg(result.d, x.d, float_arctan);
     return result;
-};
+}
+
+/**
+ * Returns the angle formed by the vector (x, y) and the x-axis.
+ */
+HNumber HMath::arctan2(const HNumber& x, const HNumber& y)
+{
+    if (y.isZero()) {
+        if (x.isNegative())
+            return HMath::pi();
+        else if (x.isZero())
+            return HMath::nan(OutOfDomain);
+        else
+            return HNumber(0);
+    } else {
+        HNumber phi = HMath::arctan(HMath::abs(y / x));
+        if (x.isNegative())
+            return (HMath::pi() - phi) * HMath::sgn(y);
+        else if (x.isZero())
+            return HMath::pi()/HNumber(2)*HMath::sgn(y);
+        else
+            return phi * HMath::sgn(y);
+    }
+}
 
 /**
  * Returns the arc sine of x.

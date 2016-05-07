@@ -728,7 +728,16 @@ CNumber CMath::arcosh(const CNumber & x)
  */
 CNumber CMath::artanh(const CNumber & x)
 {
-  return (CNumber("0.5") * CMath::ln(CNumber(1) + x)) - (CNumber("0.5") * CMath::ln(CNumber(1) - x));
+    return (CNumber("0.5") * CMath::ln(CNumber(1) + x)) - (CNumber("0.5") * CMath::ln(CNumber(1) - x));
+}
+
+
+/**
+ * Returns the phase of x.
+ */
+const CNumber CMath::phase(const CNumber& x)
+{
+    return HMath::arctan2(x.real, x.imag);
 }
 
 
@@ -867,9 +876,7 @@ REAL_WRAPPER_CMATH_NUM_INT(trunc, OutOfDomain)
 REAL_WRAPPER_CMATH_NUM(cbrt, OutOfDomain)
 REAL_WRAPPER_CMATH_NUM(sgn, OutOfDomain)
 // CMath EXPONENTIAL FUNCTION AND RELATED
-// REAL_WRAPPER_CMATH_NUM(arcsin, NotImplemented);
-// REAL_WRAPPER_CMATH_NUM(arccos, NotImplemented);
-// REAL_WRAPPER_CMATH_NUM(arctan, NotImplemented);
+REAL_WRAPPER_CMATH_NUM_NUM(arctan2, OutOfDomain)
 // CMath TRIGONOMETRY
 /* All trigonometry functions accept complex numbers */
 // CMath HIGHER MATH FUNCTIONS

@@ -181,6 +181,7 @@ public:
     static HNumber arcsin(const HNumber & x);
     static HNumber arccos(const HNumber & x);
     static HNumber arctan(const HNumber & x);
+    static HNumber arctan2(const HNumber&, const HNumber&);
     // HIGHER MATH FUNCTIONS
     static HNumber factorial(const HNumber & x, const HNumber & base = HNumber(1));
     static HNumber gamma(const HNumber & x);

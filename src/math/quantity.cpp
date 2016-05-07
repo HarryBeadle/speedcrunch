@@ -786,6 +786,7 @@ WRAPPER_DMATH_1(csc)
 WRAPPER_DMATH_1(arcsin)
 WRAPPER_DMATH_1(arccos)
 WRAPPER_DMATH_1(arctan)
+WRAPPER_DMATH_2(arctan2)
 
 WRAPPER_DMATH_2(factorial)
 WRAPPER_DMATH_1(gamma)
@@ -882,6 +883,11 @@ Quantity DMath::abs(const Quantity &n)
     Quantity result(n);
     result.m_numericValue = COMPLEX_WRAP_1(abs, n.m_numericValue);
     return result;
+}
+
+Quantity DMath::phase(const Quantity &n)
+{
+    return CMath::phase(n.numericValue());
 }
 
 Quantity DMath::sqrt(const Quantity &n)

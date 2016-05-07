@@ -151,9 +151,6 @@ class DMath
 
     static QString format(const Quantity, Quantity::Format = Quantity::Format());
 
-    static Quantity real(const Quantity& x);
-    static Quantity imag(const Quantity& x);
-
     // CONSTANTS
     static Quantity e();
     static Quantity phi();
@@ -189,6 +186,10 @@ class DMath
     static Quantity arsinh(const Quantity & x);
     static Quantity arcosh(const Quantity & x);
     static Quantity artanh(const Quantity & x);
+    // COMPLEX
+    static Quantity real(const Quantity&);
+    static Quantity imag(const Quantity&);
+    static Quantity phase(const Quantity&);
     // TRIGONOMETRY
     static Quantity sin(const Quantity & x);
     static Quantity cos(const Quantity & x);
@@ -199,6 +200,7 @@ class DMath
     static Quantity arcsin(const Quantity & x);
     static Quantity arccos(const Quantity & x);
     static Quantity arctan(const Quantity & x);
+    static Quantity arctan2(const Quantity & x, const Quantity & y);
     // HIGHER MATH FUNCTIONS
     static Quantity factorial(const Quantity & x, const Quantity & base = CNumber(1));
     static Quantity gamma(const Quantity & x);
