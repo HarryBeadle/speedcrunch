@@ -874,6 +874,7 @@ QString HMath::format(const HNumber& hn, HNumber::Format format)
         break;
     case HNumber::Format::Base::Decimal:
     case HNumber::Format::Base::Null:
+    default:
         base = 10;
         break;
     }
