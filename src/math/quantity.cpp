@@ -945,7 +945,7 @@ Quantity DMath::raise(const Quantity& n1, const Quantity& n2)
     // For negative bases only allow odd denominators.
     Rational exponent(n2.m_numericValue.real);
     if (abs(exponent.toHNumber() - n2.m_numericValue.real) >= RATIONAL_TOL
-       || (n1.isNegative() && exponent.denominator()%2 == 0))
+       || (n1.isNegative() && exponent.denominator() % 2 == 0))
         return DMath::nan(OutOfDomain);
 
     // Compute new dimension.

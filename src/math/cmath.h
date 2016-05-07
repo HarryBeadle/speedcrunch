@@ -113,8 +113,8 @@ public:
         Format(const HNumber::Format&);
         Format operator+(const Format&) const;
 
-        static const Format Polar();
-        static const Format Cartesian();
+        static Format Polar();
+        static Format Cartesian();
     };
 };
 
@@ -158,9 +158,9 @@ public:
     static CNumber arcosh(const CNumber&);
     static CNumber artanh(const CNumber&);
     // COMPLEX SPECIFIC
-    static const CNumber real(const CNumber& x) {return x.real;}
-    static const CNumber imag(const CNumber& x) {return x.imag;}
-    static const CNumber phase(const CNumber&);
+    static CNumber real(const CNumber& x) {return x.real;}
+    static CNumber imag(const CNumber& x) {return x.imag;}
+    static CNumber phase(const CNumber&);
     // TRIGONOMETRY
     static CNumber sin(const CNumber&);
     static CNumber cos(const CNumber&);

@@ -399,14 +399,14 @@ CNumber::Format CNumber::Format::operator+(const CNumber::Format& other) const
     return result;
 }
 
-const CNumber::Format CNumber::Format::Polar()
+CNumber::Format CNumber::Format::Polar()
 {
     Format result;
     result.notation = Format::Notation::Polar;
     return result;
 }
 
-const CNumber::Format CNumber::Format::Cartesian()
+CNumber::Format CNumber::Format::Cartesian()
 {
     Format result;
     result.notation = Format::Notation::Cartesian;
@@ -456,30 +456,28 @@ QString CMath::format(const CNumber& cn, CNumber::Format format)
         return "NaN";
     else if (cn.imag.isNearZero()) // Number is real.
         return HMath::format(cn.real, format);
-    else {
-        if (format.notation == CNumber::Format::Notation::Polar) {
-            QString strRadius = HMath::format(CMath::abs(cn).real, format);
-            HNumber phase = CMath::phase(cn).real;
-            if (phase.isZero())
-                return strRadius;
-            QString strPhase = HMath::format(phase, format);
-            return QString("%1 * exp(j*%2)").arg(strRadius).arg(strPhase);
-        } else {
-            QString real_part = cn.real.isZero()? "" : HMath::format(cn.real, format);
-            QString imag_part = "";
-            QString separator = "";
-            QString prefix    = ""; // TODO: Insert two modes, one for a+jb and one for a+bj.
-            QString postfix   = "j"; // TODO: Insert two modes, one for a+bi and one for a+bj.
+    if (format.notation == CNumber::Format::Notation::Polar) {
+        QString strRadius = HMath::format(CMath::abs(cn).real, format);
+        HNumber phase = CMath::phase(cn).real;
+        if (phase.isZero())
+            return strRadius;
+        QString strPhase = HMath::format(phase, format);
+        return QString("%1 * exp(j*%2)").arg(strRadius).arg(strPhase);
+    } else {
+        QString real_part = cn.real.isZero()? "" : HMath::format(cn.real, format);
+        QString imag_part = "";
+        QString separator = "";
+        QString prefix    = ""; // TODO: Insert two modes, one for a+jb and one for a+bj.
+        QString postfix   = "j"; // TODO: Insert two modes, one for a+bi and one for a+bj.
 
-            if (cn.imag.isPositive()) {
-                separator = cn.real.isZero() ? "": "+";
-                imag_part = HMath::format(cn.imag, format);
-            } else {
-                separator = "-";
-                imag_part = HMath::format(-cn.imag, format);
-            }
-            return real_part + separator + prefix + imag_part + postfix;
+        if (cn.imag.isPositive()) {
+            separator = cn.real.isZero() ? "": "+";
+            imag_part = HMath::format(cn.imag, format);
+        } else {
+            separator = "-";
+            imag_part = HMath::format(-cn.imag, format);
         }
+        return real_part + separator + prefix + imag_part + postfix;
     }
 }
 
@@ -672,7 +670,7 @@ CNumber CMath::artanh(const CNumber& x)
 /**
  * Returns the phase of x.
  */
-const CNumber CMath::phase(const CNumber& x)
+CNumber CMath::phase(const CNumber& x)
 {
     return HMath::arctan2(x.real, x.imag);
 }

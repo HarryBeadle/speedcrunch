@@ -858,7 +858,6 @@ int main(int argc, char* argv[])
 
     test_implicit_multiplication();
 
-
     settings->complexNumbers = true;
     DMath::complexMode = true;
     eval->initializeBuiltInVariables();
