@@ -4,7 +4,7 @@
   <id>speedcrunch.desktop</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0+</project_license>
-  <update_contact>speedcrunch-devel@googlegroups.com</update_contact>
+  <update_contact>speedcrunch@googlegroups.com</update_contact>
 
   <!-- TRANSLATORS: Name of the application, usually shouldn't be translated. -->
   <_name>SpeedCrunch</_name>
