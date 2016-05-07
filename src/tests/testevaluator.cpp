@@ -250,7 +250,7 @@ void test_radix_char()
     CHECK_EVAL("-0x.f + 1", "0.0625");
 }
 
-void test_thoushand_sep()
+void test_thousand_sep()
 {
     CHECK_EVAL("12'345.678'9", "12345.6789");
     CHECK_EVAL("1234'5.67'89", "12345.6789");
@@ -272,7 +272,7 @@ void test_thoushand_sep()
     CHECK_EVAL("12`345.678@9", "12345.6789");
 }
 
-void test_thoushand_sep_strict()
+void test_thousand_sep_strict()
 {
     CHECK_EVAL("12'345.678'9", "12345.6789");
     CHECK_EVAL("1234'5.67'89", "12345.6789");
@@ -801,6 +801,15 @@ void test_implicit_multiplication()
     CHECK_EVAL("2(a)^3", "250");
 }
 
+void test_format()
+{
+    CHECK_EVAL("bin(123)", "0b1111011");
+    CHECK_EVAL("oct(123)", "0o173");
+    CHECK_EVAL("hex(123)", "0x7B");
+
+    CHECK_EVAL("polar(3+4j)", "5 * exp(j*0.92729521800161223243)");
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -826,9 +835,9 @@ int main(int argc, char* argv[])
     test_radix_char();
 
     settings->strictDigitGrouping = false;
-    test_thoushand_sep();
+    test_thousand_sep();
     settings->strictDigitGrouping = true;
-    test_thoushand_sep_strict();
+    test_thousand_sep_strict();
 
     test_function_basic();
     test_function_trig();
@@ -849,10 +858,12 @@ int main(int argc, char* argv[])
 
     test_implicit_multiplication();
 
+
     settings->complexNumbers = true;
     DMath::complexMode = true;
     eval->initializeBuiltInVariables();
     test_complex();
+    test_format();
 
     test_angle_mode(settings);
 
