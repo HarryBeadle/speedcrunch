@@ -44,40 +44,40 @@
        TODO: Maybe autogenerate this. -->
   <translation/>
   <languages>
-    <lang>hu_HU</lang>
+    <lang>hu</lang>
     <lang>pt_PT</lang>
-    <lang>pt_BR</lang>
-    <lang>de_DE</lang>
-    <lang>ko_KR</lang>
-    <lang>id_ID</lang>
-    <lang>he_IL</lang>
+    <lang>pt</lang>
+    <lang>de</lang>
+    <lang>ko</lang>
+    <lang>id</lang>
+    <lang>he</lang>
     <lang>lt</lang>
-    <lang>nl_NL</lang>
-    <lang>it_IT</lang>
-    <lang>zh_CN</lang>
-    <lang>ja_JP</lang>
-    <lang>fr_FR</lang>
-    <lang>ru_RU</lang>
-    <lang>et_EE</lang>
-    <lang>lv_LV</lang>
-    <lang>eu_ES</lang>
+    <lang>nl</lang>
+    <lang>it</lang>
+    <lang>zh</lang>
+    <lang>ja</lang>
+    <lang>fr</lang>
+    <lang>ru</lang>
+    <lang>et</lang>
+    <lang>lv</lang>
+    <lang>eu</lang>
     <lang>el</lang>
     <lang>es_AR</lang>
     <lang>en_GB</lang>
-    <lang>fi_FI</lang>
+    <lang>fi</lang>
     <lang>ar</lang>
-    <lang>pl_PL</lang>
+    <lang>pl</lang>
     <lang>uz@Latn</lang>
-    <lang>es_ES</lang>
-    <lang>ca_ES</lang>
+    <lang>es</lang>
+    <lang>ca</lang>
     <lang>sk</lang>
-    <lang>nb_NO</lang>
-    <lang>tr_TR</lang>
-    <lang>ro_RO</lang>
-    <lang>sv_SE</lang>
+    <lang>nb</lang>
+    <lang>tr</lang>
+    <lang>ro</lang>
+    <lang>sv</lang>
     <lang>da</lang>
-    <lang>cs_CZ</lang>
+    <lang>cs</lang>
     <lang>vi</lang>
-    <lang>en_US</lang>
+    <lang>en</lang>
   </languages>
 </component>
