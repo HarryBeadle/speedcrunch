@@ -167,6 +167,8 @@ void MainWindow::createActions()
     m_actions.settingsResultFormatHexadecimal = new QAction(this);
     m_actions.settingsResultFormatOctal = new QAction(this);
     m_actions.settingsResultFormatScientific = new QAction(this);
+    m_actions.settingsResultFormatCartesian= new QAction(this);
+    m_actions.settingsResultFormatPolar = new QAction(this);
     m_actions.helpManual = new QAction(this);
     m_actions.helpUpdates = new QAction(this);
     m_actions.helpFeedback = new QAction(this);
@@ -207,11 +209,13 @@ void MainWindow::createActions()
     m_actions.settingsResultFormat8Digits->setCheckable(true);
     m_actions.settingsResultFormatAutoPrecision->setCheckable(true);
     m_actions.settingsResultFormatBinary->setCheckable(true);
+    m_actions.settingsResultFormatCartesian->setCheckable(true);
     m_actions.settingsResultFormatEngineering->setCheckable(true);
     m_actions.settingsResultFormatFixed->setCheckable(true);
     m_actions.settingsResultFormatGeneral->setCheckable(true);
     m_actions.settingsResultFormatHexadecimal->setCheckable(true);
     m_actions.settingsResultFormatOctal->setCheckable(true);
+    m_actions.settingsResultFormatPolar->setCheckable(true);
     m_actions.settingsResultFormatScientific->setCheckable(true);
     m_actions.viewConstants->setCheckable(true);
     m_actions.viewFullScreenMode->setCheckable(true);
@@ -343,6 +347,8 @@ void MainWindow::setActionsText()
     m_actions.settingsResultFormatHexadecimal->setText(MainWindow::tr("&Hexadecimal"));
     m_actions.settingsResultFormatOctal->setText(MainWindow::tr("&Octal"));
     m_actions.settingsResultFormatScientific->setText(MainWindow::tr("&Scientific"));
+    m_actions.settingsResultFormatCartesian->setText(MainWindow::tr("&Cartesian"));
+    m_actions.settingsResultFormatPolar->setText(MainWindow::tr("&Polar"));
     m_actions.settingsDisplayFont->setText(MainWindow::tr("&Font..."));
     m_actions.settingsLanguage->setText(MainWindow::tr("&Language..."));
 
@@ -365,6 +371,10 @@ void MainWindow::createActionGroups()
     m_actionGroups.resultFormat->addAction(m_actions.settingsResultFormatScientific);
     m_actionGroups.resultFormat->addAction(m_actions.settingsResultFormatOctal);
     m_actionGroups.resultFormat->addAction(m_actions.settingsResultFormatHexadecimal);
+
+    m_actionGroups.complexFormat = new QActionGroup(this);
+    m_actionGroups.complexFormat->addAction(m_actions.settingsResultFormatCartesian);
+    m_actionGroups.complexFormat->addAction(m_actions.settingsResultFormatPolar);
 
     m_actionGroups.radixChar = new QActionGroup(this);
     m_actionGroups.radixChar->addAction(m_actions.settingsRadixCharDefault);
@@ -492,9 +502,9 @@ void MainWindow::createMenus()
     m_menus.precision->addAction(m_actions.settingsResultFormat15Digits);
     m_menus.precision->addAction(m_actions.settingsResultFormat50Digits);
 
-
-
-    m_menus.resultFormat->addSeparator();
+    m_menus.complexFormat = m_menus.resultFormat->addMenu("");
+    m_menus.complexFormat->addAction(m_actions.settingsResultFormatCartesian);
+    m_menus.complexFormat->addAction(m_actions.settingsResultFormatPolar);
 
     m_menus.radixChar = m_menus.resultFormat->addMenu("");
     m_menus.radixChar->addAction(m_actions.settingsRadixCharDefault);
@@ -564,6 +574,7 @@ void MainWindow::setMenusText()
     m_menus.decimal->setTitle(MainWindow::tr("&Decimal"));
     m_menus.precision->setTitle(MainWindow::tr("&Precision"));
     m_menus.angleUnit->setTitle(MainWindow::tr("&Angle Unit"));
+    m_menus.complexFormat->setTitle(MainWindow::tr("Comple&x Format"));
     m_menus.behavior->setTitle(MainWindow::tr("&Behavior"));
     m_menus.display->setTitle(MainWindow::tr("&Display"));
     m_menus.colorScheme->setTitle(MainWindow::tr("Color Scheme"));
@@ -890,11 +901,13 @@ void MainWindow::createFixedConnections()
     connect(m_actions.settingsResultFormat8Digits, SIGNAL(triggered()), SLOT(setResultPrecision8Digits()));
     connect(m_actions.settingsResultFormatAutoPrecision, SIGNAL(triggered()), SLOT(setResultPrecisionAutomatic()));
     connect(m_actions.settingsResultFormatBinary, SIGNAL(triggered()), SLOT(setResultFormatBinary()));
+    connect(m_actions.settingsResultFormatCartesian, SIGNAL(triggered()), SLOT(setResultFormatCartesian()));
     connect(m_actions.settingsResultFormatEngineering, SIGNAL(triggered()), SLOT(setResultFormatEngineering()));
     connect(m_actions.settingsResultFormatFixed, SIGNAL(triggered()), SLOT(setResultFormatFixed()));
     connect(m_actions.settingsResultFormatGeneral, SIGNAL(triggered()), SLOT(setResultFormatGeneral()));
     connect(m_actions.settingsResultFormatHexadecimal, SIGNAL(triggered()), SLOT(setResultFormatHexadecimal()));
     connect(m_actions.settingsResultFormatOctal, SIGNAL(triggered()), SLOT(setResultFormatOctal()));
+    connect(m_actions.settingsResultFormatPolar, SIGNAL(triggered()), SLOT(setResultFormatPolar()));
     connect(m_actions.settingsResultFormatScientific, SIGNAL(triggered()), SLOT(setResultFormatScientific()));
 
     connect(m_actions.settingsLanguage, SIGNAL(triggered()), SLOT(showLanguageChooserDialog()));
@@ -992,6 +1005,7 @@ void MainWindow::applySettings()
 
     checkInitialResultFormat();
     checkInitialResultPrecision();
+    checkInitialComplexFormat();
 
     if (m_settings->isRadixCharacterAuto())
         m_actions.settingsRadixCharDefault->setChecked(true);
@@ -1096,6 +1110,18 @@ void MainWindow::checkInitialResultFormat()
         case 'o': m_actions.settingsResultFormatOctal->setChecked(true); break;
         case 'b': m_actions.settingsResultFormatBinary->setChecked(true); break;
         default : m_actions.settingsResultFormatFixed->setChecked(true);
+    }
+}
+
+void MainWindow::checkInitialComplexFormat()
+{
+    switch (m_settings->resultFormatComplex) {
+    case 'c':
+        m_actions.settingsResultFormatCartesian->setChecked(true);
+        break;
+    case 'p':
+        m_actions.settingsResultFormatPolar->setChecked(true);
+        break;
     }
 }
 
@@ -1907,6 +1933,15 @@ void MainWindow::setResultFormatBinary()
         m_status.resultFormat->setText(tr("Binary"));
 }
 
+void MainWindow::setResultFormatCartesian()
+{
+    if (m_settings->resultFormatComplex == 'c')
+        return;
+
+    m_settings->resultFormatComplex = 'c';
+    emit resultFormatChanged();
+}
+
 void MainWindow::setResultFormatEngineering()
 {
     setResultFormat('n');
@@ -1944,6 +1979,15 @@ void MainWindow::setResultFormatOctal()
 
     if (m_status.resultFormat)
         m_status.resultFormat->setText(tr("Octal"));
+}
+
+void MainWindow::setResultFormatPolar()
+{
+    if (m_settings->resultFormatComplex == 'p')
+        return;
+
+    m_settings->resultFormatComplex = 'p';
+    emit resultFormatChanged();
 }
 
 void MainWindow::setResultFormatScientific()

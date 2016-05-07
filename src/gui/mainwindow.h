@@ -131,12 +131,14 @@ private slots:
     void setRadixCharacterComma();
     void setRadixCharacterDot();
     void setResultFormatBinary();
+    void setResultFormatCartesian();
     void setResultFormat(char);
     void setResultFormatEngineering();
     void setResultFormatFixed();
     void setResultFormatGeneral();
     void setResultFormatHexadecimal();
     void setResultFormatOctal();
+    void setResultFormatPolar();
     void setResultFormatScientific();
     void setResultPrecision15Digits();
     void setResultPrecision2Digits();
@@ -195,6 +197,7 @@ private:
     void createFixedConnections();
     void applySettings();
     void checkInitialResultFormat();
+    void checkInitialComplexFormat();
     void checkInitialResultPrecision();
     void checkInitialLanguage();
     void checkInitialDigitGrouping();
@@ -256,6 +259,8 @@ private:
         QAction* settingsResultFormat50Digits;
         QAction* settingsResultFormatBinary;
         QAction* settingsResultFormatOctal;
+        QAction* settingsResultFormatCartesian;
+        QAction* settingsResultFormatPolar;
         QAction* settingsResultFormatHexadecimal;
         QAction* settingsAngleUnitRadian;
         QAction* settingsAngleUnitDegree;
@@ -297,6 +302,7 @@ private:
         QActionGroup* colorScheme;
         QActionGroup* digits;
         QActionGroup* resultFormat;
+        QActionGroup* complexFormat;
         QActionGroup* radixChar;
         QActionGroup* digitGrouping;
     } m_actionGroups;
@@ -310,6 +316,7 @@ private:
         QMenu* display;
         QMenu* edit;
         QMenu* resultFormat;
+        QMenu* complexFormat;
         QMenu* help;
         QMenu* precision;
         QMenu* radixChar;
