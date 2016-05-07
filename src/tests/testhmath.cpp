@@ -1,6 +1,6 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2004-2006 Ariya Hidayat <ariya@kde.org>
-// Copyright (C) 2007-2008, 2014 @heldercorreia
+// Copyright (C) 2007-2008, 2014, 2016 @heldercorreia
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -996,9 +996,10 @@ int main(int argc, char* argv[])
     test_op();
     test_functions();
 
+    if (!hmath_failed_tests)
+        return 0;
     cout << hmath_total_tests  << " total, "
          << hmath_failed_tests << " failed, "
          << hmath_new_failed_tests << " new" << endl;
-
-  return hmath_failed_tests;
+    return hmath_new_failed_tests;
 }

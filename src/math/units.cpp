@@ -1,5 +1,6 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2015 Pol Welter <polwelter@gmail.com>
+// Copyright (C) 2016 @heldercorreia
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -16,32 +17,32 @@
 // the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 // Boston, MA 02110-1301, USA.
 
-#include "math/units.h"
-#include "math/rational.h"
-#include "math/quantity.h"
+#include "units.h"
+
+#include "quantity.h"
+#include "rational.h"
+
 #include <QString>
 #include <QStringList>
 
-#define UNIT_CACHE(name, value)                     \
-    const Quantity Units::name()                    \
-    {                                               \
-        if (!m_cache.contains(#name))               \
-            m_cache[#name] = value;                 \
-        return (m_cache[#name]);                    \
+#define UNIT_CACHE(name, value) \
+    const Quantity Units::name() \
+    { \
+        if (!m_cache.contains(#name)) \
+            m_cache[#name] = value; \
+        return (m_cache[#name]); \
     }
 
-#define BASE_UNIT_CACHE(name, dimension)            \
-    const Quantity Units::name()                    \
-    {                                               \
-        if (!m_cache.contains(#name)) {             \
-            Quantity name(1);                       \
-            name.modifyDimension(dimension, 1);     \
-            m_cache[#name] = name;                  \
-        }                                           \
-        return m_cache[#name];                      \
+#define BASE_UNIT_CACHE(name, dimension) \
+    const Quantity Units::name() \
+    { \
+        if (!m_cache.contains(#name)) { \
+            Quantity name(1); \
+            name.modifyDimension(dimension, 1); \
+            m_cache[#name] = name; \
+        } \
+        return m_cache[#name]; \
     }
-
-
 
 QHash<QMap<QString, Rational>, Unit> Units::m_matchLookup;
 QMap<QString, Quantity> Units::m_cache;
@@ -59,13 +60,12 @@ unsigned int qHash(QMap<QString, Rational> dimension)
     QStringList keyList(dimension.keys());
     QString blob("");
     keyList.sort();
-    for (int i=0; i<keyList.size(); ++i) {
+    for (int i = 0; i < keyList.size(); ++i) {
         keyList[i].append(dimension[keyList[i]].toString());
         blob.append(keyList[i]);
     }
     return qHash(blob);
 }
-
 
 /*
  * initialize the lookup table for automatic matching
@@ -105,9 +105,7 @@ void Units::initTable()
     pushUnit(joule()/kilogram(), "joule/kilogram");             // specific energy
 }
 
-
-
-void Units::findUnit(Quantity & q)
+void Units::findUnit(Quantity& q)
 {
     QString unit_name = "";
     CNumber unit(1);
@@ -116,30 +114,24 @@ void Units::findUnit(Quantity & q)
     if (m_matchLookup.isEmpty())
         initTable();
 
-    /*
-     *  match derived units
-     */
+    // Match derived units.
     if (m_matchLookup.contains(q.getDimension())) {
         Unit temp(m_matchLookup[q.getDimension()]);
         q.setDisplayUnit(temp.value.numericValue(), temp.name);
-    }
-    else
-    {
-        /*
-         *  autogenerate unit name (product of base units)
-         */
-        QMap<QString, Rational> dimension = q.getDimension();
-        QMap<QString, Rational>::const_iterator i = dimension.constBegin();
+    } else {
+        // Autogenerate unit name (product of base units).
+        auto dimension = q.getDimension();
+        auto i = dimension.constBegin();
         while (i != dimension.constEnd()) {
-            QString exponent = i.value().toString();
-            if(exponent.contains('/'))
+            auto exponent = i.value().toString();
+            if (exponent.contains('/'))
                 exponent = "^(" + exponent+')';
-            else if(exponent == "1")
+            else if (exponent == "1")
                 exponent = "";
             else
                 exponent = '^' + exponent;
 
-            if(exponent == QLatin1String("^0")) exponent = QString::fromUtf8("⁰");
+            if (exponent == QLatin1String("^0")) exponent = QString::fromUtf8("⁰");
             else if (exponent == QLatin1String("^2")) exponent = QString::fromUtf8("²");
             else if (exponent == QLatin1String("^3")) exponent = QString::fromUtf8("³");
             else if (exponent == QLatin1String("^4")) exponent = QString::fromUtf8("⁴") ;
@@ -158,28 +150,25 @@ void Units::findUnit(Quantity & q)
             else if (exponent == QLatin1String("^-8")) exponent = QString::fromUtf8("⁻⁸") ;
             else if (exponent == QLatin1String("^-9")) exponent = QString::fromUtf8("⁻⁹") ;
 
-
-
-            // TODO: replace this with a lookup to a repository
-            if (i.key() == "length") {
+            // TODO: Replace this with a lookup to a repository.
+            if (i.key() == "length")
                 unit_name += " meter";
-            } else if (i.key() == "time") {
+            else if (i.key() == "time")
                 unit_name += " second";
-            } else if (i.key() == "mass") {
+            else if (i.key() == "mass")
                 unit_name += " kilogram";
-            } else if (i.key() == "el. current") {
+            else if (i.key() == "el. current")
                 unit_name += " ampere";
-            } else if (i.key() == "amount") {
+            else if (i.key() == "amount")
                 unit_name += " mole";
-            } else if (i.key() == "luminous intensity") {
+            else if (i.key() == "luminous intensity")
                 unit_name += " candela";
-            } else if (i.key() == "temperature") {
+            else if (i.key() == "temperature")
                 unit_name += " kelvin";
-            } else if (i.key() == "information") {
+            else if (i.key() == "information")
                 unit_name += " bit";
-            } else {
+            else
                 unit_name += " " + i.key(); // fall back to the dimension name
-            }
             unit_name += exponent;
             ++i;
         }
@@ -187,15 +176,13 @@ void Units::findUnit(Quantity & q)
     }
 }
 
-#define ADD_UNIT(name)  result.append(Unit(#name, name()))
+#define ADD_UNIT(name) result.append(Unit(#name, name()))
 #define ADD_UNIT_ALIAS(name, alias) result.append(Unit(#alias, name()))
 
-
-// This list contains the units that wil be set as builtin variables by the evaluator
+// This list contains the units that wil be set as builtin variables by the evaluator.
 const QList<Unit> Units::getList()
 {
     QList<Unit> result;
-
 
     ADD_UNIT(meter);
     ADD_UNIT(second);
@@ -257,7 +244,6 @@ const QList<Unit> Units::getList()
     ADD_UNIT(steradian);
     ADD_UNIT(lumen);
     ADD_UNIT(lux);
-
 
     ADD_UNIT(metric_ton);
     ADD_UNIT(short_ton);
@@ -349,46 +335,45 @@ const QList<Unit> Units::getList()
     return result;
 }
 
-BASE_UNIT_CACHE(meter,     "length")
-BASE_UNIT_CACHE(second,    "time")
-BASE_UNIT_CACHE(kilogram,  "mass")
-BASE_UNIT_CACHE(ampere,    "el. current")
-BASE_UNIT_CACHE(mole,      "amount")
-BASE_UNIT_CACHE(kelvin,    "temperature")
-BASE_UNIT_CACHE(candela,   "luminous intensity")
-BASE_UNIT_CACHE(bit,       "information")
-
+BASE_UNIT_CACHE(meter, "length")
+BASE_UNIT_CACHE(second, "time")
+BASE_UNIT_CACHE(kilogram, "mass")
+BASE_UNIT_CACHE(ampere, "el. current")
+BASE_UNIT_CACHE(mole, "amount")
+BASE_UNIT_CACHE(kelvin, "temperature")
+BASE_UNIT_CACHE(candela, "luminous intensity")
+BASE_UNIT_CACHE(bit, "information")
 
 UNIT_CACHE(yocto, HNumber("1e-24"))
 UNIT_CACHE(zepto, HNumber("1e-21"))
-UNIT_CACHE(atto,  HNumber("1e-18"))
+UNIT_CACHE(atto, HNumber("1e-18"))
 UNIT_CACHE(femto, HNumber("1e-15"))
-UNIT_CACHE(pico,  HNumber("1e-12"))
-UNIT_CACHE(nano,  HNumber("1e-9"))
+UNIT_CACHE(pico, HNumber("1e-12"))
+UNIT_CACHE(nano, HNumber("1e-9"))
 UNIT_CACHE(micro, HNumber("1e-6"))
 UNIT_CACHE(milli, HNumber("1e-3"))
 UNIT_CACHE(centi, HNumber("1e-2"))
-UNIT_CACHE(deci,  HNumber("1e-1"))
+UNIT_CACHE(deci, HNumber("1e-1"))
 
-UNIT_CACHE(deca,  HNumber("1e1"))
+UNIT_CACHE(deca, HNumber("1e1"))
 UNIT_CACHE(hecto, HNumber("1e2"))
-UNIT_CACHE(kilo,  HNumber("1e3"))
-UNIT_CACHE(mega,  HNumber("1e6"))
-UNIT_CACHE(giga,  HNumber("1e9"))
-UNIT_CACHE(tera,  HNumber("1e12"))
-UNIT_CACHE(peta,  HNumber("1e15"))
-UNIT_CACHE(exa,   HNumber("1e18"))
+UNIT_CACHE(kilo, HNumber("1e3"))
+UNIT_CACHE(mega, HNumber("1e6"))
+UNIT_CACHE(giga, HNumber("1e9"))
+UNIT_CACHE(tera, HNumber("1e12"))
+UNIT_CACHE(peta, HNumber("1e15"))
+UNIT_CACHE(exa, HNumber("1e18"))
 UNIT_CACHE(zetta, HNumber("1e21"))
 UNIT_CACHE(yotta, HNumber("1e24"))
 
-UNIT_CACHE(kibi,  HNumber("1024"))
-UNIT_CACHE(mebi,  kibi()*kibi())
-UNIT_CACHE(gibi,  kibi()*mebi())
-UNIT_CACHE(tebi,  kibi()*gibi())
-UNIT_CACHE(pebi,  kibi()*tebi())
-UNIT_CACHE(exbi,  kibi()*pebi())
-UNIT_CACHE(zebi,  kibi()*exbi())
-UNIT_CACHE(yobi,  kibi()*zebi())
+UNIT_CACHE(kibi, HNumber("1024"))
+UNIT_CACHE(mebi, kibi()*kibi())
+UNIT_CACHE(gibi, kibi()*mebi())
+UNIT_CACHE(tebi, kibi()*gibi())
+UNIT_CACHE(pebi, kibi()*tebi())
+UNIT_CACHE(exbi, kibi()*pebi())
+UNIT_CACHE(zebi, kibi()*exbi())
+UNIT_CACHE(yobi, kibi()*zebi())
 
 UNIT_CACHE(newton,              meter() * kilogram() / (second()*second()))
 UNIT_CACHE(hertz,               Quantity(1) / second())
@@ -422,16 +407,16 @@ UNIT_CACHE(grain,               pound() / HNumber(7000))
 UNIT_CACHE(short_ton,           HNumber(2000) * pound())
 UNIT_CACHE(long_ton,            HNumber(2240) * pound())
 UNIT_CACHE(atomic_mass_unit,    HNumber("1.660539040e-27") * kilogram()) // http://physics.nist.gov/cgi-bin/cuu/Value?tukg
-UNIT_CACHE(carat,               HNumber(200) * milli()*gram())        // do not confuse with karat below
+UNIT_CACHE(carat,               HNumber(200) * milli()*gram()) // Do not confuse with karat below.
 
 UNIT_CACHE(micron,              micro()*meter())
 UNIT_CACHE(angstrom,            HNumber("1e-10") * meter())
-UNIT_CACHE(astronomical_unit,   HNumber("149597870700") * meter())    // IAU 2012 Resolution B2
+UNIT_CACHE(astronomical_unit,   HNumber("149597870700") * meter()) // IAU 2012 Resolution B2.
 UNIT_CACHE(lightyear,           speed_of_light() * julian_year())
 UNIT_CACHE(lightminute,         speed_of_light() * minute())
 UNIT_CACHE(lightsecond,         speed_of_light() * second())
-UNIT_CACHE(parsec,              HNumber(648000)/HMath::pi() * astronomical_unit()) // IAU 2015 Resolution B2
-UNIT_CACHE(inch,                HNumber("0.0254") * meter())          // international inch
+UNIT_CACHE(parsec,              HNumber(648000)/HMath::pi() * astronomical_unit()) // IAU 2015 Resolution B2.
+UNIT_CACHE(inch,                HNumber("0.0254") * meter()) // International inch.
 UNIT_CACHE(foot,                HNumber(12) * inch())
 UNIT_CACHE(yard,                HNumber(36) * inch())
 UNIT_CACHE(mile,                HNumber(1760) * yard())
@@ -461,13 +446,13 @@ UNIT_CACHE(hour,                HNumber(60) * minute())
 UNIT_CACHE(day,                 HNumber(24) * hour())
 UNIT_CACHE(week,                HNumber(7) * day())
 UNIT_CACHE(julian_year,         HNumber("365.25") * day())
-UNIT_CACHE(tropical_year,       HNumber("365.24219") * day())       // approximate; changes over time due to Earth's precession
-UNIT_CACHE(sidereal_year,       HNumber("365.25636") * day())       // http://hpiers.obspm.fr/eop-pc/models/constants.html
+UNIT_CACHE(tropical_year,       HNumber("365.24219") * day()) // Approx.: changes over time due to Earth's precession.
+UNIT_CACHE(sidereal_year,       HNumber("365.25636") * day()) // http://hpiers.obspm.fr/eop-pc/models/constants.html
 
 UNIT_CACHE(percent,             HNumber("0.01"))
 UNIT_CACHE(ppm,                 HNumber("1e-6"))
 UNIT_CACHE(ppb,                 HNumber("1e-9"))
-UNIT_CACHE(karat,               Rational(1,24).toHNumber())         // do not confuse with carat above
+UNIT_CACHE(karat,               Rational(1,24).toHNumber()) // Do not confuse with carat above.
 
 UNIT_CACHE(bar,                 HNumber("1e5") * pascal())
 UNIT_CACHE(atmosphere,          HNumber("1.01325") * bar())
@@ -475,8 +460,8 @@ UNIT_CACHE(torr,                atmosphere() / HNumber(760))
 UNIT_CACHE(pounds_per_sqinch,   pound() * gravity() / (inch()*inch()))
 
 UNIT_CACHE(electron_volt,       elementary_charge() * volt())
-UNIT_CACHE(calorie,             HNumber("4.1868") * joule())        // International Table calorie
-UNIT_CACHE(british_thermal_unit, HNumber("1055.056") * joule())     // International standard ISO 31-4
+UNIT_CACHE(calorie,             HNumber("4.1868") * joule()) // International Table calorie.
+UNIT_CACHE(british_thermal_unit, HNumber("1055.056") * joule()) // International standard ISO 31-4.
 
 UNIT_CACHE(nat,                 bit() / HMath::ln(2))
 UNIT_CACHE(hartley,             HMath::ln(10) * nat())
@@ -486,10 +471,9 @@ UNIT_CACHE(tablespoon,          HNumber(15) * milli()*liter())
 UNIT_CACHE(teaspoon,            HNumber(5) * milli()*liter())
 UNIT_CACHE(cup,                 HNumber(240) * milli()*liter())
 
-UNIT_CACHE(gravity,             HNumber("9.80665") * newton() / kilogram())  // 3rd CGPM (1901, CR 70)
+UNIT_CACHE(gravity,             HNumber("9.80665") * newton() / kilogram()) // 3rd CGPM (1901, CR 70).
 UNIT_CACHE(speed_of_light,      HNumber(299792458) * meter() / second())
-UNIT_CACHE(elementary_charge,   HNumber("1.6021766208e-19") * coulomb())     // http://physics.nist.gov/cgi-bin/cuu/Value?e
+UNIT_CACHE(elementary_charge,   HNumber("1.6021766208e-19") * coulomb()) // http://physics.nist.gov/cgi-bin/cuu/Value?e
 UNIT_CACHE(speed_of_sound_STP,  HNumber(331) * meter()/second())
 UNIT_CACHE(knot,                nautical_mile()/hour())
-UNIT_CACHE(horsepower,          HNumber(550) * foot() * pound() * gravity() / second()) // imperial horsepower
-
+UNIT_CACHE(horsepower,          HNumber(550) * foot() * pound() * gravity() / second()) // Imperial horsepower.

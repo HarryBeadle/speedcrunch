@@ -1,6 +1,6 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2004-2006 Ariya Hidayat <ariya@kde.org>
-// Copyright (C) 2007-2008, 2014 @heldercorreia
+// Copyright (C) 2007-2008, 2014, 2016 @heldercorreia
 // Copyright (C) 2015-2016 Hadrien Theveneau <hadrien.theveneau@gmail.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -1031,9 +1031,10 @@ int main(int, char**)
     test_functions();
     test_branches();
 
+    if (!cmath_failed_tests)
+        return 0;
     cout << cmath_total_tests  << " total, "
          << cmath_failed_tests << " failed, "
          << cmath_new_failed_tests << " new" << endl;
-
-  return cmath_failed_tests;
+    return cmath_new_failed_tests;
 }

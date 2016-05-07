@@ -7,6 +7,7 @@
         <file>locale/da.qm</file>
         <file>locale/de_DE.qm</file>
         <file>locale/el.qm</file>
+        <file>locale/en_GB.qm</file>
         <file>locale/en_US.qm</file>
         <file>locale/es_AR.qm</file>
         <file>locale/es_ES.qm</file>
@@ -32,7 +33,7 @@
         <file>locale/sk.qm</file>
         <file>locale/sv_SE.qm</file>
         <file>locale/tr_TR.qm</file>
-        <file>locale/uz@Latn.qm</file>
+        <file>locale/uz_Latn_UZ.qm</file>
         <file>locale/vi.qm</file>
         <file>locale/zh_CN.qm</file>
         <file>color-schemes/Terminal.json</file>

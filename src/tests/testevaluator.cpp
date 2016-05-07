@@ -1,6 +1,6 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2004-2006 Ariya Hidayat <ariya@kde.org>
-// Copyright (C) 2007-2009, 2013 @heldercorreia
+// Copyright (C) 2007-2009, 2013, 2016 @heldercorreia
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@ using namespace std;
 typedef Quantity::Format Format;
 
 static Evaluator* eval = 0;
-static int eval_total_tests  = 0;
+static int eval_total_tests = 0;
 static int eval_failed_tests = 0;
 static int eval_new_failed_tests = 0;
 
@@ -341,6 +341,15 @@ void test_function_basic()
     CHECK_EVAL("(-27)^(-1/3)", "-0.33333333333333333333");
 
     CHECK_EVAL_PRECISE("exp((1)/2) + exp((1)/2)", "3.29744254140025629369730157562832714330755220142030");
+
+    // Test functions composition
+    CHECK_EVAL("log(10;log(10;1e100))", "2");
+    CHECK_EVAL("log(10;abs(-100))", "2");
+    CHECK_EVAL("abs(log(10;100))", "2");
+    CHECK_EVAL("abs(abs(-100))", "100");
+    CHECK_EVAL("sum(10;abs(-100);1)", "111");
+    CHECK_EVAL("sum(abs(-100);10;1)", "111");
+    CHECK_EVAL("sum(10;1;abs(-100))", "111");
 }
 
 void test_function_trig()
@@ -847,9 +856,10 @@ int main(int argc, char* argv[])
 
     test_angle_mode(settings);
 
-    cout << eval_total_tests  << " total, " << eval_failed_tests << " failed";
-    if (eval_failed_tests)
-        cout << ", " << eval_new_failed_tests << " new";
-    cout << endl;
-    return 0;
+    if (!eval_failed_tests)
+        return 0;
+    cout << eval_total_tests  << " total, "
+         << eval_failed_tests << " failed, "
+         << eval_new_failed_tests << " new" << endl;
+    return eval_new_failed_tests;
 }

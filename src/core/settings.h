@@ -57,7 +57,6 @@ public:
     bool sessionSave;
     bool leaveLastExpression;
     bool syntaxHighlighting;
-    bool systemTrayIconVisible;
     bool windowAlwaysOnTop;
     bool autoResultToClipboard;
     bool windowPositionSave;

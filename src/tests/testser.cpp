@@ -1,5 +1,6 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2015-2016 Hadrien Theveneau <theveneau@gmail.com>
+// Copyright (C) 2016 @heldercorreia
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -137,8 +138,11 @@ int main(int, char**)
 
 
     /* Output test satistics */
+    if (!ser_failed_tests)
+        return 0;
     cout << ser_total_tests  << " total, "
          << ser_failed_tests << " failed, "
          << ser_new_failed_tests << " new" << endl;
+    return ser_new_failed_tests;
 }
 

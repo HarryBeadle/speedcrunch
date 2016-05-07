@@ -24,7 +24,6 @@
 #include "gui/keypad.h"
 
 #include <QMainWindow>
-#include <QSystemTrayIcon>
 
 class AutoHideLabel;
 class BitFieldWidget;
@@ -98,7 +97,6 @@ private slots:
     void handleDisplaySelectionChange();
     void handleEditorSelectionChange();
     void handleManualClosed();
-    void handleSystemTrayIconActivation(QSystemTrayIcon::ActivationReason);
     void hideStateLabel();
     void increaseOpacity();
     void insertConstantIntoEditor(const QString&);
@@ -106,7 +104,6 @@ private slots:
     void insertTextIntoEditor(const QString&);
     void insertVariableIntoEditor(const QString&);
     void insertUserFunctionIntoEditor(const QString&);
-    void minimizeToSystemTray();
     void openUpdatesURL();
     void openFeedbackURL();
     void openCommunityURL();
@@ -155,7 +152,6 @@ private slots:
     void setParseAllRadixChar(bool);
     void setStrictDigitGrouping(bool);
     void setComplexNumbers(bool);
-    void setSystemTrayIconEnabled(bool);
     void setVariablesDockVisible(bool);
     void setUserFunctionsDockVisible(bool);
     void setWindowPositionSaveEnabled(bool);
@@ -170,13 +166,11 @@ private slots:
     void showResultFormatContextMenu(const QPoint&);
     void showSessionImportDialog();
     void showSessionLoadDialog();
-    void showSystemTrayMessage();
     void increaseDisplayFontPointSize();
     void decreaseDisplayFontPointSize();
 
 protected:
     virtual void closeEvent(QCloseEvent*);
-    virtual bool event(QEvent*);
     virtual bool eventFilter(QObject*, QEvent*);
 
 private:
@@ -277,7 +271,6 @@ private:
         QAction* settingsBehaviorAutoAns;
         QAction* settingsBehaviorLeaveLastExpression;
         QAction* settingsBehaviorAlwaysOnTop;
-        QAction* settingsBehaviorMinimizeToTray;
         QAction* settingsBehaviorAutoResultToClipboard;
         QAction* settingsBehaviorParseAllRadixChar;
         QAction* settingsBehaviorStrictDigitGrouping;
@@ -323,7 +316,6 @@ private:
         QMenu* session;
         QMenu* sessionExport;
         QMenu* settings;
-        QMenu* trayIcon;
         QMenu* view;
     } m_menus;
 
@@ -338,7 +330,6 @@ private:
         Editor* editor;
         Keypad* keypad;
         QWidget* root;
-        QSystemTrayIcon* trayIcon;
         ManualWindow* manual;
         BitFieldWidget* bitField;
     } m_widgets;
@@ -353,7 +344,6 @@ private:
     } m_docks;
 
     struct {
-        bool trayNotify;
         bool autoAns;
     } m_conditions;
 

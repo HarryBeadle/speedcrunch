@@ -40,6 +40,7 @@ public:
     static ManualServer* instance();
     bool URLforKeyword(const QString id, QUrl &result);
     QByteArray fileData(const QUrl &url);
+    bool isSupportedLanguage(const QString&);
 
 public slots:
     void ensureCorrectLanguage();

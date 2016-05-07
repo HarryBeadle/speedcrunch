@@ -634,8 +634,10 @@ _outfixphex(
   result = _fixp2longint(n, &l, x, scale);
   if (result != Success)
     return result;
-  if (l.length == 0)
-    return IOConversionUnderflow;
+  if (l.length == 0) {
+    result = float_geterror();
+    return result != Success ? result : IOConversionUnderflow;
+  }
   _setscale(n, &l, scale);
   return desc2str(tokens, n, scale);
 }
