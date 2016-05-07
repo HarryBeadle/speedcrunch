@@ -341,6 +341,15 @@ void test_function_basic()
     CHECK_EVAL("(-27)^(-1/3)", "-0.33333333333333333333");
 
     CHECK_EVAL_PRECISE("exp((1)/2) + exp((1)/2)", "3.29744254140025629369730157562832714330755220142030");
+
+    // Test functions composition
+    CHECK_EVAL("log(10;log(10;1e100))", "2");
+    CHECK_EVAL("log(10;abs(-100))", "2");
+    CHECK_EVAL("abs(log(10;100))", "2");
+    CHECK_EVAL("abs(abs(-100))", "100");
+    CHECK_EVAL("sum(10;abs(-100);1)", "111");
+    CHECK_EVAL("sum(abs(-100);10;1)", "111");
+    CHECK_EVAL("sum(10;1;abs(-100))", "111");
 }
 
 void test_function_trig()

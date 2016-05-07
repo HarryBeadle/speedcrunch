@@ -1094,7 +1094,9 @@ void Evaluator::compile(const Tokens& tokens)
                 // Rule for function arguments, if token is ; or ): id (arg1 ; arg2 -> id (arg.
                 // Must come before binary op rule, as it is a special case of the latter.
                 if (!ruleFound && syntaxStack.itemCount() >= 5
-                     && token.isOperator() && opPrecedence(token.asOperator()) <=  opPrecedence(Token::Semicolon))
+                     && token.isOperator()
+                     && (token.asOperator() == Token::RightPar
+                         || token.asOperator() == Token::Semicolon))
                 {
                     Token arg2 = syntaxStack.top();
                     Token sep = syntaxStack.top(1);
