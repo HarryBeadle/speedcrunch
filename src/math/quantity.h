@@ -169,32 +169,32 @@ public:
     static Quantity raise(const Quantity&, const Quantity&);
     static Quantity sgn(const Quantity&);
     // EXPONENTIAL FUNCTION AND RELATED
-    static Quantity exp(const Quantity & x);
-    static Quantity ln(const Quantity & x);
-    static Quantity lg(const Quantity & x);
-    static Quantity lb(const Quantity & x);
-    static Quantity log(const Quantity & base, const Quantity & x);
-    static Quantity sinh(const Quantity & x);
-    static Quantity cosh(const Quantity & x);
-    static Quantity tanh(const Quantity & x);
-    static Quantity arsinh(const Quantity & x);
-    static Quantity arcosh(const Quantity & x);
-    static Quantity artanh(const Quantity & x);
+    static Quantity exp(const Quantity&);
+    static Quantity ln(const Quantity&);
+    static Quantity lg(const Quantity&);
+    static Quantity lb(const Quantity&);
+    static Quantity log(const Quantity & base, const Quantity&);
+    static Quantity sinh(const Quantity&);
+    static Quantity cosh(const Quantity&);
+    static Quantity tanh(const Quantity&);
+    static Quantity arsinh(const Quantity&);
+    static Quantity arcosh(const Quantity&);
+    static Quantity artanh(const Quantity&);
     // COMPLEX
     static Quantity real(const Quantity&);
     static Quantity imag(const Quantity&);
     static Quantity phase(const Quantity&);
     // TRIGONOMETRY
-    static Quantity sin(const Quantity & x);
-    static Quantity cos(const Quantity & x);
-    static Quantity tan(const Quantity & x);
-    static Quantity cot(const Quantity & x);
-    static Quantity sec(const Quantity & x);
-    static Quantity csc(const Quantity & x);
-    static Quantity arcsin(const Quantity & x);
-    static Quantity arccos(const Quantity & x);
-    static Quantity arctan(const Quantity & x);
-    static Quantity arctan2(const Quantity & x, const Quantity & y);
+    static Quantity sin(const Quantity&);
+    static Quantity cos(const Quantity&);
+    static Quantity tan(const Quantity&);
+    static Quantity cot(const Quantity&);
+    static Quantity sec(const Quantity&);
+    static Quantity csc(const Quantity&);
+    static Quantity arcsin(const Quantity&);
+    static Quantity arccos(const Quantity&);
+    static Quantity arctan(const Quantity&);
+    static Quantity arctan2(const Quantity&, const Quantity & y);
     // HIGHER MATH FUNCTIONS
     static Quantity factorial(const Quantity& x, const Quantity& base = CNumber(1));
     static Quantity gamma(const Quantity&);

@@ -30,11 +30,11 @@
 
 #define RATIONAL_TOL HNumber("1e-20")
 
-#define ENSURE_DIMENSIONLESS(x)                 \
+#define ENSURE_DIMENSIONLESS(x) \
     if (!(x).isDimensionless()) \
         return DMath::nan(InvalidDimension);
 
-#define ENSURE_SAME_DIMENSION(x, y)                \
+#define ENSURE_SAME_DIMENSION(x, y) \
     if ((!(x).sameDimension(y))) \
         return DMath::nan(DimensionMismatch);
 
@@ -344,7 +344,7 @@ Quantity Quantity::deSerialize(const QJsonObject& json)
     result.stripUnits();
     if (json.contains("unit")) {
         QJsonObject unit_json = json["unit"].toObject();
-        result.m_unit =  new CNumber(unit_json);
+        result.m_unit = new CNumber(unit_json);
     }
     if (json.contains("unit_name"))
         result.m_unitName = json["unit_name"].toString();
@@ -701,49 +701,49 @@ bool DMath::complexMode = true;
 //  Wrappers for functions that are only defined for dimensionless arguments
 
 // Mo argument.
-#define WRAPPER_DMATH_0(fct)                \
-    Quantity DMath::fct()                   \
-    {                                       \
-        return Quantity(CMath::fct());      \
-    }                                       \
+#define WRAPPER_DMATH_0(fct) \
+    Quantity DMath::fct() \
+    { \
+        return Quantity(CMath::fct()); \
+    } \
 
 // One argument.
-#define WRAPPER_DMATH_1(fct)                                    \
+#define WRAPPER_DMATH_1(fct) \
     Quantity DMath::fct(const Quantity& arg1) \
-    {                                                           \
-        ENSURE_DIMENSIONLESS(arg1);                             \
+    { \
+        ENSURE_DIMENSIONLESS(arg1); \
         return Quantity(COMPLEX_WRAP_1(fct, arg1.m_numericValue)); \
     }
 
 // Two arguments.
-#define WRAPPER_DMATH_2(fct)                                    \
+#define WRAPPER_DMATH_2(fct) \
     Quantity DMath::fct(const Quantity& arg1, const Quantity& arg2) \
-    {                                                           \
-        ENSURE_DIMENSIONLESS(arg1);                             \
-        ENSURE_DIMENSIONLESS(arg2);                             \
+    { \
+        ENSURE_DIMENSIONLESS(arg1); \
+        ENSURE_DIMENSIONLESS(arg2); \
         return Quantity(COMPLEX_WRAP_2(fct, arg1.m_numericValue, arg2.m_numericValue)); \
     }
 
 // Three arguments.
-#define WRAPPER_DMATH_3(fct)                                    \
+#define WRAPPER_DMATH_3(fct) \
     Quantity DMath::fct(const Quantity& arg1, const Quantity& arg2, const Quantity& arg3) \
-    {                                                           \
-        ENSURE_DIMENSIONLESS(arg1);                             \
-        ENSURE_DIMENSIONLESS(arg2);                             \
-        ENSURE_DIMENSIONLESS(arg3);                             \
+    { \
+        ENSURE_DIMENSIONLESS(arg1); \
+        ENSURE_DIMENSIONLESS(arg2); \
+        ENSURE_DIMENSIONLESS(arg3); \
         return Quantity(COMPLEX_WRAP_3(fct, arg1.m_numericValue, arg2.m_numericValue, arg3.m_numericValue)); \
     }
 
 // Four arguments.
-#define WRAPPER_DMATH_4(fct)                                    \
+#define WRAPPER_DMATH_4(fct) \
     Quantity DMath::fct(const Quantity& arg1, const Quantity& arg2, const Quantity& arg3, const Quantity& arg4) \
-    {                                                           \
-        ENSURE_DIMENSIONLESS(arg1);                             \
-        ENSURE_DIMENSIONLESS(arg2);                             \
-        ENSURE_DIMENSIONLESS(arg3);                             \
-        ENSURE_DIMENSIONLESS(arg4);                             \
+    { \
+        ENSURE_DIMENSIONLESS(arg1); \
+        ENSURE_DIMENSIONLESS(arg2); \
+        ENSURE_DIMENSIONLESS(arg3); \
+        ENSURE_DIMENSIONLESS(arg4); \
         return Quantity(COMPLEX_WRAP_4(fct, arg1.m_numericValue, arg2.m_numericValue, arg3.m_numericValue, \
-                                       arg4.m_numericValue));   \
+                                       arg4.m_numericValue)); \
     }
 
 WRAPPER_DMATH_0(e)
@@ -880,12 +880,12 @@ Quantity DMath::abs(const Quantity& n)
     return result;
 }
 
-Quantity DMath::phase(const Quantity &n)
+Quantity DMath::phase(const Quantity& n)
 {
     return CMath::phase(n.numericValue());
 }
 
-Quantity DMath::sqrt(const Quantity &n)
+Quantity DMath::sqrt(const Quantity& n)
 {
     Quantity result(COMPLEX_WRAP_1(sqrt, n.m_numericValue));
     auto i = n.m_dimension.constBegin();
@@ -973,7 +973,7 @@ Quantity DMath::encodeIeee754(const Quantity& val, const Quantity& exp_bits, con
     return result;
 }
 
-Quantity DMath::encodeIeee754(const Quantity &val, const Quantity& exp_bits, const Quantity& significand_bits,
+Quantity DMath::encodeIeee754(const Quantity& val, const Quantity& exp_bits, const Quantity& significand_bits,
                               const Quantity& exp_bias)
 {
     ENSURE_DIMENSIONLESS(val);
