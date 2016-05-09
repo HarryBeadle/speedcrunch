@@ -206,7 +206,7 @@ Trigonometric & Inverse Trigonometric
     
     The inverse function is :func:`tan`.
     
-.. function:: arctan2(x)
+.. function:: arctan2(x, y)
 
     Returns the angle formed by the vector (`x`, `y`) and the x-axis. When the point (`x`, `y`) lies in the first quadrant (i.e. both `x` > 0 and `y` > 0) it is given by `arctan(y/x)`. :func:`arctan2` is capable to handle vectors in the other quadrants as well.
 
