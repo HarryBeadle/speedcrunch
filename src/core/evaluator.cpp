@@ -842,6 +842,8 @@ Tokens Evaluator::scan(const QString& expr) const
                 numberFrac = true;
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
+            else if (ch.isDigit() || (ch >= 'A' && ch < 'G') || (ch >= 'a' && ch < 'g'))
+                state = Bad;
             else { // We're done with binary number.
                 int tokenSize = i - tokenStart;
                 tokens.append(Token(Token::stxNumber, tokenText, tokenStart, tokenSize));
@@ -859,6 +861,8 @@ Tokens Evaluator::scan(const QString& expr) const
                 numberFrac = true;
             } else if (isSeparatorChar(ch)) // Ignore thousand separators
                 ++i;
+            else if (ch.isDigit() || (ch >= 'A' && ch < 'G') || (ch >= 'a' && ch < 'g'))
+                state = Bad;
             else { // We're done with octal number.
                 int tokenSize = i - tokenStart;
                 tokens.append(Token(Token::stxNumber, tokenText, tokenStart, tokenSize));
