@@ -152,10 +152,11 @@ void SyntaxHighlighter::setColorScheme(ColorScheme&& colorScheme) {
 
 void SyntaxHighlighter::highlightBlock(const QString& text)
 {
-    if (!Settings::instance()->syntaxHighlighting) {
-        setFormat(0, text.length(), colorForRole(ColorScheme::Number));
+    // Default color for the text
+    setFormat(0, text.length(), colorForRole(ColorScheme::Number));
+
+    if (!Settings::instance()->syntaxHighlighting)
         return;
-    }
 
     if (text.startsWith(QLatin1String("="))) {
         setFormat(0, 1, colorForRole(ColorScheme::Operator));
