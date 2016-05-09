@@ -335,12 +335,13 @@ void SyntaxHighlighter::groupDigits(const QString& text, int pos, int length)
 
         if (s >= 0) {
             if (!isNumber) {
-                bool nextIsNumber;
+                bool nextIsNumber = false;
                 if(evaluator->isSeparatorChar(c) && i<endPos-1) {
                     ushort nextC = text[i+1].unicode();
-                    nextIsNumber = nextC < 128 && (charType[nextC] & allowedChars);
-                } else
-                    nextIsNumber = false;
+                    nextIsNumber = (nextC < 128 && (charType[nextC] & allowedChars))
+                                   || evaluator->isSeparatorChar(nextC);
+                }
+
                 if(!nextIsNumber || !evaluator->isSeparatorChar(c)) {
                     // End of current number found, start grouping the digits.
                     formatDigitsGroup(text, s, i, invertGroup, groupSize);
@@ -356,7 +357,7 @@ void SyntaxHighlighter::groupDigits(const QString& text, int pos, int length)
             if (evaluator->isRadixChar(c)) {
                 // Invert the grouping for the fractional part.
                 invertGroup = true;
-            } else {
+            } else if(!evaluator->isSeparatorChar(c)){
                 // Look for a radix prefix.
                 invertGroup = false;
                 if (i > 0 && text[i - 1] == '0') {
@@ -373,7 +374,7 @@ void SyntaxHighlighter::groupDigits(const QString& text, int pos, int length)
                         groupSize = 3;
                         allowedChars = DEC_CHAR;
                     }
-                } else if (!evaluator->isSeparatorChar(c)){
+                } else {
                     groupSize = 3;
                     allowedChars = DEC_CHAR;
                 }
