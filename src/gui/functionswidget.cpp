@@ -72,6 +72,7 @@ FunctionsWidget::FunctionsWidget(QWidget* parent)
     setLayout(layout);
 
     QWidget::setTabOrder(m_searchFilter, m_functions);
+    setFocusProxy(m_searchFilter);
 
     retranslateText();
 
@@ -130,7 +131,6 @@ void FunctionsWidget::fillTable()
         m_noMatchLabel->raise();
     }
 
-    m_searchFilter->setFocus();
     setUpdatesEnabled(true);
 }
 

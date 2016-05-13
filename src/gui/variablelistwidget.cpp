@@ -85,6 +85,7 @@ VariableListWidget::VariableListWidget(QWidget* parent)
     m_variables->addAction(m_deleteAllAction);
 
     QWidget::setTabOrder(m_searchFilter, m_variables);
+    setFocusProxy(m_searchFilter);
 
     retranslateText();
 
@@ -138,7 +139,6 @@ void VariableListWidget::fillTable()
         m_noMatchLabel->raise();
     }
 
-    m_searchFilter->setFocus();
     setUpdatesEnabled(true);
 }
 
