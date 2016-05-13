@@ -1763,7 +1763,7 @@ void MainWindow::deleteVariablesDock()
 void MainWindow::deleteUserFunctionsDock()
 {
     if (!m_docks.userFunctions)
-        return
+        return;
 
     deleteDock(m_docks.userFunctions);
     m_docks.userFunctions = nullptr;
