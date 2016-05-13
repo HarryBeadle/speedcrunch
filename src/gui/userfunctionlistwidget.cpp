@@ -96,6 +96,8 @@ UserFunctionListWidget::UserFunctionListWidget(QWidget* parent)
     connect(m_editAction, SIGNAL(triggered()), SLOT(editItem()));
     connect(m_deleteAction, SIGNAL(triggered()), SLOT(deleteItem()));
     connect(m_deleteAllAction, SIGNAL(triggered()), SLOT(deleteAllItems()));
+
+    fillTable();
 }
 
 UserFunctionListWidget::~UserFunctionListWidget()

@@ -101,6 +101,8 @@ ConstantsWidget::ConstantsWidget(QWidget *parent)
     retranslateText();
 
     setFocusProxy(m_filter);
+
+    filter();
 }
 
 ConstantsWidget::~ConstantsWidget()

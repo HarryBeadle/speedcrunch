@@ -95,6 +95,8 @@ VariableListWidget::VariableListWidget(QWidget* parent)
     connect(m_insertAction, SIGNAL(triggered()), SLOT(activateItem()));
     connect(m_deleteAction, SIGNAL(triggered()), SLOT(deleteItem()));
     connect(m_deleteAllAction, SIGNAL(triggered()), SLOT(deleteAllItems()));
+
+    fillTable();
 }
 
 VariableListWidget::~VariableListWidget()

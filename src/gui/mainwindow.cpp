@@ -714,7 +714,6 @@ void MainWindow::createHistoryDock()
     HistoryWidget* historyWidget = qobject_cast<HistoryWidget *>(m_docks.history->widget());
     connect(historyWidget, SIGNAL(expressionSelected(const QString&)), SLOT(insertTextIntoEditor(const QString&)));
     connect(this, SIGNAL(historyChanged()), historyWidget, SLOT(updateHistory()));
-    historyWidget->updateHistory();
 
     addTabifiedDock(m_docks.history);
     m_settings->historyDockVisible = true;
@@ -730,7 +729,6 @@ void MainWindow::createVariablesDock()
     connect(m_docks.variables, SIGNAL(variableSelected(const QString&)), SLOT(insertVariableIntoEditor(const QString&)));
     connect(this, SIGNAL(radixCharacterChanged()), m_docks.variables, SLOT(handleRadixCharacterChange()));
     connect(this, SIGNAL(variablesChanged()), m_docks.variables, SLOT(updateList()));
-    m_docks.variables->updateList();
 
     addTabifiedDock(m_docks.variables);
     m_settings->variablesDockVisible = true;
@@ -747,7 +745,6 @@ void MainWindow::createUserFunctionsDock()
     connect(m_docks.userFunctions, SIGNAL(userFunctionEdited(const QString&)), SLOT(insertUserFunctionIntoEditor(const QString&)));
     connect(this, SIGNAL(radixCharacterChanged()), m_docks.userFunctions, SLOT(handleRadixCharacterChange()));
     connect(this, SIGNAL(functionsChanged()), m_docks.userFunctions, SLOT(updateList()));
-    m_docks.userFunctions->updateList();
 
     addTabifiedDock(m_docks.userFunctions);
     m_settings->userFunctionsDockVisible = true;

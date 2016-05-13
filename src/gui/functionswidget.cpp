@@ -79,6 +79,8 @@ FunctionsWidget::FunctionsWidget(QWidget* parent)
     connect(m_filterTimer, SIGNAL(timeout()), SLOT(fillTable()));
     connect(m_functions, SIGNAL(itemActivated(QTreeWidgetItem*, int)), SLOT(handleItemActivated(QTreeWidgetItem*, int)));
     connect(m_searchFilter, SIGNAL(textChanged(const QString &)), SLOT(triggerFilter()));
+
+    fillTable();
 }
 
 FunctionsWidget::~FunctionsWidget()
