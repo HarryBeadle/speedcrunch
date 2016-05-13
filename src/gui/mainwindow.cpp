@@ -667,25 +667,11 @@ void MainWindow::createBookDock()
     m_docks.book->setObjectName("BookDock");
     m_docks.book->installEventFilter(this);
     m_docks.book->setAllowedAreas(Qt::AllDockWidgetAreas);
-    addDockWidget(Qt::RightDockWidgetArea, m_docks.book);
 
     connect(m_docks.book, SIGNAL(expressionSelected(const QString&)),
         SLOT(insertTextIntoEditor(const QString&)));
 
-    if (m_docks.functions)
-        tabifyDockWidget(m_docks.functions, m_docks.book);
-    else if (m_docks.variables)
-        tabifyDockWidget(m_docks.variables, m_docks.book);
-    else if (m_docks.userFunctions)
-        tabifyDockWidget(m_docks.userFunctions, m_docks.book);
-    else if (m_docks.history)
-        tabifyDockWidget(m_docks.history, m_docks.book);
-    else if (m_docks.constants)
-        tabifyDockWidget(m_docks.constants, m_docks.book);
-
-    m_docks.book->show();
-    m_docks.book->raise();
-
+    addTabifiedDock(m_docks.book);
     m_settings->formulaBookDockVisible = true;
 }
 
@@ -695,27 +681,13 @@ void MainWindow::createConstantsDock()
     m_docks.constants->setObjectName("ConstantsDock");
     m_docks.constants->installEventFilter(this);
     m_docks.constants->setAllowedAreas(Qt::AllDockWidgetAreas);
-    addDockWidget(Qt::RightDockWidgetArea, m_docks.constants);
 
     connect(m_docks.constants->widget(), SIGNAL(constantSelected(const QString&)),
         SLOT(insertConstantIntoEditor(const QString&)));
     connect(this, SIGNAL(radixCharacterChanged()), m_docks.constants->widget(),
         SLOT(handleRadixCharacterChange()));
 
-    if (m_docks.functions)
-        tabifyDockWidget(m_docks.functions, m_docks.constants);
-    else if (m_docks.variables)
-        tabifyDockWidget(m_docks.variables, m_docks.constants);
-    else if (m_docks.userFunctions)
-        tabifyDockWidget(m_docks.userFunctions, m_docks.constants);
-    else if (m_docks.history)
-        tabifyDockWidget(m_docks.history, m_docks.constants);
-    else if (m_docks.book)
-        tabifyDockWidget(m_docks.book, m_docks.constants);
-
-    m_docks.constants->show();
-    m_docks.constants->raise();
-
+    addTabifiedDock(m_docks.constants);
     m_settings->constantsDockVisible = true;
 }
 
@@ -725,24 +697,10 @@ void MainWindow::createFunctionsDock()
     m_docks.functions->setObjectName("FunctionsDock");
     m_docks.functions->installEventFilter(this);
     m_docks.functions->setAllowedAreas(Qt::AllDockWidgetAreas);
-    addDockWidget(Qt::RightDockWidgetArea, m_docks.functions);
 
     connect(m_docks.functions->widget(), SIGNAL(functionSelected(const QString&)), SLOT(insertFunctionIntoEditor(const QString&)));
 
-    if (m_docks.history)
-        tabifyDockWidget(m_docks.history, m_docks.functions);
-    else if (m_docks.variables)
-        tabifyDockWidget(m_docks.variables, m_docks.functions);
-    else if (m_docks.userFunctions)
-        tabifyDockWidget(m_docks.userFunctions, m_docks.functions);
-    else if (m_docks.constants)
-        tabifyDockWidget(m_docks.constants, m_docks.functions);
-    else if (m_docks.book)
-        tabifyDockWidget(m_docks.book, m_docks.functions);
-
-    m_docks.functions->show();
-    m_docks.functions->raise();
-
+    addTabifiedDock(m_docks.functions);
     m_settings->functionsDockVisible = true;
 }
 
@@ -752,29 +710,14 @@ void MainWindow::createHistoryDock()
     m_docks.history->setObjectName("HistoryDock");
     m_docks.history->installEventFilter(this);
     m_docks.history->setAllowedAreas(Qt::AllDockWidgetAreas);
-    addDockWidget(Qt::RightDockWidgetArea, m_docks.history);
 
     HistoryWidget* historyWidget = qobject_cast<HistoryWidget *>(m_docks.history->widget());
     connect(historyWidget, SIGNAL(expressionSelected(const QString&)), SLOT(insertTextIntoEditor(const QString&)));
     connect(this, SIGNAL(historyChanged()), historyWidget, SLOT(updateHistory()));
     historyWidget->updateHistory();
 
-    if (m_docks.functions)
-        tabifyDockWidget(m_docks.functions, m_docks.history);
-    else if (m_docks.variables)
-        tabifyDockWidget(m_docks.variables, m_docks.history);
-    else if (m_docks.userFunctions)
-        tabifyDockWidget(m_docks.userFunctions, m_docks.history);
-    else if (m_docks.constants)
-        tabifyDockWidget(m_docks.constants, m_docks.history);
-    else if (m_docks.book)
-        tabifyDockWidget(m_docks.book, m_docks.history);
-
-    m_docks.history->show();
-    m_docks.history->raise();
-
+    addTabifiedDock(m_docks.history);
     m_settings->historyDockVisible = true;
-
 }
 
 void MainWindow::createVariablesDock()
@@ -783,28 +726,13 @@ void MainWindow::createVariablesDock()
     m_docks.variables->setObjectName("VariablesDock");
     m_docks.variables->installEventFilter(this);
     m_docks.variables->setAllowedAreas(Qt::AllDockWidgetAreas);
-    addDockWidget(Qt::RightDockWidgetArea, m_docks.variables);
 
     connect(m_docks.variables, SIGNAL(variableSelected(const QString&)), SLOT(insertVariableIntoEditor(const QString&)));
     connect(this, SIGNAL(radixCharacterChanged()), m_docks.variables, SLOT(handleRadixCharacterChange()));
     connect(this, SIGNAL(variablesChanged()), m_docks.variables, SLOT(updateList()));
-
     m_docks.variables->updateList();
 
-    if (m_docks.functions)
-        tabifyDockWidget(m_docks.functions, m_docks.variables);
-    else if (m_docks.userFunctions)
-        tabifyDockWidget(m_docks.userFunctions, m_docks.variables);
-    else if (m_docks.history)
-        tabifyDockWidget(m_docks.history, m_docks.variables);
-    else if (m_docks.constants)
-        tabifyDockWidget(m_docks.constants, m_docks.variables);
-    else if (m_docks.book)
-        tabifyDockWidget(m_docks.book, m_docks.variables);
-
-    m_docks.variables->show();
-    m_docks.variables->raise();
-
+    addTabifiedDock(m_docks.variables);
     m_settings->variablesDockVisible = true;
 }
 
@@ -814,30 +742,36 @@ void MainWindow::createUserFunctionsDock()
     m_docks.userFunctions->setObjectName("UserFunctionsDock");
     m_docks.userFunctions->installEventFilter(this);
     m_docks.userFunctions->setAllowedAreas(Qt::AllDockWidgetAreas);
-    addDockWidget(Qt::RightDockWidgetArea, m_docks.userFunctions);
 
     connect(m_docks.userFunctions, SIGNAL(userFunctionSelected(const QString&)), SLOT(insertUserFunctionIntoEditor(const QString&)));
     connect(m_docks.userFunctions, SIGNAL(userFunctionEdited(const QString&)), SLOT(insertUserFunctionIntoEditor(const QString&)));
     connect(this, SIGNAL(radixCharacterChanged()), m_docks.userFunctions, SLOT(handleRadixCharacterChange()));
     connect(this, SIGNAL(functionsChanged()), m_docks.userFunctions, SLOT(updateList()));
-
     m_docks.userFunctions->updateList();
 
-    if (m_docks.functions)
-        tabifyDockWidget(m_docks.functions, m_docks.userFunctions);
-    else if (m_docks.variables)
-        tabifyDockWidget(m_docks.variables, m_docks.userFunctions);
-    else if (m_docks.history)
-        tabifyDockWidget(m_docks.history, m_docks.userFunctions);
-    else if (m_docks.constants)
-        tabifyDockWidget(m_docks.constants, m_docks.userFunctions);
-    else if (m_docks.book)
-        tabifyDockWidget(m_docks.book, m_docks.userFunctions);
-
-    m_docks.userFunctions->show();
-    m_docks.userFunctions->raise();
-
+    addTabifiedDock(m_docks.userFunctions);
     m_settings->userFunctionsDockVisible = true;
+}
+
+void MainWindow::addTabifiedDock(QDockWidget* newDock, Qt::DockWidgetArea area)
+{
+    addDockWidget(area, newDock);
+    // Try to find an existing dock we can tabify with.
+    for (QDockWidget* d : m_allDocks) {
+        if (dockWidgetArea(d) == area)
+            tabifyDockWidget(d, newDock);
+    }
+    m_allDocks.append(newDock);
+    newDock->show();
+    newDock->raise();
+}
+
+void MainWindow::deleteDock(QDockWidget* dock)
+{
+    removeDockWidget(dock);
+    m_allDocks.removeAll(dock);
+    disconnect(dock);
+    dock->deleteLater();
 }
 
 void MainWindow::createFixedConnections()
@@ -1770,10 +1704,8 @@ void MainWindow::deleteBookDock()
 {
     Q_ASSERT(m_docks.book);
 
-    removeDockWidget(m_docks.book);
-    disconnect(m_docks.book);
-    m_docks.book->deleteLater();
-    m_docks.book = 0;
+    deleteDock(m_docks.book);
+    m_docks.book = nullptr;
     m_actions.viewFormulaBook->blockSignals(true);
     m_actions.viewFormulaBook->setChecked(false);
     m_actions.viewFormulaBook->blockSignals(false);
@@ -1784,10 +1716,8 @@ void MainWindow::deleteConstantsDock()
 {
     Q_ASSERT(m_docks.constants);
 
-    removeDockWidget(m_docks.constants);
-    disconnect(m_docks.constants);
-    m_docks.constants->deleteLater();
-    m_docks.constants = 0;
+    deleteDock(m_docks.constants);
+    m_docks.constants = nullptr;
     m_actions.viewConstants->blockSignals(true);
     m_actions.viewConstants->setChecked(false);
     m_actions.viewConstants->blockSignals(false);
@@ -1798,10 +1728,8 @@ void MainWindow::deleteFunctionsDock()
 {
     Q_ASSERT(m_docks.functions);
 
-    removeDockWidget(m_docks.functions);
-    disconnect(m_docks.functions);
-    m_docks.functions->deleteLater();
-    m_docks.functions = 0;
+    deleteDock(m_docks.functions);
+    m_docks.functions = nullptr;
     m_actions.viewFunctions->blockSignals(true);
     m_actions.viewFunctions->setChecked(false);
     m_actions.viewFunctions->blockSignals(false);
@@ -1812,10 +1740,8 @@ void MainWindow::deleteHistoryDock()
 {
     Q_ASSERT(m_docks.history);
 
-    removeDockWidget(m_docks.history);
-    disconnect(m_docks.history);
-    m_docks.history->deleteLater();
-    m_docks.history = 0;
+    deleteDock(m_docks.history);
+    m_docks.history = nullptr;
     m_actions.viewHistory->blockSignals(true);
     m_actions.viewHistory->setChecked(false);
     m_actions.viewHistory->blockSignals(false);
@@ -1826,10 +1752,8 @@ void MainWindow::deleteVariablesDock()
 {
     Q_ASSERT(m_docks.variables);
 
-    removeDockWidget(m_docks.variables);
-    disconnect(m_docks.variables);
-    m_docks.variables->deleteLater();
-    m_docks.variables = 0;
+    deleteDock(m_docks.variables);
+    m_docks.variables = nullptr;
     m_actions.viewVariables->blockSignals(true);
     m_actions.viewVariables->setChecked(false);
     m_actions.viewVariables->blockSignals(false);
@@ -1840,10 +1764,8 @@ void MainWindow::deleteUserFunctionsDock()
 {
     Q_ASSERT(m_docks.userFunctions);
 
-    removeDockWidget(m_docks.userFunctions);
-    disconnect(m_docks.userFunctions);
-    m_docks.userFunctions->deleteLater();
-    m_docks.userFunctions = 0;
+    deleteDock(m_docks.userFunctions);
+    m_docks.userFunctions = nullptr;
     m_actions.viewUserFunctions->blockSignals(true);
     m_actions.viewUserFunctions->setChecked(false);
     m_actions.viewUserFunctions->blockSignals(false);

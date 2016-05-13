@@ -177,6 +177,8 @@ private:
     Q_DISABLE_COPY(MainWindow)
 
     void clearTextEditSelection(QPlainTextEdit*);
+    void addTabifiedDock(QDockWidget*, Qt::DockWidgetArea = Qt::RightDockWidgetArea);
+    void deleteDock(QDockWidget*);
     void createUi();
     void createActions();
     void createActionGroups();
@@ -343,6 +345,7 @@ private:
         VariablesDock* variables;
         UserFunctionsDock* userFunctions;
     } m_docks;
+    QList<QDockWidget*> m_allDocks;
 
     struct {
         bool autoAns;
