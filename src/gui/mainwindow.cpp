@@ -33,17 +33,18 @@
 #include "gui/aboutbox.h"
 #include "gui/bitfieldwidget.h"
 #include "gui/bookdock.h"
-#include "gui/constantsdock.h"
+#include "gui/genericdock.h"
+#include "gui/constantswidget.h"
+#include "gui/functionswidget.h"
+#include "gui/historywidget.h"
+#include "gui/userfunctionlistwidget.h"
+#include "gui/variablelistwidget.h"
 #include "gui/editor.h"
-#include "gui/functionsdock.h"
-#include "gui/historydock.h"
 #include "gui/historywidget.h"
 #include "gui/manualwindow.h"
 #include "core/manualserver.h"
 #include "gui/resultdisplay.h"
 #include "gui/syntaxhighlighter.h"
-#include "gui/variablesdock.h"
-#include "gui/userfunctionsdock.h"
 #include "math/floatconfig.h"
 
 #include <QLatin1String>
@@ -668,8 +669,9 @@ void MainWindow::createBookDock()
     m_docks.book->installEventFilter(this);
     m_docks.book->setAllowedAreas(Qt::AllDockWidgetAreas);
 
-    connect(m_docks.book, SIGNAL(expressionSelected(const QString&)),
-        SLOT(insertTextIntoEditor(const QString&)));
+    connect(m_docks.book,
+            SIGNAL(expressionSelected(const QString&)),
+            SLOT(insertTextIntoEditor(const QString&)));
 
     addTabifiedDock(m_docks.book);
     m_settings->formulaBookDockVisible = true;
@@ -677,15 +679,15 @@ void MainWindow::createBookDock()
 
 void MainWindow::createConstantsDock()
 {
-    m_docks.constants = new ConstantsDock(this);
+    m_docks.constants = new GenericDock<ConstantsWidget>("MainWindow", QT_TR_NOOP("Constants"), this);
     m_docks.constants->setObjectName("ConstantsDock");
     m_docks.constants->installEventFilter(this);
     m_docks.constants->setAllowedAreas(Qt::AllDockWidgetAreas);
 
-    connect(m_docks.constants->widget(), SIGNAL(constantSelected(const QString&)),
-        SLOT(insertConstantIntoEditor(const QString&)));
-    connect(this, SIGNAL(radixCharacterChanged()), m_docks.constants->widget(),
-        SLOT(handleRadixCharacterChange()));
+    connect(m_docks.constants->widget(), &ConstantsWidget::constantSelected,
+            this, &MainWindow::insertConstantIntoEditor);
+    connect(this, &MainWindow::radixCharacterChanged,
+            m_docks.constants->widget(), &ConstantsWidget::handleRadixCharacterChange);
 
     addTabifiedDock(m_docks.constants);
     m_settings->constantsDockVisible = true;
@@ -693,12 +695,13 @@ void MainWindow::createConstantsDock()
 
 void MainWindow::createFunctionsDock()
 {
-    m_docks.functions = new FunctionsDock(this);
+    m_docks.functions = new GenericDock<FunctionsWidget>("MainWindow", QT_TR_NOOP("Functions"), this);
     m_docks.functions->setObjectName("FunctionsDock");
     m_docks.functions->installEventFilter(this);
     m_docks.functions->setAllowedAreas(Qt::AllDockWidgetAreas);
 
-    connect(m_docks.functions->widget(), SIGNAL(functionSelected(const QString&)), SLOT(insertFunctionIntoEditor(const QString&)));
+    connect(m_docks.functions->widget(), &FunctionsWidget::functionSelected,
+            this, &MainWindow::insertFunctionIntoEditor);
 
     addTabifiedDock(m_docks.functions);
     m_settings->functionsDockVisible = true;
@@ -706,14 +709,15 @@ void MainWindow::createFunctionsDock()
 
 void MainWindow::createHistoryDock()
 {
-    m_docks.history = new HistoryDock(this);
+    m_docks.history = new GenericDock<HistoryWidget>("MainWindow", QT_TR_NOOP("History"), this);
     m_docks.history->setObjectName("HistoryDock");
     m_docks.history->installEventFilter(this);
     m_docks.history->setAllowedAreas(Qt::AllDockWidgetAreas);
 
-    HistoryWidget* historyWidget = qobject_cast<HistoryWidget *>(m_docks.history->widget());
-    connect(historyWidget, SIGNAL(expressionSelected(const QString&)), SLOT(insertTextIntoEditor(const QString&)));
-    connect(this, SIGNAL(historyChanged()), historyWidget, SLOT(updateHistory()));
+    connect(m_docks.history->widget(), &HistoryWidget::expressionSelected,
+            this, &MainWindow::insertTextIntoEditor);
+    connect(this, &MainWindow::historyChanged,
+            m_docks.history->widget(), &HistoryWidget::updateHistory);
 
     addTabifiedDock(m_docks.history);
     m_settings->historyDockVisible = true;
@@ -721,14 +725,17 @@ void MainWindow::createHistoryDock()
 
 void MainWindow::createVariablesDock()
 {
-    m_docks.variables = new VariablesDock(this);
+    m_docks.variables = new GenericDock<VariableListWidget>("MainWindow", QT_TR_NOOP("Variables"), this);
     m_docks.variables->setObjectName("VariablesDock");
     m_docks.variables->installEventFilter(this);
     m_docks.variables->setAllowedAreas(Qt::AllDockWidgetAreas);
 
-    connect(m_docks.variables, SIGNAL(variableSelected(const QString&)), SLOT(insertVariableIntoEditor(const QString&)));
-    connect(this, SIGNAL(radixCharacterChanged()), m_docks.variables, SLOT(handleRadixCharacterChange()));
-    connect(this, SIGNAL(variablesChanged()), m_docks.variables, SLOT(updateList()));
+    connect(m_docks.variables->widget(), &VariableListWidget::variableSelected,
+            this, &MainWindow::insertVariableIntoEditor);
+    connect(this, &MainWindow::radixCharacterChanged,
+            m_docks.variables->widget(), &VariableListWidget::updateList);
+    connect(this, &MainWindow::variablesChanged,
+            m_docks.variables->widget(), &VariableListWidget::updateList);
 
     addTabifiedDock(m_docks.variables);
     m_settings->variablesDockVisible = true;
@@ -736,15 +743,19 @@ void MainWindow::createVariablesDock()
 
 void MainWindow::createUserFunctionsDock()
 {
-    m_docks.userFunctions = new UserFunctionsDock(this);
+    m_docks.userFunctions = new GenericDock<UserFunctionListWidget>("MainWindow", QT_TR_NOOP("User Functions"), this);
     m_docks.userFunctions->setObjectName("UserFunctionsDock");
     m_docks.userFunctions->installEventFilter(this);
     m_docks.userFunctions->setAllowedAreas(Qt::AllDockWidgetAreas);
 
-    connect(m_docks.userFunctions, SIGNAL(userFunctionSelected(const QString&)), SLOT(insertUserFunctionIntoEditor(const QString&)));
-    connect(m_docks.userFunctions, SIGNAL(userFunctionEdited(const QString&)), SLOT(insertUserFunctionIntoEditor(const QString&)));
-    connect(this, SIGNAL(radixCharacterChanged()), m_docks.userFunctions, SLOT(handleRadixCharacterChange()));
-    connect(this, SIGNAL(functionsChanged()), m_docks.userFunctions, SLOT(updateList()));
+    connect(m_docks.userFunctions->widget(), &UserFunctionListWidget::userFunctionSelected,
+            this, &MainWindow::insertUserFunctionIntoEditor);
+    connect(m_docks.userFunctions->widget(), &UserFunctionListWidget::userFunctionEdited,
+            this, &MainWindow::insertUserFunctionIntoEditor);
+    connect(this, &MainWindow::radixCharacterChanged,
+            m_docks.userFunctions->widget(), &UserFunctionListWidget::updateList);
+    connect(this, &MainWindow::functionsChanged,
+            m_docks.userFunctions->widget(), &UserFunctionListWidget::updateList);
 
     addTabifiedDock(m_docks.userFunctions);
     m_settings->userFunctionsDockVisible = true;
@@ -1205,7 +1216,7 @@ void MainWindow::deleteVariables()
     m_session->clearVariables();
 
     if (m_settings->variablesDockVisible)
-        m_docks.variables->updateList();
+        m_docks.variables->widget()->updateList();
 }
 
 void MainWindow::deleteUserFunctions()
@@ -1213,7 +1224,7 @@ void MainWindow::deleteUserFunctions()
     m_session->clearUserFunctions();
 
     if (m_settings->userFunctionsDockVisible)
-        m_docks.userFunctions->updateList();
+        m_docks.userFunctions->widget()->updateList();
 }
 
 void MainWindow::setResultPrecision2Digits()

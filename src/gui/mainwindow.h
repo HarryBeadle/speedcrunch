@@ -27,24 +27,25 @@
 
 class AutoHideLabel;
 class BitFieldWidget;
+template <class Widget> class GenericDock;
 class BookDock;
 class Constants;
-class ConstantsDock;
+class ConstantsWidget;
 class Editor;
 class Evaluator;
 class HistoryEntry;
 class UserFunction;
 class FunctionRepo;
-class FunctionsDock;
-class HistoryDock;
+class FunctionsWidget;
+class HistoryWidget;
 class ManualWindow;
 class ManualServer;
 class ResultDisplay;
 class Session;
 class Settings;
-class UserFunctionsDock;
+class UserFunctionListWidget;
 class Variable;
-class VariablesDock;
+class VariableListWidget;
 
 class QActionGroup;
 class QHBoxLayout;
@@ -339,11 +340,11 @@ private:
 
     struct {
         BookDock* book;
-        ConstantsDock* constants;
-        FunctionsDock* functions;
-        HistoryDock* history;
-        VariablesDock* variables;
-        UserFunctionsDock* userFunctions;
+        GenericDock<ConstantsWidget>* constants;
+        GenericDock<FunctionsWidget>* functions;
+        GenericDock<HistoryWidget>* history;
+        GenericDock<VariableListWidget>* variables;
+        GenericDock<UserFunctionListWidget>* userFunctions;
     } m_docks;
     QList<QDockWidget*> m_allDocks;
 
