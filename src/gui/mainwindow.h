@@ -119,11 +119,11 @@ private slots:
     void setAutoCalcEnabled(bool);
     void setAutoCompletionEnabled(bool);
     void setBitfieldVisible(bool);
-    void setConstantsDockVisible(bool);
-    void setFormulaBookDockVisible(bool);
+    void setConstantsDockVisible(bool, bool takeFocus = true);
+    void setFormulaBookDockVisible(bool, bool takeFocus = true);
     void setFullScreenEnabled(bool);
-    void setFunctionsDockVisible(bool);
-    void setHistoryDockVisible(bool);
+    void setFunctionsDockVisible(bool, bool takeFocus = true);
+    void setHistoryDockVisible(bool, bool takeFocus = true);
     void setSessionSaveEnabled(bool);
     void setKeypadVisible(bool);
     void setLeaveLastExpressionEnabled(bool);
@@ -153,8 +153,8 @@ private slots:
     void setParseAllRadixChar(bool);
     void setStrictDigitGrouping(bool);
     void setComplexNumbers(bool);
-    void setVariablesDockVisible(bool);
-    void setUserFunctionsDockVisible(bool);
+    void setVariablesDockVisible(bool, bool takeFocus = true);
+    void setUserFunctionsDockVisible(bool, bool takeFocus = true);
     void setWindowPositionSaveEnabled(bool);
     void setWidgetsDirection();
     void showAboutDialog();
@@ -178,7 +178,7 @@ private:
     Q_DISABLE_COPY(MainWindow)
 
     void clearTextEditSelection(QPlainTextEdit*);
-    void addTabifiedDock(QDockWidget*, Qt::DockWidgetArea = Qt::RightDockWidgetArea);
+    void addTabifiedDock(QDockWidget*, bool takeFocus = true, Qt::DockWidgetArea = Qt::RightDockWidgetArea);
     void deleteDock(QDockWidget*);
     void createUi();
     void createActions();
@@ -189,12 +189,12 @@ private:
     void createFixedWidgets();
     void createKeypad();
     void createBitField();
-    void createBookDock();
-    void createConstantsDock();
-    void createFunctionsDock();
-    void createHistoryDock();
-    void createVariablesDock();
-    void createUserFunctionsDock();
+    void createBookDock(bool takeFocus = true);
+    void createConstantsDock(bool takeFocus = true);
+    void createFunctionsDock(bool takeFocus = true);
+    void createHistoryDock(bool takeFocus = true);
+    void createVariablesDock(bool takeFocus = true);
+    void createUserFunctionsDock(bool takeFocus = true);
     void createFixedConnections();
     void applySettings();
     void checkInitialResultFormat();
