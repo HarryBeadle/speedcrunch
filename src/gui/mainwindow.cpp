@@ -662,7 +662,7 @@ void MainWindow::createKeypad()
     m_settings->keypadVisible = true;
 }
 
-void MainWindow::createBookDock(bool takeFocus)
+void MainWindow::createBookDock(bool)
 {
     m_docks.book = new BookDock(this);
     m_docks.book->setObjectName("BookDock");
@@ -673,7 +673,8 @@ void MainWindow::createBookDock(bool takeFocus)
             SIGNAL(expressionSelected(const QString&)),
             SLOT(insertTextIntoEditor(const QString&)));
 
-    addTabifiedDock(m_docks.book);
+    // No focus for this dock.
+    addTabifiedDock(m_docks.book, false);
     m_settings->formulaBookDockVisible = true;
 }
 
@@ -689,10 +690,8 @@ void MainWindow::createConstantsDock(bool takeFocus)
     connect(this, &MainWindow::radixCharacterChanged,
             m_docks.constants->widget(), &ConstantsWidget::handleRadixCharacterChange);
 
-    addTabifiedDock(m_docks.constants);
+    addTabifiedDock(m_docks.constants, takeFocus);
     m_settings->constantsDockVisible = true;
-    if (takeFocus)
-        m_docks.constants->setFocus();
 }
 
 void MainWindow::createFunctionsDock(bool takeFocus)
@@ -705,13 +704,11 @@ void MainWindow::createFunctionsDock(bool takeFocus)
     connect(m_docks.functions->widget(), &FunctionsWidget::functionSelected,
             this, &MainWindow::insertFunctionIntoEditor);
 
-    addTabifiedDock(m_docks.functions);
+    addTabifiedDock(m_docks.functions, takeFocus);
     m_settings->functionsDockVisible = true;
-    if (takeFocus)
-        m_docks.functions->setFocus();
 }
 
-void MainWindow::createHistoryDock(bool takeFocus)
+void MainWindow::createHistoryDock(bool)
 {
     m_docks.history = new GenericDock<HistoryWidget>("MainWindow", QT_TR_NOOP("History"), this);
     m_docks.history->setObjectName("HistoryDock");
@@ -723,7 +720,8 @@ void MainWindow::createHistoryDock(bool takeFocus)
     connect(this, &MainWindow::historyChanged,
             m_docks.history->widget(), &HistoryWidget::updateHistory);
 
-    addTabifiedDock(m_docks.history);
+    // No focus for this dock.
+    addTabifiedDock(m_docks.history, false);
     m_settings->historyDockVisible = true;
 }
 
@@ -741,10 +739,8 @@ void MainWindow::createVariablesDock(bool takeFocus)
     connect(this, &MainWindow::variablesChanged,
             m_docks.variables->widget(), &VariableListWidget::updateList);
 
-    addTabifiedDock(m_docks.variables);
+    addTabifiedDock(m_docks.variables, takeFocus);
     m_settings->variablesDockVisible = true;
-    if (takeFocus)
-        m_docks.variables->setFocus();
 }
 
 void MainWindow::createUserFunctionsDock(bool takeFocus)
@@ -763,13 +759,11 @@ void MainWindow::createUserFunctionsDock(bool takeFocus)
     connect(this, &MainWindow::functionsChanged,
             m_docks.userFunctions->widget(), &UserFunctionListWidget::updateList);
 
-    addTabifiedDock(m_docks.userFunctions);
+    addTabifiedDock(m_docks.userFunctions, takeFocus);
     m_settings->userFunctionsDockVisible = true;
-    if (takeFocus)
-        m_docks.userFunctions->setFocus();
 }
 
-void MainWindow::addTabifiedDock(QDockWidget* newDock, Qt::DockWidgetArea area)
+void MainWindow::addTabifiedDock(QDockWidget* newDock, bool takeFocus, Qt::DockWidgetArea area)
 {
     addDockWidget(area, newDock);
     // Try to find an existing dock we can tabify with.
@@ -780,6 +774,8 @@ void MainWindow::addTabifiedDock(QDockWidget* newDock, Qt::DockWidgetArea area)
     m_allDocks.append(newDock);
     newDock->show();
     newDock->raise();
+    if (takeFocus)
+        newDock->setFocus();
 }
 
 void MainWindow::deleteDock(QDockWidget* dock)
