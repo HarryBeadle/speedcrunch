@@ -1010,8 +1010,6 @@ void MainWindow::applySettings()
 
     if (m_widgets.display->isEmpty())
         QTimer::singleShot(0, this, SLOT(showReadyMessage()));
-
-    QTimer::singleShot(100, m_widgets.editor, SLOT(setFocus()));
 }
 
 void MainWindow::showManualWindow()
@@ -1149,7 +1147,6 @@ MainWindow::MainWindow()
 
     createUi();
     applySettings();
-    QTimer::singleShot(0, m_widgets.editor, SLOT(setFocus()));
 
     m_manualServer = ManualServer::instance();
     connect(this, SIGNAL(languageChanged()), m_manualServer, SLOT(ensureCorrectLanguage()));
@@ -1189,7 +1186,7 @@ void MainWindow::clearHistory()
 void MainWindow::clearEditor()
 {
     m_widgets.editor->clear();
-    QTimer::singleShot(0, m_widgets.editor, SLOT(setFocus()));
+    m_widgets.editor->setFocus();
 }
 
 void MainWindow::copyResultToClipboard()
@@ -1423,8 +1420,6 @@ void MainWindow::showSessionImportDialog()
     emit historyChanged();
     emit variablesChanged();
     emit functionsChanged();
-
-    QTimer::singleShot(0, m_widgets.editor, SLOT(setFocus()));
 
     if (!isActiveWindow())
         activateWindow();
@@ -1922,7 +1917,7 @@ void MainWindow::insertTextIntoEditor(const QString& s)
 
     if (!isActiveWindow())
         activateWindow();
-    QTimer::singleShot(0, m_widgets.editor, SLOT(setFocus()));
+    m_widgets.editor->setFocus();
 }
 
 void MainWindow::insertFunctionIntoEditor(const QString& f)
