@@ -34,6 +34,7 @@ public:
           m_widget(new Widget(this))
     {
         setWidget(m_widget);
+        setMinimumWidth(200);
         retranslateText();
     }
 
