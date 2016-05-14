@@ -97,6 +97,7 @@ private slots:
     void handleDisplaySelectionChange();
     void handleEditorSelectionChange();
     void handleManualClosed();
+    void handleDockWidgetVisibilityChanged(bool visible);
     void hideStateLabel();
     void increaseOpacity();
     void insertConstantIntoEditor(const QString&);

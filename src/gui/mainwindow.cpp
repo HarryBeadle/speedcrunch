@@ -768,6 +768,7 @@ void MainWindow::createUserFunctionsDock(bool takeFocus)
 
 void MainWindow::addTabifiedDock(QDockWidget* newDock, bool takeFocus, Qt::DockWidgetArea area)
 {
+    connect(newDock, &QDockWidget::visibilityChanged, this, &MainWindow::handleDockWidgetVisibilityChanged);
     addDockWidget(area, newDock);
     // Try to find an existing dock we can tabify with.
     for (QDockWidget* d : m_allDocks) {
@@ -2140,6 +2141,18 @@ void MainWindow::handleEditorTextChange()
             }
         }
     }
+}
+
+void MainWindow::handleDockWidgetVisibilityChanged(bool visible)
+{
+    QDockWidget* dock = qobject_cast<QDockWidget*>(sender());
+    if (!dock)
+        return;
+
+    // Pass the focus back to the editor if the dock that is being hidden has the focus.
+    QWidget* focusWidget = dock->focusWidget();
+    if (focusWidget && !visible && focusWidget->hasFocus())
+        m_widgets.editor->setFocus();
 }
 
 void MainWindow::insertVariableIntoEditor(const QString& v)
