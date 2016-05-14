@@ -584,6 +584,9 @@ void MainWindow::createStatusBar()
     m_status.angleUnit = new QPushButton(bar);
     m_status.resultFormat = new QPushButton(bar);
 
+    m_status.angleUnit->setFocusPolicy(Qt::NoFocus);
+    m_status.resultFormat->setFocusPolicy(Qt::NoFocus);
+
     m_status.angleUnit->setFlat(true);
     m_status.resultFormat->setFlat(true);
 
