@@ -78,7 +78,6 @@ public slots:
     void copy();
 
 private slots:
-    void activate();
     void applySelectedColorScheme();
     void clearEditor();
     void clearHistory();

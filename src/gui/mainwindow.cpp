@@ -1900,14 +1900,6 @@ void MainWindow::setResultFormatScientific()
         m_status.resultFormat->setText(tr("Scientific decimal"));
 }
 
-void MainWindow::activate()
-{
-    show();
-    raise();
-    activateWindow();
-    m_widgets.editor->setFocus();
-}
-
 void MainWindow::insertConstantIntoEditor(const QString& c)
 {
     if (c.isEmpty())
