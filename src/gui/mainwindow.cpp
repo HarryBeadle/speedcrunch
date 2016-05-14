@@ -1699,6 +1699,7 @@ void MainWindow::deleteKeypad()
 
 void MainWindow::deleteStatusBar()
 {
+    statusBar()->hide();
     m_status.angleUnit->deleteLater();
     m_status.angleUnit = 0;
 
