@@ -17,7 +17,7 @@ equals(QT_MAJOR_VERSION, 4) {
     }
 }
 
-contains(CONFIG, debug) {
+CONFIG(debug, debug|release) {
     DEFINES += EVALUATOR_DEBUG
 }
 
@@ -48,10 +48,12 @@ win32-msvc*:LIBS += User32.lib
         INCLUDEPATH += thirdparty
         target.path = "/bin"
         menu.path = "/share/applications"
+        appdata.path = "/share/appdata"
         icon.path = "/share/pixmaps"
         icon.files += resources/speedcrunch.png
         menu.files += ../pkg/speedcrunch.desktop
-        INSTALLS += target icon menu
+        appdata.files += ../pkg/speedcrunch.appdata.xml
+        INSTALLS += target icon menu appdata
     }
 }
 

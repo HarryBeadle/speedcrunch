@@ -158,7 +158,7 @@ void ManualWindow::handleAnchorClick(const QUrl &url)
         QDesktopServices::openUrl(url);
 }
 
-void ManualWindow::handleSourceChanged(const QUrl& url)
+void ManualWindow::handleSourceChanged(const QUrl&)
 {
     // This updates the window title with the new document title.
     retranslateText();

@@ -252,6 +252,7 @@ private:
         QAction* settingsResultFormatEngineering;
         QAction* settingsResultFormatScientific;
         QAction* settingsResultFormatAutoPrecision;
+        QAction* settingsResultFormat0Digits;
         QAction* settingsResultFormat2Digits;
         QAction* settingsResultFormat3Digits;
         QAction* settingsResultFormat8Digits;

@@ -318,32 +318,36 @@ void SyntaxHighlighter::groupDigits(const QString& text, int pos, int length)
         endPos = text.length();
     for (int i = pos; i < endPos; ++i) {
         ushort c = text[i].unicode();
-        bool isNumber = c < 128 && (charType[c] & allowedChars);
+        bool isDigit = c < 128 && (charType[c] & allowedChars);
 
         if (s >= 0) {
-            if (!isNumber) {
-                bool nextIsNumber;
-                if(evaluator->isSeparatorChar(c) && i<endPos-1) {
+            if (!isDigit) {
+                bool endOfNumber = true;
+                // If this is a separator and next character is a digit or a separator,
+                // the next character is part of the same number expression
+                if (evaluator->isSeparatorChar(c) && i<endPos-1) {
                     ushort nextC = text[i+1].unicode();
-                    nextIsNumber = nextC < 128 && (charType[nextC] & allowedChars);
-                } else
-                    nextIsNumber = false;
-                if(!nextIsNumber || !evaluator->isSeparatorChar(c)) {
+                    if ((nextC < 128 && (charType[nextC] & allowedChars))
+                         || evaluator->isSeparatorChar(nextC))
+                        endOfNumber = false;
+                }
+
+                if (endOfNumber) {
                     // End of current number found, start grouping the digits.
                     formatDigitsGroup(text, s, i, invertGroup, groupSize);
                     s = -1; // Reset.
                 }
             }
         } else {
-            if (isNumber) // Start of number found.
+            if (isDigit) // Start of number found.
                 s = i;
         }
 
-        if (!isNumber) {
+        if (!isDigit) {
             if (evaluator->isRadixChar(c)) {
                 // Invert the grouping for the fractional part.
                 invertGroup = true;
-            } else {
+            } else if (!evaluator->isSeparatorChar(c)){
                 // Look for a radix prefix.
                 invertGroup = false;
                 if (i > 0 && text[i - 1] == '0') {
@@ -360,7 +364,7 @@ void SyntaxHighlighter::groupDigits(const QString& text, int pos, int length)
                         groupSize = 3;
                         allowedChars = DEC_CHAR;
                     }
-                } else if (!evaluator->isSeparatorChar(c)){
+                } else {
                     groupSize = 3;
                     allowedChars = DEC_CHAR;
                 }

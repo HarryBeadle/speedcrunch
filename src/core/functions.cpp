@@ -1030,7 +1030,6 @@ void FunctionRepo::setNonTranslatableFunctionUsages()
     FUNCTION_USAGE(phase, "x");
     FUNCTION_USAGE(radians, "x");
     FUNCTION_USAGE(real, "x");
-    FUNCTION_USAGE(round, "x");
     FUNCTION_USAGE(sec, "x)");
     FUNCTION_USAGE(sgn, "x");
     FUNCTION_USAGE(sin, "x");
@@ -1065,6 +1064,7 @@ void FunctionRepo::setTranslatableFunctionUsages()
     FUNCTION_USAGE_TR(poimean, tr("average_events"));
     FUNCTION_USAGE_TR(poipmf, tr("events; average_events"));
     FUNCTION_USAGE_TR(poivar, tr("average_events"));
+    FUNCTION_USAGE_TR(round, tr("x [; precision]"));
     FUNCTION_USAGE_TR(shl, tr("n; bits"));
     FUNCTION_USAGE_TR(shr, tr("n; bits"));
     FUNCTION_USAGE_TR(unmask, tr("n; bits"));

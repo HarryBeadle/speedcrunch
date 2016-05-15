@@ -42,6 +42,7 @@ function create_pkgroot {
     ARCH=$*
     PKGROOT=$BASE_DIR/speedcrunch$ARCH-pkgroot
     echo "Creating package structure for '$ARCH'..."
+    # TODO: Use regular installation steps.
     rm -rf $PKGROOT
     mkdir --mode=0755 -p $PKGROOT/opt/speedcrunch
     install --mode 0755 $BASE_DIR/speedcrunch$ARCH-build/speedcrunch $PKGROOT/opt/speedcrunch/
@@ -55,6 +56,9 @@ function create_pkgroot {
     mkdir --mode=0755 -p $PKGROOT/usr/share/applications
     install --mode=0644 $SPEEDCRUNCH_SOURCE_DIR/pkg/speedcrunch.desktop $PKGROOT/usr/share/applications/
     dos2unix -q $PKGROOT/usr/share/applications/speedcrunch.desktop
+    mkdir --mode=0755 -p $PKGROOT/usr/share/appdata
+    install --mode=0644 $SPEEDCRUNCH_SOURCE_DIR/pkg/speedcrunch.appdata.xml $PKGROOT/usr/share/appdata/
+    dos2unix -q $PKGROOT/usr/share/appdata/speedcrunch.appdata.xml
 }
 
 function build_deb_package {

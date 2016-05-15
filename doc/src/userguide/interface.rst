@@ -35,12 +35,12 @@ Special Features of the Expression Editor
 -----------------------------------------
 
 * Autocompletion
-    If you start typing a name (for instance of a variable, function or unit), a list will pop up, suggesting possible names. You may press :kbd:`TAB` or :kbd:`ENTER` on your keyboard to automatically insert the first suggestion. Alternatively, use the arrow keys to select a different suggestion, or continue typing to refine the list.
+    If you start typing a name (for instance of a variable, function or unit), a list will pop up, suggesting possible names. You may press :kbd:`Tab` or :kbd:`Enter` on your keyboard to automatically insert the first suggestion. Alternatively, use the arrow keys to select a different suggestion, or continue typing to refine the list.
 
 * Constant quick insertion
     Press :kbd:`Ctrl` + :kbd:`Space` to open the *constant quick insertion* box. It allows access to the same constants as the constants dock (see above). Use the keyboard arrows to navigate the list.
 * Context help
-    Pressing :kbd:`F1` will show the manual page for the function under the cursor. This is extremely convenient when you need help to look up the usage of a function. Just press :kbd:`ESC` to dismiss the manual window again.
+    Pressing :kbd:`F1` will show the manual page for the function under the cursor. This is extremely convenient when you need help to look up the usage of a function. Just press :kbd:`Esc` to dismiss the manual window again.
 
 
 
@@ -110,11 +110,11 @@ Widgets and Docks
 Scrolling
 +++++++++
 
-* :kbd:`PAGE UP` and :kbd:`PAGE DOWN`
+* :kbd:`PageUp` and :kbd:`PageDown`
     Scroll the result window, page by page.
-* :kbd:`Shift` + :kbd:`PAGE UP` and :kbd:`Shift` + :kbd:`PAGE DOWN`
+* :kbd:`Shift` + :kbd:`PageUp` and :kbd:`Shift` + :kbd:`PageDown`
     Scroll the result window, line by line.
-* :kbd:`Ctrl` + :kbd:`PAGE UP` and :kbd:`Ctrl` + :kbd:`PAGE DOWN`
+* :kbd:`Ctrl` + :kbd:`PageUp` and :kbd:`Ctrl` + :kbd:`PageDown`
     Scroll to the top or bottom of the result window.
     
     
@@ -148,8 +148,10 @@ Various
 +++++++
 
 * :kbd:`F1`
-    Show context help (dismiss with :kbd:`ESC`).
+    Show context help (dismiss with :kbd:`Esc`).
 * :kbd:`F11`
     Enable fullscreen. Press again to exit.
-* :kbd:`Ctrl` + mouse wheel or :kbd:`Shift` + mouse wheel
+* :kbd:`Ctrl` + mouse wheel or :kbd:`Shift` + mouse wheel or :kbd:`Shift` + :kbd:`Up`/\ :kbd:`Down`
     Change the font size (zoom).
+* :kbd:`Ctrl` + :kbd:`Shift` + mouse wheel
+    Change the window opacity.
