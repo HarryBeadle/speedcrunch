@@ -105,7 +105,9 @@ of the chosen format:
 Angle Unit
 ++++++++++
 
-Select the angular unit to be used in calculations.
+Select the angular unit to be used in calculations. For functions that operate on angles, notably the
+:ref:`trigonometric functions <trigonometric>` like :func:`sin` or :func:`cos`, this setting
+determines the angle format of the arguments.
 
 * :menuselection:`Radian`
     Use radians for angles. A full circle corresponds to an angle of 2π radians.
