@@ -66,6 +66,8 @@ SpeedCrunch also offers capabilities to *import* a session (:menuselection:`Sess
 Settings
 --------
 
+.. _result_format:
+
 Result Format
 +++++++++++++
 

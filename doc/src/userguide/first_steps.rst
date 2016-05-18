@@ -6,14 +6,16 @@ it is disabled by default. The powerful keyboard interface is the recommended wa
 use SpeedCrunch to get the most out of it. However, the keypad can be enabled from:
 :menuselection:`View --> Keypad`.
 
+.. This note included since the code samples aren't translatable; people in comma locales
+   might get confused.
+
 .. note::
 
    All examples in this manual use a period (``.``) as the decimal separator. By default,
    SpeedCrunch will use your system's default decimal separator for output and will
-   accept both a period and a comma (``,``) for input (:ref:`see here <radix_character>` how to
-   change this behavior). Depending on these settings, it may be necessary to replace
-   periods with the appropriate decimal separator when entering these examples into
-   SpeedCrunch.
+   accept both a period and a comma (``,``) for input (:ref:`more details <radix_character>`).
+   Depending on your settings, it may be necessary to replace the periods with the
+   appropriate decimal separator when entering these examples into SpeedCrunch.
 
 When starting SpeedCrunch for the first time, the interface may thus seem a little plain. Don't be fooled, it can easily be customized. At the bottom edge of the window, you see the the **input bar**, also called the **editor**, with a blinking cursor showing that it is ready to accept keystrokes. To try out SpeedCrunch, type::
 

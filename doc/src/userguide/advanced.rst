@@ -74,6 +74,9 @@ Special caution is advised when using functions like :func:`cbrt` or any fractio
 
 When complex numbers are disabled, the constant :const:`j` is not available. However, it may be that previously stored variables still contain complex values. In that case, the imaginary part of these numbers is discarded when passing them as an argument to any built-in function.
 
+
+.. _units:
+
 Units
 =====
 .. versionadded :: 0.12
