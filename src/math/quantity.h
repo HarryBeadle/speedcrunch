@@ -173,7 +173,7 @@ public:
     static Quantity ln(const Quantity&);
     static Quantity lg(const Quantity&);
     static Quantity lb(const Quantity&);
-    static Quantity log(const Quantity & base, const Quantity&);
+    static Quantity log(const Quantity& base, const Quantity&);
     static Quantity sinh(const Quantity&);
     static Quantity cosh(const Quantity&);
     static Quantity tanh(const Quantity&);
