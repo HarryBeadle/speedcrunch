@@ -1,6 +1,5 @@
 User Interface
 ==============
-.. _context-help :
 
 Widgets
 -------
@@ -23,6 +22,8 @@ Apart from the main display, SpeedCrunch offers a number of extra panels and too
     The bit field widget serves to facilitate calculations with binary numbers. Each of the squares represents a bit. You may toggle the corresponding bit by clicking it. The resulting number is automatically inserted into the editor. Additional buttons allow you to shift, invert and reset all the bits at once.
     
     If the mouse cursor is hovered over the bit field widget, scrolling the mouse wheel will also shift the bits.
+
+  .. _keypad:
 * Keypad
     Except for version 0.11, an on-screen keypad is available. It allows the input of numbers even without a physical keyboard. The use of the keypad is discouraged, as most of SpeedCrunch's more advanced features cannot be accessed by it.
     
@@ -38,6 +39,8 @@ Special Features of the Expression Editor
     If you start typing a name (for instance of a variable, function or unit), a list will pop up, suggesting possible names. You may press :kbd:`Tab` or :kbd:`Enter` on your keyboard to automatically insert the first suggestion. Alternatively, use the arrow keys to select a different suggestion, or continue typing to refine the list.
 * Constant quick insertion
     Press :kbd:`Ctrl` + :kbd:`Space` to open the *constant quick insertion* box. It allows access to the same constants as the constants dock (see above). Use the keyboard arrows to navigate the list.
+
+  .. _context-help:
 * Context help
     Pressing :kbd:`F1` will show the manual page for the function under the cursor. This is extremely convenient when you need help to look up the usage of a function. Just press :kbd:`Esc` to dismiss the manual window again.
 * Selection results
@@ -95,6 +98,8 @@ of the chosen format:
     **Automatic** always displays as many digits as are necessary to represent the number
     precisely. The other settings explicitly specify a certain number of digits and will
     append additional zeroes to the fraction to reach that number of digits, if necessary.
+
+  .. _radix_character:
 * :menuselection:`Radix Character`
     Select the decimal separator to use in results. If :menuselection:`Settings --> Behavior --> Detect All Radix Characters` is
     disabled, this is also the radix character that needs to be used when entering numbers.
@@ -128,6 +133,8 @@ This section contains several settings that allow you to configure SpeedCrunch's
 * :menuselection:`Partial Results`
     If set, SpeedCrunch will display partial results as you type your expression as well
     as results when selecting a partial expression in the editor.
+
+  .. _automatic_result_reuse:
 * :menuselection:`Automatic Result Reuse`
     This setting allows you to quickly continue typing after evaluating an expression
     by inserting `ans` into the editor if necessary.
