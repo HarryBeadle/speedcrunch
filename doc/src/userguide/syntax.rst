@@ -78,7 +78,7 @@ When writing an expression like ``10+5*4``, which operation will be executed fir
 
 SpeedCrunch supports the following operators, listed in order of decreasing precedence:
 
-.. Note: when making changes to these tables, also check that they look ok with LaTeX; these big
+.. Note: When making changes to these tables, also check that they look ok with LaTeX; these big
 .. tables can be problematic.
 
 .. tabularcolumns:: |p{0.2\linewidth}|p{0.5\linewidth}|p{0.25\linewidth}|
