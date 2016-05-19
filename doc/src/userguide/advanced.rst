@@ -1,10 +1,16 @@
 User-Defined Variables and Functions
 ====================================
 
+
+.. _variables:
+
 Variables
 ---------
 
-When working on more sophisticated problems, you will likely find that you frequently need to access results from previous computations. As we have already seen, you can simply recall results from the result window. However, SpeedCrunch also offers another more powerful way: Variables. Variables allow you to store and recall any value, by assigning it a name. Variables are defined using the ``variable=value`` syntax::
+When working on more sophisticated problems, you will likely find that you frequently need to access
+results from previous computations. As we have already seen, you can simply recall results from the
+result window. However, SpeedCrunch also offers another more powerful way: Variables. Variables allow
+you to store and recall any value, by assigning it a name. Variables are defined using the :samp:`{variable}={value}` syntax::
 
     a = 5.123
 
@@ -26,6 +32,8 @@ Naturally, when assigning a value, the right-hand-side can be an arbitrarily com
 
 As you see, using descriptive variable names can make the calculation history much more readable.
 
+
+.. _user_functions:
 
 User Functions
 --------------
