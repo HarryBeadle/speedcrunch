@@ -79,8 +79,8 @@ When writing an expression like ``10+5*4``, which operation will be executed fir
 
 SpeedCrunch supports the following operators, listed in order of decreasing precedence:
 
-.. Note: when making changes to this table, also checks that it looks ok with LaTeX; a table
-.. this size can be iffy.
+.. Note: when making changes to these table, also checks that they look ok with LaTeX; these big
+.. tables can be problematic.
 
 .. tabularcolumns:: |p{0.2\linewidth}|p{0.5\linewidth}|p{0.25\linewidth}|
 
@@ -95,14 +95,6 @@ SpeedCrunch supports the following operators, listed in order of decreasing prec
 |                               |   Computes the factorial of its                               |                         |
 |                               |   argument. See also :func:`gamma()`.                         |                         |
 +-------------------------------+---------------------------------------------------------------+-------------------------+
-| ``x%``                        | **Percent operator**                                          | ``10% = 0.1``           |
-|                               |   Equivalent to multiplication with                           |                         |
-|                               |   0.01.                                                       |                         |
-|                               |                                                               |                         |
-|                               | .. deprecated:: 0.12                                          |                         |
-|                               |    This operator was **removed** in                           |                         |
-|                               |    SpeedCrunch 0.12. [#f1]_                                   |                         |
-+-------------------------------+---------------------------------------------------------------+-------------------------+
 | ``a ^ b``, ``a ** b``         | **Exponentiation**                                            |                         |
 |                               |   Both variants are equivalent. Note                          |                         |
 |                               |   that the power operation is                                 |                         |
@@ -110,16 +102,6 @@ SpeedCrunch supports the following operators, listed in order of decreasing prec
 |                               |   evaluated from right to left.                               |                         |
 +-------------------------------+---------------------------------------------------------------+-------------------------+
 | ``+x``, ``-x``                | **Unary plus and minus**                                      | ``--5 = +5``            |
-+-------------------------------+---------------------------------------------------------------+-------------------------+
-| ``f x``                       | **Simplified function syntax**                                | ``sqrt 2 = sqrt(2)``    |
-|                               |   Allows omitting the parentheses when                        |                         |
-|                               |   calling a function.                                         |                         |
-|                               |                                                               |                         |
-|                               | .. deprecated:: 0.12                                          |                         |
-|                               |    Use of this feature is                                     |                         |
-|                               |    discouraged because it allows                              |                         |
-|                               |    for very ambiguous expressions. It                         |                         |
-|                               |    may be removed in a later release.                         |                         |
 +-------------------------------+---------------------------------------------------------------+-------------------------+
 | ``a \ b``                     | **Integer division**                                          | ``5\4 = 1``             |
 |                               |   Divides the operands and truncates                          |                         |
@@ -155,9 +137,46 @@ SpeedCrunch supports the following operators, listed in order of decreasing prec
 +-------------------------------+---------------------------------------------------------------+-------------------------+
 
 
-.. rubric:: Footnotes
+.. We want to keep the following heading, paragraph and table together. By forcing a page break
+.. here, we avoid LaTeX squeezing the paragraph onto the same page as the previous large table
+.. and then running out of space for the next table.
 
-.. [#f1] The percent operator was confusing and not very useful. The reasons for its removal are discussed in
-         more detail in `issue #239 <issue239_>`_.
+.. raw:: latex
+
+    \pagebreak
+
+
+Deprecated Operators
+--------------------
+
+The following operators used to be supported, but were either removed from recent SpeedCrunch
+versions or are considered deprecated. Generally, these features were removed because of significant problems
+so you may want to avoid them even if they're still supported in your version of SpeedCrunch.
+
+.. tabularcolumns:: |p{0.2\linewidth}|p{0.5\linewidth}|p{0.25\linewidth}|
+
++-------------------------------+---------------------------------------------------------------+-------------------------+
+| Operator                      | Description                                                   | Examples                |
++===============================+===============================================================+=========================+
+| ``x%``                        | **Percent operator**                                          | ``10% = 0.1``           |
+|                               |   Equivalent to multiplication with                           |                         |
+|                               |   0.01.                                                       |                         |
+|                               |                                                               |                         |
+|                               | .. deprecated:: 0.12                                          |                         |
+|                               |    This operator was **removed** in                           |                         |
+|                               |    SpeedCrunch 0.12 as it was confusing and not very useful.  |                         |
+|                               |    The reasons for its removal are discussed in more detail   |                         |
+|                               |    in `issue #239 <issue239_>`_.                              |                         |
++-------------------------------+---------------------------------------------------------------+-------------------------+
+| ``f x``                       | **Simplified function syntax**                                | ``sqrt 2 = sqrt(2)``    |
+|                               |   Allows omitting the parentheses when                        |                         |
+|                               |   calling a function.                                         |                         |
+|                               |                                                               |                         |
+|                               | .. deprecated:: 0.12                                          |                         |
+|                               |    Use of this feature is                                     |                         |
+|                               |    discouraged because it allows                              |                         |
+|                               |    for very ambiguous expressions. It                         |                         |
+|                               |    will likely be removed in a future release.                |                         |
++-------------------------------+---------------------------------------------------------------+-------------------------+
 
 .. _issue239: https://bitbucket.org/heldercorreia/speedcrunch/issues/239/more-intuitive-and-useful-percentage
