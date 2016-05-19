@@ -4,8 +4,8 @@ Syntax
 This part of the documentation explains the syntax of valid SpeedCrunch input. As you will see, SpeedCrunch honors most conventions for mathematical expressions. You will find using SpeedCrunch to be very natural and intuitive, especially so if you are already familiar with a programming language.
 
 
-Numbers
--------
+Number Notation
+---------------
 
 Decimal Form
 ++++++++++++
@@ -25,7 +25,7 @@ Trailing zeros after the decimal point (like in ``12.300``) or leading zeros bef
 Scientific Notation
 +++++++++++++++++++
 
-When dealing with very small or very large numbers (think size of an atom, or a galaxy) the notation above is inconvenient. These are more commonly expressed in scientific notation; for instance, 1.234*10\ :sup:`-9` is preferable to 0.000000001234.
+When dealing with very small or very large numbers (think the size of an atom or of a galaxy) the notation above is inconvenient. These are more commonly expressed in scientific notation; for instance, 1.234*10\ :sup:`-9` is preferable to 0.000000001234.
 
 Naturally, in SpeedCrunch this could be written as ``1.234*10^-9``, but there's also a shorthand notation: ``1.234e-9``. Here, the ``e`` represents ``*10^``, but it is considered a part of the number literal and treated with higher precedence. For example, ``1e2^3`` is equivalent to ``(1e2)^3 = 100^3``. The scale of a number (sometimes called its exponent) always begins with the scale character ``E`` or ``e`` followed by a signed integer. So ``e+10``, ``e-4``, ``E-0`` are all valid scale expressions. If the sign is '+', you may simply omit it: ``e0``, ``E10``. The significand (i.e. the part preceding the exponent) is required; exactly one exponent must be specified.
 
@@ -34,8 +34,7 @@ Compared to most calculators, SpeedCrunch can accept very large numbers without 
 Non-Decimal Bases
 +++++++++++++++++
 
-Sometimes you may require to work in numeral bases other than decimal. SpeedCrunch provides support for binary (base-2), octal (base-8) and hexadecimal (base-16) numbers.
-
+In addition to decimal (base-10) numbers, SpeedCrunch provides support for binary (base-2), octal (base-8) and hexadecimal (base-16) numbers.
 You can enter a number in any of these bases by marking it with the corresponding prefix:
 
 * ``0b`` or ``0B`` for **binary**, e.g. ``0b10010``.
@@ -79,7 +78,7 @@ When writing an expression like ``10+5*4``, which operation will be executed fir
 
 SpeedCrunch supports the following operators, listed in order of decreasing precedence:
 
-.. Note: when making changes to these table, also checks that they look ok with LaTeX; these big
+.. Note: when making changes to these tables, also check that they look ok with LaTeX; these big
 .. tables can be problematic.
 
 .. tabularcolumns:: |p{0.2\linewidth}|p{0.5\linewidth}|p{0.25\linewidth}|
@@ -139,7 +138,7 @@ SpeedCrunch supports the following operators, listed in order of decreasing prec
 
 .. We want to keep the following heading, paragraph and table together. By forcing a page break
 .. here, we avoid LaTeX squeezing the paragraph onto the same page as the previous large table
-.. and then running out of space for the next table.
+.. and then running out of space for the next table and moving it onto the next page.
 
 .. raw:: latex
 
