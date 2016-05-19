@@ -783,7 +783,22 @@ void test_implicit_multiplication()
     CHECK_EVAL("f() = 123", "123");
     CHECK_EVAL("2f()", "246");
     CHECK_EVAL("5   5", "55");
-    CHECK_EVAL("10.   0.2", "2");
+
+    // Check implicit multiplication between numbers fails
+    CHECK_EVAL_FAIL("10.   0.2");
+    CHECK_EVAL_FAIL("10 0x10");
+    CHECK_EVAL_FAIL("10 #10");
+    CHECK_EVAL_FAIL("0b104");
+    CHECK_EVAL_FAIL("0b10 4");
+    CHECK_EVAL_FAIL("0b10 0x4");
+    CHECK_EVAL_FAIL("0o109");
+    CHECK_EVAL_FAIL("0o10 9");
+    CHECK_EVAL_FAIL("0o10 0x9");
+    CHECK_EVAL_FAIL("12.12.12");
+    CHECK_EVAL_FAIL("12e12.12");
+    CHECK_EVAL("0b10a", "10");
+    CHECK_EVAL("0o2a", "10");
+    CHECK_EVAL("5(5)", "25");
 
     CHECK_EVAL("a sin(pi/2)", "5");
     CHECK_EVAL("a sqrt(4)",   "10");
