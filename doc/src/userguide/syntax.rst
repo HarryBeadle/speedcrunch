@@ -77,33 +77,87 @@ Operators and Precedence
 
 When writing an expression like ``10+5*4``, which operation will be executed first? The common rules of operator precedence tell us that in this case multipication shall be computed first, hence the result is ``30``. We also distinguish **unary** operators (which act on a single number/operand) and **binary** operators (which link two operands).
 
-SpeedCrunch supports the following operators, listed in decreasing order of precedence:
+SpeedCrunch supports the following operators, listed in order of decreasing precedence:
 
-* Parentheses ``(...)``. Use these to mark precedence explicitly, e.g. ``(2+3)*4 = 5*4 = 20``.
-* Unary operator ``!``. Computes the factorial of its argument, e.g. ``5! = 125``; see also :func:`gamma`.
-* Binary operator ``^`` or ``**`` (power). Both notations (``^`` and ``**``) are equivalent. Note that the power operation is *right-associative*, i.e. evaluated from right to left, e.g. ``2^2^3 = 2^8 = 256``.
-* Simplified function syntax, e.g. ``sqrt 2``. [#simplified_function]_.
-* Binary operator ``\`` (integer division).
-* Binary operators ``*`` (multiplication) and ``/`` (division), unary operators ``+`` and ``-`` (negation), implied multiplication [#implied_mult]_, and unary operator ``%`` (percent) [#percent]_.
-* Binary operators ``+`` (addition) and ``-`` (subtraction).
-* Binary operators ``<<`` (left shift) and ``>>`` (right shift); see also :func:`shl` and :func:`shr`.
-* Binary operator ``&`` (bitwise and); see also :func:`and`.
-* Binary operator ``|`` (bitwise or); see also :func:`or`.
-* Binary operator ``->`` or ``in`` (unit conversion). Again, both notations are equivalent. See :ref:`units` for more information.
+.. Note: when making changes to this table, also checks that it looks ok with LaTeX; a table
+.. this size can be iffy.
+
+.. tabularcolumns:: |p{0.2\linewidth}|p{0.5\linewidth}|p{0.25\linewidth}|
+
++-------------------------------+---------------------------------------------------------------+-------------------------+
+| Operator                      | Description                                                   | Examples                |
++===============================+===============================================================+=========================+
+| ``(...)``                     | **Parentheses**                                               | ``(2+3)*4 = 5*4 = 20``  |
+|                               |   Parentheses mark precedence                                 |                         |
+|                               |   explicitly.                                                 |                         |
++-------------------------------+---------------------------------------------------------------+-------------------------+
+| ``x!``                        | **Factorial**                                                 | ``5! = 120``            |
+|                               |   Computes the factorial of its                               |                         |
+|                               |   argument. See also :func:`gamma()`.                         |                         |
++-------------------------------+---------------------------------------------------------------+-------------------------+
+| ``x%``                        | **Percent operator**                                          | ``10% = 0.1``           |
+|                               |   Equivalent to multiplication with                           |                         |
+|                               |   0.01.                                                       |                         |
+|                               |                                                               |                         |
+|                               | .. deprecated:: 0.12                                          |                         |
+|                               |    This operator was **removed** in                           |                         |
+|                               |    SpeedCrunch 0.12. [#f1]_                                   |                         |
++-------------------------------+---------------------------------------------------------------+-------------------------+
+| ``a ^ b``, ``a ** b``         | **Exponentiation**                                            |                         |
+|                               |   Both variants are equivalent. Note                          |                         |
+|                               |   that the power operation is                                 |                         |
+|                               |   *right-associative*, i.e. it is                             | ``2^2^3 = 2^8 = 256``   |
+|                               |   evaluated from right to left.                               |                         |
++-------------------------------+---------------------------------------------------------------+-------------------------+
+| ``+x``, ``-x``                | **Unary plus and minus**                                      | ``--5 = +5``            |
++-------------------------------+---------------------------------------------------------------+-------------------------+
+| ``f x``                       | **Simplified function syntax**                                | ``sqrt 2 = sqrt(2)``    |
+|                               |   Allows omitting the parentheses when                        |                         |
+|                               |   calling a function.                                         |                         |
+|                               |                                                               |                         |
+|                               | .. deprecated:: 0.12                                          |                         |
+|                               |    Use of this feature is                                     |                         |
+|                               |    discouraged because it allows                              |                         |
+|                               |    for very ambiguous expressions. It                         |                         |
+|                               |    may be removed in a later release.                         |                         |
++-------------------------------+---------------------------------------------------------------+-------------------------+
+| ``a \ b``                     | **Integer division**                                          | ``5\4 = 1``             |
+|                               |   Divides the operands and truncates                          |                         |
+|                               |   the result to an integer.                                   |                         |
++-------------------------------+---------------------------------------------------------------+-------------------------+
+| ``a * b``, ``a b``, ``a / b`` | **Multiplication and division**                               | ``3 sqrt(2)``           |
+|                               |   In many situations, *implicit                               |                         |
+|                               |   multiplication* allows writing                              |                         |
+|                               |   multiplications without the ``*``                           |                         |
+|                               |   operator.                                                   |                         |
+|                               |                                                               |                         |
+|                               | .. versionadded:: 0.12                                        |                         |
+|                               |    Implicit multiplication was added                          |                         |
+|                               |    SpeedCrunch 0.12.                                          |                         |
++-------------------------------+---------------------------------------------------------------+-------------------------+
+| ``a + b``, ``a - b``          | **Addition and subtraction**                                  |                         |
++-------------------------------+---------------------------------------------------------------+-------------------------+
+| ``a << n``, ``a >> n``        | **Left/right arithmetic shifts**                              | ``0b11<<1 = 0b110``     |
+|                               |   Shifts the first operand left/right                         |                         |
+|                               |   by ``n`` bits. See also :func:`shl`                         | ``0b100>>2 = 0b1``      |
+|                               |   and :func:`shr`.                                            |                         |
++-------------------------------+---------------------------------------------------------------+-------------------------+
+| ``a & b``                     | **Bitwise AND**                                               | ``0b11 & 0b10 = 0b10``  |
+|                               |   See also :func:`and`.                                       |                         |
++-------------------------------+---------------------------------------------------------------+-------------------------+
+| ``a | b``                     | **Bitwise OR**                                                | ``0b10 | 0b01 = 0b11``  |
+|                               |   See also :func:`or`.                                        |                         |
++-------------------------------+---------------------------------------------------------------+-------------------------+
+| ``->``, ``in``                | **Unit conversion**                                           | ``1000 meter in mile``  |
+|                               |   Convert the operand into the given                          |                         |
+|                               |   unit. Both forms are equivalent. See                        | ``1000 meter -> mile``  |
+|                               |   :ref:`units` for more information.                          |                         |
++-------------------------------+---------------------------------------------------------------+-------------------------+
 
 
 .. rubric:: Footnotes
 
-.. [#simplified_function]
-    .. deprecated :: 0.12
-        *Simplified function syntax* refers to the notation where the parentheses are omitted from a function call, e.g. ``sin 123``. The use of this feature is **discouraged**, as it easily allows for errors to creep in. It is deprecated as of version 0.12 and may be removed in a later version of SpeedCrunch.
-
-.. [#implied_mult]
-    .. versionadded :: 0.12
-        *Implicit multiplication* allows multiplication without the multiplication operator (``*``), for instance: ``3 sqrt(2)``.
-
-.. [#percent]
-    .. deprecated :: 0.12
-        The percent operator ``%`` has been removed: it was confusing and not very useful. The reasons for its removal are discussed in more detail in `issue #239 <issue239_>`_. In versions prior to 0.12, the percent operator was equivalent to multiplication by 0.01, e.g. ``10% = 0.1``, or ``5 - 20% = 4.8``.
+.. [#f1] The percent operator was confusing and not very useful. The reasons for its removal are discussed in
+         more detail in `issue #239 <issue239_>`_.
 
 .. _issue239: https://bitbucket.org/heldercorreia/speedcrunch/issues/239/more-intuitive-and-useful-percentage
