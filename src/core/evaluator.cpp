@@ -1317,6 +1317,11 @@ Quantity Evaluator::evalNoAssign()
     Quantity result;
 
     if (m_dirty) {
+        // Reset
+        m_assignId = QString();
+        m_assignFunc = false;
+        m_assignArg.clear();
+
         Tokens tokens = scan(m_expression);
 
         // Invalid expression?
@@ -1326,9 +1331,6 @@ Quantity Evaluator::evalNoAssign()
         }
 
         // Variable assignment?
-        m_assignId = QString();
-        m_assignFunc = false;
-        m_assignArg.clear();
         if (tokens.count() > 2 && tokens.at(0).isIdentifier()
              && tokens.at(1).asOperator() == Token::Equal)
         {
@@ -1743,6 +1745,9 @@ bool Evaluator::isBuiltInVariable(const QString& id) const
 Quantity Evaluator::eval()
 {
     Quantity result = evalNoAssign(); // This sets m_assignId.
+
+    if (!m_error.isEmpty())
+        return result;
 
     if (isBuiltInVariable(m_assignId)) {
         m_error = tr("%1 is a reserved name, please choose another").arg(m_assignId);
