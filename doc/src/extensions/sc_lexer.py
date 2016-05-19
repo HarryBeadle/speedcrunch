@@ -4,11 +4,10 @@ import re
 
 from pygments.lexer import inherit, RegexLexer, words as _words
 from pygments.token import *  # noqa
-import sphinx.highlighting
 
 
 RADIX = r'[.,]'
-SEPARATOR = '[ _\u00b7\u066b\u066c\u02d9\u2396]'
+SEPARATOR = '[ _\'u00b7\u066b\u066c\u02d9\u2396]'
 SEPARATORS = SEPARATOR + '*'
 
 
@@ -116,7 +115,7 @@ __all__ = ['SpeedCrunchLexer', 'SpeedCrunchSessionLexer']
 # Sphinx extension interface
 def setup(app):
     sc_lexer = SpeedCrunchSessionLexer(stripnl=False)
-    # sc_lexer.add_filter('raiseonerror')
+    sc_lexer.add_filter('raiseonerror')
     app.add_lexer('sc', sc_lexer)
     app.add_lexer('speedcrunch', sc_lexer)
     return {
