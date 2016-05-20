@@ -115,7 +115,8 @@ Rounding
     Truncates (rounds toward zero) ``x`` to the next ``n``-digit number. ``n`` may be omitted, in which case ``x`` is rounded to integer. Only real, dimensionless arguments are allowed.
 
 .. seealso::
-   :func:`int`, :func:`frac`.
+   | :func:`int`
+   | :func:`frac`
 
 
 Integer Division
