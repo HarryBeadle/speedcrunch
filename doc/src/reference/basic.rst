@@ -70,7 +70,7 @@ Trigonometric & Inverse Trigonometric
 
 .. function:: sin(x)
 
-    Returns the sine of *x*. The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
+    Returns the sine of ``x``. The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
 
     In **degrees** mode, the argument is assumed to be expressed in degrees, such that :func:`sin` is periodic with a period of 360 degrees: *sin(x) = sin(x+360)*. Complex arguments are not allowed in **degrees** mode, regardless of the corresponding setting.
 
@@ -82,14 +82,15 @@ Trigonometric & Inverse Trigonometric
 
     The inverse function is :func:`arcsin`.
 
-    .. seealso ::
-        * :func:`cos`
-        * :func:`tan`
-        * :func:`cot`
+    .. seealso::
+        | :func:`cos`
+        | :func:`tan`
+        | :func:`cot`
+        | :func:`arcsin`
 
 .. function:: cos(x)
 
-    Returns the cosine of *x*. The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
+    Returns the cosine of ``x``. The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
 
     In **degrees** mode, the argument is assumed to be expressed in degrees, such that :func:`cos` is periodic with a period of 360 degrees: *cos(x) = cos(x+360)*. Complex arguments are not allowed in **degrees** mode, regardless of the corresponding setting.
 
@@ -101,16 +102,16 @@ Trigonometric & Inverse Trigonometric
 
     The inverse function is :func:`arccos`.
 
-    .. seealso ::
-        * :func:`sin`
-        * :func:`tan`
-        * :func:`cot`
-        * :func:`sec`
-        * :func:`arccos`
+    .. seealso::
+        | :func:`sin`
+        | :func:`tan`
+        | :func:`cot`
+        | :func:`sec`
+        | :func:`arccos`
 
 .. function:: tan(x)
 
-    Returns the tangent of *x*. The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
+    Returns the tangent of ``x``. The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
 
     In **degrees** mode, the argument is assumed to be expressed in degrees, such that :func:`tan` is periodic with a period of 180 degrees: *tan(x) = tan(x+180)*. Complex arguments are not allowed in **degrees** mode, regardless of the corresponding setting.
 
@@ -120,14 +121,14 @@ Trigonometric & Inverse Trigonometric
 
     The inverse function is :func:`arctan`.
 
-    .. seealso ::
-        * :func:`cos`
-        * :func:`sin`
-        * :func:`cot`
+    .. seealso::
+        | :func:`cos`
+        | :func:`sin`
+        | :func:`cot`
 
 .. function:: cot(x)
 
-    Returns the cotangent of *x*. The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
+    Returns the cotangent of ``x``. The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
 
     In **degrees** mode, the argument is assumed to be expressed in degrees, such that :func:`cot` is periodic with a period of 180 degrees: *cot(x) = cot(x+180)*. Complex arguments are not allowed in **degrees** mode, regardless of the corresponding setting.
 
@@ -135,14 +136,14 @@ Trigonometric & Inverse Trigonometric
 
     The argument of :func:`cot` must be dimensionless.
 
-    .. seealso ::
-        * :func:`cos`
-        * :func:`sin`
-        * :func:`tan`
+    .. seealso::
+        | :func:`cos`
+        | :func:`sin`
+        | :func:`tan`
 
 .. function:: sec(x)
 
-    Returns the secant of *x*, defined as the reciprocal cosine of *x*: `sec(x) = 1/cos(x)` . The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
+    Returns the secant of ``x``, defined as the reciprocal cosine of ``x``: `sec(x) = 1/cos(x)` . The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
 
     In **degrees** mode, the argument is assumed to be expressed in degrees, such that :func:`sec` is periodic with a period of 360 degrees: *sec(x) = sec(x+360)*. Complex arguments are not allowed in **degrees** mode, regardless of the corresponding setting.
 
@@ -154,7 +155,7 @@ Trigonometric & Inverse Trigonometric
 
 .. function:: csc(x)
 
-    Returns the cosecant of *x*, defined as the reciprocal sine of *x*: `csc(x) = 1/sin(x)` . The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
+    Returns the cosecant of ``x``, defined as the reciprocal sine of ``x``: `csc(x) = 1/sin(x)` . The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
 
     In **degrees** mode, the argument is assumed to be expressed in degrees, such that :func:`csc` is periodic with a period of 360 degrees: *csc(x) = csc(x+360)*. Complex arguments are not allowed in **degrees** mode, regardless of the corresponding setting.
 
@@ -167,7 +168,7 @@ Trigonometric & Inverse Trigonometric
 
 .. function:: arccos(x)
 
-    Returns the inverse cosine of *x*, such that ``cos(arccos(x)) = x``.
+    Returns the inverse cosine of ``x``, such that ``cos(arccos(x)) = x``.
 
     The behavior of the function depends on both the **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
 
@@ -181,7 +182,7 @@ Trigonometric & Inverse Trigonometric
 
 .. function:: arcsin(x)
 
-    Returns the inverse sine of *x*, such that ``sin(arcsin(x)) = x``.
+    Returns the inverse sine of ``x``, such that ``sin(arcsin(x)) = x``.
 
     The behavior of the function depends on both the **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
 
@@ -196,7 +197,7 @@ Trigonometric & Inverse Trigonometric
 
 .. function:: arctan(x)
 
-    Returns the inverse sine of *x*, such that ``tan(arctan(x)) = x``.
+    Returns the inverse tangent of ``x``, such that ``tan(arctan(x)) = x``.
 
     The behavior of the function depends on both the **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
 
@@ -214,50 +215,54 @@ Hyperbolic & Inverse Hyperbolic
 
 .. function:: sinh(x)
 
-    Returns the hyperbolic sine of *x*. In **complex mode** any complex number may be used as argument.
+    Return the hyperbolic sine of ``x``. In *complex mode*, any complex number may be used as the argument.
 
     The argument must be dimensionless.
 
     The inverse function is :func:`arsinh`.
 
+
 .. function:: cosh(x)
 
-    Returns the hyperbolic cosine of *x*. In **complex mode** any complex number may be used as argument.
+    Return the hyperbolic cosine of ``x``. In *complex mode*, any complex number may be used as the argument.
 
     The argument must be dimensionless.
 
     The inverse function is :func:`arcosh`.
 
+
 .. function:: tanh(x)
 
-    Returns the hyperbolic tangent of *x*. In **complex mode** any complex number may be used as argument.
+    Return the hyperbolic tangent of ``x``. In *complex mode*, any complex number may be used as the argument.
 
     The argument must be dimensionless.
 
     The inverse function is :func:`artanh`.
 
+
 .. function:: arsinh(x)
 
-    Computes the area hyperbolic sine of `x`, the inverse function to :func:`sinh`. `arsinh(x)` is the only solution to *cosh(y) = x*.
+    Compute the area hyperbolic sine of ``x``, the inverse function to :func:`sinh`. *arsinh(x)* is the only solution to *cosh(y) = x*.
 
-    In complex mode, the function is defined for any complex *z* by arsinh(z) = ln[z + (z\ :sup:`2`+1)\ :sup`1/2`].
+    In complex mode, the function is defined for any complex ``z`` as *arsinh(z) = ln[z + (z* :sup:`2` *+1)* :sup:`1/2` *]*.
 
     The function only accepts dimensionless arguments.
 
+
 .. function:: arcosh(x)
 
-    Computes the area hyperbolic cosine of `x`, the inverse function to :func:`cosh`. `arcosh (x)` is the positive solution to *cosh(y) = x*. Except for `x=1`, the second solution to this equation will be given by `--arcosh(x)`.
+    Compute the area hyperbolic cosine of ``x``, the inverse function to :func:`cosh`. *arcosh (x)* is the positive solution to *cosh(y) = x*. Except for `*x=1*, the second solution to this equation will be given by *-arcosh(x)*.
 
-    In real mode, the parameter `x` must be >1. In complex mode, the function is defined for any complex *z* by arcosh(z) = ln[z + (z\ :sup:`2`-1)\ :sup:`2`].
+    In real mode, the parameter ``x`` must be *> 1*. In complex mode, the function is defined for any complex ``z`` as *arcosh(z) = ln[z + (z* :sup:`2` *-1)* :sup:`2` *]*.
 
     The function only accepts dimensionless arguments.
 
 
 .. function:: artanh(x)
 
-    Computes the area hyperbolic tangent of `x`, the inverse function to tanh y. `artanh (x)` is the only solution to *tanh(y) = x*. In real mode, the parameter `x` has to fulfill -1 < `x` < 1.
+    Compute the area hyperbolic tangent of ``x``, the inverse function to :func:`tanh`. *artanh(x)* is the only solution to *tanh(y) = x*. In real mode, the parameter ``x`` has to fulfill *-1 < x < 1*.
 
-    In complex mode, `artanh` takes any argument, except for -1 and +1. In the complex plane it is defined by artanh(z) = 1/2 * ln[(z+1)/(z-1)].
+    In complex mode, this function accepts any argument except for -1 and +1. In the complex plane, it is defined as *artanh(z) = 1/2 \* ln[(z+1)/(z-1)]*.
 
     The function only accepts dimensionless arguments.
 
