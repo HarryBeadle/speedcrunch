@@ -70,11 +70,11 @@ Trigonometric & Inverse Trigonometric
 
 .. function:: sin(x)
 
-    Returns the sine of ``x``. The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
+    Returns the sine of ``x``. The behavior depends on both the angle unit setting (degrees or radians) and on whether complex numbers are enabled.
 
-    In **degrees** mode, the argument is assumed to be expressed in degrees, such that :func:`sin` is periodic with a period of 360 degrees: *sin(x) = sin(x+360)*. Complex arguments are not allowed in **degrees** mode, regardless of the corresponding setting.
+    In *degrees* mode, the argument is assumed to be expressed in degrees, such that :func:`sin` is periodic with a period of 360 degrees: *sin(x) = sin(x+360)*. Complex arguments are not allowed in *degrees* mode, regardless of the corresponding setting.
 
-    When **radians** are set as angle unit, :func:`sin` will be 2π-periodic. The argument may be complex.
+    When *radians* are set as the angle unit, :func:`sin` will be 2π-periodic. The argument may be complex.
 
     For real arguments beyond approx. \|x\|>10\ :sup:`77`, SpeedCrunch no longer recognizes the periodicity of the function and issues an error.
 
@@ -90,11 +90,11 @@ Trigonometric & Inverse Trigonometric
 
 .. function:: cos(x)
 
-    Returns the cosine of ``x``. The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
+    Returns the cosine of ``x``. The behavior depends on both the angle unit setting (degrees or radians) and on whether complex numbers are enabled.
 
-    In **degrees** mode, the argument is assumed to be expressed in degrees, such that :func:`cos` is periodic with a period of 360 degrees: *cos(x) = cos(x+360)*. Complex arguments are not allowed in **degrees** mode, regardless of the corresponding setting.
+    In *degrees* mode, the argument is assumed to be expressed in degrees, such that :func:`cos` is periodic with a period of 360 degrees: *cos(x) = cos(x+360)*. Complex arguments are not allowed in *degrees* mode, regardless of the corresponding setting.
 
-    When **radians** are set as angle unit, :func:`cos` will be 2π-periodic. The argument may be complex.
+    When *radians* are set as the angle unit, :func:`cos` will be 2π-periodic. The argument may be complex.
 
     For real arguments beyond approx. \|x\|>10\ :sup:`77`, SpeedCrunch no longer recognizes the periodicity of the function and issues an error.
 
@@ -111,11 +111,11 @@ Trigonometric & Inverse Trigonometric
 
 .. function:: tan(x)
 
-    Returns the tangent of ``x``. The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
+    Returns the tangent of ``x``. The behavior depends on both the angle unit setting (degrees or radians) and on whether complex numbers are enabled.
 
-    In **degrees** mode, the argument is assumed to be expressed in degrees, such that :func:`tan` is periodic with a period of 180 degrees: *tan(x) = tan(x+180)*. Complex arguments are not allowed in **degrees** mode, regardless of the corresponding setting.
+    In *degrees* mode, the argument is assumed to be expressed in degrees, such that :func:`tan` is periodic with a period of 180 degrees: *tan(x) = tan(x+180)*. Complex arguments are not allowed in *degrees* mode, regardless of the corresponding setting.
 
-    When **radians** are set as angle unit, :func:`tan` will be π-periodic. The argument may be complex.
+    When *radians* are set as the angle unit, :func:`tan` will be π-periodic. The argument may be complex.
 
     The argument of :func:`tan` must be dimensionless.
 
@@ -128,11 +128,11 @@ Trigonometric & Inverse Trigonometric
 
 .. function:: cot(x)
 
-    Returns the cotangent of ``x``. The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
+    Returns the cotangent of ``x``. The behavior depends on both the angle unit setting (degrees or radians) and on whether complex numbers are enabled.
 
-    In **degrees** mode, the argument is assumed to be expressed in degrees, such that :func:`cot` is periodic with a period of 180 degrees: *cot(x) = cot(x+180)*. Complex arguments are not allowed in **degrees** mode, regardless of the corresponding setting.
+    In *degrees* mode, the argument is assumed to be expressed in degrees, such that :func:`cot` is periodic with a period of 180 degrees: *cot(x) = cot(x+180)*. Complex arguments are not allowed in *degrees* mode, regardless of the corresponding setting.
 
-    When **radians** are set as angle unit, :func:`cot` will be π-periodic. The argument may be complex.
+    When *radians* are set as the angle unit, :func:`cot` will be π-periodic. The argument may be complex.
 
     The argument of :func:`cot` must be dimensionless.
 
@@ -143,11 +143,11 @@ Trigonometric & Inverse Trigonometric
 
 .. function:: sec(x)
 
-    Returns the secant of ``x``, defined as the reciprocal cosine of ``x``: `sec(x) = 1/cos(x)` . The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
+    Returns the secant of ``x``, defined as the reciprocal cosine of ``x``: *sec(x) = 1/cos(x)*. The behavior depends on both the angle unit setting (degrees or radians) and on whether complex numbers are enabled.
 
-    In **degrees** mode, the argument is assumed to be expressed in degrees, such that :func:`sec` is periodic with a period of 360 degrees: *sec(x) = sec(x+360)*. Complex arguments are not allowed in **degrees** mode, regardless of the corresponding setting.
+    In *degrees* mode, the argument is assumed to be expressed in degrees, such that :func:`sec` is periodic with a period of 360 degrees: *sec(x) = sec(x+360)*. Complex arguments are not allowed in *degrees* mode, regardless of the corresponding setting.
 
-    When **radians** are set as angle unit, :func:`sec` will be 2π-periodic. The argument may be complex.
+    When *radians* are set as the angle unit, :func:`sec` will be 2π-periodic. The argument may be complex.
 
     For real arguments beyond approx. \|x\|>10\ :sup:`77`, SpeedCrunch no longer recognizes the periodicity of the function and issues an error.
 
@@ -155,11 +155,11 @@ Trigonometric & Inverse Trigonometric
 
 .. function:: csc(x)
 
-    Returns the cosecant of ``x``, defined as the reciprocal sine of ``x``: `csc(x) = 1/sin(x)` . The behavior depends on both **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
+    Returns the cosecant of ``x``, defined as the reciprocal sine of ``x``: *csc(x) = 1/sin(x)*. The behavior depends on both the angle unit setting (degrees or radians) and on whether complex numbers are enabled.
 
-    In **degrees** mode, the argument is assumed to be expressed in degrees, such that :func:`csc` is periodic with a period of 360 degrees: *csc(x) = csc(x+360)*. Complex arguments are not allowed in **degrees** mode, regardless of the corresponding setting.
+    In *degrees* mode, the argument is assumed to be expressed in degrees, such that :func:`csc` is periodic with a period of 360 degrees: *csc(x) = csc(x+360)*. Complex arguments are not allowed in *degrees* mode, regardless of the corresponding setting.
 
-    When **radians** are set as angle unit, :func:`csc` will be 2π-periodic. The argument may be complex.
+    When *radians* are set as the angle unit, :func:`csc` will be 2π-periodic. The argument may be complex.
 
     For real arguments beyond approx. \|x\|>10\ :sup:`77`, SpeedCrunch no longer recognizes the periodicity of the function and issues an error.
 
@@ -168,13 +168,11 @@ Trigonometric & Inverse Trigonometric
 
 .. function:: arccos(x)
 
-    Returns the inverse cosine of ``x``, such that ``cos(arccos(x)) = x``.
+    Returns the inverse cosine of ``x``, such that *cos(arccos(x)) = x*. The behavior of the function depends on both the angle unit setting (degrees or radians) and on whether complex numbers are enabled.
 
-    The behavior of the function depends on both the **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
+    In *degrees* mode, :func:`arccos` takes a real argument from *[-1, 1]*, and the return value is in the range *[0, 180]*. Real arguments outside *[-1, 1]* and complex numbers are not allowed in *degrees* mode.
 
-    In **degrees** mode, :func:`arccos` takes a real argument from [--1, 1], and the return value is in the range [0, 180]. Real arguments outside [--1, 1] and complex numbers are not allowed in **degrees** mode.
-
-    When **radians** are set as angle unit, :func:`arccos` maps an element from [--1, 1] to a value in [0, π]. When **complex numbers** are enabled in addition, :func:`arccos` may take any argument from the complex plane. In complex mode, ``arccos(-1) = π`` and ``arccos(1) = 0`` will yield the same result as in real mode.
+    When *radians* are set as the angle unit, :func:`arccos` maps an element from *[-1, 1]* to a value in *[0, π]*. When complex numbers are enabled in addition, :func:`arccos` may take any argument from the complex plane. In complex mode, *arccos(-1) = π* and *arccos(1) = 0* will yield the same result as in real mode.
 
     The argument of :func:`arccos` must be dimensionless.
 
@@ -182,13 +180,11 @@ Trigonometric & Inverse Trigonometric
 
 .. function:: arcsin(x)
 
-    Returns the inverse sine of ``x``, such that ``sin(arcsin(x)) = x``.
+    Returns the inverse sine of ``x``, such that *sin(arcsin(x)) = x*. The behavior of the function depends on both the angle unit setting (degrees or radians) and on whether complex numbers are enabled.
 
-    The behavior of the function depends on both the **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
+    In *degrees* mode, :func:`arcsin` takes a real argument from *[-1, 1]*, and the return value is in the range *[-90, 90]*. Real arguments outside *[-1, 1]* and complex numbers are not allowed in *degrees* mode.
 
-    In **degrees** mode, :func:`arcsin` takes a real argument from [--1, 1], and the return value is in the range [--90, 90]. Real arguments outside [--1, 1] and complex numbers are not allowed in **degrees** mode.
-
-    When **radians** are set as angle unit, :func:`arcsin` maps an element from [--1, 1] to a value in [--π/2, π/2]. When **complex numbers** are enabled in addition, :func:`arcsin` may take any argument from the complex plane. In complex mode, ``arcsin(-1) = π/2`` and ``arcsin(1) = π/2`` will yield the same result as in real mode.
+    When *radians* are set as the angle unit, :func:`arcsin` maps an element from *[-1, 1]* to a value in *[-π/2, π/2]*. When complex numbers are enabled in addition, :func:`arcsin` may take any argument from the complex plane. In complex mode, *arcsin(-1) = π/2* and *arcsin(1) = π/2* will yield the same result as in real mode.
 
     The argument of :func:`arccos` must be dimensionless.
 
@@ -197,13 +193,11 @@ Trigonometric & Inverse Trigonometric
 
 .. function:: arctan(x)
 
-    Returns the inverse tangent of ``x``, such that ``tan(arctan(x)) = x``.
+    Returns the inverse tangent of ``x``, such that *tan(arctan(x)) = x*. The behavior of the function depends on both the angle unit setting (degrees or radians) and on whether complex numbers are enabled.
 
-    The behavior of the function depends on both the **angle mode** (degrees or radians) and on whether **complex numbers** are enabled.
+    In *degrees* mode, :func:`arctan` takes a real argument, and the return value is in the range *[-90, 90]*. Complex arguments are not allowed in *degrees* mode.
 
-    In **degrees** mode, :func:`arctan` takes a real argument, and the return value is in the range [-90, 90]. Complex arguments are not allowed in **degrees** mode.
-
-    When **radians** are set as angle unit, :func:`arctan` maps a real number to a value in [-π/2, π/2]. When **complex numbers** are enabled in addition, :func:`arctan` may take any argument from the complex plane, except for +/- j.
+    When *radians* are set as the angle unit, :func:`arctan` maps a real number to a value in *[-π/2, π/2]*. When complex numbers are enabled in addition, :func:`arctan` may take any argument from the complex plane, except for *+j* and *-j*.
 
     The argument of :func:`arctan` must be dimensionless.
 
@@ -251,7 +245,7 @@ Hyperbolic & Inverse Hyperbolic
 
 .. function:: arcosh(x)
 
-    Compute the area hyperbolic cosine of ``x``, the inverse function to :func:`cosh`. *arcosh (x)* is the positive solution to *cosh(y) = x*. Except for `*x=1*, the second solution to this equation will be given by *-arcosh(x)*.
+    Compute the area hyperbolic cosine of ``x``, the inverse function to :func:`cosh`. *arcosh(x)* is the positive solution to *cosh(y) = x*. Except for *x=1*, the second solution to this equation will be given by *-arcosh(x)*.
 
     In real mode, the parameter ``x`` must be *> 1*. In complex mode, the function is defined for any complex ``z`` as *arcosh(z) = ln[z + (z* :sup:`2` *-1)* :sup:`2` *]*.
 
