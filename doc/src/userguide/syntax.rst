@@ -70,6 +70,10 @@ instead, the absolute value and the sign are stored separately. For this reason,
 representation of a negative number in SpeedCrunch is *not* its two's complement. See :func:`mask`
 and :func:`unmask` to convert a negative number into the two's complement form.
 
+Any integer larger than the limit will be silently converted into a floating point number, making it susceptible to rounding errors.
+To specify large integers, shift operators (``1 << n``) are preferable to exponentiation (``2 ^ n``) as the latter are floating point
+calculations and are susceptible to rounding errors.
+
 
 Operators and Precedence
 ------------------------
