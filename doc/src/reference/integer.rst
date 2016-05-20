@@ -34,7 +34,7 @@ Bitwise Operations
     Shifted out bits are always dropped. During a right shift, the most significant bit (bit 255) is copied. During a left shift, zero bits are shifted in.
 
 
-.. function:: shr(n; bits)
+.. function:: shr(x; n)
 
     Performs an arithmetic right shift.
 
@@ -130,9 +130,9 @@ Integer Division
 
     Only real, dimensionless arguments are allowed.
 
-.. function:: mod(a; n)
+.. function:: mod(a; b)
 
-    Compute the remainder of the integer division ``a/n``. The divisor ``n`` must be non-zero. The result takes the sign of ``a``.
+    Compute the remainder of the integer division ``a/b``. The divisor ``b`` must be non-zero. The result takes the sign of ``a``.
 
     This function always returns an exact result, provided that the parameters are exact.
 
