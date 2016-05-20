@@ -23,10 +23,10 @@ executable so the entire directory can be copied to another computer and run
 there.
 
 
-Apple OS X
-----------
+.. Apple OS X
+.. ----------
 
-TODO: OSX installation instructions
+.. TODO: OSX installation instructions
 
 
 Linux
