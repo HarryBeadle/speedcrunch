@@ -261,32 +261,34 @@ Hyperbolic & Inverse Hyperbolic
 
     The function only accepts dimensionless arguments.
 
+
 Special
 -------
 
 .. function:: erf(x)
 
-    Computes the error function, evaluated in `x`. The error function is closely related to the Gaussian cumulative density function.
+    Compute the error function, evaluated in ``x``. The error function is closely related to the Gaussian cumulative density function.
 
     Note that currently only real arguments are allowed. Furthermore, the function only accepts dimensionless arguments.
 
 .. function:: erfc(x)
 
-    Computes the complementary error function, evaluated in `x`. The complementary error function is defined by ``erfc(x) = 1 - erf(x)``
+    Compute the complementary error function, evaluated in ``x``. The complementary error function is defined by ``erfc(x) = 1 - erf(x)``.
 
     Note that currently only real arguments are allowed. Furthermore, the function only accepts dimensionless arguments.
 
 .. function:: gamma(x)
 
-    Evaluates the gamma function (frequently denoted by the Greek letter Γ). The gamma function is an analytic extension to the factorial operation, defined on real numbers as well. The relation between factorial and gamma function is given by Γ(n) = (n - 1)!.
+    Evaluates the gamma function (frequently denoted by the Greek letter Γ). The gamma function is an analytic extension to the factorial operation which is defined on real numbers as well. The relation between factorial and the gamma function is given by *Γ(n) = (n - 1)!*.
 
     Note that currently only real arguments are allowed. Furthermore, the function only accepts dimensionless arguments.
 
-    The computation of the factorial operation is in fact done by a call of :func:`gamma`. This means that in SpeedCrunch factorials of non-integer numbers are allowed.
+    The computation of the factorial operation is in fact implemented via :func:`gamma`. This means that in SpeedCrunch, factorials of non-integer numbers are allowed.
 
 .. function:: lngamma(x)
 
-    Computes ``ln(abs(gamma(x)))``. As the gamma function grows extremely quickly, it is sometimes easier to work with its logarithm instead. :func:`lngamma` allows much larger arguments, that would otherwise overflow :func:`gamma`.
+    Computes ``ln(abs(gamma(x)))``. As the gamma function grows extremely quickly, it is sometimes easier to work with its logarithm instead. :func:`lngamma` allows much larger arguments that would otherwise overflow :func:`gamma`.
+
     Note that currently only real arguments are allowed. Furthermore, the function only accepts dimensionless arguments.
 
 
@@ -295,28 +297,28 @@ Various
 
 .. function:: sgn(x)
 
-    Depending on the sign of `x`, returns +1 (if `x` >= 0) or -1 (if `x` < 0).
+    For *x >= 0*, return +1. For *x < 0*, return -1.
 
 .. function:: radians(x)
 
-    Converts the angle `x` into radians. Independently on the **angle mode**, :func:`radians` will assume that `x` is given in degrees, and returns ``pi*x/180``.
+    Convert the angle ``x`` into radians. Independently of the angle unit setting, this function will assume that ``x`` is given in degrees and return ``pi*x/180``.
 
     The function only accepts real, dimensionless arguments.
 
 .. function:: degrees(x)
 
-    Converts the angle `x` into degrees. Independently on the **angle mode**, :func:`degrees` will assume that `x` is given in radians, and returns ``180*x/pi``.
+    Convert the angle ``x`` into degrees. Independently of the angle unit setting, this function will assume that ``x`` is given in radians and return ``180*x/pi``.
 
     The function only accepts real, dimensionless arguments.
 
 .. function:: int(x)
 
-    Returns the integer part of `x`, effectively rounding `x` toward zero.
+    Returns the integer part of ``x``, effectively rounding it towards zero.
 
     The function only accepts real, dimensionless arguments.
 
 .. function:: frac(x)
 
-    Returns the fractional (non-integer) part of `x`, given by ``frac(x) = x - int(x)``.
+    Returns the fractional (non-integer) part of ``x``, given by ``frac(x) = x - int(x)``.
 
     The function only accepts real, dimensionless arguments.
