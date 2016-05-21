@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 import re
 
 from pygments.lexer import inherit, RegexLexer, words as _words
@@ -32,7 +32,7 @@ def digits(d, required=True):
     return '([%s]%s)%s' % (d, SEPARATORS, '+' if required else '*')
 
 
-class words(_words):  # noqa
+class words(_words):
     def get(self):
         return super(words, self).get() + r'(?=\W+)'
 
@@ -52,7 +52,7 @@ class SpeedCrunchLexer(RegexLexer):
     flags = re.MULTILINE | re.UNICODE
 
     tokens = {
-        'root': [
+        str('root'): [
             # comments
             (r'[?].*\n', Comment),
 
@@ -97,7 +97,7 @@ class SpeedCrunchSessionLexer(SpeedCrunchLexer):
     aliases = ['speedcrunch', 'sc']
 
     tokens = {
-        'root': [
+        str('root'): [
             # results; any line starting with '='
             (r'\n\s*=.*\n', Generic.Emph),
 
