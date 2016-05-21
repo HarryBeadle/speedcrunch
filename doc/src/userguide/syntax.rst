@@ -40,7 +40,7 @@ You can enter a number in any of these bases by marking it with the correspondin
 * ``0b`` or ``0B`` for **binary**, e.g. ``0b10010``.
 * ``0o`` or ``0O`` for **octal**, e.g. ``0o1412``.
 * ``0d`` or ``0D`` for **decimal**. These can be omitted since decimal is the default base.
-* ``0x``, ``0X``, ``0h``, ``0H`` or ``#`` for **hexadecimal**. The additional six digits are represented by the upper or lower case letters ``a`` to ``f``, e.g. ``0xdeadbeef`` or ``0xDEADBEEF``.
+* ``0x``, ``0X``, or ``#`` for **hexadecimal**. The additional six digits are represented by the upper or lower case letters ``a`` to ``f``, e.g. ``0xdeadbeef`` or ``0xDEADBEEF``.
 
 You may even enter fractional values in any of these bases. Note that scientific notation is not
 supported for non-decimal bases, however. Examples::
@@ -64,15 +64,18 @@ operations::
 
 To change the base that is used for displaying results, select one of the corresponding settings in :menuselection:`Settings --> Result Format`.
 
-SpeedCrunch stores integers with a precision of up to 256 bits. Internally, negative numbers are
-not stored in the two's complement form that's commonly used for negative integers in computing;
-instead, the absolute value and the sign are stored separately. For this reason, the binary
-representation of a negative number in SpeedCrunch is *not* its two's complement. See :func:`mask`
-and :func:`unmask` to convert a negative number into the two's complement form.
+SpeedCrunch stores integers with a precision of up to 256 bits. Since this would be unwieldy,
+the binary representation of a negative number in SpeedCrunch is *not* its two's complement.
+Instead, like with other bases, the value and the sign are represented separately::
 
-Any integer larger than the limit will be silently converted into a floating point number, making it susceptible to rounding errors.
-To specify large integers, shift operators (``1 << n``) are preferable to exponentiation (``2 ^ n``) as the latter are floating point
-calculations and are susceptible to rounding errors.
+    bin(-1)
+    = -0b1
+
+See :func:`mask` and :func:`unmask` to convert a negative number into the two's complement form.
+
+Any integer larger than the 256-bit limit will be silently converted into a floating point number, making it susceptible to rounding errors.
+To specify large integers, using the shift operators (``1 << n``) is preferable to exponentiation (``2 ^ n``) as the latter are floating point
+calculations and thus susceptible to rounding errors.
 
 
 Operators and Precedence
