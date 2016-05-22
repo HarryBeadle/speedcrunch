@@ -58,9 +58,9 @@ Bitwise Operations
 
 .. function:: unmask(x; n)
 
-    Takes the lower ``n`` bits from ``x`` and sign-extends them to full 256 bit. This means that bit at position ``n`` - 1 is copied to all upper bits.
+    Takes the lower ``n`` bits from ``x`` and sign-extends them to full 256 bits. This means that bit at position *n-1* is copied to all upper bits.
 
-    ``x`` must be in the range -2\ :sup:`255` <= ``x`` <= +2\ :sup:`256`-1, and ``n`` must be an integer, 1 <= ``n`` <= 255. ``x`` is rounded toward zero.
+    The value of ``x`` must be in the range *-2* :sup:`255` *<= x <= +2* :sup:`256` *-1*, and ``n`` must be an integer, *1 <= n <= 255*. ``x`` is rounded toward zero.
 
     Example: Converting a number in two's complement representation to a signed number::
 
@@ -112,7 +112,7 @@ Rounding
 
 .. function:: trunc(x [; n])
 
-    Truncates (rounds toward zero) ``x`` to the next ``n``-digit number. ``n`` may be omitted, in which case ``x`` is rounded to integer. Only real, dimensionless arguments are allowed.
+    Truncates (rounds toward zero) ``x`` to the next ``n``-digit number; ``n`` may be omitted, in which case ``x`` is rounded to integer. Only real, dimensionless arguments are allowed.
 
 .. seealso::
    | :func:`int`

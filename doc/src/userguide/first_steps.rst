@@ -72,7 +72,7 @@ Let us finish this short introduction with a word about functions. SpeedCrunch c
     sqrt(144)
     = 12
 
-:func:`sqrt` calculates the square root of its argument. Some functions require or accept more than one argument. In that case, separate them with a semicolon (``;``).
+The function :func:`sqrt` calculates the square root of its argument. Some functions require or accept more than one argument. In that case, separate them with a semicolon (``;``).
 
 .. warning::
 
