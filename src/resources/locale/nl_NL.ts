@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="nl_NL">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="nl_NL" version="2.1">
 <context>
     <name>AboutBox</name>
     <message>
@@ -12,12 +10,12 @@
     <message>
         <location filename="../../gui/aboutbox.cpp" line="46"/>
         <source>Maintainer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/aboutbox.cpp" line="48"/>
         <source>Core developers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/aboutbox.cpp" line="56"/>
@@ -27,20 +25,12 @@
     <message>
         <location filename="../../gui/aboutbox.cpp" line="118"/>
         <source>Copyright (C) 2004-2016 The SpeedCrunch developers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/aboutbox.cpp" line="141"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Former maintainer</source>
-        <translation type="vanished">Voormalig onderhouder</translation>
-    </message>
-    <message>
-        <source>Maintainer, core developer, designer, translator</source>
-        <translation type="vanished">Onderhouder, hoofdontwikkelaar, ontwerper, vertaler</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/aboutbox.cpp" line="57"/>
@@ -48,117 +38,9 @@
         <translation>Rekenmotor</translation>
     </message>
     <message>
-        <source>Packager</source>
-        <translation type="vanished">Pakketbeheerder</translation>
-    </message>
-    <message>
         <location filename="../../gui/aboutbox.cpp" line="59"/>
         <source>Thanks</source>
         <translation>Bedankt</translation>
-    </message>
-    <message>
-        <source>Translations</source>
-        <translation type="vanished">Vertalingen</translation>
-    </message>
-    <message>
-        <source>Arabic</source>
-        <translation type="vanished">Arabisch</translation>
-    </message>
-    <message>
-        <source>Argentinian Spanish</source>
-        <translation type="vanished">Spaans (Argentinië)</translation>
-    </message>
-    <message>
-        <source>Basque</source>
-        <translation type="vanished">Baskisch</translation>
-    </message>
-    <message>
-        <source>Brazilian Portuguese</source>
-        <translation type="vanished">Portugees (Brazilië)</translation>
-    </message>
-    <message>
-        <source>Catalan</source>
-        <translation type="vanished">Catalaans</translation>
-    </message>
-    <message>
-        <source>Czech</source>
-        <translation type="vanished">Tsjechisch</translation>
-    </message>
-    <message>
-        <source>Dutch</source>
-        <translation type="vanished">Nederlands</translation>
-    </message>
-    <message>
-        <source>Estonian</source>
-        <translation type="vanished">Ests</translation>
-    </message>
-    <message>
-        <source>French</source>
-        <translation type="vanished">Frans</translation>
-    </message>
-    <message>
-        <source>Finnish</source>
-        <translation type="vanished">Fins</translation>
-    </message>
-    <message>
-        <source>German</source>
-        <translation type="vanished">Duits</translation>
-    </message>
-    <message>
-        <source>Hebrew</source>
-        <translation type="vanished">Hebreeuws</translation>
-    </message>
-    <message>
-        <source>Indonesian</source>
-        <translation type="vanished">Indonesisch</translation>
-    </message>
-    <message>
-        <source>Italian</source>
-        <translation type="vanished">Italiaans</translation>
-    </message>
-    <message>
-        <source>Latvian</source>
-        <translation type="vanished">Lets</translation>
-    </message>
-    <message>
-        <source>Norwegian</source>
-        <translation type="vanished">Noors</translation>
-    </message>
-    <message>
-        <source>Polish</source>
-        <translation type="vanished">Pools</translation>
-    </message>
-    <message>
-        <source>Portuguese</source>
-        <translation type="vanished">Portugees</translation>
-    </message>
-    <message>
-        <source>Romanian</source>
-        <translation type="vanished">Roemeens</translation>
-    </message>
-    <message>
-        <source>Russian</source>
-        <translation type="vanished">Russisch</translation>
-    </message>
-    <message>
-        <source>Simplified Chinese</source>
-        <translation type="vanished">Vereenvoudigd Chinees</translation>
-    </message>
-    <message>
-        <source>Spanish</source>
-        <translation type="vanished">Spaans</translation>
-    </message>
-    <message>
-        <source>Swedish</source>
-        <translation type="vanished">Zweeds</translation>
-    </message>
-    <message>
-        <source>Turkish</source>
-        <translation type="vanished">Turks</translation>
-    </message>
-    <message>
-        <source>Copyright (C)</source>
-        <translation type="vanished">Auteursrecht (C)</translation>
     </message>
     <message>
         <location filename="../../gui/aboutbox.cpp" line="122"/>
@@ -169,18 +51,6 @@
         <location filename="../../gui/aboutbox.cpp" line="128"/>
         <source>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</source>
         <translation>Dit programma is verspreid met de hoop dat het nuttig zal zijn maar ZONDER EENDER WELKE GARANTIE; zelfs zonder de impliciete garantie van VERKOOPBAARHEID of GESCHIKTHEID VOOR EEN BEPAALD DOEL. Zie de GNU General Public License voor meer details.</translation>
-    </message>
-    <message>
-        <source>Japanese</source>
-        <translation type="vanished">Japans</translation>
-    </message>
-    <message>
-        <source>Hungarian</source>
-        <translation type="vanished">Hongaars</translation>
-    </message>
-    <message>
-        <source>Korean</source>
-        <translation type="vanished">Koreaans</translation>
     </message>
 </context>
 <context>
@@ -639,7 +509,7 @@
     <message>
         <location filename="../../core/constants.cpp" line="586"/>
         <source>Conventional value of Josephson Constant</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="587"/>
@@ -664,7 +534,7 @@
     <message>
         <location filename="../../core/constants.cpp" line="591"/>
         <source>Conventional value of von Klitzing Constant</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="592"/>
@@ -699,7 +569,7 @@
     <message>
         <location filename="../../core/constants.cpp" line="601"/>
         <source>Hartree Energy in eV</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="602"/>
@@ -709,7 +579,7 @@
     <message>
         <location filename="../../core/constants.cpp" line="603"/>
         <source>Quantum of Circulation times 2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="604"/>
@@ -749,17 +619,17 @@
     <message>
         <location filename="../../core/constants.cpp" line="614"/>
         <source>Compton wavelength</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="615"/>
         <source>Compton wavelength over 2 pi</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="616"/>
         <source>Electron volt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="617"/>
@@ -774,7 +644,7 @@
     <message>
         <location filename="../../core/constants.cpp" line="619"/>
         <source>First Radiation Constant for Spectral Radiance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="620"/>
@@ -782,18 +652,14 @@
         <translation>Gasconstante</translation>
     </message>
     <message>
-        <source>Loschmidt Constant</source>
-        <translation type="vanished">Constante van Loschmidt</translation>
-    </message>
-    <message>
         <location filename="../../core/constants.cpp" line="621"/>
         <source>Loschmidt constant (273.15 K, 100 kPa)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="622"/>
         <source>Loschmidt constant (273.15 K, 101.325 kPa)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="623"/>
@@ -813,7 +679,7 @@
     <message>
         <location filename="../../core/constants.cpp" line="626"/>
         <source>{220} Lattice Spacing of Silicon</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="629"/>
@@ -1448,12 +1314,12 @@
     <message>
         <location filename="../../gui/editor.cpp" line="360"/>
         <source>User function</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/editor.cpp" line="440"/>
         <source>Argument</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/editor.cpp" line="545"/>
@@ -1503,49 +1369,49 @@
     <message>
         <location filename="../../core/evaluator.cpp" line="84"/>
         <source>too time consuming - computation was rejected</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="87"/>
         <location filename="../../core/evaluator.cpp" line="143"/>
         <source>dimension mismatch - quantities with different dimensions cannot be compared, added, etc.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="90"/>
         <source>invalid dimension - operation might require dimensionless arguments</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="93"/>
         <location filename="../../core/evaluator.cpp" line="131"/>
         <source>Computation aborted - encountered numerical instability</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="140"/>
         <source>invalid dimension - function might require dimensionless arguments</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="152"/>
         <source>error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="1383"/>
         <source>compile error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="1569"/>
         <source>unit must not be zero</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="1573"/>
         <source>Conversion failed - dimension mismatch</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="1600"/>
@@ -1556,7 +1422,7 @@
     <message>
         <location filename="../../core/evaluator.cpp" line="1693"/>
         <source>recursion not supported</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="66"/>
@@ -1585,10 +1451,6 @@
         <location filename="../../core/evaluator.cpp" line="81"/>
         <source>overflow - integer result exceeds maximum limit for integers</source>
         <translation>overflow - integer resultaat overschrijdt limiet voor integers</translation>
-    </message>
-    <message>
-        <source>too time consuming computation was rejected</source>
-        <translation type="vanished">de berekening duurt te lang en werd afgewezen</translation>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="110"/>
@@ -1620,10 +1482,6 @@
         <location filename="../../core/evaluator.cpp" line="149"/>
         <source>internal error, please report a bug</source>
         <translation>Interne fout, rapporteer aub een bug</translation>
-    </message>
-    <message>
-        <source>user function recursion is not supported</source>
-        <translation type="vanished">Recursieve gebruikersfuncties worden niet ondersteund</translation>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="1755"/>
@@ -1690,7 +1548,7 @@
         <location filename="../../core/functions.cpp" line="1001"/>
         <location filename="../../core/functions.cpp" line="1002"/>
         <source>x; exponent_bits; significand_bits [; exponent_bias]</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="1003"/>
@@ -1725,7 +1583,7 @@
     <message>
         <location filename="../../core/functions.cpp" line="1010"/>
         <source>x [; precision]</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="1018"/>
@@ -1905,52 +1763,52 @@
     <message>
         <location filename="../../core/functions.cpp" line="1056"/>
         <source>Decode IEEE-754 Binary Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="1057"/>
         <source>Encode IEEE-754 Binary Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="1058"/>
         <source>Decode 16-bit Half-Precision Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="1059"/>
         <source>Encode 16-bit Half-Precision Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="1060"/>
         <source>Decode 32-bit Single-Precision Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="1061"/>
         <source>Encode 32-bit Single-Precision Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="1062"/>
         <source>Decode 64-bit Double-Precision Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="1063"/>
         <source>Encode 64-bit Double-Precision Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="1064"/>
         <source>Decode 128-bit Quad-Precision Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="1065"/>
         <source>Encode 128-bit Quad-Precision Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="1066"/>
@@ -2192,72 +2050,72 @@
     <message>
         <location filename="../../gui/keypad.cpp" line="167"/>
         <source>Inverse cosine</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/keypad.cpp" line="168"/>
         <source>The last result</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/keypad.cpp" line="169"/>
         <source>Inverse sine</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/keypad.cpp" line="170"/>
         <source>Inverse tangent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/keypad.cpp" line="171"/>
         <source>Clear expression</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/keypad.cpp" line="172"/>
         <source>Cosine</source>
-        <translation type="unfinished">Cosinus</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/keypad.cpp" line="173"/>
         <source>Scientific notation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/keypad.cpp" line="174"/>
         <source>Exponential</source>
-        <translation type="unfinished">E-macht</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/keypad.cpp" line="175"/>
         <source>Natural logarithm</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/keypad.cpp" line="176"/>
         <source>Sine</source>
-        <translation type="unfinished">Sinus</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/keypad.cpp" line="177"/>
         <source>Square root</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/keypad.cpp" line="178"/>
         <source>Tangent</source>
-        <translation type="unfinished">Tangens</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/keypad.cpp" line="179"/>
         <source>Assign variable x</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/keypad.cpp" line="180"/>
         <source>The variable x</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2379,7 +2237,7 @@
     <message>
         <location filename="../../gui/mainwindow.cpp" line="303"/>
         <source>&amp;Wrap Selection in Parentheses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="305"/>
@@ -2400,10 +2258,6 @@
         <location filename="../../gui/mainwindow.cpp" line="308"/>
         <source>&amp;History</source>
         <translation>&amp;Geschiedenis</translation>
-    </message>
-    <message>
-        <source>&amp;Menu Bar</source>
-        <translation type="vanished">&amp;Menubalk</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="311"/>
@@ -2436,10 +2290,6 @@
         <translation>&amp;Radialen</translation>
     </message>
     <message>
-        <source>Always On &amp;Top</source>
-        <translation type="vanished">Altijd &amp;bovenaan</translation>
-    </message>
-    <message>
         <location filename="../../gui/mainwindow.cpp" line="319"/>
         <source>Automatic Result &amp;Reuse</source>
         <translation>Automatisch resultaat &amp;gebruiken</translation>
@@ -2450,10 +2300,6 @@
         <translation>Automatische &amp;aanvulling</translation>
     </message>
     <message>
-        <source>&amp;Minimize To System Tray</source>
-        <translation type="vanished">Naar het systeemvak &amp;minimaliseren</translation>
-    </message>
-    <message>
         <location filename="../../gui/mainwindow.cpp" line="321"/>
         <source>&amp;Partial Results</source>
         <translation>&amp;Gedeeltelijke resultaten</translation>
@@ -2462,14 +2308,6 @@
         <location filename="../../gui/mainwindow.cpp" line="322"/>
         <source>Save &amp;History on Exit</source>
         <translation>Gesc&amp;hiedenis opslaan bij afsluiten</translation>
-    </message>
-    <message>
-        <source>Save &amp;Variables on Exit</source>
-        <translation type="vanished">&amp;Variabelen opslaan bij afsluiten</translation>
-    </message>
-    <message>
-        <source>Save User &amp;Functions on Exit</source>
-        <translation type="vanished">Gebruikers&amp;functies opslaan bij afsluiten</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="323"/>
@@ -2505,26 +2343,6 @@
         <location filename="../../gui/mainwindow.cpp" line="336"/>
         <source>&amp;Dot</source>
         <translation>&amp;Punt</translation>
-    </message>
-    <message>
-        <source>&amp;15 Decimal Digits</source>
-        <translation type="vanished">&amp;15 decimalen</translation>
-    </message>
-    <message>
-        <source>&amp;2 Decimal Digits</source>
-        <translation type="vanished">&amp;2 decimalen</translation>
-    </message>
-    <message>
-        <source>&amp;3 Decimal Digits</source>
-        <translation type="vanished">&amp;3 decimalen</translation>
-    </message>
-    <message>
-        <source>&amp;50 Decimal Digits</source>
-        <translation type="vanished">&amp;50 decimalen</translation>
-    </message>
-    <message>
-        <source>&amp;8 Decimal Digits</source>
-        <translation type="vanished">&amp;8 decimalen</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="344"/>
@@ -2570,10 +2388,6 @@
         <location filename="../../gui/mainwindow.cpp" line="1097"/>
         <source>Type an expression here</source>
         <translation>Typ hier een expressie</translation>
-    </message>
-    <message>
-        <source>The menu bar is now hidden. To make it visible again, press Ctrl+M.</source>
-        <translation type="vanished">De menubalk is nu verborgen. Om hem weer zichtbaar te maken, druk op Ctrl+M.</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="351"/>
@@ -2633,12 +2447,12 @@
     <message>
         <location filename="../../gui/mainwindow.cpp" line="309"/>
         <source>&amp;Keypad</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="318"/>
         <source>Always on &amp;Top</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="325"/>
@@ -2673,42 +2487,42 @@
     <message>
         <location filename="../../gui/mainwindow.cpp" line="333"/>
         <source>Enable Complex Numbers</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="337"/>
         <source>&amp;0 Digits</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="338"/>
         <source>&amp;15 Digits</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="339"/>
         <source>&amp;2 Digits</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="340"/>
         <source>&amp;3 Digits</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="341"/>
         <source>&amp;50 Digits</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="342"/>
         <source>&amp;8 Digits</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="355"/>
         <source>Context Help</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="360"/>
@@ -2734,10 +2548,6 @@
         <location filename="../../gui/mainwindow.cpp" line="1343"/>
         <source>File %1 is not a valid session</source>
         <translation>Bestand %1 is geen geldige sessie</translation>
-    </message>
-    <message>
-        <source>SpeedCrunch Sessions (*.sch);;All Files (*)</source>
-        <translation type="vanished">SpeedCrunch-sessies (*.sch);;Alle bestanden (*)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="1345"/>
@@ -2766,10 +2576,6 @@
 If no, current variables and display will be cleared.</source>
         <translation>Moet de geladen sessie worden samengevoegd met de huidige sessie?
 Zoniet worden de huidige variabelen en weergave gewist.</translation>
-    </message>
-    <message>
-        <source>Question</source>
-        <translation type="vanished">Vraag</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="1410"/>
@@ -2808,22 +2614,12 @@ Zoniet worden de huidige variabelen en weergave gewist.</translation>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="1624"/>
         <source>Text file (*.txt);;Any file (*.*)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="1662"/>
         <source>Display font</source>
         <translation>Weergavelettertype</translation>
-    </message>
-    <message>
-        <source>Warning</source>
-        <translation type="vanished">Waarschuwing</translation>
-    </message>
-    <message>
-        <source>SpeedCrunch is minimized.
-Left click the icon to restore it or right click for options.</source>
-        <translation type="vanished">SpeedCrunch is geminimaliseerd.
-Klik met links op het pictogram om het te herstellen of met rechts voor opties.</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="2324"/>
@@ -2899,13 +2695,13 @@ Klik met links op het pictogram om het te herstellen of met rechts voor opties.<
         <location filename="../../gui/mainwindow.cpp" line="1344"/>
         <location filename="../../gui/mainwindow.cpp" line="1389"/>
         <source>SpeedCrunch Sessions (*.json);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="1362"/>
         <location filename="../../gui/mainwindow.cpp" line="1428"/>
         <source>Merge?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="1602"/>
@@ -2915,7 +2711,7 @@ Klik met links op het pictogram om het te herstellen of met rechts voor opties.<
     <message>
         <location filename="../../gui/mainwindow.cpp" line="1603"/>
         <source>HTML file (*.html)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="1623"/>
@@ -2924,43 +2720,16 @@ Klik met links op het pictogram om het te herstellen of met rechts voor opties.<
     </message>
 </context>
 <context>
-    <name>Manual</name>
-    <message>
-        <source>Index</source>
-        <translation type="vanished">Index</translation>
-    </message>
-    <message>
-        <source>Keyboard shortcuts</source>
-        <translation type="vanished">Toetsenbordsneltoetsen</translation>
-    </message>
-    <message>
-        <source>Built-in functions</source>
-        <translation type="vanished">Ingebouwde functies</translation>
-    </message>
-    <message>
-        <source>Named constants</source>
-        <translation type="vanished">Constanten met benamingen</translation>
-    </message>
-    <message>
-        <source>User-defined variables</source>
-        <translation type="vanished">Gebruikersgedefinieerde variabelen</translation>
-    </message>
-</context>
-<context>
     <name>ManualWindow</name>
-    <message>
-        <source>User Manual</source>
-        <translation type="vanished">Gebruikershandleiding</translation>
-    </message>
     <message>
         <location filename="../../gui/manualwindow.cpp" line="69"/>
         <source>SpeedCrunch Manual</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/manualwindow.cpp" line="71"/>
         <source>%1 - SpeedCrunch Manual</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
