@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>AboutBox</name>
     <message>
@@ -12,7 +10,7 @@
     <message>
         <location filename="../../gui/aboutbox.cpp" line="46"/>
         <source>Original author</source>
-        <translation>初始作者</translation>
+        <translation>原始作者</translation>
     </message>
     <message>
         <location filename="../../gui/aboutbox.cpp" line="49"/>
@@ -22,22 +20,22 @@
     <message>
         <location filename="../../gui/aboutbox.cpp" line="45"/>
         <source>Maintainer, core developer, designer, translator</source>
-        <translation type="unfinished"></translation>
+        <translation>维护人员、核心开发者、设计者、翻译者</translation>
     </message>
     <message>
         <location filename="../../gui/aboutbox.cpp" line="47"/>
         <source>Math engine</source>
-        <translation type="unfinished"></translation>
+        <translation>数学引擎</translation>
     </message>
     <message>
         <location filename="../../gui/aboutbox.cpp" line="48"/>
         <source>Packager</source>
-        <translation type="unfinished"></translation>
+        <translation>打包者</translation>
     </message>
     <message>
         <location filename="../../gui/aboutbox.cpp" line="51"/>
         <source>Thanks</source>
-        <translation type="unfinished"></translation>
+        <translation>致谢</translation>
     </message>
     <message>
         <location filename="../../gui/aboutbox.cpp" line="103"/>
@@ -82,7 +80,7 @@
     <message>
         <location filename="../../gui/aboutbox.cpp" line="119"/>
         <source>Estonian</source>
-        <translation type="unfinished"></translation>
+        <translation>爱沙尼亚语</translation>
     </message>
     <message>
         <location filename="../../gui/aboutbox.cpp" line="121"/>
@@ -117,7 +115,7 @@
     <message>
         <location filename="../../gui/aboutbox.cpp" line="139"/>
         <source>Latvian</source>
-        <translation type="unfinished"></translation>
+        <translation>拉脱维亚语</translation>
     </message>
     <message>
         <location filename="../../gui/aboutbox.cpp" line="141"/>
@@ -207,195 +205,195 @@
         <location filename="../../core/book.cpp" line="67"/>
         <location filename="../../core/book.cpp" line="84"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>索引</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="85"/>
         <source>Algebra</source>
-        <translation type="unfinished"></translation>
+        <translation>代数</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="86"/>
         <location filename="../../core/book.cpp" line="116"/>
         <source>Quadratic Equation</source>
-        <translation type="unfinished"></translation>
+        <translation>二次方程</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="87"/>
         <location filename="../../core/book.cpp" line="127"/>
         <source>Logarithmic Base Conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>对数基本转换</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="88"/>
         <source>Geometry</source>
-        <translation type="unfinished"></translation>
+        <translation>几何</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="89"/>
         <location filename="../../core/book.cpp" line="217"/>
         <source>Circle</source>
-        <translation type="unfinished"></translation>
+        <translation>圆</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="90"/>
         <location filename="../../core/book.cpp" line="292"/>
         <source>Sector</source>
-        <translation type="unfinished"></translation>
+        <translation>扇形</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="91"/>
         <location filename="../../core/book.cpp" line="310"/>
         <source>Sphere</source>
-        <translation type="unfinished"></translation>
+        <translation>域</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="92"/>
         <location filename="../../core/book.cpp" line="255"/>
         <source>Cube</source>
-        <translation type="unfinished"></translation>
+        <translation>立方体</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="93"/>
         <location filename="../../core/book.cpp" line="236"/>
         <source>Cone</source>
-        <translation type="unfinished"></translation>
+        <translation>锥体</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="94"/>
         <location filename="../../core/book.cpp" line="275"/>
         <source>Cylinder</source>
-        <translation type="unfinished"></translation>
+        <translation>柱面</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="95"/>
         <source>Unit Conversions</source>
-        <translation type="unfinished"></translation>
+        <translation>单位转换</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="96"/>
         <location filename="../../core/book.cpp" line="423"/>
         <source>Temperature</source>
-        <translation type="unfinished"></translation>
+        <translation>温度</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="97"/>
         <source>Electronics</source>
-        <translation type="unfinished"></translation>
+        <translation>电子</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="98"/>
         <location filename="../../core/book.cpp" line="137"/>
         <source>Ohm&apos;s Law</source>
-        <translation type="unfinished"></translation>
+        <translation>欧姆定律</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="99"/>
         <location filename="../../core/book.cpp" line="154"/>
         <source>Power</source>
-        <translation type="unfinished"></translation>
+        <translation>能量</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="100"/>
         <location filename="../../core/book.cpp" line="178"/>
         <source>Reactance</source>
-        <translation type="unfinished"></translation>
+        <translation>电阻</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="101"/>
         <location filename="../../core/book.cpp" line="200"/>
         <source>Resonance</source>
-        <translation type="unfinished"></translation>
+        <translation>谐振</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="102"/>
         <location filename="../../core/book.cpp" line="329"/>
         <source>Radio Frequency</source>
-        <translation type="unfinished"></translation>
+        <translation>电波频率</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="103"/>
         <source>Antennas</source>
-        <translation type="unfinished"></translation>
+        <translation>天线</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="104"/>
         <location filename="../../core/book.cpp" line="349"/>
         <source>Characteristic Impedance (coax)</source>
-        <translation type="unfinished"></translation>
+        <translation>特性阻抗(同轴)</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="105"/>
         <location filename="../../core/book.cpp" line="364"/>
         <source>Velocity of Propagation (coax)</source>
-        <translation type="unfinished"></translation>
+        <translation>传播速度(同轴)</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="106"/>
         <location filename="../../core/book.cpp" line="381"/>
         <source>Standing Wave Ratio &amp; Return Loss</source>
-        <translation type="unfinished"></translation>
+        <translation>驻波比&amp;回波损耗</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="107"/>
         <location filename="../../core/book.cpp" line="407"/>
         <source>Free Space Wavelength</source>
-        <translation type="unfinished"></translation>
+        <translation>自由空间波长</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="142"/>
         <location filename="../../core/book.cpp" line="168"/>
         <source>resistance</source>
-        <translation type="unfinished"></translation>
+        <translation>电阻</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="143"/>
         <location filename="../../core/book.cpp" line="167"/>
         <source>voltage</source>
-        <translation type="unfinished"></translation>
+        <translation>电压</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="144"/>
         <location filename="../../core/book.cpp" line="166"/>
         <source>current</source>
-        <translation type="unfinished"></translation>
+        <translation>货币</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="165"/>
         <source>power</source>
-        <translation type="unfinished"></translation>
+        <translation>功率</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="186"/>
         <source>inductive reactance</source>
-        <translation type="unfinished"></translation>
+        <translation>感抗</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="187"/>
         <source>capacitive reactance</source>
-        <translation type="unfinished"></translation>
+        <translation>容抗</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="188"/>
         <location filename="../../core/book.cpp" line="206"/>
         <source>inductance</source>
-        <translation type="unfinished"></translation>
+        <translation>电感</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="189"/>
         <location filename="../../core/book.cpp" line="207"/>
         <source>capacitance</source>
-        <translation type="unfinished"></translation>
+        <translation>电容</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="190"/>
         <source>frequency</source>
-        <translation type="unfinished"></translation>
+        <translation>频率</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="205"/>
         <source>resonance frequency</source>
-        <translation type="unfinished"></translation>
+        <translation>共振频率</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="223"/>
@@ -403,18 +401,18 @@
         <location filename="../../core/book.cpp" line="297"/>
         <location filename="../../core/book.cpp" line="316"/>
         <source>area</source>
-        <translation type="unfinished"></translation>
+        <translation>面积</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="224"/>
         <source>perimeter</source>
-        <translation type="unfinished"></translation>
+        <translation>周长</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="225"/>
         <location filename="../../core/book.cpp" line="319"/>
         <source>diameter</source>
-        <translation type="unfinished"></translation>
+        <translation>直径</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="226"/>
@@ -423,7 +421,7 @@
         <location filename="../../core/book.cpp" line="299"/>
         <location filename="../../core/book.cpp" line="318"/>
         <source>radius</source>
-        <translation type="unfinished"></translation>
+        <translation>半径</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="241"/>
@@ -431,49 +429,49 @@
         <location filename="../../core/book.cpp" line="279"/>
         <location filename="../../core/book.cpp" line="317"/>
         <source>volume</source>
-        <translation type="unfinished"></translation>
+        <translation>体积</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="242"/>
         <location filename="../../core/book.cpp" line="262"/>
         <source>surface area</source>
-        <translation type="unfinished"></translation>
+        <translation>表面积</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="244"/>
         <location filename="../../core/book.cpp" line="282"/>
         <source>height</source>
-        <translation type="unfinished"></translation>
+        <translation>高度</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="245"/>
         <source>slant height</source>
-        <translation type="unfinished"></translation>
+        <translation>斜向高度</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="263"/>
         <source>face diagonal</source>
-        <translation type="unfinished"></translation>
+        <translation>平面对角线</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="264"/>
         <source>space diagonal</source>
-        <translation type="unfinished"></translation>
+        <translation>空间对角线</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="265"/>
         <source>edge length</source>
-        <translation type="unfinished"></translation>
+        <translation>边长</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="298"/>
         <source>arc length</source>
-        <translation type="unfinished"></translation>
+        <translation>弧长</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="300"/>
         <source>central angle (degrees)</source>
-        <translation type="unfinished"></translation>
+        <translation>中心角(度)</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="337"/>
@@ -483,68 +481,68 @@
         <location filename="../../core/book.cpp" line="430"/>
         <location filename="../../core/book.cpp" line="431"/>
         <source>temperature</source>
-        <translation type="unfinished"></translation>
+        <translation>温度</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="391"/>
         <source>input power</source>
-        <translation type="unfinished"></translation>
+        <translation>输入功率</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="392"/>
         <source>reflected power</source>
-        <translation type="unfinished"></translation>
+        <translation>反射功率</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="393"/>
         <source>transmitted power</source>
-        <translation type="unfinished"></translation>
+        <translation>发射功率</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="394"/>
         <source>return loss</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="352"/>
         <location filename="../../core/book.cpp" line="371"/>
         <source>dielectric constant</source>
-        <translation type="unfinished"></translation>
+        <translation>介电常数</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="353"/>
         <source>outer conductor&apos;s inner diameter</source>
-        <translation type="unfinished"></translation>
+        <translation>外导体内径</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="354"/>
         <source>inner conductor&apos;s outer diameter</source>
-        <translation type="unfinished"></translation>
+        <translation>内导体外径</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="370"/>
         <source>speed of light</source>
-        <translation type="unfinished"></translation>
+        <translation>光速</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="395"/>
         <source>reflection coefficient</source>
-        <translation type="unfinished"></translation>
+        <translation>反射系数</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="396"/>
         <source>standing wave ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>驻波比</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="397"/>
         <source>normalized impedance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="413"/>
         <source>frequency (Hz)</source>
-        <translation type="unfinished"></translation>
+        <translation>频率 (Hz)</translation>
     </message>
 </context>
 <context>
@@ -552,7 +550,7 @@
     <message>
         <location filename="../../gui/bookdock.cpp" line="67"/>
         <source>Formula Book</source>
-        <translation type="unfinished"></translation>
+        <translation>官方手册</translation>
     </message>
 </context>
 <context>
@@ -570,22 +568,22 @@
     <message>
         <location filename="../../core/constants.cpp" line="250"/>
         <source>Universal</source>
-        <translation type="unfinished"></translation>
+        <translation>普遍</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="252"/>
         <source>Archimedes&apos; constant Pi</source>
-        <translation type="unfinished"></translation>
+        <translation>阿基米德常数</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="253"/>
         <source>Euler&apos;s number</source>
-        <translation type="unfinished"></translation>
+        <translation>欧拉数</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="254"/>
         <source>Golden ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>黄金比例</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="257"/>
@@ -630,7 +628,7 @@
     <message>
         <location filename="../../core/constants.cpp" line="266"/>
         <source>Standard Gravity</source>
-        <translation type="unfinished"></translation>
+        <translation>标准重力</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="270"/>
@@ -855,512 +853,512 @@
     <message>
         <location filename="../../core/constants.cpp" line="330"/>
         <source>Molar Mass</source>
-        <translation type="unfinished"></translation>
+        <translation>摩尔质量</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="332"/>
         <source>Aluminium</source>
-        <translation type="unfinished"></translation>
+        <translation>铝</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="333"/>
         <source>Antimony</source>
-        <translation type="unfinished"></translation>
+        <translation>锑</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="334"/>
         <source>Argon</source>
-        <translation type="unfinished"></translation>
+        <translation>氩</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="335"/>
         <source>Arsenic</source>
-        <translation type="unfinished"></translation>
+        <translation>砷</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="336"/>
         <source>Barium</source>
-        <translation type="unfinished"></translation>
+        <translation>钡</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="337"/>
         <source>Beryllium</source>
-        <translation type="unfinished"></translation>
+        <translation>铍</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="338"/>
         <source>Bismuth</source>
-        <translation type="unfinished"></translation>
+        <translation>铋</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="339"/>
         <source>Boron</source>
-        <translation type="unfinished"></translation>
+        <translation>硼</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="340"/>
         <source>Bromine</source>
-        <translation type="unfinished"></translation>
+        <translation>溴</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="341"/>
         <source>Cadmium</source>
-        <translation type="unfinished"></translation>
+        <translation>镉</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="342"/>
         <source>Caesium</source>
-        <translation type="unfinished"></translation>
+        <translation>铯</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="343"/>
         <source>Calcium</source>
-        <translation type="unfinished"></translation>
+        <translation>钙</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="344"/>
         <source>Carbon</source>
-        <translation type="unfinished"></translation>
+        <translation>碳</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="345"/>
         <source>Cerium</source>
-        <translation type="unfinished"></translation>
+        <translation>铈</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="346"/>
         <source>Chlorine</source>
-        <translation type="unfinished"></translation>
+        <translation>氯</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="347"/>
         <source>Chromium</source>
-        <translation type="unfinished"></translation>
+        <translation>铬</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="348"/>
         <source>Cobalt</source>
-        <translation type="unfinished"></translation>
+        <translation>钴</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="349"/>
         <source>Copper</source>
-        <translation type="unfinished"></translation>
+        <translation>铜</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="350"/>
         <source>Dysprosium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="351"/>
         <source>Erbium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="352"/>
         <source>Europium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="353"/>
         <source>Fluorine</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="354"/>
         <source>Gadolinium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="355"/>
         <source>Gallium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="356"/>
         <source>Germanium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="357"/>
         <source>Gold</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="358"/>
         <source>Hafnium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="359"/>
         <source>Helium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="360"/>
         <source>Holmium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="361"/>
         <source>Hydrogen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="362"/>
         <source>Indium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="363"/>
         <source>Iodine</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="364"/>
         <source>Iridium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="365"/>
         <source>Iron</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="366"/>
         <source>Krypton</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="367"/>
         <source>Lanthanum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="368"/>
         <source>Lead</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="369"/>
         <source>Lithium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="370"/>
         <source>Lutetium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="371"/>
         <source>Magnesium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="372"/>
         <source>Manganese</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="373"/>
         <source>Mercury</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="374"/>
         <source>Molybdenum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="375"/>
         <source>Neodymium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="376"/>
         <source>Neon</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="377"/>
         <source>Nickel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="378"/>
         <source>Niobium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="379"/>
         <source>Nitrogen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="380"/>
         <source>Osmium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="381"/>
         <source>Oxygen</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="382"/>
         <source>Palladium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="383"/>
         <source>Phosphorus</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="384"/>
         <source>Platinum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="385"/>
         <source>Potassium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="386"/>
         <source>Praseodymium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="387"/>
         <source>Protactinium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="388"/>
         <source>Rhenium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="389"/>
         <source>Rubidium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="390"/>
         <source>Ruthenium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="391"/>
         <source>Samarium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="392"/>
         <source>Scandium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="393"/>
         <source>Selenium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="394"/>
         <source>Silicon</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="395"/>
         <source>Silver</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="396"/>
         <source>Sodium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="397"/>
         <source>Strontium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="398"/>
         <source>Sulfur</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="399"/>
         <source>Tantalum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="400"/>
         <source>Tellurium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="401"/>
         <source>Terbium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="402"/>
         <source>Thallium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="403"/>
         <source>Thorium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="404"/>
         <source>Thulium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="405"/>
         <source>Tin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="406"/>
         <source>Titanium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="407"/>
         <source>Tungsten</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="408"/>
         <source>Uranium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="409"/>
         <source>Vanadium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="410"/>
         <source>Xenon</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="411"/>
         <source>Ytterbium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="412"/>
         <source>Yttrium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="413"/>
         <source>Zinc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="414"/>
         <source>Zirconium</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="417"/>
         <source>Particle Masses</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="419"/>
         <source>Electron Mass</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="420"/>
         <source>Muon Mass</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="421"/>
         <source>Tau Mass</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="422"/>
         <source>Up-Quark Mass</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="423"/>
         <source>Down-Quark Mass</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="424"/>
         <source>Charm-Quark Mass</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="425"/>
         <source>Strange-Quark Mass</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="426"/>
         <source>Top-Quark Mass</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="427"/>
         <source>Bottom-Quark Mass</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="428"/>
         <source>W-Boson Mass</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="429"/>
         <source>Z-Boson Mass</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="430"/>
         <source>Higgs-Boson Mass</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="431"/>
         <source>Proton Mass</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="432"/>
         <source>Neutron Mass</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="433"/>
         <source>Electron Mass (SI)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="434"/>
         <source>Proton Mass (SI)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="435"/>
         <source>Neutron Mass (SI)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1420,7 +1418,7 @@
     <message>
         <location filename="../../gui/editor.cpp" line="574"/>
         <source>Selection result: n/a</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../gui/editor.cpp" line="577"/>
@@ -1495,37 +1493,37 @@
         <location filename="../../core/evaluator.cpp" line="90"/>
         <location filename="../../core/evaluator.cpp" line="1461"/>
         <source>wrong number of arguments</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="93"/>
         <source>does not take NaN as an argument</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="99"/>
         <source>result out of range</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="104"/>
         <source>undefined for argument domain</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="107"/>
         <source>computation too expensive</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="112"/>
         <source>internal error, please report a bug</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="1466"/>
         <source>user function recursion is not supported</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="1525"/>
@@ -1536,17 +1534,17 @@
     <message>
         <location filename="../../core/evaluator.cpp" line="1533"/>
         <source>%1 is a variable name, please choose another or delete the variable</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="1542"/>
         <source>argument %1 is used more than once</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="1560"/>
         <source>%1 is a user function name, please choose another or delete the function</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1554,44 +1552,44 @@
     <message>
         <location filename="../../core/functions.cpp" line="820"/>
         <source>max; trials; probability</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="821"/>
         <location filename="../../core/functions.cpp" line="823"/>
         <source>trials; probability</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="822"/>
         <source>hits; trials; probability</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="824"/>
         <source>max; total; hits; trials</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="825"/>
         <location filename="../../core/functions.cpp" line="827"/>
         <source>total; hits; trials</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="826"/>
         <source>count; total; hits; trials</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="828"/>
         <source>dividend; divisor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="829"/>
         <source>base; x</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="830"/>
@@ -1599,394 +1597,394 @@
         <location filename="../../core/functions.cpp" line="837"/>
         <location filename="../../core/functions.cpp" line="838"/>
         <source>n; bits</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="831"/>
         <source>value; modulo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="832"/>
         <location filename="../../core/functions.cpp" line="834"/>
         <source>events; average_events</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="833"/>
         <location filename="../../core/functions.cpp" line="835"/>
         <source>average_events</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="843"/>
         <source>Absolute Value</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="844"/>
         <source>Absolute Deviation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="845"/>
         <source>Arc Cosine</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="846"/>
         <source>Logical AND</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="847"/>
         <source>Area Hyperbolic Cosine</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="848"/>
         <source>Area Hyperbolic Sine</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="849"/>
         <source>Area Hyperbolic Tangent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="850"/>
         <source>Arc Sine</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="851"/>
         <source>Arc Tangent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="852"/>
         <source>Average (Arithmetic Mean)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="854"/>
         <source>Binomial Cumulative Distribution Function</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="855"/>
         <source>Binomial Distribution Mean</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="856"/>
         <source>Binomial Probability Mass Function</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="857"/>
         <source>Binomial Distribution Variance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="858"/>
         <source>Cube Root</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="859"/>
         <source>Ceiling</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="860"/>
         <source>Cosine</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="861"/>
         <source>Hyperbolic Cosine</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="862"/>
         <source>Cotangent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="863"/>
         <source>Cosecant</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="865"/>
         <source>Degrees of Arc</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="866"/>
         <source>Error Function</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="867"/>
         <source>Complementary Error Function</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="868"/>
         <source>Exponential</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="869"/>
         <source>Floor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="870"/>
         <source>Fractional Part</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="871"/>
         <source>Extension of Factorials [= (x-1)!]</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="872"/>
         <source>Greatest Common Divisor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="873"/>
         <source>Geometric Mean</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="875"/>
         <source>Hypergeometric Cumulative Distribution Function</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="876"/>
         <source>Hypergeometric Distribution Mean</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="877"/>
         <source>Hypergeometric Probability Mass Function</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="878"/>
         <source>Hypergeometric Distribution Variance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="879"/>
         <source>Integer Quotient</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="880"/>
         <source>Integer Part</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="881"/>
         <source>Binary Logarithm</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="882"/>
         <source>Common Logarithm</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="883"/>
         <source>Natural Logarithm</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="885"/>
         <source>Logarithm to Arbitrary Base</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="886"/>
         <source>Mask to a bit size</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="887"/>
         <source>Maximum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="888"/>
         <source>Median Value (50th Percentile)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="889"/>
         <source>Minimum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="890"/>
         <source>Modulo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="891"/>
         <source>Combination (Binomial Coefficient)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="892"/>
         <source>Logical NOT</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="893"/>
         <source>Permutation (Arrangement)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="853"/>
         <source>Convert to Binary Representation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="864"/>
         <source>Convert to Decimal Representation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="874"/>
         <source>Convert to Hexadecimal Representation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="894"/>
         <source>Convert to Octal Representation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="895"/>
         <source>Logical OR</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="896"/>
         <source>Poissonian Cumulative Distribution Function</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="897"/>
         <source>Poissonian Distribution Mean</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="898"/>
         <source>Poissonian Probability Mass Function</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="899"/>
         <source>Poissonian Distribution Variance</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="900"/>
         <source>Product</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="901"/>
         <source>Radians</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="902"/>
         <source>Rounding</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="903"/>
         <source>Secant</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="904"/>
         <source>Arithmetic Shift Left</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="905"/>
         <source>Arithmetic Shift Right</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="906"/>
         <source>Signum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="907"/>
         <source>Sine</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="908"/>
         <source>Hyperbolic Sine</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="909"/>
         <source>Square Root</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="910"/>
         <source>Standard Deviation (Square Root of Variance)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="911"/>
         <source>Sum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="912"/>
         <source>Tangent</source>
-        <translation type="unfinished"></translation>
+        <translation>正切</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="913"/>
         <source>Hyperbolic Tangent</source>
-        <translation type="unfinished"></translation>
+        <translation>双曲正切</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="914"/>
         <source>Truncation</source>
-        <translation type="unfinished"></translation>
+        <translation>舍去</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="915"/>
         <source>Sign-extend a value</source>
-        <translation type="unfinished"></translation>
+        <translation>符号扩展一个值</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="916"/>
         <source>Variance</source>
-        <translation type="unfinished"></translation>
+        <translation>方差</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="917"/>
         <source>Logical XOR</source>
-        <translation type="unfinished"></translation>
+        <translation>逻辑 XOR</translation>
     </message>
 </context>
 <context>
@@ -2182,12 +2180,12 @@
     <message>
         <location filename="../../gui/mainwindow.cpp" line="341"/>
         <source>Bitfield</source>
-        <translation type="unfinished"></translation>
+        <translation>位域</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="342"/>
         <source>Use&amp;r Functions</source>
-        <translation type="unfinished"></translation>
+        <translation>用户函数(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="344"/>
@@ -2207,7 +2205,7 @@
     <message>
         <location filename="../../gui/mainwindow.cpp" line="347"/>
         <source>Automatic Result &amp;Reuse</source>
-        <translation type="unfinished"></translation>
+        <translation>自动重用结果(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="348"/>
@@ -2237,12 +2235,12 @@
     <message>
         <location filename="../../gui/mainwindow.cpp" line="353"/>
         <source>Save User &amp;Functions on Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>退出时保存用户函数(&amp;F)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="354"/>
         <source>Save &amp;Window Positon on Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>退出时保存窗口位置(&amp;W)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="355"/>
@@ -2252,12 +2250,12 @@
     <message>
         <location filename="../../gui/mainwindow.cpp" line="360"/>
         <source>Leave &amp;Last Expression</source>
-        <translation type="unfinished"></translation>
+        <translation>保留最后的表达式(&amp;L)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="361"/>
         <source>Automatic &amp;Result to Clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>自动复制结果到剪贴板(&amp;R)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="364"/>
@@ -2337,22 +2335,22 @@
     <message>
         <location filename="../../gui/mainwindow.cpp" line="388"/>
         <source>User &amp;Manual</source>
-        <translation type="unfinished"></translation>
+        <translation>用户手册(&amp;M)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="1134"/>
         <source>Type an expression here</source>
-        <translation type="unfinished"></translation>
+        <translation>在这里输入一个表达式</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="2178"/>
         <source>The menu bar is now hidden. To make it visible again, press Ctrl+M.</source>
-        <translation type="unfinished"></translation>
+        <translation>菜单栏现在被隐藏。如果想让它再次显示，请按 Ctrl+M。</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="385"/>
         <source>&amp;Font...</source>
-        <translation type="unfinished"></translation>
+        <translation>字体(&amp;F)...</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="386"/>
@@ -2407,42 +2405,42 @@
     <message>
         <location filename="../../gui/mainwindow.cpp" line="356"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>已禁用</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="357"/>
         <source>Small Space</source>
-        <translation type="unfinished"></translation>
+        <translation>小空间</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="358"/>
         <source>Medium Space</source>
-        <translation type="unfinished"></translation>
+        <translation>中空间</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="359"/>
         <source>Large Space</source>
-        <translation type="unfinished"></translation>
+        <translation>大空间</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="362"/>
         <source>Detect &amp;All Radix Characters</source>
-        <translation type="unfinished"></translation>
+        <translation>检测全部基数字符(&amp;A)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="363"/>
         <source>&amp;Strict Digit Groups Detection</source>
-        <translation type="unfinished"></translation>
+        <translation>严格检测数字分组(&amp;S)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="393"/>
         <source>About &amp;SpeedCrunch</source>
-        <translation type="unfinished"></translation>
+        <translation>关于 &amp;SpeedCrunch</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="617"/>
         <source>&amp;Display</source>
-        <translation type="unfinished"></translation>
+        <translation>显示(&amp;D)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="619"/>
@@ -2452,7 +2450,7 @@
     <message>
         <location filename="../../gui/mainwindow.cpp" line="620"/>
         <source>Digit Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>数字分组</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="1410"/>
@@ -2542,7 +2540,7 @@ If no, current variables and display will be cleared.</source>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="1926"/>
         <source>Display font</source>
-        <translation type="unfinished"></translation>
+        <translation>显示字体</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="2181"/>
@@ -2579,7 +2577,7 @@ Left click the icon to restore it or right click for options.</source>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="614"/>
         <source>&amp;Precision</source>
-        <translation>精度(&amp;P)</translation>
+        <translation>精确(&amp;P)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="316"/>
@@ -2594,27 +2592,27 @@ Left click the icon to restore it or right click for options.</source>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="334"/>
         <source>Formula &amp;Book</source>
-        <translation type="unfinished"></translation>
+        <translation>公式手册(&amp;B)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="389"/>
         <source>Check &amp;Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>检查更新(&amp;U)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="390"/>
         <source>Send &amp;Feedback</source>
-        <translation type="unfinished"></translation>
+        <translation>发送反馈(&amp;F)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="391"/>
         <source>Join &amp;Community</source>
-        <translation type="unfinished"></translation>
+        <translation>加入社区(&amp;C)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="392"/>
         <source>&amp;News Feed</source>
-        <translation type="unfinished"></translation>
+        <translation>新闻订阅(&amp;N)</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="607"/>
@@ -2624,7 +2622,7 @@ Left click the icon to restore it or right click for options.</source>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="618"/>
         <source>Color Scheme</source>
-        <translation type="unfinished"></translation>
+        <translation>颜色方案</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="1866"/>
@@ -2643,31 +2641,31 @@ Left click the icon to restore it or right click for options.</source>
         <location filename="../../core/manual.cpp" line="51"/>
         <location filename="../../core/manual.cpp" line="63"/>
         <source>Index</source>
-        <translation type="unfinished"></translation>
+        <translation>索引</translation>
     </message>
     <message>
         <location filename="../../core/manual.cpp" line="64"/>
         <location filename="../../core/manual.cpp" line="75"/>
         <source>Keyboard shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>键盘快捷键</translation>
     </message>
     <message>
         <location filename="../../core/manual.cpp" line="65"/>
         <location filename="../../core/manual.cpp" line="83"/>
         <source>Built-in functions</source>
-        <translation type="unfinished"></translation>
+        <translation>内置函数</translation>
     </message>
     <message>
         <location filename="../../core/manual.cpp" line="66"/>
         <location filename="../../core/manual.cpp" line="91"/>
         <source>Named constants</source>
-        <translation type="unfinished"></translation>
+        <translation>命名常量</translation>
     </message>
     <message>
         <location filename="../../core/manual.cpp" line="67"/>
         <location filename="../../core/manual.cpp" line="99"/>
         <source>User-defined variables</source>
-        <translation type="unfinished"></translation>
+        <translation>用户定义的变量</translation>
     </message>
 </context>
 <context>
@@ -2675,7 +2673,7 @@ Left click the icon to restore it or right click for options.</source>
     <message>
         <location filename="../../gui/manualwindow.cpp" line="43"/>
         <source>User Manual</source>
-        <translation type="unfinished"></translation>
+        <translation>用户手册</translation>
     </message>
 </context>
 <context>
@@ -2683,42 +2681,42 @@ Left click the icon to restore it or right click for options.</source>
     <message>
         <location filename="../../gui/userfunctionlistwidget.cpp" line="149"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../gui/userfunctionlistwidget.cpp" line="149"/>
         <source>Value</source>
-        <translation type="unfinished">值</translation>
+        <translation>值</translation>
     </message>
     <message>
         <location filename="../../gui/userfunctionlistwidget.cpp" line="152"/>
         <source>Search</source>
-        <translation type="unfinished">搜索</translation>
+        <translation>搜索</translation>
     </message>
     <message>
         <location filename="../../gui/userfunctionlistwidget.cpp" line="153"/>
         <source>No match found</source>
-        <translation type="unfinished">没有找到匹配的</translation>
+        <translation>没有找到匹配</translation>
     </message>
     <message>
         <location filename="../../gui/userfunctionlistwidget.cpp" line="155"/>
         <source>Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>插入</translation>
     </message>
     <message>
         <location filename="../../gui/userfunctionlistwidget.cpp" line="156"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑</translation>
     </message>
     <message>
         <location filename="../../gui/userfunctionlistwidget.cpp" line="157"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>删除</translation>
     </message>
     <message>
         <location filename="../../gui/userfunctionlistwidget.cpp" line="158"/>
         <source>Delete All</source>
-        <translation type="unfinished"></translation>
+        <translation>全部删除</translation>
     </message>
 </context>
 <context>
@@ -2726,7 +2724,7 @@ Left click the icon to restore it or right click for options.</source>
     <message>
         <location filename="../../gui/userfunctionsdock.cpp" line="60"/>
         <source>User Functions</source>
-        <translation type="unfinished"></translation>
+        <translation>用户函数</translation>
     </message>
 </context>
 <context>
@@ -2734,37 +2732,37 @@ Left click the icon to restore it or right click for options.</source>
     <message>
         <location filename="../../gui/variablelistwidget.cpp" line="147"/>
         <source>Name</source>
-        <translation type="unfinished">名称</translation>
+        <translation>名称</translation>
     </message>
     <message>
         <location filename="../../gui/variablelistwidget.cpp" line="147"/>
         <source>Value</source>
-        <translation type="unfinished">值</translation>
+        <translation>值</translation>
     </message>
     <message>
         <location filename="../../gui/variablelistwidget.cpp" line="150"/>
         <source>Search</source>
-        <translation type="unfinished">搜索</translation>
+        <translation>搜索</translation>
     </message>
     <message>
         <location filename="../../gui/variablelistwidget.cpp" line="151"/>
         <source>No match found</source>
-        <translation type="unfinished">没有找到匹配的</translation>
+        <translation>没有找到匹配</translation>
     </message>
     <message>
         <location filename="../../gui/variablelistwidget.cpp" line="153"/>
         <source>Insert</source>
-        <translation type="unfinished"></translation>
+        <translation>插入</translation>
     </message>
     <message>
         <location filename="../../gui/variablelistwidget.cpp" line="154"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>删除</translation>
     </message>
     <message>
         <location filename="../../gui/variablelistwidget.cpp" line="155"/>
         <source>Delete All</source>
-        <translation type="unfinished"></translation>
+        <translation>全部删除</translation>
     </message>
 </context>
 <context>

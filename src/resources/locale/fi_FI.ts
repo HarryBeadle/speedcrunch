@@ -1,13 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="fi_FI">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="fi_FI" version="2.1">
 <context>
     <name>AboutBox</name>
     <message>
         <location filename="../../gui/aboutbox.cpp" line="34"/>
         <location filename="../../gui/aboutbox.cpp" line="194"/>
         <source>About SpeedCrunch</source>
-        <translation>Tietoja SpeedCrunchista</translation>
+        <translation>Tietoa SpeedCrunchista</translation>
     </message>
     <message>
         <location filename="../../gui/aboutbox.cpp" line="46"/>
@@ -448,7 +446,7 @@
     <message>
         <location filename="../../core/book.cpp" line="245"/>
         <source>slant height</source>
-        <translation type="unfinished"></translation>
+        <translation>sivujanan pituus</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="263"/>
@@ -493,7 +491,7 @@
     <message>
         <location filename="../../core/book.cpp" line="392"/>
         <source>reflected power</source>
-        <translation type="unfinished"></translation>
+        <translation>heijastunut teho</translation>
     </message>
     <message>
         <location filename="../../core/book.cpp" line="393"/>
@@ -630,7 +628,7 @@
     <message>
         <location filename="../../core/constants.cpp" line="266"/>
         <source>Standard Gravity</source>
-        <translation type="unfinished"></translation>
+        <translation>Normaaliputoamiskiihtyvyys</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="270"/>
@@ -685,7 +683,7 @@
     <message>
         <location filename="../../core/constants.cpp" line="283"/>
         <source>Atomic &amp; Nuclear</source>
-        <translation>Atomi- &amp; ydinfysiikka</translation>
+        <translation>Atomi- ja ydinfysiikka</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="285"/>
@@ -1275,92 +1273,92 @@
     <message>
         <location filename="../../core/constants.cpp" line="417"/>
         <source>Particle Masses</source>
-        <translation type="unfinished"></translation>
+        <translation>Hiukkasten massat</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="419"/>
         <source>Electron Mass</source>
-        <translation type="unfinished"></translation>
+        <translation>Elektronin massa</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="420"/>
         <source>Muon Mass</source>
-        <translation type="unfinished"></translation>
+        <translation>Myonin massa</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="421"/>
         <source>Tau Mass</source>
-        <translation type="unfinished"></translation>
+        <translation>Taun massa</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="422"/>
         <source>Up-Quark Mass</source>
-        <translation type="unfinished"></translation>
+        <translation>Ylöskvarkin massa</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="423"/>
         <source>Down-Quark Mass</source>
-        <translation type="unfinished"></translation>
+        <translation>Alaskvarkin massa</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="424"/>
         <source>Charm-Quark Mass</source>
-        <translation type="unfinished"></translation>
+        <translation>Lumokvarkin massa</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="425"/>
         <source>Strange-Quark Mass</source>
-        <translation type="unfinished"></translation>
+        <translation>Outokvarkin massa</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="426"/>
         <source>Top-Quark Mass</source>
-        <translation type="unfinished"></translation>
+        <translation>Huippukvarkin massa</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="427"/>
         <source>Bottom-Quark Mass</source>
-        <translation type="unfinished"></translation>
+        <translation>Pohjakvarkin massa</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="428"/>
         <source>W-Boson Mass</source>
-        <translation type="unfinished"></translation>
+        <translation>W-bosonin massa</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="429"/>
         <source>Z-Boson Mass</source>
-        <translation type="unfinished"></translation>
+        <translation>Z-bosonin massa</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="430"/>
         <source>Higgs-Boson Mass</source>
-        <translation type="unfinished"></translation>
+        <translation>Higgsin bosonin massa</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="431"/>
         <source>Proton Mass</source>
-        <translation type="unfinished"></translation>
+        <translation>Protonin massa</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="432"/>
         <source>Neutron Mass</source>
-        <translation type="unfinished"></translation>
+        <translation>Neutronin massa</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="433"/>
         <source>Electron Mass (SI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Elektronin massa (SI)</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="434"/>
         <source>Proton Mass (SI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Protonin massa (SI)</translation>
     </message>
     <message>
         <location filename="../../core/constants.cpp" line="435"/>
         <source>Neutron Mass (SI)</source>
-        <translation type="unfinished"></translation>
+        <translation>Neutronin massa (SI)</translation>
     </message>
 </context>
 <context>
@@ -1420,7 +1418,7 @@
     <message>
         <location filename="../../gui/editor.cpp" line="574"/>
         <source>Selection result: n/a</source>
-        <translation type="unfinished"></translation>
+        <translation>Valinnan tulos: –</translation>
     </message>
     <message>
         <location filename="../../gui/editor.cpp" line="577"/>
@@ -1525,28 +1523,28 @@
     <message>
         <location filename="../../core/evaluator.cpp" line="1466"/>
         <source>user function recursion is not supported</source>
-        <translation type="unfinished"></translation>
+        <translation>käyttäjän funktioiden rekursiota ei tueta</translation>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="1525"/>
         <location filename="../../core/evaluator.cpp" line="1547"/>
         <source>%1 is a reserved name, please choose another</source>
-        <translation>%1 on varattu sana, ole hyvä ja käytä jotain toista</translation>
+        <translation>%1 on varattu sana; ole hyvä ja käytä jotain toista</translation>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="1533"/>
         <source>%1 is a variable name, please choose another or delete the variable</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 on muuttujan nimi; ole hyvä ja käytä jotain toista tai poista muuttuja</translation>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="1542"/>
         <source>argument %1 is used more than once</source>
-        <translation type="unfinished"></translation>
+        <translation>parametria %1 on käytetty useammin kuin kerran</translation>
     </message>
     <message>
         <location filename="../../core/evaluator.cpp" line="1560"/>
         <source>%1 is a user function name, please choose another or delete the function</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 on käyttäjän funktion nimi; ole hyvä ja käytä jotain toista tai poista funktio</translation>
     </message>
 </context>
 <context>
@@ -1554,34 +1552,34 @@
     <message>
         <location filename="../../core/functions.cpp" line="820"/>
         <source>max; trials; probability</source>
-        <translation type="unfinished"></translation>
+        <translation>maksimi; kokeita; todennäköisyys</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="821"/>
         <location filename="../../core/functions.cpp" line="823"/>
         <source>trials; probability</source>
-        <translation type="unfinished"></translation>
+        <translation>kokeita; todennäköisyys</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="822"/>
         <source>hits; trials; probability</source>
-        <translation type="unfinished"></translation>
+        <translation>onnistumisia; kokeita; todennäköisyys</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="824"/>
         <source>max; total; hits; trials</source>
-        <translation type="unfinished"></translation>
+        <translation>maksimi; yhteensä; onnistumisia; kokeita</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="825"/>
         <location filename="../../core/functions.cpp" line="827"/>
         <source>total; hits; trials</source>
-        <translation type="unfinished"></translation>
+        <translation>yhteensä; onnistumisia; kokeita</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="826"/>
         <source>count; total; hits; trials</source>
-        <translation type="unfinished"></translation>
+        <translation>lukumäärä; yhteensä; onnistumisia; kokeita</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="828"/>
@@ -1591,7 +1589,7 @@
     <message>
         <location filename="../../core/functions.cpp" line="829"/>
         <source>base; x</source>
-        <translation type="unfinished"></translation>
+        <translation>kanta; x</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="830"/>
@@ -1610,13 +1608,13 @@
         <location filename="../../core/functions.cpp" line="832"/>
         <location filename="../../core/functions.cpp" line="834"/>
         <source>events; average_events</source>
-        <translation type="unfinished"></translation>
+        <translation>tapahtumia; tapahtumia_keskimäärin</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="833"/>
         <location filename="../../core/functions.cpp" line="835"/>
         <source>average_events</source>
-        <translation type="unfinished"></translation>
+        <translation>tapahtumia_keskimäärin</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="843"/>
@@ -1766,7 +1764,7 @@
     <message>
         <location filename="../../core/functions.cpp" line="875"/>
         <source>Hypergeometric Cumulative Distribution Function</source>
-        <translation>Hypergeometrinen kertymäfunktio</translation>
+        <translation>Hypergeometrisen jakauman kertymäfunktio</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="876"/>
@@ -1776,7 +1774,7 @@
     <message>
         <location filename="../../core/functions.cpp" line="877"/>
         <source>Hypergeometric Probability Mass Function</source>
-        <translation>Hypergeometrinen pistetodennäköisyysfunktio</translation>
+        <translation>Hypergeometrisen jakauman pistetodennäköisyysfunktio</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="878"/>
@@ -1796,12 +1794,12 @@
     <message>
         <location filename="../../core/functions.cpp" line="881"/>
         <source>Binary Logarithm</source>
-        <translation type="unfinished"></translation>
+        <translation>2-kantainen logaritmi</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="882"/>
         <source>Common Logarithm</source>
-        <translation type="unfinished"></translation>
+        <translation>10-kantainen logaritmi</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="883"/>
@@ -1811,12 +1809,12 @@
     <message>
         <location filename="../../core/functions.cpp" line="885"/>
         <source>Logarithm to Arbitrary Base</source>
-        <translation type="unfinished"></translation>
+        <translation>Logaritmi</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="886"/>
         <source>Mask to a bit size</source>
-        <translation type="unfinished"></translation>
+        <translation>Maskaa bittikokoon</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="887"/>
@@ -1856,22 +1854,22 @@
     <message>
         <location filename="../../core/functions.cpp" line="853"/>
         <source>Convert to Binary Representation</source>
-        <translation type="unfinished"></translation>
+        <translation>Muunna binäärimerkintään</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="864"/>
         <source>Convert to Decimal Representation</source>
-        <translation type="unfinished"></translation>
+        <translation>Muunna desimaalimerkintään</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="874"/>
         <source>Convert to Hexadecimal Representation</source>
-        <translation type="unfinished"></translation>
+        <translation>Muunna heksadesimaalimerkintään</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="894"/>
         <source>Convert to Octal Representation</source>
-        <translation type="unfinished"></translation>
+        <translation>Muunna oktaalimerkintään</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="895"/>
@@ -1976,7 +1974,7 @@
     <message>
         <location filename="../../core/functions.cpp" line="915"/>
         <source>Sign-extend a value</source>
-        <translation type="unfinished"></translation>
+        <translation>Pidennä arvo etumerkillä</translation>
     </message>
     <message>
         <location filename="../../core/functions.cpp" line="916"/>
@@ -2182,12 +2180,12 @@
     <message>
         <location filename="../../gui/mainwindow.cpp" line="341"/>
         <source>Bitfield</source>
-        <translation type="unfinished"></translation>
+        <translation>Bittikenttä</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="342"/>
         <source>Use&amp;r Functions</source>
-        <translation type="unfinished"></translation>
+        <translation>Käyttäjän f&amp;unktiot</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="344"/>
@@ -2237,12 +2235,12 @@
     <message>
         <location filename="../../gui/mainwindow.cpp" line="353"/>
         <source>Save User &amp;Functions on Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>Tallenna käyttäjän &amp;funktiot lopetettaessa</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="354"/>
         <source>Save &amp;Window Positon on Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>Tallenna ikk&amp;unan sijainti lopetettaessa</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="355"/>
@@ -2337,7 +2335,7 @@
     <message>
         <location filename="../../gui/mainwindow.cpp" line="388"/>
         <source>User &amp;Manual</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Käyttöopas</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="1134"/>
@@ -2407,37 +2405,37 @@
     <message>
         <location filename="../../gui/mainwindow.cpp" line="356"/>
         <source>Disabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Ei käytössä</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="357"/>
         <source>Small Space</source>
-        <translation type="unfinished"></translation>
+        <translation>Pieni väli</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="358"/>
         <source>Medium Space</source>
-        <translation type="unfinished"></translation>
+        <translation>Keskisuuri väli</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="359"/>
         <source>Large Space</source>
-        <translation type="unfinished"></translation>
+        <translation>Suuri väli</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="362"/>
         <source>Detect &amp;All Radix Characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Tunnista kaikki &amp;desimaalierottimet</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="363"/>
         <source>&amp;Strict Digit Groups Detection</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiukka numeroiden &amp;ryhmittelyn tunnistus</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="393"/>
         <source>About &amp;SpeedCrunch</source>
-        <translation>Tietoja &amp;SpeedCrunchista</translation>
+        <translation>Tietoa &amp;SpeedCrunchista</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="617"/>
@@ -2447,12 +2445,12 @@
     <message>
         <location filename="../../gui/mainwindow.cpp" line="619"/>
         <source>&amp;Help</source>
-        <translation>&amp;Ohje</translation>
+        <translation>O&amp;hje</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="620"/>
         <source>Digit Grouping</source>
-        <translation type="unfinished"></translation>
+        <translation>Numeroiden ryhmittely</translation>
     </message>
     <message>
         <location filename="../../gui/mainwindow.cpp" line="1410"/>
@@ -2656,19 +2654,19 @@ Palauta kuvakkeesta vasemmalla painikkeella tai näytä valikko oikealla painikk
         <location filename="../../core/manual.cpp" line="65"/>
         <location filename="../../core/manual.cpp" line="83"/>
         <source>Built-in functions</source>
-        <translation type="unfinished"></translation>
+        <translation>Sisäänrakennetut funktiot</translation>
     </message>
     <message>
         <location filename="../../core/manual.cpp" line="66"/>
         <location filename="../../core/manual.cpp" line="91"/>
         <source>Named constants</source>
-        <translation type="unfinished"></translation>
+        <translation>Nimetyt vakiot</translation>
     </message>
     <message>
         <location filename="../../core/manual.cpp" line="67"/>
         <location filename="../../core/manual.cpp" line="99"/>
         <source>User-defined variables</source>
-        <translation type="unfinished"></translation>
+        <translation>Käyttäjän määrittelemät muuttujat</translation>
     </message>
 </context>
 <context>
@@ -2676,7 +2674,7 @@ Palauta kuvakkeesta vasemmalla painikkeella tai näytä valikko oikealla painikk
     <message>
         <location filename="../../gui/manualwindow.cpp" line="43"/>
         <source>User Manual</source>
-        <translation type="unfinished"></translation>
+        <translation>Käyttöopas</translation>
     </message>
 </context>
 <context>
@@ -2699,7 +2697,7 @@ Palauta kuvakkeesta vasemmalla painikkeella tai näytä valikko oikealla painikk
     <message>
         <location filename="../../gui/userfunctionlistwidget.cpp" line="153"/>
         <source>No match found</source>
-        <translation type="unfinished">Ei tuloksia</translation>
+        <translation>Ei tuloksia</translation>
     </message>
     <message>
         <location filename="../../gui/userfunctionlistwidget.cpp" line="155"/>
@@ -2727,7 +2725,7 @@ Palauta kuvakkeesta vasemmalla painikkeella tai näytä valikko oikealla painikk
     <message>
         <location filename="../../gui/userfunctionsdock.cpp" line="60"/>
         <source>User Functions</source>
-        <translation type="unfinished"></translation>
+        <translation>Käyttäjän funktiot</translation>
     </message>
 </context>
 <context>
