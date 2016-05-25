@@ -27,24 +27,25 @@
 
 class AutoHideLabel;
 class BitFieldWidget;
+template <class Widget> class GenericDock;
 class BookDock;
 class Constants;
-class ConstantsDock;
+class ConstantsWidget;
 class Editor;
 class Evaluator;
 class HistoryEntry;
 class UserFunction;
 class FunctionRepo;
-class FunctionsDock;
-class HistoryDock;
+class FunctionsWidget;
+class HistoryWidget;
 class ManualWindow;
 class ManualServer;
 class ResultDisplay;
 class Session;
 class Settings;
-class UserFunctionsDock;
+class UserFunctionListWidget;
 class Variable;
-class VariablesDock;
+class VariableListWidget;
 
 class QActionGroup;
 class QHBoxLayout;
@@ -77,13 +78,13 @@ public slots:
     void copy();
 
 private slots:
-    void activate();
     void applySelectedColorScheme();
     void clearEditor();
     void clearHistory();
     void copyResultToClipboard();
     void cycleAngleUnits();
     void cycleResultFormats();
+    void decreaseDisplayFontPointSize();
     void decreaseOpacity();
     void deleteVariables();
     void deleteUserFunctions();
@@ -97,7 +98,9 @@ private slots:
     void handleDisplaySelectionChange();
     void handleEditorSelectionChange();
     void handleManualClosed();
+    void handleDockWidgetVisibilityChanged(bool visible);
     void hideStateLabel();
+    void increaseDisplayFontPointSize();
     void increaseOpacity();
     void insertConstantIntoEditor(const QString&);
     void insertFunctionIntoEditor(const QString&);
@@ -118,11 +121,11 @@ private slots:
     void setAutoCalcEnabled(bool);
     void setAutoCompletionEnabled(bool);
     void setBitfieldVisible(bool);
-    void setConstantsDockVisible(bool);
-    void setFormulaBookDockVisible(bool);
+    void setConstantsDockVisible(bool, bool takeFocus = true);
+    void setFormulaBookDockVisible(bool, bool takeFocus = true);
     void setFullScreenEnabled(bool);
-    void setFunctionsDockVisible(bool);
-    void setHistoryDockVisible(bool);
+    void setFunctionsDockVisible(bool, bool takeFocus = true);
+    void setHistoryDockVisible(bool, bool takeFocus = true);
     void setSessionSaveEnabled(bool);
     void setKeypadVisible(bool);
     void setLeaveLastExpressionEnabled(bool);
@@ -131,12 +134,14 @@ private slots:
     void setRadixCharacterComma();
     void setRadixCharacterDot();
     void setResultFormatBinary();
+    void setResultFormatCartesian();
     void setResultFormat(char);
     void setResultFormatEngineering();
     void setResultFormatFixed();
     void setResultFormatGeneral();
     void setResultFormatHexadecimal();
     void setResultFormatOctal();
+    void setResultFormatPolar();
     void setResultFormatScientific();
     void setResultPrecision15Digits();
     void setResultPrecision2Digits();
@@ -152,8 +157,8 @@ private slots:
     void setParseAllRadixChar(bool);
     void setStrictDigitGrouping(bool);
     void setComplexNumbers(bool);
-    void setVariablesDockVisible(bool);
-    void setUserFunctionsDockVisible(bool);
+    void setVariablesDockVisible(bool, bool takeFocus = true);
+    void setUserFunctionsDockVisible(bool, bool takeFocus = true);
     void setWindowPositionSaveEnabled(bool);
     void setWidgetsDirection();
     void showAboutDialog();
@@ -166,8 +171,7 @@ private slots:
     void showResultFormatContextMenu(const QPoint&);
     void showSessionImportDialog();
     void showSessionLoadDialog();
-    void increaseDisplayFontPointSize();
-    void decreaseDisplayFontPointSize();
+    void wrapSelection();
 
 protected:
     virtual void closeEvent(QCloseEvent*);
@@ -177,6 +181,8 @@ private:
     Q_DISABLE_COPY(MainWindow)
 
     void clearTextEditSelection(QPlainTextEdit*);
+    void addTabifiedDock(QDockWidget*, bool takeFocus, Qt::DockWidgetArea = Qt::RightDockWidgetArea);
+    void deleteDock(QDockWidget*);
     void createUi();
     void createActions();
     void createActionGroups();
@@ -186,15 +192,16 @@ private:
     void createFixedWidgets();
     void createKeypad();
     void createBitField();
-    void createBookDock();
-    void createConstantsDock();
-    void createFunctionsDock();
-    void createHistoryDock();
-    void createVariablesDock();
-    void createUserFunctionsDock();
+    void createBookDock(bool takeFocus = true);
+    void createConstantsDock(bool takeFocus = true);
+    void createFunctionsDock(bool takeFocus = true);
+    void createHistoryDock(bool takeFocus = true);
+    void createVariablesDock(bool takeFocus = true);
+    void createUserFunctionsDock(bool takeFocus = true);
     void createFixedConnections();
     void applySettings();
     void checkInitialResultFormat();
+    void checkInitialComplexFormat();
     void checkInitialResultPrecision();
     void checkInitialLanguage();
     void checkInitialDigitGrouping();
@@ -234,6 +241,7 @@ private:
         QAction* editDeleteUserFunction;
         QAction* editClearExpression;
         QAction* editClearHistory;
+        QAction* editWrapSelection;
         QAction* viewKeypad;
         QAction* viewFormulaBook;
         QAction* viewConstants;
@@ -257,6 +265,8 @@ private:
         QAction* settingsResultFormat50Digits;
         QAction* settingsResultFormatBinary;
         QAction* settingsResultFormatOctal;
+        QAction* settingsResultFormatCartesian;
+        QAction* settingsResultFormatPolar;
         QAction* settingsResultFormatHexadecimal;
         QAction* settingsAngleUnitRadian;
         QAction* settingsAngleUnitDegree;
@@ -298,6 +308,7 @@ private:
         QActionGroup* colorScheme;
         QActionGroup* digits;
         QActionGroup* resultFormat;
+        QActionGroup* complexFormat;
         QActionGroup* radixChar;
         QActionGroup* digitGrouping;
     } m_actionGroups;
@@ -311,6 +322,7 @@ private:
         QMenu* display;
         QMenu* edit;
         QMenu* resultFormat;
+        QMenu* complexFormat;
         QMenu* help;
         QMenu* precision;
         QMenu* radixChar;
@@ -337,12 +349,13 @@ private:
 
     struct {
         BookDock* book;
-        ConstantsDock* constants;
-        FunctionsDock* functions;
-        HistoryDock* history;
-        VariablesDock* variables;
-        UserFunctionsDock* userFunctions;
+        GenericDock<ConstantsWidget>* constants;
+        GenericDock<FunctionsWidget>* functions;
+        GenericDock<HistoryWidget>* history;
+        GenericDock<VariableListWidget>* variables;
+        GenericDock<UserFunctionListWidget>* userFunctions;
     } m_docks;
+    QList<QDockWidget*> m_allDocks;
 
     struct {
         bool autoAns;

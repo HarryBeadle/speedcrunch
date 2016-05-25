@@ -108,15 +108,31 @@ Rounding
 
 .. function:: round(x [; n])
 
-    Round ``x`` to the nearest ``n``-digit number. ``n`` may be omitted, in which case ``x`` is rounded to the closest integer. Only real, dimensionless arguments are allowed.
+    Round ``x`` to the nearest number with ``n`` fractional digits; ``n`` may be omitted, in which case ``x`` is rounded to the closest integer. Ties are broken by rounding to the nearest *even* integer. This rounding strategy, commonly known as *Banker's rounding*, serves to avoid a bias (for instance when averaging or summing).
+
+    Example::
+
+        round(0.5)
+        = 0
+
+        round(1.5)
+        = 2
+
+        round(12.345; 2)
+        = 12.34
+
+        round(12345; -2)
+        = 12300
+
+    Only real, dimensionless arguments are allowed.
 
 .. function:: trunc(x [; n])
 
-    Truncates (rounds toward zero) ``x`` to the next ``n``-digit number; ``n`` may be omitted, in which case ``x`` is rounded to integer. Only real, dimensionless arguments are allowed.
+    Truncate (rounds toward zero) ``x`` to the next number with ``n``fractional digits; ``n`` may be omitted, in which case ``x`` is rounded to integer. Only real, dimensionless arguments are allowed.
 
-.. seealso::
-   | :func:`int`
-   | :func:`frac`
+    .. seealso::
+       | :func:`int`
+       | :func:`frac`
 
 
 Integer Division

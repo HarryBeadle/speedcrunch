@@ -203,6 +203,16 @@ Trigonometric & Inverse Trigonometric
 
     The inverse function is :func:`tan`.
 
+.. function:: arctan2(x, y)
+
+    Returns the angle formed by the vector *(x, y)* and the X axis. If the point *(x, y)* lies in the first quadrant (i.e. both *x > 0* and *y > 0* are true), it is given by *arctan(y/x)*. However, the function handles vectors in other quadrants as well.
+
+    The behavior of the function depends on the angle unit setting (degrees or radians). In *degrees* mode, this function returns a value in the range *]-180, 180]*. When *radians* are set as the angle unit, the return value lies in the range *]-π, π]*.
+
+    Unlike :func:`arctan` this function only accepts real arguments.
+
+    The argument values must be dimensionless.
+
 
 Hyperbolic & Inverse Hyperbolic
 -------------------------------
@@ -289,6 +299,39 @@ Special
     Computes ``ln(abs(gamma(x)))``. As the gamma function grows extremely quickly, it is sometimes easier to work with its logarithm instead. :func:`lngamma` allows much larger arguments that would otherwise overflow :func:`gamma`.
 
     Note that currently only real arguments are allowed. Furthermore, the function only accepts dimensionless arguments.
+
+
+Complex Numbers
+---------------
+
+.. function:: real(x)
+
+    Return the real part of a complex number ``x``.
+
+    The argument may have a dimension.
+
+.. function:: imag(x)
+
+    Return the imaginary part of a complex number ``x``.
+
+    The argument may have a dimension.
+
+.. function:: phase(x)
+
+    Returns the phase (angle) of a complex number ``x``. The unit of the angle corresponds to the current angle mode.
+
+    The argument may have a dimension.
+
+    .. seealso::
+       | :func:`abs` (absolute value)
+
+.. function:: polar(x)
+
+    Converts the complex number ``x`` to polar form, i.e. the form *r e* :sup:`jɸ`. The angle ɸ is always given in radians.
+
+.. function:: cart(x)
+
+    Converts the complex number ``x`` to cartesian form, i.e. the form *a + j b*.
 
 
 Various

@@ -715,6 +715,13 @@ void Editor::keyPressEvent(QKeyEvent* event)
     int key = event->key();
 
     switch (key) {
+    case Qt::Key_Tab:
+        // setTabChangesFocus still allows entering a Tab character when there's no
+        // other widgets to change focus to. To avoid that, we explicitly eat any
+        // Tabs that make it here.
+        event->accept();
+        return;
+
     case Qt::Key_Enter:
     case Qt::Key_Return:
         QTimer::singleShot(0, this, SLOT(triggerEnter()));
@@ -786,29 +793,6 @@ void Editor::keyPressEvent(QKeyEvent* event)
             return;
         }
         break;
-
-    case Qt::Key_P:
-        if (event->modifiers() == Qt::ControlModifier) {
-            QTextCursor cursor = textCursor();
-            if (cursor.hasSelection()) {
-                const int selectionStart = cursor.selectionStart();
-                const int selectionEnd = cursor.selectionEnd();
-                cursor.setPosition(selectionStart);
-                cursor.insertText("(");
-                cursor.setPosition(selectionEnd + 1);
-                cursor.insertText(")");
-            } else {
-                cursor.movePosition(QTextCursor::Start);
-                cursor.insertText("(");
-                cursor.movePosition(QTextCursor::End);
-                cursor.insertText(")");
-            }
-            setTextCursor(cursor);
-            event->accept();
-            return;
-        }
-        break;
-
     default:;
     }
 
@@ -870,6 +854,25 @@ void Editor::stopAutoComplete()
     m_completion->selectItem(QString());
     m_completion->doneCompletion();
     setFocus();
+}
+
+void Editor::wrapSelection()
+{
+    QTextCursor cursor = textCursor();
+    if (cursor.hasSelection()) {
+        const int selectionStart = cursor.selectionStart();
+        const int selectionEnd = cursor.selectionEnd();
+        cursor.setPosition(selectionStart);
+        cursor.insertText("(");
+        cursor.setPosition(selectionEnd + 1);
+        cursor.insertText(")");
+    } else {
+        cursor.movePosition(QTextCursor::Start);
+        cursor.insertText("(");
+        cursor.movePosition(QTextCursor::End);
+        cursor.insertText(")");
+    }
+    setTextCursor(cursor);
 }
 
 EditorCompletion::EditorCompletion(Editor* editor)
