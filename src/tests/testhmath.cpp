@@ -833,6 +833,16 @@ void test_functions()
     CHECK_PRECISE(HMath::arctan("-0.6"), "-0.54041950027058415544357836460859991013514825146259");
     CHECK_PRECISE(HMath::arctan("-1.0"), "-0.78539816339744830961566084581987572104929234984378");
 
+    CHECK(HMath::arctan2(0, 0), "NaN");
+    CHECK(HMath::arctan2(0, 1), "1.57079632679489661923");
+    CHECK(HMath::arctan2(0, -1), "-1.57079632679489661923");
+    CHECK(HMath::arctan2(1, 0), "0");
+    CHECK(HMath::arctan2(-1, 0), "3.14159265358979323846");
+    CHECK(HMath::arctan2(1, 1), "0.78539816339744830962");
+    CHECK(HMath::arctan2(1, -1), "-0.78539816339744830962");
+    CHECK(HMath::arctan2(-1, 1), "2.35619449019234492885");
+    CHECK(HMath::arctan2(-1, -1), "-2.35619449019234492885");
+
     CHECK(HMath::arcsin("NaN"), "NaN");
     CHECK(HMath::arcsin("-1"), "-1.57079632679489661923");
     CHECK(HMath::arcsin("0"), "0");

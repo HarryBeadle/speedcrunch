@@ -208,6 +208,15 @@ Trigonometric & Inverse Trigonometric
     
     The inverse function is :func:`tan`.
     
+.. function:: arctan2(x, y)
+
+    Returns the angle formed by the vector (`x`, `y`) and the x-axis. When the point (`x`, `y`) lies in the first quadrant (i.e. both `x` > 0 and `y` > 0) it is given by `arctan(y/x)`. :func:`arctan2` is capable to handle vectors in the other quadrants as well.
+
+    The behavior of the function depends on the **angle mode** (degrees or radians). In **degrees** mode, :func:`arctan2` returns a value in the range ]-180, 180]. When **radians** are set as angle unit, the return value lies in ]-π, π].
+    
+    Unlike :func:`arctan` this function only accepts real arguments.
+
+    The argument of :func:`arctan` must be dimensionless.
 
 Hyperbolic & Inverse Hyperbolic
 -------------------------------
@@ -288,6 +297,41 @@ Special
 
     Computes ``ln(abs(gamma(x)))``. As the gamma function grows extremely quickly, it is sometimes easier to work with its logarithm instead. :func:`lngamma` allows much larger arguments, that would otherwise overflow :func:`gamma`.
     Note that currently only real arguments are allowed. Furthermore, the function only accepts dimensionless arguments.
+    
+Complex Numbers
+---------------
+
+.. function:: real(x)
+
+    Returns the real part of a complex number `x`.
+    
+    The argument may have a dimension.
+    
+
+.. function:: imag(x)
+
+    Returns the imaginary part of a complex number `x`.
+    
+    The argument may have a dimension.
+    
+
+.. function:: phase(x)
+
+    Returns the phase (angle) of a complex number `x`. The unit of the angle corresponds to the current angle mode.
+    
+    The argument may have a dimension.
+    
+    .. seealso ::
+        * :func:`abs` (absolute value)
+        
+.. function:: polar(x)
+
+    Converts the complex number `x` to polar form, i.e. it bring it in the form *r* e\ :sup:`jɸ`. Here the angle ɸ is always given in radians.
+    
+.. function:: cart(x)
+
+    Converts the complex number `x` to cartesian form, i.e. it bring it in the form *a + j b*.
+        
               
 
 Various
