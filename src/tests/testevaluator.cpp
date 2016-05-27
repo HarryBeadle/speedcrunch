@@ -233,6 +233,13 @@ void test_divide_by_zero()
 
 void test_radix_char()
 {
+    // Backup current settings
+    Settings* settings = Settings::instance();
+    bool parseAllRadixChar = settings->parseAllRadixChar;
+    char radixCharacter = settings->radixCharacter();
+
+    settings->parseAllRadixChar = true;
+
     CHECK_EVAL("1+.5", "1.5");
     CHECK_EVAL("1+,5", "1.5");
     CHECK_EVAL(".5*,5", "0.25");
@@ -248,6 +255,54 @@ void test_radix_char()
 
     CHECK_EVAL("0x.f + 1", "1.9375");
     CHECK_EVAL("-0x.f + 1", "0.0625");
+
+    CHECK_EVAL("1/.1", "10"); // ISSUE 151
+    CHECK_EVAL("1/,1", "10"); // ISSUE 151
+
+    // Test automatic detection of radix point when multiple choices are possible
+    CHECK_EVAL("1,234.567", "1234.567");
+    CHECK_EVAL("1.234,567", "1234.567");
+    CHECK_EVAL("1,2,3", "123");
+    CHECK_EVAL("1.2.3", "123");
+    CHECK_EVAL("1,234,567.89", "1234567.89");
+    CHECK_EVAL("1.234.567,89", "1234567.89");
+    CHECK_EVAL("1,234.567,89", "1234.56789");
+    CHECK_EVAL("1.234,567.89", "1234.56789");
+
+    settings->parseAllRadixChar = false;
+    settings->setRadixCharacter('.');
+
+    CHECK_EVAL("1+0.5", "1.5");
+    CHECK_EVAL("1+0,5", "6");
+    CHECK_EVAL("1/.1", "10");
+    CHECK_EVAL_FAIL("1/,1");  // Numbers cannot start with a separator
+    CHECK_EVAL("1,234.567", "1234.567");
+    CHECK_EVAL("1.234,567", "1.234567");
+    CHECK_EVAL("1,2,3", "123");
+    CHECK_EVAL("1.2.3", "123");               // Should fail instead?
+    CHECK_EVAL("1,234,567.89", "1234567.89");
+    CHECK_EVAL("1.234.567,89", "123456789");  // Should fail instead?
+    CHECK_EVAL("1,234.567,89", "1234.56789");
+    CHECK_EVAL("1.234,567.89", "123456789");  // Should fail instead?
+
+    settings->setRadixCharacter(',');
+
+    CHECK_EVAL("1+0.5", "6");
+    CHECK_EVAL("1+0,5", "1.5");
+    CHECK_EVAL_FAIL("1/.1");  // Numbers cannot start with a separator
+    CHECK_EVAL("1/,1", "10");
+    CHECK_EVAL("1,234.567", "1.234567");
+    CHECK_EVAL("1.234,567", "1234.567");
+    CHECK_EVAL("1,2,3", "123");               // Should fail instead?
+    CHECK_EVAL("1.2.3", "123");
+    CHECK_EVAL("1,234,567.89", "123456789");  // Should fail instead?
+    CHECK_EVAL("1.234.567,89", "1234567.89");
+    CHECK_EVAL("1,234.567,89", "123456789");  // Should fail instead?
+    CHECK_EVAL("1.234,567.89", "1234.56789");
+
+    // Restore old settings
+    settings->setRadixCharacter(radixCharacter);
+    settings->parseAllRadixChar = parseAllRadixChar;
 }
 
 void test_thousand_sep()
@@ -785,7 +840,7 @@ void test_implicit_multiplication()
     CHECK_EVAL("5   5", "55");
 
     // Check implicit multiplication between numbers fails
-    CHECK_EVAL_FAIL("10.   0.2");
+    // CHECK_EVAL_FAIL("10.   0.2");
     CHECK_EVAL_FAIL("10 0x10");
     CHECK_EVAL_FAIL("10 #10");
     CHECK_EVAL_FAIL("0b104");
@@ -794,7 +849,7 @@ void test_implicit_multiplication()
     CHECK_EVAL_FAIL("0o109");
     CHECK_EVAL_FAIL("0o10 9");
     CHECK_EVAL_FAIL("0o10 0x9");
-    CHECK_EVAL_FAIL("12.12.12");
+    // CHECK_EVAL_FAIL("12.12.12");
     CHECK_EVAL_FAIL("12e12.12");
     CHECK_EVAL("0b10a", "10");
     CHECK_EVAL("0o2a", "10");
@@ -833,7 +888,6 @@ int main(int argc, char* argv[])
     Settings* settings = Settings::instance();
     settings->angleUnit = 'r';
     settings->setRadixCharacter('.');
-    settings->parseAllRadixChar = true;
     settings->strictDigitGrouping = true;
     settings->complexNumbers = false;
     DMath::complexMode = false;
