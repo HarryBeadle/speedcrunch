@@ -110,7 +110,7 @@ public:
 
     static bool isSeparatorChar(const QChar&);
     static bool isRadixChar(const QChar&);
-    static bool fixNumberRadix(QString&);
+    static QString fixNumberRadix(const QString&);
 
     QString autoFix(const QString&);
     QString dump();

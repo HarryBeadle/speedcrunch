@@ -544,7 +544,7 @@ bool Evaluator::isSeparatorChar(const QChar &ch)
         return s_separatorRE.exactMatch(ch);
 }
 
-bool Evaluator::fixNumberRadix(QString& number)
+QString Evaluator::fixNumberRadix(const QString& number)
 {
     int dotCount = 0;
     int commaCount = 0;
@@ -561,7 +561,7 @@ bool Evaluator::fixNumberRadix(QString& number)
             else if (c == ',')
                 ++commaCount;
             else
-                return false; // should not happen
+                return QString(); // should not happen
         }
     }
 
@@ -593,8 +593,7 @@ bool Evaluator::fixNumberRadix(QString& number)
           result.append(c);
     }
 
-    number = result;
-    return true;
+    return result;
 }
 
 Evaluator* Evaluator::instance()
@@ -937,7 +936,8 @@ Tokens Evaluator::scan(const QString& expr) const
                 expText = "E";
                 expStart = i;
                 ++i;
-                if (fixNumberRadix(tokenText))
+                tokenText = fixNumberRadix(tokenText);
+                if (!tokenText.isNull())
                     state = InExpIndicator;
                 else
                     state = Bad;
@@ -950,7 +950,8 @@ Tokens Evaluator::scan(const QString& expr) const
                 ++i;
             } else {
                 // We're done with number
-                if (fixNumberRadix(tokenText))
+                tokenText = fixNumberRadix(tokenText);
+                if (!tokenText.isNull())
                     state = InNumberEnd;
                 else
                     state = Bad;
