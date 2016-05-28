@@ -235,10 +235,9 @@ void test_radix_char()
 {
     // Backup current settings
     Settings* settings = Settings::instance();
-    bool parseAllRadixChar = settings->parseAllRadixChar;
     char radixCharacter = settings->radixCharacter();
 
-    settings->parseAllRadixChar = true;
+    settings->setRadixCharacter('*');
 
     CHECK_EVAL("1+.5", "1.5");
     CHECK_EVAL("1+,5", "1.5");
@@ -269,7 +268,6 @@ void test_radix_char()
     CHECK_EVAL("1,234.567,89", "1234.56789");
     CHECK_EVAL("1.234,567.89", "1234.56789");
 
-    settings->parseAllRadixChar = false;
     settings->setRadixCharacter('.');
 
     CHECK_EVAL("1+0.5", "1.5");
@@ -279,11 +277,11 @@ void test_radix_char()
     CHECK_EVAL("1,234.567", "1234.567");
     CHECK_EVAL("1.234,567", "1.234567");
     CHECK_EVAL("1,2,3", "123");
-    CHECK_EVAL("1.2.3", "123");               // Should fail instead?
+    CHECK_EVAL("1.2.3", "123");
     CHECK_EVAL("1,234,567.89", "1234567.89");
-    CHECK_EVAL("1.234.567,89", "123456789");  // Should fail instead?
+    CHECK_EVAL("1.234.567,89", "123456789");
     CHECK_EVAL("1,234.567,89", "1234.56789");
-    CHECK_EVAL("1.234,567.89", "123456789");  // Should fail instead?
+    CHECK_EVAL("1.234,567.89", "123456789");
 
     settings->setRadixCharacter(',');
 
@@ -293,16 +291,15 @@ void test_radix_char()
     CHECK_EVAL("1/,1", "10");
     CHECK_EVAL("1,234.567", "1.234567");
     CHECK_EVAL("1.234,567", "1234.567");
-    CHECK_EVAL("1,2,3", "123");               // Should fail instead?
+    CHECK_EVAL("1,2,3", "123");
     CHECK_EVAL("1.2.3", "123");
-    CHECK_EVAL("1,234,567.89", "123456789");  // Should fail instead?
+    CHECK_EVAL("1,234,567.89", "123456789");
     CHECK_EVAL("1.234.567,89", "1234567.89");
-    CHECK_EVAL("1,234.567,89", "123456789");  // Should fail instead?
+    CHECK_EVAL("1,234.567,89", "123456789");
     CHECK_EVAL("1.234,567.89", "1234.56789");
 
     // Restore old settings
     settings->setRadixCharacter(radixCharacter);
-    settings->parseAllRadixChar = parseAllRadixChar;
 }
 
 void test_thousand_sep()
@@ -325,28 +322,6 @@ void test_thousand_sep()
 
     CHECK_EVAL("12$345.678~9", "12345.6789");
     CHECK_EVAL("12`345.678@9", "12345.6789");
-}
-
-void test_thousand_sep_strict()
-{
-    CHECK_EVAL("12'345.678'9", "12345.6789");
-    CHECK_EVAL("1234'5.67'89", "12345.6789");
-    CHECK_EVAL("1234'56", "123456");
-    //CHECK_EVAL("'123456", "123456");  // FIXME: should not fail?
-    CHECK_EVAL("123456'", "123456");
-    CHECK_EVAL("123'''456", "123456");
-    CHECK_EVAL(".'123456", "0.123456");
-
-    CHECK_EVAL("12 345.678 9", "12345.6789");
-    CHECK_EVAL("12_345.678_9", "12345.6789");
-    CHECK_EVAL(QString::fromUtf8("12·345.678·9"), "12345.6789");
-    CHECK_EVAL(QString::fromUtf8("12٫345.678٫9"), "12345.6789");
-    CHECK_EVAL(QString::fromUtf8("12٬345.678٬9"), "12345.6789");
-    CHECK_EVAL(QString::fromUtf8("12˙345.678˙9"), "12345.6789");
-    CHECK_EVAL(QString::fromUtf8("12⎖345.678⎖9"), "12345.6789");
-
-    CHECK_EVAL_FAIL("12$345.678~9");
-    CHECK_EVAL_FAIL("12`345.678@9");
 }
 
 void test_function_basic()
@@ -888,7 +863,6 @@ int main(int argc, char* argv[])
     Settings* settings = Settings::instance();
     settings->angleUnit = 'r';
     settings->setRadixCharacter('.');
-    settings->strictDigitGrouping = true;
     settings->complexNumbers = false;
     DMath::complexMode = false;
 
@@ -903,10 +877,7 @@ int main(int argc, char* argv[])
     test_divide_by_zero();
     test_radix_char();
 
-    settings->strictDigitGrouping = false;
     test_thousand_sep();
-    settings->strictDigitGrouping = true;
-    test_thousand_sep_strict();
 
     test_function_basic();
     test_function_trig();

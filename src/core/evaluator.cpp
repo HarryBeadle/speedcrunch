@@ -502,7 +502,7 @@ static bool isIdentifier(QChar ch)
 // Helper function: return true for valid radix characters.
 bool Evaluator::isRadixChar(const QChar &ch)
 {
-    if (Settings::instance()->parseAllRadixChar)
+    if (Settings::instance()->isRadixCharacterBoth())
         return ch.unicode() == '.' || ch.unicode() == ',';
     // There exist more than 2 radix characters actually:
     //   U+0027 ' apostrophe
@@ -518,30 +518,13 @@ bool Evaluator::isRadixChar(const QChar &ch)
 // Helper function: return true for valid thousand separator characters.
 bool Evaluator::isSeparatorChar(const QChar &ch)
 {
-    /* Only match known thousand separators: 
-     *   U+0020   space
-     *   U+0027 ' apostrophe
-     *   U+002C , comma
-     *   U+002E . full stop
-     *   U+005F _ low line
-     *   U+00B7 · middle dot
-     *   U+066B ٫ arabic decimal separator
-     *   U+066C ٬ arabic thousands separator
-     *   U+02D9 ˙ dot above
-     *   U+2396 ⎖ decimal separator key symbol
-     */
-    static QRegExp s_separatorStrictRE("[ ',\\._\\x00B7\\x066B\\x066C\\x02D9\\x2396]");
-
     // Match everything that is not alphanumeric or an operator or NUL.
     static QRegExp s_separatorRE("[^a-zA-Z0-9\\+\\-\\*/\\^;\\(\\)%!=\\\\&\\|<>\\?#\\x0000]");
 
     if (isRadixChar(ch))
         return false;
 
-    if (Settings::instance()->strictDigitGrouping)
-        return s_separatorStrictRE.exactMatch(ch);
-    else
-        return s_separatorRE.exactMatch(ch);
+    return s_separatorRE.exactMatch(ch);
 }
 
 QString Evaluator::fixNumberRadix(const QString& number)
@@ -573,8 +556,6 @@ QString Evaluator::fixNumberRadix(const QString& number)
         ignoreDot = lastRadixChar != '.';
         ignoreComma = lastRadixChar != ',';
     }
-
-    // TODO: fail if "parseAllRadixChar" is not set and there are more than 1 radix character found?
 
     QChar radixChar;  // Nul character by default
     if (!ignoreDot)
