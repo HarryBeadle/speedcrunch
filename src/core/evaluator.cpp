@@ -779,6 +779,9 @@ Tokens Evaluator::scan(const QString& expr) const
                 numberBase = 10;
                 state = InNumber;
                 ++i;
+            } else if (isSeparatorChar(ch)) {
+                // Leading separator, probably a number
+                state = InNumberPrefix;
             } else if (ch.isNull()) // Terminator character.
                 state = Finish;
             else if (isIdentifier(ch)) // Identifier or alphanumeric operator
@@ -857,12 +860,17 @@ Tokens Evaluator::scan(const QString& expr) const
                     state = InNumber;
                 }
             } else if (ch.toUpper() == 'E') {
-                // Maybe exponent (tokenText is "0")
-                numberBase = 10;
-                expText = "E";
-                expStart = i;
-                ++i;
-                state = InExpIndicator;
+                if (tokenText.endsWith("0")) {
+                    // Maybe exponent (tokenText is "0" or "-0")
+                    numberBase = 10;
+                    expText = "E";
+                    expStart = i;
+                    ++i;
+                    state = InExpIndicator;
+                } else {
+                    // Only leading separators
+                    state = Bad;
+                }
             } else if (isRadixChar(ch)) {
                 // Might be a radix point or a separator, collect it and decide later
                 tokenText.append(ch);
@@ -896,10 +904,20 @@ Tokens Evaluator::scan(const QString& expr) const
             } else if (isSeparatorChar(ch)) {
                 // Ignore thousand separators
                 ++i;
+            } else if (tokenText.isEmpty() && (ch == '+' || ch == '-')) {
+                // Allow expressions like "$-10" or "$+10"
+                if (ch == '-')
+                    tokenText.append('-');
+                ++i;
             } else {
-                // We're done with integer number (tokenText is "0")
-                numberBase = 10;
-                state = InNumberEnd;
+                if (tokenText.endsWith("0")) {
+                    // We're done with integer number (tokenText is "0" or "-0")
+                    numberBase = 10;
+                    state = InNumberEnd;
+                } else {
+                    // Only leading separators
+                    state = Bad;
+                }
             }
 
             break;

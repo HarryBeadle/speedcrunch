@@ -273,7 +273,7 @@ void test_radix_char()
     CHECK_EVAL("1+0.5", "1.5");
     CHECK_EVAL("1+0,5", "6");
     CHECK_EVAL("1/.1", "10");
-    CHECK_EVAL_FAIL("1/,1");  // Numbers cannot start with a separator
+    CHECK_EVAL("1/,1", "1");
     CHECK_EVAL("1,234.567", "1234.567");
     CHECK_EVAL("1.234,567", "1.234567");
     CHECK_EVAL("1,2,3", "123");
@@ -287,7 +287,7 @@ void test_radix_char()
 
     CHECK_EVAL("1+0.5", "6");
     CHECK_EVAL("1+0,5", "1.5");
-    CHECK_EVAL_FAIL("1/.1");  // Numbers cannot start with a separator
+    CHECK_EVAL("1/.1", "1");
     CHECK_EVAL("1/,1", "10");
     CHECK_EVAL("1,234.567", "1.234567");
     CHECK_EVAL("1.234,567", "1234.567");
@@ -307,7 +307,7 @@ void test_thousand_sep()
     CHECK_EVAL("12'345.678'9", "12345.6789");
     CHECK_EVAL("1234'5.67'89", "12345.6789");
     CHECK_EVAL("1234'56", "123456");
-    //CHECK_EVAL("'123456", "123456");  // FIXME: should not fail?
+    CHECK_EVAL("'123456", "123456");
     CHECK_EVAL("123456'", "123456");
     CHECK_EVAL("123'''456", "123456");
     CHECK_EVAL(".'123456", "0.123456");
@@ -322,6 +322,10 @@ void test_thousand_sep()
 
     CHECK_EVAL("12$345.678~9", "12345.6789");
     CHECK_EVAL("12`345.678@9", "12345.6789");
+    CHECK_EVAL("$ 1234.567", "1234.567");
+    CHECK_EVAL("1234.567 $", "1234.567");
+    CHECK_EVAL("$-10", "-10");
+    CHECK_EVAL("$+10", "10");
 }
 
 void test_function_basic()
