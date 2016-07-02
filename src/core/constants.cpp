@@ -1,6 +1,6 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2007 Ariya Hidayat <ariya@kde.org>
-// Copyright (C) 2007, 2009, 2011, 2013 @heldercorreia
+// Copyright (C) 2007, 2009, 2011, 2013, 2016 @heldercorreia
 // Copyright (C) 2009 Andreas Scherer <andreas_coder@freenet.de>
 // Copyright (C) 2016 Hadrien Theveneau <theveneau@gmail.com>
 //
@@ -28,7 +28,7 @@
 
 #include <algorithm>
 
-static Constants* s_constantsInstance = 0;
+static Constants* s_constantsInstance = nullptr;
 
 static void s_deleteConstants()
 {
@@ -772,26 +772,12 @@ Constants* Constants::instance()
     return s_constantsInstance;
 }
 
-constant_name_is::constant_name_is(const QString& name)
-    : m_name(name)
-{
-}
-
-bool constant_name_is::operator()(const Constant& c) const
-{
-    return c.name == m_name;
-}
-
 Constants::Constants()
     : d(new Constants::Private)
 {
     setObjectName("Constants");
     d->populate();
     d->retranslateText();
-}
-
-Constants::~Constants()
-{
 }
 
 const QList<Constant>& Constants::list() const
@@ -807,4 +793,8 @@ const QStringList& Constants::categories() const
 void Constants::retranslateText()
 {
     d->retranslateText();
+}
+
+Constants::~Constants()
+{
 }
