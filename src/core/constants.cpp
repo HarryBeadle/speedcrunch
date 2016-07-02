@@ -798,3 +798,4 @@ void Constants::retranslateText()
 Constants::~Constants()
 {
 }
+
