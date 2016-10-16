@@ -80,6 +80,7 @@ public slots:
 private slots:
     void applySelectedColorScheme();
     void clearEditor();
+    void clearEditorAndBitfield();
     void clearHistory();
     void copyResultToClipboard();
     void cycleAngleUnits();
