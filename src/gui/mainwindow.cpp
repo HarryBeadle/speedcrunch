@@ -1226,7 +1226,8 @@ void MainWindow::clearEditor()
 void MainWindow::clearEditorAndBitfield()
 {
     clearEditor();
-    m_widgets.bitField->clear();
+    if (m_widgets.bitField)
+        m_widgets.bitField->clear();
 }
 
 void MainWindow::copyResultToClipboard()
