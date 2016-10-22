@@ -113,19 +113,27 @@ BitFieldWidget::BitFieldWidget(QWidget* parent) :
         }
     }
 
+    // TODO: find some more justifiable size calculation.
+    int buttonHeight = m_bitWidgets.at(0)->height() * 4 / 3;
+    int buttonWidth = buttonHeight * 2;
+
     QPushButton* resetButton = new QPushButton("0");
+    resetButton->setFixedSize(buttonWidth, buttonHeight);
     resetButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(resetButton, SIGNAL(clicked()), this, SLOT(resetBits()));
 
     QPushButton* invertButton = new QPushButton("~");
+    invertButton->setFixedSize(buttonWidth, buttonHeight);
     invertButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(invertButton, SIGNAL(clicked()), this, SLOT(invertBits()));
 
     QPushButton* shiftLeftButton = new QPushButton("<<");
+    shiftLeftButton->setFixedSize(buttonWidth, buttonHeight);
     shiftLeftButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(shiftLeftButton, SIGNAL(clicked()), this, SLOT(shiftBitsLeft()));
 
     QPushButton* shiftRightButton = new QPushButton(">>");
+    shiftRightButton->setFixedSize(buttonWidth, buttonHeight);
     shiftRightButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(shiftRightButton, SIGNAL(clicked()), this, SLOT(shiftBitsRight()));
 
