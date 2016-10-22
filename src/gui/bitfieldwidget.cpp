@@ -25,9 +25,9 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QListIterator>
-#include <QPainter>
 #include <QPaintEvent>
 #include <QPushButton>
+#include <QApplication>
 
 BitWidget::BitWidget(int bitPosition, QWidget* parent)
     : QLabel(parent),
@@ -39,6 +39,21 @@ BitWidget::BitWidget(int bitPosition, QWidget* parent)
     setToolTip(QString("2<sup>%1</sup> = %2")
         .arg(bitPosition)
         .arg(HMath::format(number, Quantity::Format::Decimal())));
+
+    setObjectName("BitWidget");
+}
+
+void BitWidget::setState(bool state)
+{
+    if (state != m_state) {
+        m_state = state;
+        setStyleSheet(
+            QString("QLabel { background-color : %1; color : %2; }")
+                .arg(QApplication::palette().color(state ? QPalette::WindowText : QPalette::Window).name())
+                .arg(QApplication::palette().color(state ? QPalette::Window : QPalette::WindowText).name())
+        );
+        update();
+    }
 }
 
 void BitWidget::mouseReleaseEvent(QMouseEvent*)
@@ -47,20 +62,16 @@ void BitWidget::mouseReleaseEvent(QMouseEvent*)
     emit stateChanged(m_state);
 }
 
-void BitWidget::paintEvent(QPaintEvent* event)
-{
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
-
-    if (m_state)
-        painter.fillRect(event->rect(), Qt::SolidPattern);
-    else
-        painter.drawRect(event->rect());
-}
-
 BitFieldWidget::BitFieldWidget(QWidget* parent) :
     QWidget(parent)
 {
+    setStyleSheet(QString("QLabel#BitWidget {"
+                          " border: 1px solid;"
+                          " background-color : %1; color : %2;"
+                          "}")
+                      .arg(QApplication::palette().color(QPalette::Window).name())
+                      .arg(QApplication::palette().color(QPalette::WindowText).name())
+                 );
     m_bitWidgets.reserve(NumberOfBits);
     for (int i = 0; i < NumberOfBits; ++i) {
         BitWidget* bitWidget = new BitWidget(i);
