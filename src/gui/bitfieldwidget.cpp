@@ -85,24 +85,13 @@ BitFieldWidget::BitFieldWidget(QWidget* parent) :
     QGridLayout* fieldLayout = new QGridLayout;
     int bitOffset = 0;
 
-    for (int column = 0; column < 17; ++column) {
+    for (int column = 1; column < 17; ++column) {
         if ((column % 2) == 0) {
             if ((column % 4) != 0)
                 continue;
 
             QLabel* topNumberLabel = new QLabel;
             QLabel* bottomNumberLabel = new QLabel;
-
-            int topNumber = NumberOfBits - column * 2;
-            int bottomNumber = topNumber - NumberOfBits / 2;
-
-            if (column == 0) {
-                --topNumber;
-                --bottomNumber;
-            }
-
-            topNumberLabel->setText(QString("%1").arg(topNumber));
-            bottomNumberLabel->setText(QString("%1").arg(bottomNumber));
 
             fieldLayout->addWidget(topNumberLabel, 0, column);
             fieldLayout->addWidget(bottomNumberLabel, 1, column);
