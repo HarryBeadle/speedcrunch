@@ -40,6 +40,7 @@ BitWidget::BitWidget(int bitPosition, QWidget* parent)
         .arg(bitPosition)
         .arg(HMath::format(number, Quantity::Format::Decimal())));
 
+    setText(QString("%1").arg(bitPosition));
     setObjectName("BitWidget");
 }
 
@@ -66,6 +67,8 @@ BitFieldWidget::BitFieldWidget(QWidget* parent) :
     QWidget(parent)
 {
     setStyleSheet(QString("QLabel#BitWidget {"
+                          " qproperty-alignment: 'AlignHCenter | AlignVCenter';"
+                          " font: 500 10pt \"Arial\";"
                           " border: 1px solid;"
                           " background-color : %1; color : %2;"
                           "}")
