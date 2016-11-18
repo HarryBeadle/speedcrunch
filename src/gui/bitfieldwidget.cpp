@@ -26,15 +26,12 @@
 #include <QLabel>
 #include <QListIterator>
 #include <QPaintEvent>
-#include <QPushButton>
 #include <QApplication>
 
 BitWidget::BitWidget(int bitPosition, QWidget* parent)
     : QLabel(parent),
     m_state(false)
 {
-    setFixedSize(SizePixels, SizePixels);
-
     HNumber number(HMath::raise(HNumber(2), bitPosition));
     setToolTip(QString("2<sup>%1</sup> = %2")
         .arg(bitPosition)
@@ -66,14 +63,30 @@ void BitWidget::mouseReleaseEvent(QMouseEvent*)
 BitFieldWidget::BitFieldWidget(QWidget* parent) :
     QWidget(parent)
 {
-    setStyleSheet(QString("QLabel#BitWidget {"
+    // Build the CSS border color using 50% opacity (same result as previous method with painting)
+    const QColor& borderColor = QApplication::palette().color(QPalette::WindowText);
+    QString cssBorderColor = QString("rgba(%1, %2, %3, %4)")
+                                .arg(borderColor.red())
+                                .arg(borderColor.green())
+                                .arg(borderColor.blue())
+                                .arg(0.5);
+
+    setStyleSheet(QString("QLabel#BitWidget, QLabel#FirstBitWidget {"
                           " qproperty-alignment: 'AlignHCenter | AlignVCenter';"
-                          " font: 500 10pt \"Arial\";"
-                          " border: 1px solid;"
+                          " border-top: 1px solid %3;"
+                          " border-bottom: 1px solid %3;"
+                          " border-right: 1px solid %3;"
+                          " padding: 1px;"
                           " background-color : %1; color : %2;"
-                          "}")
+                          "}"
+                          /* Extra style for first bit of each group */
+                          "QLabel#FirstBitWidget {"
+                          " border-left: 1px solid %3;"
+                          "}"
+                          )
                       .arg(QApplication::palette().color(QPalette::Window).name())
                       .arg(QApplication::palette().color(QPalette::WindowText).name())
+                      .arg(cssBorderColor)
                  );
     m_bitWidgets.reserve(NumberOfBits);
     for (int i = 0; i < NumberOfBits; ++i) {
@@ -100,11 +113,19 @@ BitFieldWidget::BitFieldWidget(QWidget* parent) :
             QHBoxLayout* bottomLayout(new QHBoxLayout);
             QHBoxLayout* topLayout(new QHBoxLayout);
 
+            // Disable items spacing so that it looks like a table
+            bottomLayout->setSpacing(0);
+            topLayout->setSpacing(0);
+
             for (int j = 0; j < 4; ++j) {
                 const int topIndex = NumberOfBits - 1 - bitOffset * 4 - j;
                 topLayout->addWidget(m_bitWidgets.at(topIndex));
                 bottomLayout->addWidget(m_bitWidgets.at(topIndex - NumberOfBits / 2));
             }
+
+            // Change the name of first bits so that the proper style is applied
+            topLayout->itemAt(0)->widget()->setObjectName("FirstBitWidget");
+            bottomLayout->itemAt(0)->widget()->setObjectName("FirstBitWidget");
 
             ++bitOffset;
 
@@ -113,41 +134,72 @@ BitFieldWidget::BitFieldWidget(QWidget* parent) :
         }
     }
 
-    // TODO: find some more justifiable size calculation.
-    int buttonHeight = m_bitWidgets.at(0)->height() * 4 / 3;
-    int buttonWidth = buttonHeight * 2;
+    m_resetButton = new QPushButton("0");
+    m_resetButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(m_resetButton, SIGNAL(clicked()), this, SLOT(resetBits()));
 
-    QPushButton* resetButton = new QPushButton("0");
-    resetButton->setFixedSize(buttonWidth, buttonHeight);
-    resetButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(resetButton, SIGNAL(clicked()), this, SLOT(resetBits()));
+    m_invertButton = new QPushButton("~");
+    m_invertButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(m_invertButton, SIGNAL(clicked()), this, SLOT(invertBits()));
 
-    QPushButton* invertButton = new QPushButton("~");
-    invertButton->setFixedSize(buttonWidth, buttonHeight);
-    invertButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(invertButton, SIGNAL(clicked()), this, SLOT(invertBits()));
+    m_shiftLeftButton = new QPushButton("<<");
+    m_shiftLeftButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(m_shiftLeftButton, SIGNAL(clicked()), this, SLOT(shiftBitsLeft()));
 
-    QPushButton* shiftLeftButton = new QPushButton("<<");
-    shiftLeftButton->setFixedSize(buttonWidth, buttonHeight);
-    shiftLeftButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(shiftLeftButton, SIGNAL(clicked()), this, SLOT(shiftBitsLeft()));
-
-    QPushButton* shiftRightButton = new QPushButton(">>");
-    shiftRightButton->setFixedSize(buttonWidth, buttonHeight);
-    shiftRightButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(shiftRightButton, SIGNAL(clicked()), this, SLOT(shiftBitsRight()));
+    m_shiftRightButton = new QPushButton(">>");
+    m_shiftRightButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(m_shiftRightButton, SIGNAL(clicked()), this, SLOT(shiftBitsRight()));
 
     QGridLayout* buttonsLayout = new QGridLayout;
-    buttonsLayout->addWidget(resetButton, 0, 0);
-    buttonsLayout->addWidget(invertButton, 0, 1);
-    buttonsLayout->addWidget(shiftLeftButton, 1, 0);
-    buttonsLayout->addWidget(shiftRightButton, 1, 1);
+    buttonsLayout->addWidget(m_resetButton, 0, 0);
+    buttonsLayout->addWidget(m_invertButton, 0, 1);
+    buttonsLayout->addWidget(m_shiftLeftButton, 1, 0);
+    buttonsLayout->addWidget(m_shiftRightButton, 1, 1);
 
     QHBoxLayout* mainLayout = new QHBoxLayout(this);
     mainLayout->addStretch();
     mainLayout->addLayout(fieldLayout);
     mainLayout->addLayout(buttonsLayout);
     mainLayout->addStretch();
+
+    // The following needs to be done AFTER the widgets have been added to BitFieldWidget
+    // as the style sheet will not be applied otherwise
+    this->updateSize();
+}
+
+void BitFieldWidget::updateSize()
+{
+    // Compute bit widgets max size and apply it to all bit widgets
+    QSize maxSize(0, 0);
+
+    for (QListIterator<BitWidget*> bitsIterator(m_bitWidgets) ; bitsIterator.hasNext() ; ) {
+        const BitWidget* bitWidget = bitsIterator.next();
+
+        QSize &widgetSize = bitWidget->sizeHint();
+        if (maxSize.width() < widgetSize.width())
+            maxSize.setWidth(widgetSize.width());
+        if (maxSize.height() < widgetSize.height())
+            maxSize.setHeight(widgetSize.height());
+    }
+
+    // Make the box be a square
+    if (maxSize.width() < maxSize.height())
+        maxSize.setWidth(maxSize.height());
+    else
+        maxSize.setHeight(maxSize.width());
+
+    // Apply maxSize to all bit widgets
+    for (QListIterator<BitWidget*> bitsIterator(m_bitWidgets) ; bitsIterator.hasNext() ; )
+        bitsIterator.next()->setFixedSize(maxSize);
+
+    // TODO: find some more justifiable size calculation.
+    int buttonHeight = maxSize.height() * 4 / 3;
+    int buttonWidth = buttonHeight * 2;
+
+    m_resetButton->setFixedSize(buttonWidth, buttonHeight);
+    m_invertButton->setFixedSize(buttonWidth, buttonHeight);
+    m_shiftLeftButton->setFixedSize(buttonWidth, buttonHeight);
+    m_shiftRightButton->setFixedSize(buttonWidth, buttonHeight);
 }
 
 void BitFieldWidget::wheelEvent(QWheelEvent* we)

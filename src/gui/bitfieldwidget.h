@@ -22,6 +22,7 @@
 
 #include <QLabel>
 #include <QWidget>
+#include <QPushButton>
 
 class Quantity;
 
@@ -66,6 +67,7 @@ protected:
 public slots:
     void clear();
     void updateBits(const Quantity&);
+    void updateSize(void);
 
 private slots:
     void onBitChanged();
@@ -82,6 +84,11 @@ private:
     Q_DISABLE_COPY(BitFieldWidget)
 
     QList<BitWidget*> m_bitWidgets;
+
+    QPushButton* m_resetButton;
+    QPushButton* m_invertButton;
+    QPushButton* m_shiftLeftButton;
+    QPushButton* m_shiftRightButton;
 };
 
 #endif // BITFIELDWIDGET_H
