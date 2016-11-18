@@ -175,7 +175,7 @@ void BitFieldWidget::updateSize()
     for (QListIterator<BitWidget*> bitsIterator(m_bitWidgets) ; bitsIterator.hasNext() ; ) {
         const BitWidget* bitWidget = bitsIterator.next();
 
-        QSize &widgetSize = bitWidget->sizeHint();
+        const QSize &widgetSize = bitWidget->sizeHint();
         if (maxSize.width() < widgetSize.width())
             maxSize.setWidth(widgetSize.width());
         if (maxSize.height() < widgetSize.height())
