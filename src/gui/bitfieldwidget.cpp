@@ -27,6 +27,7 @@
 #include <QListIterator>
 #include <QPaintEvent>
 #include <QApplication>
+#include <QPushButton>
 
 BitWidget::BitWidget(int bitPosition, QWidget* parent)
     : QLabel(parent),
@@ -172,9 +173,7 @@ void BitFieldWidget::updateSize()
     // Compute bit widgets max size and apply it to all bit widgets
     QSize maxSize(0, 0);
 
-    for (QListIterator<BitWidget*> bitsIterator(m_bitWidgets) ; bitsIterator.hasNext() ; ) {
-        const BitWidget* bitWidget = bitsIterator.next();
-
+    for (const auto &bitWidget : m_bitWidgets) {
         const QSize &widgetSize = bitWidget->sizeHint();
         if (maxSize.width() < widgetSize.width())
             maxSize.setWidth(widgetSize.width());
@@ -189,8 +188,8 @@ void BitFieldWidget::updateSize()
         maxSize.setHeight(maxSize.width());
 
     // Apply maxSize to all bit widgets
-    for (QListIterator<BitWidget*> bitsIterator(m_bitWidgets) ; bitsIterator.hasNext() ; )
-        bitsIterator.next()->setFixedSize(maxSize);
+    for (auto &widget : m_bitWidgets)
+        widget->setFixedSize(maxSize);
 
     // TODO: find some more justifiable size calculation.
     int buttonHeight = maxSize.height() * 4 / 3;

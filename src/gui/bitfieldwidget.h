@@ -22,9 +22,9 @@
 
 #include <QLabel>
 #include <QWidget>
-#include <QPushButton>
 
 class Quantity;
+class QPushButton;
 
 class BitWidget : public QLabel {
     Q_OBJECT
@@ -67,7 +67,7 @@ protected:
 public slots:
     void clear();
     void updateBits(const Quantity&);
-    void updateSize(void);
+    void updateSize();
 
 private slots:
     void onBitChanged();
