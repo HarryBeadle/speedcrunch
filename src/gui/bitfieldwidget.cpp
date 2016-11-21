@@ -190,7 +190,7 @@ void BitFieldWidget::updateFieldLayout()
     // Find out how much bytes per row can be shown within availableWidth
     int bytesPerRow = 1;
     if (byteWidgetWidth > 0 && byteWidgetWidth <= availableWidth) {
-        // Make it a power of 2 so that only 8/16/32/64 bytes per row are possible
+        // Make it a power of 2 so that only 8/16/32/64 bits per row are possible
         bytesPerRow = pow(2, floor(log2(availableWidth / byteWidgetWidth)));
     }
 
