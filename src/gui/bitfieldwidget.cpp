@@ -183,7 +183,7 @@ void BitFieldWidget::updateFieldLayout()
     int widgetWidth = this->size().width();
     int buttonsWidth = m_buttonsLayout->sizeHint().width();
     int byteWidgetWidth = m_byteLayouts.at(0)->sizeHint().width();
-    auto& contentMargins = this->contentsMargins() + m_mainLayout->contentsMargins();
+    auto contentMargins = this->contentsMargins() + m_mainLayout->contentsMargins();
     int spacesWidth = contentMargins.left() + contentMargins.right() + m_mainLayout->spacing() * 3;
     int availableWidth = widgetWidth - (buttonsWidth + spacesWidth);
 
@@ -221,7 +221,7 @@ void BitFieldWidget::updateSize()
     QSize maxSize(0, 0);
 
     for (auto& bitWidget : m_bitWidgets) {
-        auto& widgetSize = bitWidget->sizeHint();
+        auto widgetSize = bitWidget->sizeHint();
         if (maxSize.width() < widgetSize.width())
             maxSize.setWidth(widgetSize.width());
         if (maxSize.height() < widgetSize.height())
