@@ -1,7 +1,7 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2004, 2007 Ariya Hidayat <ariya@kde.org>
 // Copyright (C) 2005, 2006 Johan Thelin <e8johan@gmail.com>
-// Copyright (C) 2007-2014 @heldercorreia
+// Copyright (C) 2007-2016 @heldercorreia
 // Copyright (C) 2011 Daniel Schäufele <git@schaeufele.org>
 //
 // This program is free software; you can redistribute it and/or
@@ -2180,10 +2180,17 @@ void MainWindow::handleCopyAvailable(bool copyAvailable)
 
 void MainWindow::handleBitsChanged(const QString& str)
 {
-    clearEditor();
     Quantity num(CNumber(str.toLatin1().data()));
-    insertTextIntoEditor(DMath::format(num, Quantity::Format::Fixed() + Quantity::Format::Hexadecimal()));
+    auto result = DMath::format(num, Quantity::Format::Fixed() + Quantity::Format::Hexadecimal());
+    insertTextIntoEditor(result);
     showStateLabel(QString("Current value: %1").arg(NumberFormatter::format(num)));
+
+    auto cursor = m_widgets.editor->textCursor();
+    if (cursor.hasSelection())
+        cursor.removeSelectedText();
+    cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, result.length());
+    cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, result.length());
+    m_widgets.editor->setTextCursor(cursor);
 }
 
 void MainWindow::handleEditorTextChange()
