@@ -43,7 +43,7 @@ class Editor : public QPlainTextEdit {
     Q_OBJECT
 
 public:
-    explicit Editor(QWidget* parent = 0);
+    explicit Editor(QWidget* parent = nullptr);
 
     bool isAutoCalcEnabled() const;
     bool isAutoCompletionEnabled() const;
@@ -60,11 +60,12 @@ public:
     void stopAutoComplete();
     void wrapSelection();
     QString text() const;
-    QStringList matchFragment(const QString & id) const;
+    QStringList matchFragment(const QString&) const;
     QString getKeyword() const;
 
 signals:
-    void autoCalcEnabled(const QString&);
+    void autoCalcMessageAvailable(const QString&);
+    void autoCalcQuantityAvailable(const Quantity&);
     void autoCalcDisabled();
     void controlPageDownPressed();
     void controlPageUpPressed();

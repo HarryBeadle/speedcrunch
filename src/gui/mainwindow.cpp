@@ -886,7 +886,8 @@ void MainWindow::createFixedConnections()
     connect(m_actions.helpAbout, SIGNAL(triggered()), SLOT(showAboutDialog()));
 
     connect(m_widgets.editor, SIGNAL(autoCalcDisabled()), SLOT(hideStateLabel()));
-    connect(m_widgets.editor, SIGNAL(autoCalcEnabled(const QString&)), SLOT(showStateLabel(const QString&)));
+    connect(m_widgets.editor, SIGNAL(autoCalcMessageAvailable(const QString&)), SLOT(handleAutoCalcMessageAvailable(const QString&)));
+    connect(m_widgets.editor, SIGNAL(autoCalcQuantityAvailable(const Quantity&)), SLOT(handleAutoCalcQuantityAvailable(const Quantity&)));
     connect(m_widgets.editor, SIGNAL(returnPressed()), SLOT(evaluateEditorExpression()));
     connect(m_widgets.editor, SIGNAL(shiftDownPressed()), SLOT(decreaseDisplayFontPointSize()));
     connect(m_widgets.editor, SIGNAL(shiftUpPressed()), SLOT(increaseDisplayFontPointSize()));
@@ -1661,6 +1662,17 @@ void MainWindow::showStateLabel(const QString& msg)
     const int height = m_widgets.state->height();
     QPoint pos = mapFromGlobal(m_widgets.editor->mapToGlobal(QPoint(0, -height)));
     m_widgets.state->move(pos);
+}
+
+void MainWindow::handleAutoCalcMessageAvailable(const QString& message)
+{
+    showStateLabel(message);
+}
+
+void MainWindow::handleAutoCalcQuantityAvailable(const Quantity& quantity)
+{
+    if (m_settings->bitfieldVisible)
+        m_widgets.bitField->updateBits(quantity);
 }
 
 void MainWindow::setFullScreenEnabled(bool b)

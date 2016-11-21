@@ -22,6 +22,7 @@
 #define GUI_MAINWINDOW_H
 
 #include "gui/keypad.h"
+#include "math/quantity.h"
 
 #include <QMainWindow>
 
@@ -92,8 +93,10 @@ private slots:
     void evaluateEditorExpression();
     void exportHtml();
     void exportPlainText();
+    void handleAutoCalcMessageAvailable(const QString&);
+    void handleAutoCalcQuantityAvailable(const Quantity&);
     void handleCopyAvailable(bool copyAvailable);
-    void handleBitsChanged(const QString&str);
+    void handleBitsChanged(const QString&);
     void handleKeypadButtonPress(Keypad::Button);
     void handleEditorTextChange();
     void handleDisplaySelectionChange();
