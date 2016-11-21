@@ -21,6 +21,8 @@
 
 #include "math/quantity.h"
 
+#include <cmath>
+
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
