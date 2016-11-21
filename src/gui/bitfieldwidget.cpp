@@ -65,7 +65,7 @@ BitFieldWidget::BitFieldWidget(QWidget* parent) :
     QWidget(parent)
 {
     // Build the CSS border color using 50% opacity (same result as previous method with painting)
-    const QColor& borderColor = QApplication::palette().color(QPalette::WindowText);
+    auto& borderColor = QApplication::palette().color(QPalette::WindowText);
     QString cssBorderColor = QString("rgba(%1, %2, %3, %4)")
                                 .arg(borderColor.red())
                                 .arg(borderColor.green())
@@ -89,6 +89,7 @@ BitFieldWidget::BitFieldWidget(QWidget* parent) :
                       .arg(QApplication::palette().color(QPalette::WindowText).name())
                       .arg(cssBorderColor)
                  );
+
     m_bitWidgets.reserve(NumberOfBits);
     for (int i = 0; i < NumberOfBits; ++i) {
         BitWidget* bitWidget = new BitWidget(i);
@@ -96,43 +97,35 @@ BitFieldWidget::BitFieldWidget(QWidget* parent) :
         m_bitWidgets.append(bitWidget);
     }
 
-    QGridLayout* fieldLayout = new QGridLayout;
-    int bitOffset = 0;
+    m_byteLayouts.reserve(NumberOfBits / 8);
+    for (int i = 0; i < NumberOfBits; i += 8) {
+      QHBoxLayout* byteLayout(new QHBoxLayout);
+      byteLayout->setSpacing(5);
 
-    for (int column = 1; column < 17; ++column) {
-        if ((column % 2) == 0) {
-            if ((column % 4) != 0)
-                continue;
+      // Each byte is drawn over 3 UI elements (1 for each nibble and 1 for space)
+      for (int nibble = 1 ; nibble >= 0 ; --nibble) {
+          // Draw each nibble (4-bits) in a single box
+          QHBoxLayout* nibbleLayout(new QHBoxLayout);
 
-            QLabel* topNumberLabel = new QLabel;
-            QLabel* bottomNumberLabel = new QLabel;
+          // Disable items spacing so that it looks like a table
+          nibbleLayout->setSpacing(0);
 
-            fieldLayout->addWidget(topNumberLabel, 0, column);
-            fieldLayout->addWidget(bottomNumberLabel, 1, column);
+          for (int j = 3; j >= 0; --j) {
+              const int bitIndex = i + (nibble * 4) + j;
+              nibbleLayout->addWidget(m_bitWidgets.at(bitIndex));
+          }
 
-        } else {
-            QHBoxLayout* bottomLayout(new QHBoxLayout);
-            QHBoxLayout* topLayout(new QHBoxLayout);
+          // Change the name of first bits so that the proper style is applied
+          nibbleLayout->itemAt(0)->widget()->setObjectName("FirstBitWidget");
 
-            // Disable items spacing so that it looks like a table
-            bottomLayout->setSpacing(0);
-            topLayout->setSpacing(0);
-
-            for (int j = 0; j < 4; ++j) {
-                const int topIndex = NumberOfBits - 1 - bitOffset * 4 - j;
-                topLayout->addWidget(m_bitWidgets.at(topIndex));
-                bottomLayout->addWidget(m_bitWidgets.at(topIndex - NumberOfBits / 2));
-            }
-
-            // Change the name of first bits so that the proper style is applied
-            topLayout->itemAt(0)->widget()->setObjectName("FirstBitWidget");
-            bottomLayout->itemAt(0)->widget()->setObjectName("FirstBitWidget");
-
-            ++bitOffset;
-
-            fieldLayout->addLayout(bottomLayout, 1, column, Qt::AlignCenter);
-            fieldLayout->addLayout(topLayout, 0, column, Qt::AlignCenter);
+          byteLayout->addLayout(nibbleLayout, Qt::AlignCenter);
         }
+
+        // Draw the space between each byte
+        QLabel* byteSpaceLabel = new QLabel;
+        byteLayout->addWidget(byteSpaceLabel);
+
+        m_byteLayouts.append(byteLayout);
     }
 
     m_resetButton = new QPushButton("0");
@@ -151,30 +144,84 @@ BitFieldWidget::BitFieldWidget(QWidget* parent) :
     m_shiftRightButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(m_shiftRightButton, SIGNAL(clicked()), this, SLOT(shiftBitsRight()));
 
-    QGridLayout* buttonsLayout = new QGridLayout;
-    buttonsLayout->addWidget(m_resetButton, 0, 0);
-    buttonsLayout->addWidget(m_invertButton, 0, 1);
-    buttonsLayout->addWidget(m_shiftLeftButton, 1, 0);
-    buttonsLayout->addWidget(m_shiftRightButton, 1, 1);
+    m_buttonsLayout = new QGridLayout;
+    m_buttonsLayout->addWidget(m_resetButton, 0, 0);
+    m_buttonsLayout->addWidget(m_invertButton, 0, 1);
+    m_buttonsLayout->addWidget(m_shiftLeftButton, 1, 0);
+    m_buttonsLayout->addWidget(m_shiftRightButton, 1, 1);
 
-    QHBoxLayout* mainLayout = new QHBoxLayout(this);
-    mainLayout->addStretch();
-    mainLayout->addLayout(fieldLayout);
-    mainLayout->addLayout(buttonsLayout);
-    mainLayout->addStretch();
+    m_fieldLayout = new QGridLayout;
+
+    m_mainLayout = new QHBoxLayout(this);
+    m_mainLayout->addStretch();
+    m_mainLayout->addLayout(m_fieldLayout);
+    m_mainLayout->addLayout(m_buttonsLayout);
+    m_mainLayout->addStretch();
+
+    this->updateFieldLayout();
 
     // The following needs to be done AFTER the widgets have been added to BitFieldWidget
     // as the style sheet will not be applied otherwise
     this->updateSize();
+
+    // Update the field layout again, because the widgets size has changed now
+    this->updateFieldLayout();
 }
 
+/** Update the bitfield layout based on the size of BitFieldWidget and its children.
+ * This method should be called during initialization (but only after all the BitFieldWidget
+ * members have been set) and every time the size of BitFieldWidget is changed.
+ */
+void BitFieldWidget::updateFieldLayout()
+{
+    // Empty current field layout
+    while (m_fieldLayout->count() > 0) {
+        m_fieldLayout->removeItem(m_fieldLayout->itemAt(0));
+    }
+
+    // Compute how much horizontal space we have to draw the bitfield
+    int widgetWidth = this->size().width();
+    int buttonsWidth = m_buttonsLayout->sizeHint().width();
+    int byteWidgetWidth = m_byteLayouts.at(0)->sizeHint().width();
+    auto& contentMargins = this->contentsMargins() + m_mainLayout->contentsMargins();
+    int spacesWidth = contentMargins.left() + contentMargins.right() + m_mainLayout->spacing() * 3;
+    int availableWidth = widgetWidth - (buttonsWidth + spacesWidth);
+
+    // Find out how much bytes per row can be shown within availableWidth
+    int bytesPerRow = 1;
+    if (byteWidgetWidth > 0 && byteWidgetWidth <= availableWidth) {
+        // Make it a power of 2 so that only 8/16/32/64 bytes per row are possible
+        bytesPerRow = pow(2, floor(log2(availableWidth / byteWidgetWidth)));
+    }
+
+    // Populate the field layout
+    int maxRows = NumberOfBits / (8 * bytesPerRow);
+    for (int col = 0 ; col < bytesPerRow ; ++col) {
+        const int colOffset = (bytesPerRow - col - 1);
+
+        for (int row = 0 ; row < maxRows ; ++row) {
+            int byteIndex = (maxRows - row - 1) * bytesPerRow + colOffset;
+            auto* byteLayout = m_byteLayouts.at(byteIndex);
+
+            m_fieldLayout->addLayout(byteLayout, row, col);
+        }
+    }
+
+    // Update the minimum widget size so that its width can be reduced by the user
+    if (byteWidgetWidth + buttonsWidth > 0)
+        this->setMinimumWidth(byteWidgetWidth + buttonsWidth + spacesWidth);
+}
+
+/** Update the size of each BitWidget so that it is the same, as well as the size of the buttons.
+ * This method should be called during initialization, and every time the UI font is changed.
+ */
 void BitFieldWidget::updateSize()
 {
     // Compute bit widgets max size and apply it to all bit widgets
     QSize maxSize(0, 0);
 
-    for (const auto &bitWidget : m_bitWidgets) {
-        const QSize &widgetSize = bitWidget->sizeHint();
+    for (auto& bitWidget : m_bitWidgets) {
+        auto& widgetSize = bitWidget->sizeHint();
         if (maxSize.width() < widgetSize.width())
             maxSize.setWidth(widgetSize.width());
         if (maxSize.height() < widgetSize.height())
@@ -188,7 +235,7 @@ void BitFieldWidget::updateSize()
         maxSize.setHeight(maxSize.width());
 
     // Apply maxSize to all bit widgets
-    for (auto &widget : m_bitWidgets)
+    for (auto& widget : m_bitWidgets)
         widget->setFixedSize(maxSize);
 
     // TODO: find some more justifiable size calculation.
@@ -207,6 +254,11 @@ void BitFieldWidget::wheelEvent(QWheelEvent* we)
         shiftBitsLeft();
     else
         shiftBitsRight();
+}
+
+void BitFieldWidget::resizeEvent(QResizeEvent* re)
+{
+  this->updateFieldLayout();
 }
 
 void BitFieldWidget::updateBits(const Quantity& number)
