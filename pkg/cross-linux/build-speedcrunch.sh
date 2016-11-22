@@ -3,7 +3,7 @@ set -e
 
 BASE_DIR=~
 SPEEDCRUNCH_SOURCE_DIR=/speedcrunch-source
-RELEASE_VERSION=0.11.99.snapshot.$(date +"%Y.%m.%d")
+RELEASE_VERSION=master
 OUTPUT_DIR=/vagrant/dist
 
 function build_speedcrunch {
