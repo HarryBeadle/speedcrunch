@@ -31,12 +31,12 @@ import re
 import sphinx
 from sphinx import addnodes
 from sphinx.directives import ObjectDescription
-from sphinx.domains import Domain, Index, ObjType, StandardDomain
+from sphinx.domains import Domain, Index, ObjType
 from sphinx.roles import XRefRole
 from sphinx.util.docfields import Field, GroupedField
 from sphinx.util.nodes import make_refnode
 
-from translations import load_translations, _, l_
+from translations import _, l_
 import qtkeyword
 
 _SIG_RE = re.compile(r'''
@@ -210,7 +210,6 @@ class SpeedCrunchDomain(Domain):
 
     def __init__(self, env):
         super(SpeedCrunchDomain, self).__init__(env)
-        load_translations(env)
 
     def clear_doc(self, docname):
         for name, (i_docname, objtype) in list(self.data['objects'].items()):
@@ -246,11 +245,16 @@ class SpeedCrunchDomain(Domain):
             yield (name, name, objtype, docname, 'sc.' + name, 1)
 
 
+def add_index_to_standard_domain(app, env, *args):
+    # workaround so we can include our custom index via sc:functionindex
+    std_domain = env.domains['std']
+    std_domain.data['labels']['sc:functionindex'] = \
+        ('sc-functionindex', '', FunctionIndex.localname)
+    std_domain.data['anonlabels']['sc:functionindex'] = \
+        ('sc-functionindex', '')
+
+
 def setup(app):
     app.add_domain(SpeedCrunchDomain)
-    # workaround so we can include our custom index via sc:functionindex
-    StandardDomain.initial_data['labels']['sc:functionindex'] = \
-        ('sc-functionindex', '', FunctionIndex.localname)
-    StandardDomain.initial_data['anonlabels']['sc:functionindex'] = \
-        ('sc-functionindex', '')
+    app.connect('env-before-read-docs', add_index_to_standard_domain)
     return {'version': '0.1'}

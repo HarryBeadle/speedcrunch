@@ -45,8 +45,15 @@ def l_(string):
     return locale._TranslationProxy(_, string)
 
 
-def load_translations(env):
+def load_translations(app):
+    env = app.env
     # (try to) load string translations
     locale_dirs = [os.path.join(env.srcdir, x)
                    for x in env.config.locale_dirs]
+    print("loading '%s' translations [%s]..." % (_CATALOG, env.config.language))
     locale.init(locale_dirs, env.config.language, _CATALOG)
+
+
+def setup(app):
+    app.connect('builder-inited', load_translations)
+    return {'version': '0.1'}
