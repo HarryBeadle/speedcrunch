@@ -17,6 +17,13 @@
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+"""
+A domain for SpeedCrunch things (functions and constants, mostly). To use,
+enable the extension and use the 'sc' domain like any other domain (e.g.
+'sc:function', 'sc:constant'). To link to the function index, use
+:ref:`sc:functionindex`.
+"""
+
 import bisect
 from collections import deque
 import re

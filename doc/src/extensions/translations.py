@@ -17,6 +17,17 @@
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
+"""
+Helper extension to provide translation strings for our custom extensions. This
+extension piggy-backs onto Sphinx's i18n system to load the 'extra-doc-strings'
+catalog and hand out translations from it. To use, enable the extension (this
+causes the translations to be loaded); in other extensions, import this module
+and use the `_` and `l_` functions.
+
+The translations are loaded during the 'env-before-read-docs' event;
+module-level strings should only ever use `l_` (to lazy-load the translation).
+"""
+
 import os
 
 from sphinx import locale
