@@ -2211,11 +2211,11 @@ void MainWindow::handleEditorTextChange()
         Tokens tokens = m_evaluator->scan(expr);
         if (tokens.count() == 1) {
             bool operatorCondition =
-                tokens.at(0).asOperator() == Token::Plus
+                tokens.at(0).asOperator() == Token::Addition
                 || tokens.at(0).asOperator() == Token::Subtraction
                 || tokens.at(0).asOperator() == Token::Multiplication
                 || tokens.at(0).asOperator() == Token::Division
-                || tokens.at(0).asOperator() == Token::Caret;
+                || tokens.at(0).asOperator() == Token::Exponentiation;
             if (operatorCondition) {
                 m_conditions.autoAns = false;
                 expr.prepend("ans");

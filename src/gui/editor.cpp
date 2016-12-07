@@ -427,9 +427,9 @@ void Editor::triggerAutoComplete()
     if(Evaluator::instance()->isUserFunctionAssign())
     {
         for(int i=2; i<tokens.size(); ++i) {
-            if(tokens[i].asOperator() == Token::Semicolon)
+            if(tokens[i].asOperator() == Token::ListSeparator)
                 continue;
-            if(tokens[i].asOperator() == Token::RightPar)
+            if(tokens[i].asOperator() == Token::AssociationEnd)
                 break;
             if(tokens[i].isIdentifier()) {
                 QString arg = tokens[i].text();
@@ -704,9 +704,9 @@ void Editor::keyPressEvent(QKeyEvent* event)
 
     switch (key) {
     case Qt::Key_Tab:
-        // setTabChangesFocus still allows entering a Tab character when there's no
-        // other widgets to change focus to. To avoid that, we explicitly eat any
-        // Tabs that make it here.
+        // setTabChangesFocus() still allows entering a Tab character when
+        // there's no other widgets to change focus to. To avoid that,
+        // explicitly consume any Tabs that make it here.
         event->accept();
         return;
 
