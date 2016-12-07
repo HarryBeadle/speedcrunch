@@ -194,7 +194,8 @@ static Token::Op matchOperator(const QString& text)
 
         switch(p.unicode()) {
         case '+': result = Token::Plus; break;
-        case '-': result = Token::Minus; break;
+        case 0x2212: // −
+        case '-': result = Token::Subtraction; break;
         case 0x00D7: // ×
         case '*': result = Token::Multiplication; break;
         case 0x00F7: // ÷
@@ -248,7 +249,7 @@ static int opPrecedence(Token::Op op)
     case Token::Modulo:
     case Token::Backslash: prec = 600; break;
     case Token::Plus:
-    case Token::Minus: prec = 300; break;
+    case Token::Subtraction: prec = 300; break;
     case Token::LeftShift:
     case Token::RightShift: prec = 200; break;
     case Token::Ampersand: prec = 100; break;
@@ -524,7 +525,7 @@ bool Evaluator::isRadixChar(const QChar &ch)
 bool Evaluator::isSeparatorChar(const QChar& ch)
 {
     // Match everything that is not alphanumeric or an operator or NUL.
-    static const QRegExp s_separatorRE("[^a-zA-Z0-9\\+\\-\\*×÷/\\^;\\(\\)%!=\\\\&\\|<>\\?#\\x0000]");
+    static const QRegExp s_separatorRE("[^a-zA-Z0-9\\+\\-−\\*×÷/\\^;\\(\\)%!=\\\\&\\|<>\\?#\\x0000]");
 
     if (isRadixChar(ch))
         return false;
@@ -1168,11 +1169,11 @@ void Evaluator::compile(const Tokens& tokens)
                   Token id = syntaxStack.top(2);
                   if (x.isOperand()
                       && isFunction(id)
-                      && (op.asOperator() == Token::Plus || op.asOperator() == Token::Minus))
+                      && (op.asOperator() == Token::Plus || op.asOperator() == Token::Subtraction))
                     {
                       ruleFound = true;
                       syntaxStack.reduce(2);
-                      if (op.asOperator() == Token::Minus)
+                      if (op.asOperator() == Token::Subtraction)
                         m_codes.append(Opcode(Opcode::Neg));
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for unary operator in simplified function syntax; function " << id.text() << "\n";
@@ -1246,7 +1247,7 @@ void Evaluator::compile(const Tokens& tokens)
                       switch (op.asOperator()) {
                       // Simple binary operations.
                       case Token::Plus:      m_codes.append(Opcode::Add); break;
-                      case Token::Minus:     m_codes.append(Opcode::Sub); break;
+                      case Token::Subtraction:     m_codes.append(Opcode::Sub); break;
                       case Token::Multiplication: m_codes.append(Opcode::Mul); break;
                       case Token::Division:  m_codes.append(Opcode::Div); break;
                       case Token::Caret:     m_codes.append(Opcode::Pow); break;
@@ -1313,12 +1314,12 @@ void Evaluator::compile(const Tokens& tokens)
                     Token op2 = syntaxStack.top(1);
                     Token op1 = syntaxStack.top(2);
                     if (x.isOperand() && op1.isOperator()
-                         && (op2.asOperator() == Token::Plus || op2.asOperator() == Token::Minus)
+                         && (op2.asOperator() == Token::Plus || op2.asOperator() == Token::Subtraction)
                          && (token.isOperand()
                              || opPrecedence(token.asOperator()) <= opPrecedence(Token::Multiplication)))
                     {
                         ruleFound = true;
-                        if (op2.asOperator() == Token::Minus)
+                        if (op2.asOperator() == Token::Subtraction)
                             m_codes.append(Opcode(Opcode::Neg));
 
                         syntaxStack.reduce(2);
@@ -1337,12 +1338,12 @@ void Evaluator::compile(const Tokens& tokens)
                     Token x = syntaxStack.top();
                     Token op = syntaxStack.top(1);
                     if (x.isOperand()
-                        && (op.asOperator() == Token::Plus || op.asOperator() == Token::Minus)
+                        && (op.asOperator() == Token::Plus || op.asOperator() == Token::Subtraction)
                         && ((token.isOperator() && opPrecedence(token.asOperator()) <= opPrecedence(Token::Multiplication))
                             || token.isOperand()))
                     {
                         ruleFound = true;
-                        if (op.asOperator() == Token::Minus)
+                        if (op.asOperator() == Token::Subtraction)
                             m_codes.append(Opcode(Opcode::Neg));
 #ifdef EVALUATOR_DEBUG
                         dbg << "\tRule for unary operator (auxiliary)" << "\n";

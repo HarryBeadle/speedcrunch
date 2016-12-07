@@ -2212,7 +2212,7 @@ void MainWindow::handleEditorTextChange()
         if (tokens.count() == 1) {
             bool operatorCondition =
                 tokens.at(0).asOperator() == Token::Plus
-                || tokens.at(0).asOperator() == Token::Minus
+                || tokens.at(0).asOperator() == Token::Subtraction
                 || tokens.at(0).asOperator() == Token::Multiplication
                 || tokens.at(0).asOperator() == Token::Division
                 || tokens.at(0).asOperator() == Token::Caret;

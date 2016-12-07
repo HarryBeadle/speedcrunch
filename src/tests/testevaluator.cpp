@@ -204,6 +204,11 @@ void test_binary()
     CHECK_EVAL("0-1", "-1");
     CHECK_EVAL("1-1", "0");
 
+    CHECK_EVAL("0−0", "0");
+    CHECK_EVAL("1−0", "1");
+    CHECK_EVAL("0−1", "-1");
+    CHECK_EVAL("1−1", "0");
+
     CHECK_EVAL("2*3", "6");
     CHECK_EVAL("2×3", "6");
     CHECK_EVAL("3*2", "6");
