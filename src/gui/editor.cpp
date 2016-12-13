@@ -812,6 +812,12 @@ void Editor::keyPressEvent(QKeyEvent* event)
             return;
         }
         break;
+
+    case Qt::Key_Asterisk:
+        insert(QString::fromUtf8("×")); // U+00D7 × MULTIPLICATION SIGN.
+        event->accept();
+        return;
+
     default:;
     }
 
