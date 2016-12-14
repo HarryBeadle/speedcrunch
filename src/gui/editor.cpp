@@ -818,6 +818,11 @@ void Editor::keyPressEvent(QKeyEvent* event)
         event->accept();
         return;
 
+    case Qt::Key_Minus:
+        insert(QString::fromUtf8("−")); // U+2212 − MINUS SIGN.
+        event->accept();
+        return;
+
     default:;
     }
 
