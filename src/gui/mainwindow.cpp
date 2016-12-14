@@ -2021,9 +2021,9 @@ void MainWindow::handleKeypadButtonPress(Keypad::Button b)
     case Keypad::Key9: insertTextIntoEditor("9"); break;
 
     case Keypad::KeyPlus: insertTextIntoEditor("+"); break;
-    case Keypad::KeyMinus: insertTextIntoEditor("-"); break;
-    case Keypad::KeyTimes: insertTextIntoEditor("*"); break;
-    case Keypad::KeyDivide: insertTextIntoEditor("/"); break;
+    case Keypad::KeyMinus: insertTextIntoEditor("−"); break;
+    case Keypad::KeyTimes: insertTextIntoEditor("×"); break;
+    case Keypad::KeyDivide: insertTextIntoEditor("÷"); break;
 
     case Keypad::KeyEE: insertTextIntoEditor("e"); break;
     case Keypad::KeyLeftPar: insertTextIntoEditor("("); break;
