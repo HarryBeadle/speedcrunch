@@ -214,6 +214,7 @@ static Token::Operator matchOperator(const QString& text)
             result = Token::Subtraction;
             break;
         case 0x00D7: // × MULTIPLICATION SIGN
+        case 0x22C5: // ⋅ DOT OPERATOR
         case '*':
             result = Token::Multiplication;
             break;
@@ -606,7 +607,7 @@ bool Evaluator::isSeparatorChar(const QChar& ch)
 {
     // Match everything that is not alphanumeric or an operator or NUL.
     static const QRegExp s_separatorRE(
-        "[^a-zA-Z0-9\\+\\-−\\*×÷/\\^;\\(\\)%!=\\\\&\\|<>\\?#\\x0000]"
+        "[^a-zA-Z0-9\\+\\-−\\*×⋅÷/\\^;\\(\\)%!=\\\\&\\|<>\\?#\\x0000]"
     );
 
     if (isRadixChar(ch))

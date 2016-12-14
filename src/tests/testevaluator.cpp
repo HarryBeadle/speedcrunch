@@ -211,8 +211,10 @@ void test_binary()
 
     CHECK_EVAL("2*3", "6");
     CHECK_EVAL("2×3", "6");
+    CHECK_EVAL("2⋅3", "6"); // U+22C5 Dot operator.
     CHECK_EVAL("3*2", "6");
     CHECK_EVAL("3×2", "6");
+    CHECK_EVAL("3⋅2", "6");
 
     CHECK_EVAL("10/2", "5");
     CHECK_EVAL("10÷2", "5");
