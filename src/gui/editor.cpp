@@ -823,6 +823,11 @@ void Editor::keyPressEvent(QKeyEvent* event)
         event->accept();
         return;
 
+    case Qt::Key_Colon:
+        insert(QString::fromUtf8("÷")); // U+00F7 ÷ DIVISION SIGN.
+        event->accept();
+        return;
+
     default:;
     }
 
