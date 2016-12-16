@@ -1,52 +1,56 @@
-cmake_minimum_required(VERSION 2.8.11)
-
 project(speedcrunch)
-set(speedcrunch_VERSION "master")
-
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_COLOR_MAKEFILE ON)
-set(CMAKE_VERBOSE_MAKEFILE OFF)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-find_package(Qt5Core)
-find_package(Qt5Widgets)
-find_package(Qt5Help)
-
-if(APPLE)
-    set(PROGNAME SpeedCrunch)
-    set(MACOSX_BUNDLE_ICON_FILE speedcrunch.icns)
-    set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${speedcrunch_VERSION})
-    set(MACOSX_BUNDLE_VERSION ${speedcrunch_VERSION})
-    set(MACOSX_BUNDLE_LONG_VERSION_STRING Version ${speedcrunch_VERSION})
-    set(CMAKE_OSX_ARCHITECTURES ppc;i386)
-else(APPLE)
-    set(PROGNAME speedcrunch)
-endif(APPLE)
-
-ADD_DEFINITIONS("-DSPEEDCRUNCH_VERSION=\"${speedcrunch_VERSION}\"")
-ADD_DEFINITIONS(-DQT_USE_QSTRINGBUILDER)
-
-include(SourceFiles.cmake)
-
-if(WIN32)
-    set(WIN32_RES_FILE ${CMAKE_CURRENT_BINARY_DIR}/speedcrunch.rc.obj)
-    if(MINGW)
-        add_custom_command(OUTPUT ${WIN32_RES_FILE}
-                           COMMAND windres.exe ${CMAKE_CURRENT_SOURCE_DIR}/resources/speedcrunch.rc ${WIN32_RES_FILE})
-    else(MINGW)
-        add_custom_command(OUTPUT ${WIN32_RES_FILE}
-                           COMMAND rc.exe /fo ${WIN32_RES_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/resources/speedcrunch.rc)
-    endif(MINGW)
-endif(WIN32)
+cmake_minimum_required(VERSION 3.0)
 
 string(COMPARE EQUAL "${CMAKE_CXX_COMPILER_ID}" MSVC USING_MSVC)
 if(USING_MSVC)
     add_definitions(-D_USE_MATH_DEFINES)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
 else()
-    add_definitions(-Wall)
-    add_definitions(-Wno-shift-negative-value)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+    add_compile_options(-Wall
+                        -Wno-shift-negative-value)
+    set(CMAKE_CXX_FLAGS "-std=c++0x -stdlib=libc++")
+endif()
+
+set(speedcrunch_VERSION "master")
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_COLOR_MAKEFILE ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Help REQUIRED)
+
+ADD_DEFINITIONS("-DSPEEDCRUNCH_VERSION=\"${speedcrunch_VERSION}\"")
+ADD_DEFINITIONS(-DQT_USE_QSTRINGBUILDER)
+
+include(SourceFiles.cmake)
+
+if(APPLE)
+    set(APP_ICON_FILE speedcrunch.icns)
+    set(APP_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/${APP_ICON_FILE}")
+    set(PROGNAME SpeedCrunch)
+    set(MACOSX_BUNDLE_ICON_FILE ${APP_ICON_FILE})
+    set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${speedcrunch_VERSION})
+    set(MACOSX_BUNDLE_VERSION ${speedcrunch_VERSION})
+    set(MACOSX_BUNDLE_LONG_VERSION_STRING Version ${speedcrunch_VERSION})
+
+    set_source_files_properties(${APP_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+else()
+    set(PROGNAME speedcrunch)
+endif()
+
+if(WIN32)
+    set(WIN32_RES_FILE ${CMAKE_CURRENT_BINARY_DIR}/speedcrunch.rc.obj)
+    if(MINGW)
+        add_custom_command(OUTPUT ${WIN32_RES_FILE}
+                           COMMAND windres.exe ${CMAKE_CURRENT_SOURCE_DIR}/resources/speedcrunch.rc ${WIN32_RES_FILE})
+    else()
+        add_custom_command(OUTPUT ${WIN32_RES_FILE}
+                           COMMAND rc.exe /fo ${WIN32_RES_FILE} ${CMAKE_CURRENT_SOURCE_DIR}/resources/speedcrunch.rc)
+    endif()
 endif()
 
 # Embedded manual
@@ -60,19 +64,17 @@ else()
     set(speedcrunch_RESOURCES ${speedcrunch_RESOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/../doc/build_html_embedded/manual.qrc)
 endif()
 
-qt5_add_RESOURCES(speedcrunch_RESOURCES_SOURCES ${speedcrunch_RESOURCES})
-add_executable(${PROGNAME} WIN32 MACOSX_BUNDLE ${speedcrunch_SOURCES} ${speedcrunch_HEADERS_MOC} ${speedcrunch_RESOURCES_SOURCES} ${speedcrunch_FORMS_HEADERS} ${WIN32_RES_FILE})
+if(WIN32)
+    add_executable(${PROGNAME} WIN32 ${speedcrunch_SOURCES} ${speedcrunch_RESOURCES} ${WIN32_RES_FILE})
+elseif(APPLE)
+    add_executable(${PROGNAME} MACOSX_BUNDLE ${speedcrunch_SOURCES} ${speedcrunch_RESOURCES} ${APP_ICON})
+else()
+    add_executable(${PROGNAME} ${speedcrunch_SOURCES} ${speedcrunch_RESOURCES})
+endif()
 
 if(REBUILD_MANUAL)
     add_dependencies(${PROGNAME} manual)
 endif()
-
-if(APPLE)
-    set( speedcrunch_RESOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${PROGNAME}.app/Contents/Resources )
-    add_custom_command(TARGET ${PROGNAME} POST_BUILD
-                       COMMAND mkdir ARGS -p ${speedcrunch_RESOURCE_DIR}
-                       COMMAND cp ARGS -f resources/${MACOSX_BUNDLE_ICON_FILE} ${speedcrunch_RESOURCE_DIR})
-endif(APPLE)
 
 add_custom_target(confclean COMMAND rm -rf Makefile CMakeFiles/ CMakeCache.txt cmake_install.cmake DartTestfile.txt install_manifest.txt)
 
