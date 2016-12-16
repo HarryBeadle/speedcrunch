@@ -36,7 +36,6 @@ if(APPLE)
     set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${speedcrunch_VERSION})
     set(MACOSX_BUNDLE_VERSION ${speedcrunch_VERSION})
     set(MACOSX_BUNDLE_LONG_VERSION_STRING Version ${speedcrunch_VERSION})
-
     set_source_files_properties(${APP_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
 else()
     set(PROGNAME speedcrunch)
@@ -112,45 +111,53 @@ include_directories(${CMAKE_BINARY_DIR} thirdparty core gui math)
 
 ################################# INSTALL ######################################
 
-if(NOT WIN32)
-    set(SHAREDIR "share/")
-    set(MENUDIR "${SHAREDIR}/applications/")
-    set(APPDATADIR "${SHAREDIR}/appdata/")
-    set(ICONDIR "${SHAREDIR}/pixmaps/")
-    set(BINDIR "bin")
-else(NOT WIN32)
-    set(BINDIR ".")
-    set(DATADIR ".")
-endif(NOT WIN32)
+if(UNIX AND NOT APPLE)
+    set(SHARE_DIR "share")
+    set(BIN_INSTALL_DIR "bin")
+
+    set(MENU_DIR "${SHARE_DIR}/applications/")
+    set(APP_DATA_DIR "${SHARE_DIR}/appdata/")
+    set(ICON_DIR "${SHARE_DIR}/pixmaps/")
+elseif(APPLE)
+    set(BIN_INSTALL_DIR ".")
+    set(DOC_INSTALL_DIR "${PROGNAME}.app/Contents/Resources")
+else()
+    set(BIN_INSTALL_DIR ".")
+    set(DOC_INSTALL_DIR ".")
+endif()
 
 option(PORTABLE_SPEEDCRUNCH "Enable to build in portable mode" OFF)
 if(PORTABLE_SPEEDCRUNCH)
     add_definitions(-DSPEEDCRUNCH_PORTABLE)
 endif(PORTABLE_SPEEDCRUNCH)
 
-install(TARGETS ${PROGNAME} DESTINATION ${BINDIR})
+install(TARGETS ${PROGNAME} DESTINATION ${BIN_INSTALL_DIR})
 
-if(NOT WIN32)
-    install(FILES ../pkg/speedcrunch.desktop DESTINATION ${MENUDIR})
-    install(FILES resources/speedcrunch.png DESTINATION ${ICONDIR})
-    install(FILES ../pkg/speedcrunch.appdata.xml DESTINATION ${APPDATADIR})
-else(NOT WIN32)
-    install(FILES ../pkg/COPYING.rtf DESTINATION ${DATADIR})
-endif(NOT WIN32)
+if(UNIX AND NOT APPLE)
+    install(FILES ../pkg/speedcrunch.desktop DESTINATION ${MENU_DIR})
+    install(FILES resources/speedcrunch.png DESTINATION ${ICON_DIR})
+    install(FILES ../pkg/speedcrunch.appdata.xml DESTINATION ${APP_DATA_DIR})
+elseif(WIN32)
+    install(FILES ../pkg/COPYING.rtf DESTINATION ${DOC_INSTALL_DIR})
+endif()
 
 if(WIN32)
     include(../pkg/QtWin32Deploy.cmake)
-    qtwin32_deploy_modules(${BINDIR} qtwin32_Qt5Widgets qtwin32_Qt5Help)
-    qtwin32_deploy_default_qt_conf(${BINDIR})
+    qtwin32_deploy_modules(${BIN_INSTALL_DIR} qtwin32_Qt5Widgets qtwin32_Qt5Help)
+    qtwin32_deploy_default_qt_conf(${BIN_INSTALL_DIR})
     if(${qtwin32_QT_MINOR_VERSION} VERSION_LESS 5.5)
         # Qt 5.4 and below also require ICU.
-        qtwin32_deploy_modules(${BINDIR} qtwin32_ICU)
+        qtwin32_deploy_modules(${BIN_INSTALL_DIR} qtwin32_ICU)
     endif()
 endif(WIN32)
-set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${BINDIR})
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${BIN_INSTALL_DIR})
 include(InstallRequiredSystemLibraries)
 
 ################################# PACKAGE #####################################
+
+if(APPLE)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
+endif()
 
 set(CPACK_PACKAGE_VENDOR SpeedCrunch)
 set(CPACK_PACKAGE_VERSION ${speedcrunch_VERSION})
@@ -167,8 +174,8 @@ if(WIN32)
     endif(NOT CPACK_GENERATOR)
 
     set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/../pkg/COPYING.rtf")
-    set(CPACK_NSIS_EXECUTABLES_DIRECTORY ${BINDIR})
-    set(CPACK_NSIS_INSTALLED_ICON_NAME "${BINDIR}\\\\${PROGNAME}.exe,0")
+    set(CPACK_NSIS_EXECUTABLES_DIRECTORY ${BIN_INSTALL_DIR})
+    set(CPACK_NSIS_INSTALLED_ICON_NAME "${BIN_INSTALL_DIR}\\\\${PROGNAME}.exe,0")
     set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\resources\\\\speedcrunch.ico")
     set(CPACK_NSIS_HELP_LINK "http://groups.google.com/group/speedcrunch")
     set(CPACK_NSIS_URL_INFO_ABOUT "http://speedcrunch.org")
@@ -182,7 +189,7 @@ if(WIN32)
 
          WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator' '' 'SpeedCrunch'
          WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator' 'FriendlyTypeName' 'SpeedCrunch'
-         WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator\\\\shell\\\\open\\\\command' '' '\\\"$INSTDIR\\\\${BINDIR}\\\\${PROGNAME}.exe\\\"'
+         WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator\\\\shell\\\\open\\\\command' '' '\\\"$INSTDIR\\\\${BIN_INSTALL_DIR}\\\\${PROGNAME}.exe\\\"'
          WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator\\\\Application' 'ApplicationCompany' 'SpeedCrunch'
 
          WriteRegStr SHCTX 'Software\\\\Classes\\\\Applications\\\\${PROGNAME}.exe' 'FriendlyAppName' 'SpeedCrunch'
@@ -210,7 +217,14 @@ if(WIN32)
              Page custom x64Check
             ")
     endif()
-endif(WIN32)
+elseif(APPLE)
+     set(CPACK_GENERATOR "DragNDrop")
+     set(CPACK_DMG_FORMAT "UDBZ")
+     set(CPACK_DMG_VOLUME_NAME "${PROGNAME}")
+     set(CPACK_PACKAGE_FILE_NAME "${PROGNAME}")
+elseif(UNIX)
+    set(CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+endif()
 
 include(CPack)
 
