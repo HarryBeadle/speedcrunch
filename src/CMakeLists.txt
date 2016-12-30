@@ -1,6 +1,8 @@
 project(speedcrunch)
 cmake_minimum_required(VERSION 3.0)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
 string(COMPARE EQUAL "${CMAKE_CXX_COMPILER_ID}" MSVC USING_MSVC)
 if(USING_MSVC)
     add_definitions(-D_USE_MATH_DEFINES)
@@ -142,7 +144,7 @@ elseif(WIN32)
 endif()
 
 if(WIN32)
-    include(../pkg/QtWin32Deploy.cmake)
+    include(QtWin32Deploy)
     qtwin32_deploy_modules(${BIN_INSTALL_DIR} qtwin32_Qt5Widgets qtwin32_Qt5Help)
     qtwin32_deploy_default_qt_conf(${BIN_INSTALL_DIR})
     if(${qtwin32_QT_MINOR_VERSION} VERSION_LESS 5.5)
