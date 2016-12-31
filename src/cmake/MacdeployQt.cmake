@@ -1,5 +1,9 @@
-function(macdeployqt target)
-    set(app_name ${ARGV1})
+# Macdeployqt.cmake
+#
+# Copyright (c) 2017 Samuel Gaist <samuel.gaist@edeltech.ch>
+#
+
+function(macdeployqt target app_name)
 
     set(CURRENT_TARGET_PATH "\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_DIR}/${target}")
     set(QT_RPATH "${_qt5Core_install_prefix}/lib/")

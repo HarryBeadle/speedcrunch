@@ -20,6 +20,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_COLOR_MAKEFILE ON)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_MACOSX_RPATH ON)
 
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
@@ -81,6 +83,7 @@ add_custom_target(confclean COMMAND rm -rf Makefile CMakeFiles/ CMakeCache.txt c
 
 set(QT_LIBRARIES Qt5::Widgets Qt5::Help)
 target_link_libraries(${APPLICATION_NAME} ${QT_LIBRARIES})
+qt5_use_modules(${APPLICATION_NAME} Widgets Help Sql)
 
 enable_testing()
 
@@ -151,10 +154,13 @@ if(WIN32)
         # Qt 5.4 and below also require ICU.
         qtwin32_deploy_modules(${BIN_INSTALL_DIR} qtwin32_ICU)
     endif()
+elseif(APPLE)
+    include(MacdeployQt)
+    macdeployqt(${APPLICATION_NAME}.app ${APPLICATION_NAME})
 endif(WIN32)
+
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${BIN_INSTALL_DIR})
 include(InstallRequiredSystemLibraries)
-
 
 include(SpeedCrunchCPack.cmake)
 
