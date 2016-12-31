@@ -5,7 +5,7 @@ endif()
 set(CPACK_PACKAGE_VENDOR SpeedCrunch)
 set(CPACK_PACKAGE_VERSION ${speedcrunch_VERSION})
 set(CPACK_PACKAGE_INSTALL_DIRECTORY SpeedCrunch)
-set(CPACK_PACKAGE_EXECUTABLES ${PROGNAME} SpeedCrunch)
+set(CPACK_PACKAGE_EXECUTABLES ${APPLICATION_NAME} SpeedCrunch)
 
 if(WIN32)
     set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
@@ -20,7 +20,7 @@ if(WIN32)
 
     set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/../pkg/COPYING.rtf")
     set(CPACK_NSIS_EXECUTABLES_DIRECTORY ${BIN_INSTALL_DIR})
-    set(CPACK_NSIS_INSTALLED_ICON_NAME "${BIN_INSTALL_DIR}\\\\${PROGNAME}.exe,0")
+    set(CPACK_NSIS_INSTALLED_ICON_NAME "${BIN_INSTALL_DIR}\\\\${APPLICATION_NAME}.exe,0")
     set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\resources\\\\speedcrunch.ico")
     set(CPACK_NSIS_HELP_LINK "http://groups.google.com/group/speedcrunch")
     set(CPACK_NSIS_URL_INFO_ABOUT "http://speedcrunch.org")
@@ -34,16 +34,16 @@ if(WIN32)
 
          WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator' '' 'SpeedCrunch'
          WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator' 'FriendlyTypeName' 'SpeedCrunch'
-         WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator\\\\shell\\\\open\\\\command' '' '\\\"$INSTDIR\\\\${BIN_INSTALL_DIR}\\\\${PROGNAME}.exe\\\"'
+         WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator\\\\shell\\\\open\\\\command' '' '\\\"$INSTDIR\\\\${BIN_INSTALL_DIR}\\\\${APPLICATION_NAME}.exe\\\"'
          WriteRegStr SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator\\\\Application' 'ApplicationCompany' 'SpeedCrunch'
 
-         WriteRegStr SHCTX 'Software\\\\Classes\\\\Applications\\\\${PROGNAME}.exe' 'FriendlyAppName' 'SpeedCrunch'
+         WriteRegStr SHCTX 'Software\\\\Classes\\\\Applications\\\\${APPLICATION_NAME}.exe' 'FriendlyAppName' 'SpeedCrunch'
          ")
     set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
         "DeleteRegValue SHCTX 'Software\\\\RegisteredApplications' 'SpeedCrunch'
          DeleteRegKey SHCTX 'Software\\\\SpeedCrunch'
          DeleteRegKey SHCTX 'Software\\\\Classes\\\\SpeedCrunch.Url.calculator'
-         DeleteRegKey SHCTX 'Software\\\\Classes\\\\Applications\\\\${PROGNAME}.exe'
+         DeleteRegKey SHCTX 'Software\\\\Classes\\\\Applications\\\\${APPLICATION_NAME}.exe'
          ")
 
     if(${CMAKE_SIZEOF_VOID_P} EQUAL 8)
@@ -65,8 +65,8 @@ if(WIN32)
 elseif(APPLE)
      set(CPACK_GENERATOR "DragNDrop")
      set(CPACK_DMG_FORMAT "UDBZ")
-     set(CPACK_DMG_VOLUME_NAME "${PROGNAME}")
-     set(CPACK_PACKAGE_FILE_NAME "${PROGNAME}")
+     set(CPACK_DMG_VOLUME_NAME "${APPLICATION_NAME}")
+     set(CPACK_PACKAGE_FILE_NAME "${APPLICATION_NAME}")
 elseif(UNIX)
     set(CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
 endif()
