@@ -3,14 +3,16 @@ cmake_minimum_required(VERSION 3.0)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
-string(COMPARE EQUAL "${CMAKE_CXX_COMPILER_ID}" MSVC USING_MSVC)
-if(USING_MSVC)
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     add_definitions(-D_USE_MATH_DEFINES)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
 else()
     add_compile_options(-Wall
                         -Wno-shift-negative-value)
-    set(CMAKE_CXX_FLAGS "-std=c++0x -stdlib=libc++")
+    set(CMAKE_CXX_FLAGS "-std=c++0x")
+    if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+    endif()
 endif()
 
 set(speedcrunch_VERSION "master")
