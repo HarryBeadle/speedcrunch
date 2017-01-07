@@ -3,16 +3,17 @@ cmake_minimum_required(VERSION 3.0)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+if (MSVC)
     add_definitions(-D_USE_MATH_DEFINES)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
 else()
     add_compile_options(-Wall
                         -Wno-shift-negative-value)
     set(CMAKE_CXX_FLAGS "-std=c++0x")
-    if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-    endif()
+endif()
+
+if(APPLE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 endif()
 
 set(speedcrunch_VERSION "master")
@@ -78,7 +79,7 @@ else()
 endif()
 
 if(REBUILD_MANUAL)
-    add_dependencies(${APPLICATION_NAME} manual)
+    set_property(TARGET ${APPLICATION_NAME} PROPERTY AUTOGEN_TARGET_DEPENDS manual)
 endif()
 
 add_custom_target(confclean COMMAND rm -rf Makefile CMakeFiles/ CMakeCache.txt cmake_install.cmake DartTestfile.txt install_manifest.txt)
@@ -163,6 +164,7 @@ endif(WIN32)
 
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${BIN_INSTALL_DIR})
 include(InstallRequiredSystemLibraries)
+set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
 
 include(SpeedCrunchCPack.cmake)
 
