@@ -1,7 +1,7 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2004, 2007 Ariya Hidayat <ariya@kde.org>
 // Copyright (C) 2005, 2006 Johan Thelin <e8johan@gmail.com>
-// Copyright (C) 2007-2014 @heldercorreia
+// Copyright (C) 2007-2016 @heldercorreia
 // Copyright (C) 2011 Daniel Schäufele <git@schaeufele.org>
 //
 // This program is free software; you can redistribute it and/or
@@ -176,6 +176,7 @@ void MainWindow::createActions()
     m_actions.helpFeedback = new QAction(this);
     m_actions.helpCommunity = new QAction(this);
     m_actions.helpNews = new QAction(this);
+    m_actions.helpDonate = new QAction(this);
     m_actions.helpAbout = new QAction(this);
     m_actions.contextHelp = new QAction(this);
 
@@ -230,8 +231,9 @@ void MainWindow::createActions()
     m_actions.viewBitfield->setCheckable(true);
     m_actions.viewUserFunctions->setCheckable(true);
 
-    for (QString colorScheme : ColorScheme::enumerate()) {
-        QAction* action = new QAction(this);
+    const auto schemes = ColorScheme::enumerate(); // TODO: use qAsConst().
+    for (auto& colorScheme : schemes) {
+        auto action = new QAction(this);
         action->setCheckable(true);
         action->setText(colorScheme);
         action->setData(colorScheme);
@@ -361,6 +363,7 @@ void MainWindow::setActionsText()
     m_actions.helpFeedback->setText(MainWindow::tr("Send &Feedback"));
     m_actions.helpCommunity->setText(MainWindow::tr("Join &Community"));
     m_actions.helpNews->setText(MainWindow::tr("&News Feed"));
+    m_actions.helpDonate->setText(MainWindow::tr("&Donate"));
     m_actions.helpAbout->setText(MainWindow::tr("About &SpeedCrunch"));
 }
 
@@ -399,7 +402,8 @@ void MainWindow::createActionGroups()
     m_actionGroups.angle->addAction(m_actions.settingsAngleUnitDegree);
 
     m_actionGroups.colorScheme = new QActionGroup(this);
-    for (QAction* action : m_actions.settingsDisplayColorSchemes)
+    const auto schemes = m_actions.settingsDisplayColorSchemes;
+    for (auto& action : schemes)
         m_actionGroups.colorScheme->addAction(action);
 
     m_actionGroups.digitGrouping = new QActionGroup(this);
@@ -550,7 +554,8 @@ void MainWindow::createMenus()
 
     m_menus.display = m_menus.settings->addMenu("");
     m_menus.colorScheme = m_menus.display->addMenu("");
-    for (QAction* action : m_actions.settingsDisplayColorSchemes)
+    const auto schemes = m_actions.settingsDisplayColorSchemes; // TODO: qAsConst().
+    for (auto& action : schemes)
         m_menus.colorScheme->addAction(action);
     m_menus.display->addAction(m_actions.settingsDisplayFont);
 
@@ -565,6 +570,7 @@ void MainWindow::createMenus()
     m_menus.help->addAction(m_actions.helpFeedback);
     m_menus.help->addAction(m_actions.helpCommunity);
     m_menus.help->addAction(m_actions.helpNews);
+    m_menus.help->addAction(m_actions.helpDonate);
     m_menus.help->addSeparator();
     m_menus.help->addAction(m_actions.helpAbout);
 
@@ -786,7 +792,8 @@ void MainWindow::addTabifiedDock(QDockWidget* newDock, bool takeFocus, Qt::DockW
     connect(newDock, &QDockWidget::visibilityChanged, this, &MainWindow::handleDockWidgetVisibilityChanged);
     addDockWidget(area, newDock);
     // Try to find an existing dock we can tabify with.
-    for (QDockWidget* d : m_allDocks) {
+    const auto allDocks = m_allDocks; // TODO: Use Qt 5.7's qAsConst().
+    for (auto& d : allDocks) {
         if (dockWidgetArea(d) == area)
             tabifyDockWidget(d, newDock);
     }
@@ -879,10 +886,12 @@ void MainWindow::createFixedConnections()
     connect(m_actions.helpFeedback, SIGNAL(triggered()), SLOT(openFeedbackURL()));
     connect(m_actions.helpCommunity, SIGNAL(triggered()), SLOT(openCommunityURL()));
     connect(m_actions.helpNews, SIGNAL(triggered()), SLOT(openNewsURL()));
+    connect(m_actions.helpDonate, SIGNAL(triggered()), SLOT(openDonateURL()));
     connect(m_actions.helpAbout, SIGNAL(triggered()), SLOT(showAboutDialog()));
 
     connect(m_widgets.editor, SIGNAL(autoCalcDisabled()), SLOT(hideStateLabel()));
-    connect(m_widgets.editor, SIGNAL(autoCalcEnabled(const QString&)), SLOT(showStateLabel(const QString&)));
+    connect(m_widgets.editor, SIGNAL(autoCalcMessageAvailable(const QString&)), SLOT(handleAutoCalcMessageAvailable(const QString&)));
+    connect(m_widgets.editor, SIGNAL(autoCalcQuantityAvailable(const Quantity&)), SLOT(handleAutoCalcQuantityAvailable(const Quantity&)));
     connect(m_widgets.editor, SIGNAL(returnPressed()), SLOT(evaluateEditorExpression()));
     connect(m_widgets.editor, SIGNAL(shiftDownPressed()), SLOT(decreaseDisplayFontPointSize()));
     connect(m_widgets.editor, SIGNAL(shiftUpPressed()), SLOT(increaseDisplayFontPointSize()));
@@ -919,7 +928,8 @@ void MainWindow::createFixedConnections()
 
     connect(m_actions.settingsDisplayFont, SIGNAL(triggered()), SLOT(showFontDialog()));
 
-    for (QAction* action : m_actions.settingsDisplayColorSchemes)
+    const auto schemes = m_actions.settingsDisplayColorSchemes;
+    for (auto& action : schemes) // TODO: Use Qt 5.7's qAsConst();
         connect(action, SIGNAL(triggered()), SLOT(applySelectedColorScheme()));
 
     connect(this, SIGNAL(languageChanged()), SLOT(retranslateText()));
@@ -1025,7 +1035,10 @@ void MainWindow::applySettings()
     m_widgets.display->setFont(font);
     m_widgets.editor->setFont(font);
 
-    for (QAction* action : m_actions.settingsDisplayColorSchemes) {
+    m_widgets.display->scrollToBottom();
+
+    const auto schemes = m_actions.settingsDisplayColorSchemes;
+    for (auto& action : schemes) {
         if (m_settings->colorScheme == action->data().toString())
             action->setChecked(true);
     }
@@ -1330,7 +1343,6 @@ void MainWindow::hideStateLabel()
 
 void MainWindow::showSessionLoadDialog()
 {
-    QString errMsg  = tr("File %1 is not a valid session");
     QString filters = tr("SpeedCrunch Sessions (*.json);;All Files (*)");
     QString fname = QFileDialog::getOpenFileName(this, tr("Load Session"), QString::null, filters);
     if (fname.isEmpty())
@@ -1657,6 +1669,17 @@ void MainWindow::showStateLabel(const QString& msg)
     const int height = m_widgets.state->height();
     QPoint pos = mapFromGlobal(m_widgets.editor->mapToGlobal(QPoint(0, -height)));
     m_widgets.state->move(pos);
+}
+
+void MainWindow::handleAutoCalcMessageAvailable(const QString& message)
+{
+    showStateLabel(message);
+}
+
+void MainWindow::handleAutoCalcQuantityAvailable(const Quantity& quantity)
+{
+    if (m_settings->bitfieldVisible)
+        m_widgets.bitField->updateBits(quantity);
 }
 
 void MainWindow::setFullScreenEnabled(bool b)
@@ -1998,9 +2021,9 @@ void MainWindow::handleKeypadButtonPress(Keypad::Button b)
     case Keypad::Key9: insertTextIntoEditor("9"); break;
 
     case Keypad::KeyPlus: insertTextIntoEditor("+"); break;
-    case Keypad::KeyMinus: insertTextIntoEditor("-"); break;
-    case Keypad::KeyTimes: insertTextIntoEditor("*"); break;
-    case Keypad::KeyDivide: insertTextIntoEditor("/"); break;
+    case Keypad::KeyMinus: insertTextIntoEditor("−"); break;
+    case Keypad::KeyTimes: insertTextIntoEditor("×"); break;
+    case Keypad::KeyDivide: insertTextIntoEditor("÷"); break;
 
     case Keypad::KeyEE: insertTextIntoEditor("e"); break;
     case Keypad::KeyLeftPar: insertTextIntoEditor("("); break;
@@ -2051,6 +2074,11 @@ void MainWindow::openCommunityURL()
 void MainWindow::openNewsURL()
 {
     QDesktopServices::openUrl(QUrl(QString::fromLatin1("http://speedcrunch.blogspot.com/")));
+}
+
+void MainWindow::openDonateURL()
+{
+    QDesktopServices::openUrl(QUrl(QString::fromLatin1("http://speedcrunch.org/donate.html")));
 }
 
 void MainWindow::copy()
@@ -2159,10 +2187,17 @@ void MainWindow::handleCopyAvailable(bool copyAvailable)
 
 void MainWindow::handleBitsChanged(const QString& str)
 {
-    clearEditor();
     Quantity num(CNumber(str.toLatin1().data()));
-    insertTextIntoEditor(DMath::format(num, Quantity::Format::Fixed() + Quantity::Format::Hexadecimal()));
+    auto result = DMath::format(num, Quantity::Format::Fixed() + Quantity::Format::Hexadecimal());
+    insertTextIntoEditor(result);
     showStateLabel(QString("Current value: %1").arg(NumberFormatter::format(num)));
+
+    auto cursor = m_widgets.editor->textCursor();
+    if (cursor.hasSelection())
+        cursor.removeSelectedText();
+    cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, result.length());
+    cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, result.length());
+    m_widgets.editor->setTextCursor(cursor);
 }
 
 void MainWindow::handleEditorTextChange()
@@ -2176,11 +2211,11 @@ void MainWindow::handleEditorTextChange()
         Tokens tokens = m_evaluator->scan(expr);
         if (tokens.count() == 1) {
             bool operatorCondition =
-                tokens.at(0).asOperator() == Token::Plus
-                || tokens.at(0).asOperator() == Token::Minus
-                || tokens.at(0).asOperator() == Token::Asterisk
-                || tokens.at(0).asOperator() == Token::Slash
-                || tokens.at(0).asOperator() == Token::Caret;
+                tokens.at(0).asOperator() == Token::Addition
+                || tokens.at(0).asOperator() == Token::Subtraction
+                || tokens.at(0).asOperator() == Token::Multiplication
+                || tokens.at(0).asOperator() == Token::Division
+                || tokens.at(0).asOperator() == Token::Exponentiation;
             if (operatorCondition) {
                 m_conditions.autoAns = false;
                 expr.prepend("ans");
@@ -2305,7 +2340,8 @@ void MainWindow::showLanguageChooserDialog()
         map.insert(langName, localeName);
     }
 
-    int current = map.values().indexOf(m_settings->language) + 1;
+    const auto values = map.values();
+    int current = values.indexOf(m_settings->language) + 1;
 
     QString defaultKey = tr("System Default");
     QStringList keys(QStringList() << defaultKey << map.keys());

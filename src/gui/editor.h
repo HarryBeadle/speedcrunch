@@ -1,6 +1,6 @@
 // This file is part of the SpeedCrunch project
 // Copyright (C) 2004, 2005, 2007 Ariya Hidayat <ariya@kde.org>
-// Copyright (C) 2007-2009, 2013, 2014 @heldercorreia
+// Copyright (C) 2007-2016 @heldercorreia
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -20,8 +20,9 @@
 #ifndef GUI_EDITOR_H
 #define GUI_EDITOR_H
 
-#include <QPlainTextEdit>
 #include "core/sessionhistory.h"
+
+#include <QPlainTextEdit>
 
 struct Constant;
 class ConstantCompletion;
@@ -43,7 +44,7 @@ class Editor : public QPlainTextEdit {
     Q_OBJECT
 
 public:
-    explicit Editor(QWidget* parent = 0);
+    explicit Editor(QWidget* parent = nullptr);
 
     bool isAutoCalcEnabled() const;
     bool isAutoCompletionEnabled() const;
@@ -60,11 +61,12 @@ public:
     void stopAutoComplete();
     void wrapSelection();
     QString text() const;
-    QStringList matchFragment(const QString & id) const;
+    QStringList matchFragment(const QString&) const;
     QString getKeyword() const;
 
 signals:
-    void autoCalcEnabled(const QString&);
+    void autoCalcMessageAvailable(const QString&);
+    void autoCalcQuantityAvailable(const Quantity&);
     void autoCalcDisabled();
     void controlPageDownPressed();
     void controlPageUpPressed();
