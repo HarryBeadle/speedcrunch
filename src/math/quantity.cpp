@@ -875,6 +875,19 @@ Quantity DMath::imag(const Quantity& x)
     return result;
 }
 
+Quantity DMath::conj(const Quantity& n)
+{
+    if (complexMode) {
+        Quantity result = Quantity(n);
+        result.m_numericValue = CMath::conj(result.m_numericValue);
+        return result;
+    }
+    else {
+        // no change for a Real number
+        return n;
+    }
+}
+
 Quantity DMath::abs(const Quantity& n)
 {
     Quantity result(n);

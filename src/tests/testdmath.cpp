@@ -112,6 +112,11 @@ void test_functions()
     CHECK(DMath::round(CNumber("1.234"), 1), "1.2");
     CHECK(DMath::round(Quantity(CNumber("1.234"))*Units::joule(), 0), "NaN");
 
+    DMath::complexMode = false;
+    CHECK(DMath::conj(Quantity(CNumber("3"))*Units::ohm()), "3 ohm");
+    DMath::complexMode = true;
+    CHECK(DMath::conj(Quantity(CNumber("3+4j"))*Units::ohm()), "(3-4j) ohm");
+
     CHECK(DMath::trunc(CNumber("1.274"), 1), "1.2");
     CHECK(DMath::trunc(Quantity(CNumber("1.234"))*Units::joule(), 0), "NaN");
 
