@@ -877,15 +877,13 @@ Quantity DMath::imag(const Quantity& x)
 
 Quantity DMath::conj(const Quantity& n)
 {
-    if (complexMode) {
-        Quantity result = Quantity(n);
-        result.m_numericValue = CMath::conj(result.m_numericValue);
-        return result;
-    }
-    else {
-        // no change for a Real number
-        return n;
-    }
+    Quantity result = Quantity(n);
+    // If in Real mode, just strip the imaginary part.
+    result.m_numericValue = complexMode ?
+        CMath::conj(result.m_numericValue)
+        : CMath::real(result.m_numericValue);
+
+    return result;
 }
 
 Quantity DMath::abs(const Quantity& n)
