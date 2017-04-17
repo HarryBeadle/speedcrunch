@@ -177,13 +177,6 @@ void test_binary()
     // See http://en.wikipedia.org/wiki/Empty_product.
     CHECK_EVAL("0^0", "NaN");
 
-    // See https://en.wikipedia.org/wiki/Exponentiation#Powers_of_zero
-    DMath::complexMode = true;
-    CHECK_EVAL_KNOWN_ISSUE("0^1",   "0", 718);
-    CHECK_EVAL_KNOWN_ISSUE("0^1.5", "0", 718);
-    CHECK_EVAL_KNOWN_ISSUE("0^2",   "0", 718);
-    DMath::complexMode = false;
-
     CHECK_EVAL("1^0", "1");
     CHECK_EVAL("1^1", "1");
     CHECK_EVAL("1^2", "1");
@@ -804,6 +797,14 @@ void test_complex()
     CHECK_EVAL("VARIANCE(1j;-1j)", "1");
     CHECK_EVAL("VARIANCE(1j;-1j;1;-1)", "1");
     CHECK_EVAL("VARIANCE(2j;-2j;1;-1)", "2.5");
+
+    // See https://en.wikipedia.org/wiki/Exponentiation#Powers_of_zero
+    CHECK_EVAL_KNOWN_ISSUE("0^1",        "0", 718);
+    CHECK_EVAL_KNOWN_ISSUE("0^1.5",      "0", 718);
+    CHECK_EVAL_KNOWN_ISSUE("0^2",        "0", 718);
+    CHECK_EVAL_KNOWN_ISSUE("0^(1+1j)",   "0", 718);
+    CHECK_EVAL_KNOWN_ISSUE("0^(1.5+1j)", "0", 718);
+    CHECK_EVAL_KNOWN_ISSUE("0^(2+1j)",   "0", 718);
 }
 
 void test_angle_mode(Settings* settings)
