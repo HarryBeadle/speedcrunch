@@ -46,8 +46,6 @@
         return CMath::nan(InvalidParamCount); \
     }
 
-#define ENSURE_POSITIVE_ARGUMENT_COUNT() ENSURE_MINIMUM_ARGUMENT_COUNT(1)
-
 #define ENSURE_ARGUMENT_COUNT(i) \
     if (args.count() != (i)) { \
         f->setError(InvalidParamCount); \
@@ -125,14 +123,14 @@ Quantity function_abs(Function* f, const Function::ArgumentList& args)
 Quantity function_average(Function* f, const Function::ArgumentList& args)
 {
     /* TODO : complex mode switch for this function */
-    ENSURE_POSITIVE_ARGUMENT_COUNT();
+    ENSURE_MINIMUM_ARGUMENT_COUNT(2);
     return std::accumulate(args.begin()+1, args.end(), *args.begin()) / Quantity(args.count());
 }
 
 Quantity function_absdev(Function* f, const Function::ArgumentList& args)
 {
     /* TODO : complex mode switch for this function */
-    ENSURE_POSITIVE_ARGUMENT_COUNT();
+    ENSURE_MINIMUM_ARGUMENT_COUNT(2);
     Quantity mean = function_average(f, args);
     if (mean.isNan())
         return mean;   // pass the error along
@@ -194,7 +192,7 @@ Quantity function_ceil(Function* f, const Function::ArgumentList& args)
 Quantity function_gcd(Function* f, const Function::ArgumentList& args)
 {
     /* TODO : complex mode switch for this function */
-    ENSURE_POSITIVE_ARGUMENT_COUNT();
+    ENSURE_MINIMUM_ARGUMENT_COUNT(2);
     for (int i = 0; i < args.count(); ++i)
         if (!args[i].isInteger()) {
             f->setError(OutOfDomain);
@@ -235,7 +233,7 @@ Quantity function_sqrt(Function* f, const Function::ArgumentList& args)
 
 Quantity function_variance(Function* f, const Function::ArgumentList& args)
 {
-    ENSURE_POSITIVE_ARGUMENT_COUNT()
+    ENSURE_MINIMUM_ARGUMENT_COUNT(2);
 
     Quantity mean = function_average(f, args);
     if (mean.isNan())
@@ -254,7 +252,7 @@ Quantity function_variance(Function* f, const Function::ArgumentList& args)
 Quantity function_stddev(Function* f, const Function::ArgumentList& args)
 {
     /* TODO : complex mode switch for this function */
-    ENSURE_POSITIVE_ARGUMENT_COUNT();
+    ENSURE_MINIMUM_ARGUMENT_COUNT(2);
     return DMath::sqrt(function_variance(f, args));
 }
 
@@ -501,7 +499,7 @@ Quantity function_radians(Function* f, const Function::ArgumentList& args)
 
 Quantity function_max(Function* f, const Function::ArgumentList& args)
 {
-    ENSURE_POSITIVE_ARGUMENT_COUNT()
+    ENSURE_MINIMUM_ARGUMENT_COUNT(2);
     ENSURE_REAL_ARGUMENTS()
     ENSURE_SAME_DIMENSION()
     return *std::max_element(args.begin(), args.end());
@@ -509,7 +507,7 @@ Quantity function_max(Function* f, const Function::ArgumentList& args)
 
 Quantity function_median(Function* f, const Function::ArgumentList& args)
 {
-    ENSURE_POSITIVE_ARGUMENT_COUNT()
+    ENSURE_MINIMUM_ARGUMENT_COUNT(2);
     ENSURE_REAL_ARGUMENTS()
     ENSURE_SAME_DIMENSION()
 
@@ -525,7 +523,7 @@ Quantity function_median(Function* f, const Function::ArgumentList& args)
 
 Quantity function_min(Function* f, const Function::ArgumentList& args)
 {
-    ENSURE_POSITIVE_ARGUMENT_COUNT()
+    ENSURE_MINIMUM_ARGUMENT_COUNT(2);
     ENSURE_REAL_ARGUMENTS()
     ENSURE_SAME_DIMENSION()
     return *std::min_element(args.begin(), args.end());
@@ -533,20 +531,20 @@ Quantity function_min(Function* f, const Function::ArgumentList& args)
 
 Quantity function_sum(Function* f, const Function::ArgumentList& args)
 {
-    ENSURE_POSITIVE_ARGUMENT_COUNT();
+    ENSURE_MINIMUM_ARGUMENT_COUNT(2);
     return std::accumulate(args.begin(), args.end(), Quantity(0));
 }
 
 Quantity function_product(Function* f, const Function::ArgumentList& args)
 {
-    ENSURE_POSITIVE_ARGUMENT_COUNT();
+    ENSURE_MINIMUM_ARGUMENT_COUNT(2);
     return std::accumulate(args.begin(), args.end(), Quantity(1), std::multiplies<Quantity>());
 }
 
 Quantity function_geomean(Function* f, const Function::ArgumentList& args)
 {
     /* TODO : complex mode switch for this function */
-    ENSURE_POSITIVE_ARGUMENT_COUNT();
+    ENSURE_MINIMUM_ARGUMENT_COUNT(2);
 
     Quantity result = std::accumulate(args.begin(), args.end(), Quantity(1),
         std::multiplies<Quantity>());
