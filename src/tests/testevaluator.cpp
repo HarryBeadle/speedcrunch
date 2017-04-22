@@ -543,14 +543,9 @@ void test_function_stat()
 
 void test_function_logic()
 {
-    CHECK_EVAL("and(0)", "0");
-    CHECK_EVAL("and(1)", "1");
-
-    CHECK_EVAL("or(0)", "0");
-    CHECK_EVAL("or(1)", "1");
-
-    CHECK_EVAL("xor(0)", "0");
-    CHECK_EVAL("xor(1)", "1");
+    CHECK_EVAL_FAIL("and(1)");
+    CHECK_EVAL_FAIL("or(2)");
+    CHECK_EVAL_FAIL("xor(3)");
 
     CHECK_EVAL("and(0;0)", "0");
     CHECK_EVAL("and(0;1)", "0");
