@@ -397,7 +397,7 @@ void Constants::Private::populate()
     PUSH_CONSTANT_CODATA("Fermi Coupling Constant",        "1.1663787e-5",      "Ge/V²", "0.0000006e-5",      "2016-03-28");
     PUSH_CONSTANT_CODATA("Fine-structure Constant",        "7.2973525664e-3",   "",      "0.0000000017e-3",   "2016-03-28");
     PUSH_CONSTANT_CODATA("Hartree Energy",                 "4.359744650e-18",   "J",     "0.000000054e-18",   "2016-03-28");
-    PUSH_CONSTANT_CODATA("Hartree Energy in eV",           "27.21138602",       "ev",    "0.00000017",        "2016-03-28");
+    PUSH_CONSTANT_CODATA("Hartree Energy in eV",           "27.21138602",       "eV",    "0.00000017",        "2016-03-28");
     PUSH_CONSTANT_CODATA("Quantum of Circulation",         "3.6369475486e-4",   "m²/s",  "0.0000000017e-4",   "2016-03-28");
     PUSH_CONSTANT_CODATA("Quantum of Circulation times 2", "7.2738950972e-4",   "m²/s",  "0.0000000033e-4",   "2016-03-28");  // I don't know why it is usefull, but it is present in CODATA constants, so I added it  -- Hadrien Theveneau, 2016-03-28
     PUSH_CONSTANT_CODATA("Rydberg Constant",               "10973731.568508",   "1/m",   "0.000065",          "2016-03-28");
