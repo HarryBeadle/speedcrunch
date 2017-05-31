@@ -851,12 +851,12 @@ QString DMath::format(Quantity q, Quantity::Format format)
     number /= unit;
 
     QString result = CMath::format(number, format);
-
     if (!number.real.isZero() && !number.imag.isZero() && unit_name != " ")
         result = "(" + result + ")";
 
-    if (unit_name != " ")
+    if (unit_name != " ") {
         result.append(unit_name);
+    }
 
     return result;
 }
@@ -866,6 +866,7 @@ Quantity DMath::real(const Quantity& x)
     Quantity result(x);
     result.m_numericValue = result.m_numericValue.real;
     return result;
+
 }
 
 Quantity DMath::imag(const Quantity& x)

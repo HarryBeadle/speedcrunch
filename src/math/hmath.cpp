@@ -770,6 +770,7 @@ char* _doFormat(cfloatnum x, signed char base, signed char expbase, char outmode
     }
     float_free(&tmp);
     return str;
+    //return "120e0";
 }
 
 /**
@@ -891,6 +892,41 @@ QString HMath::format(const HNumber& hn, HNumber::Format format)
 
     QString result(rs);
     free(rs);
+
+    if (format.mode == HNumber::Format::Mode::Engineering) {
+        int i = 0;
+        while (result.at(i) != 'e') {
+            i++;
+            if (i > result.length() - 1) break;
+        }
+        QString eexp = result.section('e', -1);
+
+        QString symbol = "";
+        switch (eexp.toInt()) {
+            case 13: symbol = "E"; break;
+            case 15: symbol = "P"; break;
+            case 12: symbol = "T"; break;
+            case 9: symbol = "G"; break;
+            case 6: symbol = "M"; break;
+            case 3: symbol = "k"; break;
+            case 0: symbol = ""; break;
+            case -3: symbol = "m"; break;
+            case -6: symbol = "μ"; break;
+            case -9: symbol = "n"; break;
+            case -12: symbol = "p"; break;
+            case -15: symbol = "f"; break;
+            case -18: symbol = "a"; break;
+        }
+
+        result = result.section('e', 0, 0);
+        result.append(symbol);
+        if (symbol != "") {
+            result.append(" (e" + eexp + ")");
+        } else {
+            result.append("e" + eexp);
+        }
+    }
+
     return result;
 }
 

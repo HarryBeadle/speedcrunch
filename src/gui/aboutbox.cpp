@@ -44,6 +44,7 @@ AboutBox::AboutBox(QWidget* parent, Qt::WindowFlags f)
 
     const QString authors = "<p><b>%1</b><br>%2";
     msg += authors.arg(tr("Maintainer"), "Helder Correia");
+    msg += authors.arg(tr("Engineering Additions"), "Harry Beadle");
 
     msg += "<p>" + QString("<b>%1</b><br>").arg(tr("Core developers"));
     msg +=
