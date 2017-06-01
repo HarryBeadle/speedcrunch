@@ -1,3 +1,11 @@
+# SpeedCrunch (Engineering Fork)
+
+This is a fork of the SpeedCrunch calculator with some personal additions to make the calculator more useful in my daily engineering (student) workflow. A list of additions follows.
+
+ - SI unit prefixes (M, k, m, u, etc.) as well as exponents when in Engineering result display mode.
+ - (Planned) Alt-key hides and shows the menubar.
+ - (Planned) SI unit prefixes as default varibles (so typing 150u evaluates as 150e(-6)). 
+
 # SpeedCrunch
 SpeedCrunch is a high-precision scientific calculator. It features a syntax-highlighted
 scrollable display and is designed to be fully used via keyboard. Some distinctive
