@@ -903,7 +903,7 @@ QString HMath::format(const HNumber& hn, HNumber::Format format)
 
         QString symbol = "";
         switch (eexp.toInt()) {
-            case 13: symbol = "E"; break;
+            case 18: symbol = "E"; break;
             case 15: symbol = "P"; break;
             case 12: symbol = "T"; break;
             case 9: symbol = "G"; break;
